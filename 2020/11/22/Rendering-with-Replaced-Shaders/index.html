@@ -5,37 +5,37 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
 <meta name="generator" content="Hexo 5.2.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/girl_180_0.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/girl_32_0.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/girl_16_0.png">
-  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blogs/images/girl_180_0.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blogs/images/girl_32_0.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blogs/images/girl_16_0.png">
+  <link rel="mask-icon" href="/blogs/images/logo.svg" color="#222">
 
-<link rel="stylesheet" href="/blog/css/main.css">
+<link rel="stylesheet" href="/blogs/css/main.css">
 
 
-<link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/blogs/lib/font-awesome/css/all.min.css">
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"tyson-wu.github.io","root":"/blog/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"tyson-wu.github.io","root":"/blogs/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
   <meta name="description" content="通常每个需要渲染的物体都自带材质以及相应的shader，但是有时候我们可能希望使用同一个Shader对场景中的进行渲染。例如，当我们对屏幕图像进行边缘检测时，需要知道每个像素点所对应三维空间点的法向量，然后根据法向量的差异来判断是否是边缘。还有一些情况我们需要场景的深度信息。无论是法向纹理还是深度散纹理等，都可以通过Relpace Shader来实现。Replace Shader和普通shader">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Rendering with Replaced Shaders">
-<meta property="og:url" content="https://tyson-wu.github.io/2020/11/22/Rendering-with-Replaced-Shaders/index.html">
+<meta property="og:url" content="https://tyson-wu.github.io/blogs/2020/11/22/Rendering-with-Replaced-Shaders/index.html">
 <meta property="og:site_name" content="TysonWu&#39;s Blog">
 <meta property="og:description" content="通常每个需要渲染的物体都自带材质以及相应的shader，但是有时候我们可能希望使用同一个Shader对场景中的进行渲染。例如，当我们对屏幕图像进行边缘检测时，需要知道每个像素点所对应三维空间点的法向量，然后根据法向量的差异来判断是否是边缘。还有一些情况我们需要场景的深度信息。无论是法向纹理还是深度散纹理等，都可以通过Relpace Shader来实现。Replace Shader和普通shader">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-11-22T10:01:34.000Z">
-<meta property="article:modified_time" content="2020-11-23T16:04:35.137Z">
+<meta property="article:modified_time" content="2020-11-23T16:10:41.510Z">
 <meta property="article:author" content="Tyson Wu">
 <meta property="article:tag" content="Unity">
 <meta property="article:tag" content="Shader">
 <meta property="article:tag" content="Replaced Shader">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://tyson-wu.github.io/2020/11/22/Rendering-with-Replaced-Shaders/">
+<link rel="canonical" href="https://tyson-wu.github.io/blogs/2020/11/22/Rendering-with-Replaced-Shaders/">
 
 
 <script id="page-configurations">
@@ -97,7 +97,7 @@
 
   <div class="site-meta">
 
-    <a href="/blog/" class="brand" rel="start">
+    <a href="/blogs/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
       <h1 class="site-title">TysonWu's Blog</h1>
       <span class="logo-line-after"><i></i></span>
@@ -118,27 +118,27 @@
   <ul id="menu" class="main-menu menu">
         <li class="menu-item menu-item-home">
 
-    <a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+    <a href="/blogs/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+    <a href="/blogs/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
 
   </li>
         <li class="menu-item menu-item-about">
 
-    <a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+    <a href="/blogs/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
 
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+    <a href="/blogs/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+    <a href="/blogs/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
 
   </li>
   </ul>
@@ -169,10 +169,10 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/2020/11/22/Rendering-with-Replaced-Shaders/">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/11/22/Rendering-with-Replaced-Shaders/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.png">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
       <meta itemprop="name" content="Tyson Wu">
       <meta itemprop="description" content="If you want, Just do it!">
     </span>
@@ -199,7 +199,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-24 00:04:35" itemprop="dateModified" datetime="2020-11-24T00:04:35+08:00">2020-11-24</time>
+                <time title="修改时间：2020-11-24 00:10:41" itemprop="dateModified" datetime="2020-11-24T00:10:41+08:00">2020-11-24</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -207,11 +207,11 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blog/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blog/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
                 </span>
             </span>
 
@@ -247,9 +247,9 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/blog/tags/Unity/" rel="tag"># Unity</a>
-              <a href="/blog/tags/Shader/" rel="tag"># Shader</a>
-              <a href="/blog/tags/Replaced-Shader/" rel="tag"># Replaced Shader</a>
+              <a href="/blogs/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/blogs/tags/Shader/" rel="tag"># Shader</a>
+              <a href="/blogs/tags/Replaced-Shader/" rel="tag"># Replaced Shader</a>
           </div>
 
         
@@ -258,7 +258,7 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/blog/2020/11/22/Camera-Depth-Texture/" rel="prev" title="Camera’s Depth Texture">
+    <a href="/blogs/2020/11/22/Camera-Depth-Texture/" rel="prev" title="Camera’s Depth Texture">
       <i class="fa fa-chevron-left"></i> Camera’s Depth Texture
     </a></div>
       <div class="post-nav-item"></div>
@@ -327,27 +327,27 @@
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="Tyson Wu"
-      src="/blog/images/avatar.png">
+      src="/blogs/images/avatar.png">
   <p class="site-author-name" itemprop="name">Tyson Wu</p>
   <div class="site-description" itemprop="description">If you want, Just do it!</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
-          <a href="/blog/archives/">
+          <a href="/blogs/archives/">
         
           <span class="site-state-item-count">9</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
-            <a href="/blog/categories/">
+            <a href="/blogs/categories/">
           
         <span class="site-state-item-count">10</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-            <a href="/blog/tags/">
+            <a href="/blogs/tags/">
           
         <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">标签</span></a>
@@ -399,19 +399,19 @@
   </div>
 
   
-  <script src="/blog/lib/anime.min.js"></script>
-  <script src="/blog/lib/velocity/velocity.min.js"></script>
-  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+  <script src="/blogs/lib/anime.min.js"></script>
+  <script src="/blogs/lib/velocity/velocity.min.js"></script>
+  <script src="/blogs/lib/velocity/velocity.ui.min.js"></script>
 
-<script src="/blog/js/utils.js"></script>
+<script src="/blogs/js/utils.js"></script>
 
-<script src="/blog/js/motion.js"></script>
-
-
-<script src="/blog/js/schemes/pisces.js"></script>
+<script src="/blogs/js/motion.js"></script>
 
 
-<script src="/blog/js/next-boot.js"></script>
+<script src="/blogs/js/schemes/pisces.js"></script>
+
+
+<script src="/blogs/js/next-boot.js"></script>
 
 
 
