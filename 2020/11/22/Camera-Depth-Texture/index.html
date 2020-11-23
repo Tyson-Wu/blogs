@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/girl_180_0.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/girl_32_0.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/girl_16_0.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"tyson-wu.github.io","root":"/blog/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Camera可以创建深度图、深度+法向纹理、运动向量图。这算是一种简化版的G-buffer，这些纹理图可以用在post-processing中，从而实现自定义的光照模型。我们也可以使用Shader Replacement创建这类纹理图。Camera虽然内置了创建深度图的功能，但是通常该功能是关闭的，需要在脚本中通过Camera.depthTextureMode来启用该功能。Unity提供了三种深度">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Camera’s Depth Texture">
+<meta property="og:url" content="https://tyson-wu.github.io/2020/11/22/Camera-Depth-Texture/index.html">
+<meta property="og:site_name" content="TysonWu&#39;s Blog">
+<meta property="og:description" content="Camera可以创建深度图、深度+法向纹理、运动向量图。这算是一种简化版的G-buffer，这些纹理图可以用在post-processing中，从而实现自定义的光照模型。我们也可以使用Shader Replacement创建这类纹理图。Camera虽然内置了创建深度图的功能，但是通常该功能是关闭的，需要在脚本中通过Camera.depthTextureMode来启用该功能。Unity提供了三种深度">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-11-22T09:01:34.000Z">
+<meta property="article:modified_time" content="2020-11-23T16:04:35.137Z">
+<meta property="article:author" content="Tyson Wu">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="Camera">
+<meta property="article:tag" content="Shader">
+<meta property="article:tag" content="Depth Texture">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://tyson-wu.github.io/2020/11/22/Camera-Depth-Texture/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Camera’s Depth Texture | TysonWu's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">TysonWu's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">AiCooXiao</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/2020/11/22/Camera-Depth-Texture/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Camera’s Depth Texture
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-22 17:01:34" itemprop="dateCreated datePublished" datetime="2020-11-22T17:01:34+08:00">2020-11-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-11-24 00:04:35" itemprop="dateModified" datetime="2020-11-24T00:04:35+08:00">2020-11-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/Unity/Shader/Depth-Texture/" itemprop="url" rel="index"><span itemprop="name">Depth Texture</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/class-Camera.html">Camera</a>可以创建深度图、深度+法向纹理、运动向量图。这算是一种简化版的G-buffer，这些纹理图可以用在post-processing中，从而实现自定义的光照模型。我们也可以使用<a href="https://tyson-wu.github.io/myblog/2020/11/20/Rendering-with-Replaced-Shaders/">Shader Replacement</a>创建这类纹理图。<br>Camera虽然内置了创建深度图的功能，但是通常该功能是关闭的，需要在脚本中通过<a target="_blank" rel="noopener" href="https://docs.unity3d.com/ScriptReference/Camera-depthTextureMode.html">Camera.depthTextureMode</a>来启用该功能。<br>Unity提供了三种深度图纹理模式：</p>
+<ul>
+<li>DepthTextureMode.Depth：纯<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-DepthTextures.html">深度图</a>。默认情况下生成的深度值的范围是[0-1]，且是非线性分布。</li>
+<li>DepthTextureMode.DepthNormals：同时包含深度和法向量信息。</li>
+<li>DepthTextureMode.MotionVectors：在屏幕空间内，每个像素点在当前帧的运动向量。这是一张RG16的纹理图，只有两个通道，每个通道深度为16。</li>
+</ul>
+<p>这几种模式采用的是位标记，也就是说可以两两组合。例如，我需要深度图和运动向量图，可以执行以下操作：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">camera.depthTextureMode = DepthTextureMode.Depth | DepthTextureMode.MotionVectors;</span><br></pre></td></tr></table></figure>
+
+<h2 id="DepthTextureMode-Depth-texture"><a href="#DepthTextureMode-Depth-texture" class="headerlink" title="DepthTextureMode.Depth texture"></a>DepthTextureMode.Depth texture</h2><p>此模式会创建一张屏幕大小的<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-DepthTextures.html">深度图</a>。<br>深度图渲染是在ShadowCaster pass中执行的，ShadowCaster pass也是用来实现阴影采集的Shader pass。因此，如果游戏物体所挂载的Shader不支持Shadow casting，也就是Shader中没有shadow caster pass，那么这个游戏物体不会被渲染到深度图中。<br>因此，当我们需要渲染某些物体的深度图时，需要保证：</p>
+<ul>
+<li>这些物体所挂载的Shader或者其fallback中的Shader具有shadow casting pass。或者</li>
+<li>使用<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-SurfaceShaders.html">surface shader</a>，然后加入addshadow标识符，使得表面着色器能够生成shadow pass。</li>
+</ul>
+<p>需要注意的是，只有”RenderType”=”Opaque”的物体会被渲染到深度图中。这些物体被认为是实体，在渲染队列中的编号&lt;=2500。</p>
+<h2 id="DepthTextureMode-DepthNormals-texture"><a href="#DepthTextureMode-DepthNormals-texture" class="headerlink" title="DepthTextureMode.DepthNormals texture"></a>DepthTextureMode.DepthNormals texture</h2><p>此模式会创建一张屏幕大小、深度为8、32位的纹理图。其中基于观察坐标系的法向量被存储到R&amp;G通道中，而深度被存到B&amp;A通道中。其中法向量是采用立体投影的方式进行编码，而深度是16位精度的浮点数。<br>在[UnityCG.cginc]文件中有一个DecodeDepthNormal可以用来对这里的深度以及法向量进行解码。其中解码后的深度值是范围为[0,1]的小数。<br>可以参考<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/PostProcessing-AmbientOcclusion.html">屏幕空间环境遮罩</a>的图像后处理教程。</p>
+<h2 id="DepthTextureMode-MotionVectors-texture"><a href="#DepthTextureMode-MotionVectors-texture" class="headerlink" title="DepthTextureMode.MotionVectors texture"></a>DepthTextureMode.MotionVectors texture</h2><p>此模式会创建一张屏幕大小的、两通道的、RG16的纹理图，每个通道占16位。基于屏幕空间的运动向量就是被编码到这两个通道中，分别表示U、V两个坐标值。<br>当采样值的范围在[-1,1]时，这表示的是上一帧与当前帧的UV偏移值，因为UV坐标的坐标值范围是[0-1]。</p>
+<h2 id="Tips-amp-Tricks"><a href="#Tips-amp-Tricks" class="headerlink" title="Tips&amp;Tricks"></a>Tips&amp;Tricks</h2><p>当Camera启用渲染深度图或深度+法向图时，Camera inspactor会有相应的提示语。<br>使用Camera.depthTextureMode方式获取深度图，当我们想关闭该功能时，需要手动设置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">camera.depthTextureMode = DepthTextureMode.None;</span><br></pre></td></tr></table></figure>
+<p>当我们在实现复杂Shader或者图像效果时，我们要考虑到<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-PlatformDifferences.html">不同平台之间的差异性</a>。</p>
+<h2 id="Shader-variables"><a href="#Shader-variables" class="headerlink" title="Shader variables"></a>Shader variables</h2><p>当我们想在Shader中使用由camera.depthTextureMode方法生成深度图时，在Shader中可以声明_CameraDepthTexture变量：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sampler2D _CameraDepthTexture;</span><br></pre></td></tr></table></figure>
+<p>_CameraDepthTexture是全局Shader属性，任何Shader都可以声明并访问该变量。_CameraDepthTexture总是指向摄像机的主深度图(我理解的是当前帧第一张深度纹理)。还有_LastCameraDepthTexture，用来指向最后一个深度图(好绕。。。)。例如我们在脚本中使用第二个Camera来获取分辨率减半的纹理图。<br>如果生成的是运动向量图，那么可以使用_CameraMotionVectorsTexture这个全局属性。<br>这里强调这些纹理图是使用camera.depthTextureMode方式生成的。因为除此之外，还可以使用<a href="/_posts/Rendering-with-Replaced-Shaders.md">Relapcement Shader</a>的方式，但是这种方式生成的纹理不会自动写入到上面这几个全局变量中。</p>
+<h2 id="Under-the-hood"><a href="#Under-the-hood" class="headerlink" title="Under the hood"></a>Under the hood</h2><p>本节所讲的深度图，是Camera的内置功能，不需要使用者考虑如何实现。但是这种内置的深度图生成方法，却是与所使用的rendering path和硬件平台有关。通常情况下，Deferred Shading或者Legacy Deferred Lighting这两种rendering path，会自动生成深度图并存放在G-Buffer中。另外，有一些平台在渲染的时候，会自动将深度信息缓存到Depth buffer。如果前面两种情况都不满足的话，那么引擎会额外开一个Pass来生成深度图，这种额外的方式就是<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-ShaderReplacement.html">Shader Replacement</a>，因此我们需要准确的使用RenderType这个标签。例如”RenderType”=”Transparent”的物体的深度信息可能会采集不到。<br>MotionVectors纹理图是通过额外开启一个Pass生成的。只有运动的物体会被采集，通过对别前后帧物体的运动来计算像素运动向量。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/blog/tags/Camera/" rel="tag"># Camera</a>
+              <a href="/blog/tags/Shader/" rel="tag"># Shader</a>
+              <a href="/blog/tags/Depth-Texture/" rel="tag"># Depth Texture</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2020/11/21/Git-on-the-Server-The-Protocols/" rel="prev" title="4.1 Git On the Server - The Protocols">
+      <i class="fa fa-chevron-left"></i> 4.1 Git On the Server - The Protocols
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/2020/11/22/Rendering-with-Replaced-Shaders/" rel="next" title="Rendering with Replaced Shaders">
+      Rendering with Replaced Shaders <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#DepthTextureMode-Depth-texture"><span class="nav-number">1.</span> <span class="nav-text">DepthTextureMode.Depth texture</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DepthTextureMode-DepthNormals-texture"><span class="nav-number">2.</span> <span class="nav-text">DepthTextureMode.DepthNormals texture</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DepthTextureMode-MotionVectors-texture"><span class="nav-number">3.</span> <span class="nav-text">DepthTextureMode.MotionVectors texture</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Tips-amp-Tricks"><span class="nav-number">4.</span> <span class="nav-text">Tips&amp;Tricks</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Shader-variables"><span class="nav-number">5.</span> <span class="nav-text">Shader variables</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Under-the-hood"><span class="nav-number">6.</span> <span class="nav-text">Under the hood</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Tyson Wu"
+      src="/blog/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Tyson Wu</p>
+  <div class="site-description" itemprop="description">If you want, Just do it!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tyson Wu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/schemes/pisces.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
