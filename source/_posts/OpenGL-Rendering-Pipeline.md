@@ -2,7 +2,7 @@
 title: OpenGL Rendering Pipeline
 date: 2020-12-20 15:01:00
 categories:
-- [Render Pipeline]
+- [OpenGL, Render Pipeline]
 tags:
 - OpenGL
 - Render Pipeline
