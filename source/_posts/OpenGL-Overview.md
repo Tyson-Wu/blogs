@@ -1,5 +1,5 @@
 ---
-title: OepnGL Overview
+title: OpenGL Overview
 date: 2020-12-19 15:01:00
 categories:
 - [OpenGL, Overview]
