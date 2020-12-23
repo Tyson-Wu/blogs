@@ -1,6 +1,6 @@
 ---
-title: 摇杆实现方法1
-date: 2020-12-23 22:01:00
+title: 摇杆实现方法2
+date: 2020-12-23 22:02:00
 categories:
 - [Unity, Component]
 tags:
