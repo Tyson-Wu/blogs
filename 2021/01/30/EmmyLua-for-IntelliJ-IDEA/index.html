@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blogs/images/girl_180_0.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blogs/images/girl_32_0.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blogs/images/girl_16_0.png">
+  <link rel="mask-icon" href="/blogs/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blogs/css/main.css">
+
+
+<link rel="stylesheet" href="/blogs/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"tyson-wu.github.io","root":"/blogs/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="EmmyLua是Jetbrains IDE的一个插件，它提供了一套注解的语法，可以帮助IDE进行代码之间索引跳转，以及变量名称提示等功能。总而言之，EmmyLua是丰富IDE的功能，和实际的代码没有关系，IDE的跳转也只是限于注释之间。 类的声明EmmyLua使用@class来模拟面向对象编程，支持继承和属性 123456789--- my supper class---@class Transp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="EmmyLua 的使用方法">
+<meta property="og:url" content="https://tyson-wu.github.io/blogs/2021/01/30/EmmyLua-for-IntelliJ-IDEA/index.html">
+<meta property="og:site_name" content="TysonWu&#39;s Blog">
+<meta property="og:description" content="EmmyLua是Jetbrains IDE的一个插件，它提供了一套注解的语法，可以帮助IDE进行代码之间索引跳转，以及变量名称提示等功能。总而言之，EmmyLua是丰富IDE的功能，和实际的代码没有关系，IDE的跳转也只是限于注释之间。 类的声明EmmyLua使用@class来模拟面向对象编程，支持继承和属性 123456789--- my supper class---@class Transp">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-01-30T02:38:34.000Z">
+<meta property="article:modified_time" content="2021-01-29T05:58:54.942Z">
+<meta property="article:author" content="Tyson Wu">
+<meta property="article:tag" content="Lua">
+<meta property="article:tag" content="EmmyLua">
+<meta property="article:tag" content="IntelliJ IDEA">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://tyson-wu.github.io/blogs/2021/01/30/EmmyLua-for-IntelliJ-IDEA/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>EmmyLua 的使用方法 | TysonWu's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blogs/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">TysonWu's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">AiCooXiao</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blogs/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blogs/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/blogs/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blogs/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blogs/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/01/30/EmmyLua-for-IntelliJ-IDEA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          EmmyLua 的使用方法
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-30 10:38:34" itemprop="dateCreated datePublished" datetime="2021-01-30T10:38:34+08:00">2021-01-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-29 13:58:54" itemprop="dateModified" datetime="2021-01-29T13:58:54+08:00">2021-01-29</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Lua/" itemprop="url" rel="index"><span itemprop="name">Lua</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Lua/EmmyLua/" itemprop="url" rel="index"><span itemprop="name">EmmyLua</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>EmmyLua是Jetbrains IDE的一个插件，它提供了一套注解的语法，可以帮助IDE进行代码之间索引跳转，以及变量名称提示等功能。总而言之，EmmyLua是丰富IDE的功能，和实际的代码没有关系，IDE的跳转也只是限于注释之间。</p>
+<h2 id="类的声明"><a href="#类的声明" class="headerlink" title="类的声明"></a>类的声明</h2><p>EmmyLua使用@class来模拟面向对象编程，支持继承和属性</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">--- my supper class</span><br><span class="line">---@class Transport</span><br><span class="line">local p &#x3D; Class()</span><br><span class="line"></span><br><span class="line">--- 子类</span><br><span class="line">---@class Car : Transport</span><br><span class="line">local cls &#x3D; Class(p)</span><br><span class="line">function c:test()</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<p>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">--@class my_type[: parent_type] [@comment]</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">---@class Car : Transport @define class Car extends Transport</span><br><span class="line">local cls &#x3D; class()</span><br><span class="line">function clas:test()</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<p>上面定义了一个Car类，我们可以使用@type Car来表明某个变量属于Car类</p>
+<h2 id="变量的声明"><a href="#变量的声明" class="headerlink" title="变量的声明"></a>变量的声明</h2><p>使用<code>@type</code>可以指明某个变量的类型</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">---@type Car</span><br><span class="line">local car1 &#x3D; getCar()</span><br><span class="line">---@type Car</span><br><span class="line">global_car &#x3D; getCar()</span><br><span class="line">global_car:test()</span><br></pre></td></tr></table></figure>
+<p>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@type my_type[|other_type] [@comment]</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">---@type Car @instance of car</span><br><span class="line">local car1 &#x3D; &#123;&#125;</span><br><span class="line"></span><br><span class="line">---@type Car|Ship @transport tools, car or ship. Since lua is dynamic-typed, a variable may be of different types</span><br><span class="line">---use | to list all possible types</span><br><span class="line">local transport &#x3D; &#123;&#125;</span><br><span class="line"></span><br><span class="line">---@type Car @global variable type</span><br><span class="line">global_car &#x3D; &#123;&#125;</span><br><span class="line"></span><br><span class="line">local obj &#x3D; &#123;&#125;</span><br><span class="line">---@type Car @property type</span><br><span class="line">obj.car &#x3D; getCar()</span><br></pre></td></tr></table></figure>
+
+<h2 id="别名注释"><a href="#别名注释" class="headerlink" title="别名注释"></a>别名注释</h2><p>使用<code>@alias</code>将一些复杂不容易输入的类型注册为新的容易输入的类型<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@alias new_name type</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">---@alias Handler fun( type: string, data: any):void</span><br><span class="line">---@param handler Handler</span><br><span class="line">function addHandler(handler)</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h2 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h2><p>使用<code>@param</code>来指定函数的参数类型<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@param param_name my_type[|other_type] [@comment]</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">---@param car Car</span><br><span class="line">local function setCar(car)</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">---@param car Car</span><br><span class="line">setCallback(function(car)</span><br><span class="line">end)</span><br><span class="line"></span><br><span class="line">---@param car Car</span><br><span class="line">for k, car in pairs(list) do</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h2 id="函数返回值类型说明"><a href="#函数返回值类型说明" class="headerlink" title="函数返回值类型说明"></a>函数返回值类型说明</h2><p>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@return my_type[|other_type] [@comment]</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">---@return Car|Ship</span><br><span class="line">local function crate()</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">---here car_or_ship doesn&#39;t need @type annotation, EmmyLua has already inferred the type via &quot;create&quot; function</span><br><span class="line">local car_or_ship &#x3D; create()</span><br><span class="line"></span><br><span class="line">---@return Car</span><br><span class="line">function factory:create()</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h2 id="属性声明"><a href="#属性声明" class="headerlink" title="属性声明"></a>属性声明</h2><p>使用<code>@field</code>可以标明类所具有的属性，即使类中没有使用到这个属性<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@field [public|protected|private] field_name field_type[|other_type] [@comment]</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">---@class Car</span><br><span class="line">---@field public name string @add name field to class Car, you&#39;ll see it in code completion</span><br><span class="line">local cls &#x3D; class()</span><br></pre></td></tr></table></figure>
+
+<h2 id="泛型声明"><a href="#泛型声明" class="headerlink" title="泛型声明"></a>泛型声明</h2><p>使用<code>@generic</code>来模拟一些高级语言的泛型<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@generic T1 [: parent_type] [, T2 [: parent_type]]</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">---@generic T : Transport, K</span><br><span class="line">---@param param1 T</span><br><span class="line">---@param param2 K</span><br><span class="line">---@return T</span><br><span class="line">local function test(param1, param2)</span><br><span class="line">	-- todo</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">---@type Car</span><br><span class="line">local car &#x3D; ...</span><br><span class="line">local value &#x3D; test(car)</span><br></pre></td></tr></table></figure>
+<p>这里说明一下，上面的<code>T</code>和<code>K</code>都是类型，只不过<code>T</code>是继承自<code>Transport</code>的一种类型，而<code>K</code>可以是任何类型。<br>然后<code>param1</code>是类型<code>T</code>的实例</p>
+<h2 id="不定参数的注释"><a href="#不定参数的注释" class="headerlink" title="不定参数的注释"></a>不定参数的注释</h2><p>使用<code>@vararg</code>注解函数不定参数部分<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@vararg type</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">---@vararg string</span><br><span class="line">---@return string</span><br><span class="line">local function format(...)</span><br><span class="line">	local tbl &#x3D; &#123;...&#125; --inferred as string[]</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h2 id="嵌入其他语言"><a href="#嵌入其他语言" class="headerlink" title="嵌入其他语言"></a>嵌入其他语言</h2><p>使用<code>@language</code>可以在lua代码中嵌入其他语言<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@language language_id</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">---@language JSON</span><br><span class="line">local jsonText &#x3D; [[&#123;</span><br><span class="line">	&quot;name&quot;:&quot;Emmy&quot;</span><br><span class="line">	&#125;]]</span><br></pre></td></tr></table></figure>
+
+<h2 id="数组类型声明"><a href="#数组类型声明" class="headerlink" title="数组类型声明"></a>数组类型声明</h2><p>使用<code>@type mytype[]</code>可以指定变量类型为数组<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@type my_type[]</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">---@type Car[]</span><br><span class="line">local list &#x3D; &#123;&#125;</span><br><span class="line">local car &#x3D; list[1]</span><br><span class="line">-- car, and you &#39;ll see completion</span><br><span class="line"></span><br><span class="line">for i, car in pairs(list) do</span><br><span class="line">	-- car. and you&#39;ll see completion</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h2 id="table类型声明"><a href="#table类型声明" class="headerlink" title="table类型声明"></a>table类型声明</h2><p>使用<code>@type table</code>可以表示某变量为表格类型<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@type table&lt;key_type, value_type&gt;</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">---@type table&lt;string, Car&gt;</span><br><span class="line">local dict &#x3D; &#123;&#125;</span><br><span class="line">local car &#x3D; dict[&#39;key&#39;]</span><br><span class="line">-- car. and you&#39;ll see completion</span><br><span class="line">for key, car in pairs(dict) do</span><br><span class="line">	-- car. and you&#39;ll see completion</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h2 id="函数声明"><a href="#函数声明" class="headerlink" title="函数声明"></a>函数声明</h2><p>使用<code>fun(param:my_type):return_type</code>来表示函数类型变量<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@type fun(param:my_type):return_type</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@type fun(key:string):Car</span><br><span class="line">local carCreatorFn1</span><br><span class="line"></span><br><span class="line">local car &#x3D; carCreatorFn1(&#39;key&#39;)</span><br><span class="line">-- car. and you see code completion</span><br><span class="line"></span><br><span class="line">---@type fun():Car[]</span><br><span class="line">local carCreatorFn2</span><br><span class="line"></span><br><span class="line">for i, car in pairs(carCreatorFn2()) do</span><br><span class="line">	-- car. and you see completion</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h2 id="字面常量类型声明"><a href="#字面常量类型声明" class="headerlink" title="字面常量类型声明"></a>字面常量类型声明</h2><p>字面常量也可以指定特定字符串来作为代码提示，结合别名，可以起到类似于枚举的效果<br>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">---@alias Handler fun(type: string, data: any): void</span><br><span class="line"></span><br><span class="line">---@param event string | &quot;&#39;onClised&#39;&quot; | &quot;&#39;onData&#39;&quot;</span><br><span class="line">---@param handler Handler | &quot;function(type, data) print(data) end&quot;</span><br><span class="line">function addEventListener(event, handler)</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<p>上面的写法还是比较复杂，我们可以用<code>@alias</code>再简化一下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">---@alias Handler fun(type: string, data: any): void</span><br><span class="line">---@alias IOEventEnum string | &quot;&#39;onClised&#39;&quot; | &quot;&#39;onData&#39;&quot;</span><br><span class="line">---@param event IOEventEnum</span><br><span class="line">---@param handler Handler | &quot;function(type, data) print(data) end&quot;</span><br><span class="line">function addEventListener(event, handler)</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">&#96;ConfigurableJoint&#96;是Unity物理引擎中非常重要且功能强大的部分，它涵盖了其他Joint的所有功能。拥有超过40个配置选项，通过这些配置项的灵活运用，我们几乎可以创建任何铰接的物理效果。</span><br><span class="line"></span><br><span class="line">但是官方文档对它的介绍非常简短，我们通常需要不断的微调参数，来理解其内部机制。即便是不断尝试，也很难掌握。</span><br><span class="line"></span><br><span class="line">在探讨&#96;ConfigurableJoint&#96;之前，我们先来看一下他的基本参数。</span><br><span class="line"></span><br><span class="line">## anchors and connected body</span><br><span class="line"></span><br><span class="line">&#96;anchor&#96;和&#96;connectedAnchor&#96;是Joint中最基本的属性。他们是铰接世界的罗密欧与朱丽叶-这两者永远是成对出现的。Unity会尝试移动铰接对象，直到铰接对象中的这两个点重合。通常情况下，这两个点最终都会重合在一起，但是有两个特例。一个是在Joint中使用弹力，这时候，在弹力的作用下两个点会保持一定的距离。另一个是，当我们设置某个轴为自由时，例如我们设置X轴自由，这两个点的只有Y、Z坐标会保持对齐。</span><br><span class="line">需要注意的是，默认情况下，&#96;anchor&#96;是模型空间下的坐标，&#96;connectedAnchor&#96;是世界坐标系下的坐标。所以当模型移动的时候，&#96;anchor&#96;点会跟随移动，但是&#96;connectedAnchor&#96;点则保持不动。</span><br><span class="line">在本文中。与&#96;anchor&#96;相关联的叫做&#96;铰接体&#96;，与&#96;connectedAnchor&#96;相关联的叫做&#96;被铰接体&#96;。</span><br><span class="line"></span><br><span class="line">### 来个例子</span><br><span class="line"></span><br><span class="line">如下图所示，Unity将铰接物体的&#96;anchor&#96;点移动到&#96;connectedAnchor&#96;点：</span><br><span class="line">![](https:&#x2F;&#x2F;miro.medium.com&#x2F;max&#x2F;576&#x2F;1*Epf1F9HAYOnsRa0c0Ap7sg.png)</span><br><span class="line"></span><br><span class="line">我们还可以通过移动&#96;connectedAnchor&#96;点来将控制整个铰接物体移动。如果我们设置&#96;connectedBody&#96;，那么&#96;connectedAnchor&#96;点的坐标不在是世界坐标，而是属于&#96;connectedBody&#96;所关联物体下的模型坐标系。当我们移动&#96;connectedBody&#96;时，整个铰链物体会一起移动。并且在移动过程中&#96;anchor&#96;点会不断靠近&#96;connectedAnchor&#96;点。</span><br><span class="line"></span><br><span class="line">### 铰接物体的相互作用</span><br><span class="line"></span><br><span class="line">当我们移动被铰接物体中的任何一个物体时，另外一个物体也会跟随运动：</span><br><span class="line">![](https:&#x2F;&#x2F;miro.medium.com&#x2F;max&#x2F;454&#x2F;1*Ag7OwgAV6uax3kND7qRAkA.gif)</span><br><span class="line"></span><br><span class="line">如果我们将&#96;auotConfigureConnectedAnchor&#96;设置为True时，Unity将会忽略掉面板上设置的&#96;connectedAnchor&#96;参数，同时自动计算&#96;connectedAnchor&#96;的坐标，使得&#96;connectedAnchor&#96;和&#96;anchor&#96;两个点保持重合。</span><br><span class="line"></span><br><span class="line">### 再来个例子</span><br><span class="line"></span><br><span class="line">下面的代码模拟了Joint的内部机制：</span><br><span class="line"></span><br><span class="line">&#96;&#96;&#96; bash</span><br><span class="line">public class OurOwnJoint : MonoBehaviour &#123;</span><br><span class="line">    &#x2F;&#x2F; 这些是可配置参数</span><br><span class="line">    public Rigidbody connectedBody;</span><br><span class="line">    public Vector3 anchor;</span><br><span class="line">    public bool autoConfigureConnectedAnchor;</span><br><span class="line">    public Vector3 connectedAnchor;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 执行初始化</span><br><span class="line">    void Start() &#123;</span><br><span class="line">        var ourBody &#x3D; GetComponent&lt;Rigidbody&gt;();</span><br><span class="line">        &#x2F;&#x2F; 如果 autoConfigureConnectedAnchor 是 true, </span><br><span class="line">        &#x2F;&#x2F; 我们应该忽略 connectedAnchor.</span><br><span class="line">        if ( this.autoConfigureConnectedAnchor ) &#123;</span><br><span class="line">            &#x2F;&#x2F; Anchor 是相对于 ourbody 的局部坐标 - 我们将他转换为世界坐标.</span><br><span class="line">            var anchorWorldPosition &#x3D; ourBody.transform.TransformPoint( this.anchor );</span><br><span class="line">            &#x2F;&#x2F; 如果我们设置了 connectedBody，那么将 anchor 坐标映射到connectedBody局部坐标系中.</span><br><span class="line">            &#x2F;&#x2F; 否则，我们直接使用 anchor 的世界坐标.</span><br><span class="line">            this.connectedAnchor &#x3D; this.connectedBody !&#x3D; null ?</span><br><span class="line">                this.connectedBody.transform.InverseTransformPoint( anchorWorldPosition ) :</span><br><span class="line">                anchorWorldPosition;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 这里我们不断将 anchor 向 connectedAnchor 点靠拢</span><br><span class="line">    void FixedUpdate() &#123;</span><br><span class="line">        var ourBody &#x3D; GetComponent&lt;Rigidbody&gt;();</span><br><span class="line">        &#x2F;&#x2F; 计算 anchor 的世界坐标</span><br><span class="line">        var anchorWorldPosition &#x3D; ourBody.transform.TransformPoint( this.anchor );</span><br><span class="line">        &#x2F;&#x2F; 计算connectedAnchor 的世界坐标. 注意, 如果connectedBody没有设置，那么</span><br><span class="line">        &#x2F;&#x2F; 这个坐标就存储在 connectedAnchor 配置中</span><br><span class="line">        var connectedAnchorWorldPosition &#x3D; this.connectedBody !&#x3D; null ?</span><br><span class="line">            this.connectedBody.transform.TransformPoint( this.connectedAnchor ) :</span><br><span class="line">            this.connectedAnchor;</span><br><span class="line">        &#x2F;&#x2F; 这里计算了 connectedAnchor 和 anchor 两个点的距离</span><br><span class="line">        var positionError &#x3D; connectedAnchorWorldPosition - anchorWorldPosition;</span><br><span class="line">        &#x2F;&#x2F; 移动被铰接的物体，使得两个点靠近</span><br><span class="line">        ourBody.position +&#x3D; positionError;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面内容相对简单，来加点难度吧！</p>
+<h2 id="线性运动"><a href="#线性运动" class="headerlink" title="线性运动"></a>线性运动</h2><p>这里我们介绍三个属性：xMotion 、 yMotion 、 zMotion。</p>
+<p>假设<code>connectedAnchor</code>和<code>anchor</code>点在世界坐标系下的坐标分别是(1,2,3)、(-1,-2,-3)。很明显这两个点不在同一个位置，前面讲过，在Joint的作用下，这两个点会不断靠近。</p>
+<p>为了达到这个目的，Joint会不断修改<code>connectedAnchor</code> 或 <code>anchor</code> 的坐标。而修改坐标的方式是，在(2,4,6)方向移动<code>铰接体</code>，或者在(-2.-4,-6)方向移动<code>被铰接体</code>。<br>我们还可以通过修改运动属性来控制这种相互靠近的过程。</p>
+<h3 id="运动参数的配置"><a href="#运动参数的配置" class="headerlink" title="运动参数的配置"></a>运动参数的配置</h3><p>每个维度都可以配置一下任何一种运动方式：</p>
+<ul>
+<li>Locked: 当我们希望<code>铰接体</code>和<code>被铰接体</code>靠近时。例如我们希望<code>铰接体</code>和<code>被铰接体</code>的两个锚点重合，那么我们可以设置yMotion为Locked；</li>
+<li>Limited: 当我们希望在<code>铰接体</code>和<code>被铰接体</code>之间的设置距离上限时。例如希望<code>铰接体</code>和<code>被铰接体</code>在Y方向的距离不超过10，那么可以设置yMotion为Limited；</li>
+<li>Free：当我们对<code>铰接体</code>和<code>被铰接体</code>之间的相对位置不做要求时。例如我们希望<code>铰接体</code>和<code>被铰接体</code>处于同一垂线，这时候我们对y轴没有要求，那么我们可以设置yMotion为Free；</li>
+</ul>
+<h3 id="来个例子"><a href="#来个例子" class="headerlink" title="来个例子"></a>来个例子</h3><p>下图中，我们将xMotion设置为Free，将yMotion设置为Locked，因此<code>铰接体</code>和<code>被铰接体</code>的锚点在y轴上重合，但是x轴保持不变；</p>
+<h3 id="再来个代码例子"><a href="#再来个代码例子" class="headerlink" title="再来个代码例子"></a>再来个代码例子</h3><p>下面通过代码来表示Joint的内部机制。当我们将Motion设置为Free时，Joint是不会修改铰接体的坐标的。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// ... 跳过无关代码</span><br><span class="line"><span class="keyword">if</span> ( this.xMotion == ConfigurableJointMotion.Free ) &#123;</span><br><span class="line">    positionError.x = 0;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ( this.yMotion == ConfigurableJointMotion.Free ) &#123;</span><br><span class="line">    positionError.y = 0;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ( this.zMotion == ConfigurableJointMotion.Free ) &#123;</span><br><span class="line">    positionError.z = 0;</span><br><span class="line">&#125;</span><br><span class="line">ourBody.position += positionError;</span><br></pre></td></tr></table></figure>
+
+<p>如果我们将所有的Motion都设置为Free，然后移动<code>被铰接体</code>，这时候我们会发现<code>铰接体</code>不会移动，而是会旋转。<br>接下来的内容会解释这个神奇的现象/</p>
+<h2 id="Axes"><a href="#Axes" class="headerlink" title="Axes"></a>Axes</h2><p>首先，需要明确的一点是，上面的运动约束，其被约束的轴向是相对于<code>铰接体</code>的。因此当我们想</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blogs/tags/Lua/" rel="tag"># Lua</a>
+              <a href="/blogs/tags/EmmyLua/" rel="tag"># EmmyLua</a>
+              <a href="/blogs/tags/IntelliJ-IDEA/" rel="tag"># IntelliJ IDEA</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blogs/2020/12/23/Joy-Stick-Function-2/" rel="prev" title="摇杆实现方法2">
+      <i class="fa fa-chevron-left"></i> 摇杆实现方法2
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E7%9A%84%E5%A3%B0%E6%98%8E"><span class="nav-number">1.</span> <span class="nav-text">类的声明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E7%9A%84%E5%A3%B0%E6%98%8E"><span class="nav-number">2.</span> <span class="nav-text">变量的声明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%AB%E5%90%8D%E6%B3%A8%E9%87%8A"><span class="nav-number">3.</span> <span class="nav-text">别名注释</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E"><span class="nav-number">4.</span> <span class="nav-text">参数说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%80%BC%E7%B1%BB%E5%9E%8B%E8%AF%B4%E6%98%8E"><span class="nav-number">5.</span> <span class="nav-text">函数返回值类型说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%9E%E6%80%A7%E5%A3%B0%E6%98%8E"><span class="nav-number">6.</span> <span class="nav-text">属性声明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%9B%E5%9E%8B%E5%A3%B0%E6%98%8E"><span class="nav-number">7.</span> <span class="nav-text">泛型声明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E5%AE%9A%E5%8F%82%E6%95%B0%E7%9A%84%E6%B3%A8%E9%87%8A"><span class="nav-number">8.</span> <span class="nav-text">不定参数的注释</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B5%8C%E5%85%A5%E5%85%B6%E4%BB%96%E8%AF%AD%E8%A8%80"><span class="nav-number">9.</span> <span class="nav-text">嵌入其他语言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E7%B1%BB%E5%9E%8B%E5%A3%B0%E6%98%8E"><span class="nav-number">10.</span> <span class="nav-text">数组类型声明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#table%E7%B1%BB%E5%9E%8B%E5%A3%B0%E6%98%8E"><span class="nav-number">11.</span> <span class="nav-text">table类型声明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%A3%B0%E6%98%8E"><span class="nav-number">12.</span> <span class="nav-text">函数声明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E9%9D%A2%E5%B8%B8%E9%87%8F%E7%B1%BB%E5%9E%8B%E5%A3%B0%E6%98%8E"><span class="nav-number">13.</span> <span class="nav-text">字面常量类型声明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E8%BF%90%E5%8A%A8"><span class="nav-number">14.</span> <span class="nav-text">线性运动</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E5%8A%A8%E5%8F%82%E6%95%B0%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="nav-number">14.1.</span> <span class="nav-text">运动参数的配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%A5%E4%B8%AA%E4%BE%8B%E5%AD%90"><span class="nav-number">14.2.</span> <span class="nav-text">来个例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%8D%E6%9D%A5%E4%B8%AA%E4%BB%A3%E7%A0%81%E4%BE%8B%E5%AD%90"><span class="nav-number">14.3.</span> <span class="nav-text">再来个代码例子</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Axes"><span class="nav-number">15.</span> <span class="nav-text">Axes</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Tyson Wu"
+      src="/blogs/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Tyson Wu</p>
+  <div class="site-description" itemprop="description">If you want, Just do it!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blogs/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blogs/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blogs/tags/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Tyson-Wu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Tyson-Wu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/zhao-wu-zhu-43" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhao-wu-zhu-43" rel="noopener" target="_blank"><i class="知乎 fa-fw"></i>知乎</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.cnblogs.com/Hi-blog/" title="https:&#x2F;&#x2F;www.cnblogs.com&#x2F;Hi-blog&#x2F;" rel="noopener" target="_blank">starnight_cyber</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tyson Wu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blogs/lib/anime.min.js"></script>
+  <script src="/blogs/lib/velocity/velocity.min.js"></script>
+  <script src="/blogs/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blogs/js/utils.js"></script>
+
+<script src="/blogs/js/motion.js"></script>
+
+
+<script src="/blogs/js/schemes/pisces.js"></script>
+
+
+<script src="/blogs/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
