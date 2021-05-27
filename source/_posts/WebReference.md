@@ -1,6 +1,6 @@
 ---
 title:  Web Reference
-date: 2020-11-9 17:01:34
+date: 2021-05-27 17:01:34
 ---
 
 
@@ -9,10 +9,14 @@ date: 2020-11-9 17:01:34
 ### Math
 [OpenGL Projection Matrix](http://www.songho.ca/opengl/gl_projectionmatrix.html):Opengl中的矩阵应用；
 [欧拉公式 e^{i*k}=cos(k)+i*sin(k) 的来历是什么？](https://www.zhihu.com/question/21999356):欧拉公式;
-[Exploring procedural generation and display of fantasy maps](https://heredragonsabound.blogspot.com/2019/02/perlin-noise-procedural-content.html):地图生成；
-[Procedural Terrain Generation With Voronoi Diagrams](https://squeakyspacebar.github.io/2017/07/12/Procedural-Map-Generation-With-Voronoi-Diagrams.html):地图生成；
-[a map generator based on Voronoi diagrams](https://github.com/squeakyspacebar/novatellus):地图生成；
-[Map generator based on Voronoi Diagram and Perlin noise](https://github.com/averrin/mapgen-viewer):地图生成；
+[线性方程组矩阵解法](https://www.shuxuele.com/algebra/systems-linear-equations-matrices.html):线性方程组矩阵解法;
+[判断线段是否相交并求交点](https://blog.csdn.net/leonardohaig/article/details/110881364):判断线段是否相交并求交点;
+
+### Noise
+[Poisson Disk Sampling](http://devmag.org.za/2009/05/03/poisson-disk-sampling/):泊松采样；
+[Warping](https://iquilezles.org/www/articles/warp/warp.htm):Warping, or dommain distortion is a very common technique in computer graphics for generating procedural textures and geometry;
+[2D noise](https://www.redblobgames.com/articles/noise/2d/):These are some quick & dirty experiments I did with 2D noise;
+[OpenSimplex 2](https://github.com/KdotJPG/OpenSimplex2):Successors to OpenSimplex Noise, plus updated OpenSimplex;
 
 
 ### Polygon
@@ -21,11 +25,28 @@ date: 2020-11-9 17:01:34
 [Polygon Clipping (Part 2)](https://sean.cm/a/polygon-clipping-pt2):多边形布尔运算；
 [Barend's Blog](https://barendgehrels.blogspot.com/2010/12/intersections-1.html):多边形布尔运算；
 [Concave Polygon Intersection - Algorithm](https://cs.stackexchange.com/questions/99927/concave-polygon-intersection-algorithm):多边形布尔运算；
+[PNPOLY - Point Inclusion in Polygon Test W. Randolph Franklin (WRF)](https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html):...;
+
 
 ### Mesh
 [Meshing in a Minecraft Game](https://0fps.net/2012/06/30/meshing-in-a-minecraft-game/):网格合并贪心算法；
 [planet generator](http://experilous.com/1/blog/post/procedural-planet-generation):行星网格；
 [Evelios Development](http://eveliosdev.blogspot.com/2016/06/plate-tectonics.html):地图网格生成；
+[Exploring procedural generation and display of fantasy maps](https://heredragonsabound.blogspot.com/2019/02/perlin-noise-procedural-content.html):地图生成；
+[Procedural Terrain Generation With Voronoi Diagrams](https://squeakyspacebar.github.io/2017/07/12/Procedural-Map-Generation-With-Voronoi-Diagrams.html):地图生成；
+[a map generator based on Voronoi diagrams](https://github.com/squeakyspacebar/novatellus):地图生成；
+[Map generator based on Voronoi Diagram and Perlin noise](https://github.com/averrin/mapgen-viewer):地图生成；
+[VoronoiLib](https://github.com/Zalgo2462/VoronoiLib):C# implementation of Fortune's Algorithm;
+[Terrain Generation 3: Voronoi Diagrams](https://leatherbee.org/index.php/2018/10/06/terrain-generation-3-voronoi-diagrams/):generating a small number of large Voronoi cells as tectonic plates;
+[ManyLandsGenerator](https://github.com/michaellasky/ManyLandsGenerator):The Random Island Generator being developed for use in The Rogue Sea;
+[Unity-delaunay](https://github.com/jceipek/Unity-delaunay):Port of as3delaunay to C# for Unity;
+[miniHexMap](https://github.com/KHN190/miniHexMap):Create, edit, generate hex mesh in Unity Editor mode;
+[Delaunator guide](https://mapbox.github.io/delaunator/):a fast library for Delaunay triangulation;
+[#csDelaunay](https://github.com/squeakyspacebar/csDelaunay):This is a refactoring of PouletFrit's C# port of as3delaunay;
+[csDelaunay](https://github.com/PouletFrit/csDelaunay):This is a port and interpretation of actionscript library as3delaunay;
+[VoronoiUnityDOTS](https://github.com/tyoden/VoronoiUnityDOTS):Fortune's Voronoi diagram for Unity DOTS (Job System, Burst Compiler) - WIP;
+[Terrain erosion sandbox in WebGl](https://github.com/LanLou123/Webgl-Erosion):Erosion simulation in Web Browser;
+
 
 ### Path
 [Euclidean Shortest Paths](https://fribbels.github.io/shortestpath/writeup.html):避障寻路；
@@ -39,6 +60,7 @@ date: 2020-11-9 17:01:34
 [Route Planning in Road Networks](http://algo2.iti.kit.edu/schultes/hwy/schultes_diss.pdf):路网寻路方案；
 [Computing the Sortest Path: A* Search Meets Graph Theory](https://www.microsoft.com/en-us/research/wp-content/uploads/2004/07/tr-2004-24.pdf):A*寻路；
 [Hierarchical A*: Searching Abstraction Hierarchies Efficiently](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.42.1704&rep=rep1&type=pdf):A*寻路算法优化；
+[Introduction to the A* Algorithm](https://www.redblobgames.com/pathfinding/a-star/introduction.html):Introduction to the A* Algorithm;
 [Creating natural paths on terrains using pathfinding](http://blog.runevision.com/2016/03/note-on-creating-natural-paths-in.html):道路自动生成；
 
 ### Graphs
@@ -55,6 +77,11 @@ date: 2020-11-9 17:01:34
 [The Battle of Polytopia](https://store.steampowered.com/app/874390/The_Battle_of_Polytopia/):游戏；
 [文明VI: 新纪元季票](https://civilization.com/zh-CN/new-frontier-pass/civilization-vi-vietnam-kublai-khan-pack/):游戏；
 [Banished](http://www.shiningrocksoftware.com/2011-05-16-the-doors-are-open/):一些设计实现思路；
+[stratagus](https://github.com/Wargus/stratagus):The Stratagus strategy game engine;
+[turn based military strategy games](https://sourceforge.net/directory/?q=turn%20based%20military%20strategy%20games):搜索游戏；
+[Turn-Based ToolKit (TBTK)](http://assetstore.unitylover.com/unity_asset/turn-based-toolkit-tbtk/):子走棋；
+[Light baked Prefabs & other tips to get 60 fps on low-end phones](https://unity.com/how-to/advanced/optimize-lighting-mobile-games?_ga=2.238992768.1610235152.1617097265-1411223696.1612421527):tips from Michelle Martin, software engineer at MetalPop Games, on how to optimize games for a range of mobile devices, so you can reach as many potential players as possible;
+
 ## Render
 
 ### Color
@@ -74,42 +101,64 @@ date: 2020-11-9 17:01:34
 [Physically Based Rendering Algorithms: A Comprehensive Study In Unity3D](https://www.jordanstevenstechart.com/physically-based-rendering):物理光照详解；
 [Graphics Rendering Pipeline](https://www.codinblack.com/graphics-rendering-pipeline/):渲染管线；
 [HLSL固有函数 【Intrinsic Functions (DirectX HLSL)】](https://gameinstitute.qq.com/community/detail/115786):HLSL固有函数；
+[The Blinn-Phong Normalization Zoo](http://www.thetenthplanet.de/archives/255):The Blinn-Phong Normalization Zoo;
+
+
+### Shader
+[Creating A Stylized Waterfall in Unity: Part 1](https://origin.80.lv/articles/creating-a-stylized-waterfall-in-unity-part-1/):Math Roodhuizen allowed us to repost his guide to creating a RiME-style waterfall in Unity, Amplify Shader Editor, and Maya;
+[Particle Metaballs in Unity using URP and Shader Graph Part 1](https://bronsonzgeb.com/index.php/2021/02/27/particle-metaballs-in-unity-using-urp-and-shader-graph-part-1/):This series will explain how to draw Metaballs in Unity using the Universal Render Pipeline (URP) and Shader Graph;
+[Rendering Implicit Surfaces and Distance Fields: Sphere Tracing](https://www.scratchapixel.com/lessons/advanced-rendering/rendering-distance-fields/introduction):Rendering Implicit Surfaces and Distance Fields: Sphere Tracing;
+[Shader Tutorials by Ronja](https://www.ronja-tutorials.com/):The focus of this tutorials is on unity shaders with hlsl;
 
 ## AI
 
 [GPGOAP](https://github.com/stolk/GPGOAP):面向目标的行为规划；
+[ReGoap](https://github.com/luxkun/ReGoap):Generic C# GOAP (Goal Oriented Action Planning) library with Unity3d examples;
 
 ## Data Struct
 
 ### Tree
 [JavaScript QuadTree Implementation](http://www.mikechambers.com/blog/2011/03/21/javascript-quadtree-implementation/):四叉树；
 
-``` bash
-$ hexo new "My New Post"
-```
+## Engine
 
-More info: [WritinMethg](https://hexo.io/docs/writing.html)
+### Unity
+[Unity Tutorials: How To Create Custom Editor Window](https://weeklyhow.com/unity-custom-editor-window/):Create Custom Editor Window;
+[Unity Editor Built-in Icons](https://unitylist.com/p/5c3/Unity-editor-icons):Unity version: 2020.1.0f1 Icons what can load using EditorGUIUtility.IconContent;
+[Universal Render Pipeline](https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@7.1/manual/universalrp-asset.html):URP;
+[Intro to Shader Graph](https://www.cyanilux.com/tutorials/intro-to-shader-graph/):This post is a detailed introduction to using Shader Graph ;
+[Writing Shader Code for the Universal RP](https://cyangamedev.wordpress.com/2020/06/05/urp-shader-code/):Writing Shader Code for the Universal RP;
+[Universal Rendering Examples](https://github.com/Unity-Technologies/UniversalRenderingExamples):This project contains a collection of Custom Renderer examples. This will be updated as we refine the feature and add more options;
+[The Big Shader Graph Tutorial: Introduction](https://www.codinblack.com/the-big-shader-graph-tutorial-introduction/):This is the first part of a fundamental tutorial about shader graph;
+[URP - Sampling Shadow Map from Shader Graph](https://forum.unity.com/threads/urp-sampling-shadow-map-from-shader-graph.857581/):URP - Sampling Shadow Map from Shader Graph;
+[Introduction To Unity: Particle Systems](https://www.raywenderlich.com/138-introduction-to-unity-particle-systems):Unity’s particle system is both robust and feature packed. In this tutorial, you’ll learn the ins-and-outs of it to create both fire and explosions;
+[Using MaterialPropertyBlocks with ShaderGraph shaders](https://forum.unity.com/threads/using-materialpropertyblocks-with-shadergraph-shaders-help-wanted.651547/):Using MaterialPropertyBlocks with ShaderGraph shaders;
+[How to Use Terrain with URP in Unity 2020 | Beginner Tutorial](https://game-developers.org/how-to-use-terrain-with-urp-in-unity-2020-beginner-tutorial/):How to Use Terrain with URP in Unity 2020 | Beginner Tutorial;
+[Bake static light and shadows directly into texture ! optimizing for mobile](https://forum.unity.com/threads/bake-static-light-and-shadows-directly-into-texture-optimizing-for-mobile.824526/):Bake static light and shadows directly into texture ! optimizing for mobile;
+[Project Acoustics Unity Bake Tutorial](https://docs.microsoft.com/en-us/gaming/acoustics/unity-baking):his article describes acoustics baking by using Project Acoustics in Unity;
+[How to customize Unity script templates](https://support.unity.com/hc/en-us/articles/210223733-How-to-customize-Unity-script-templates):When I create a new script, the Unity Editor generates its content. For C# scripts it uses the file name as the class name;
+[Unity Tools - Script Template](https://github.com/joaoborks/myunitytools-script-template):This tool adds custom Script Templates to Unity that will serve as alternatives for the default "C#Script" that I personally always modify before writing my scripts;
+[Editor Window](https://riptutorial.com/unity3d/example/14519/editor-window):Create a basic EditorWindow;
+[Unity – Creating a custom map editor](https://www.synnaxium.com/en/2019/01/unity-custom-map-editor-part-1/):make a custom map editor in Unity;
+[unity编辑器扩展之SceneUI](https://zhuanlan.zhihu.com/p/114371275):unity编辑器扩展之SceneUI——贴在Scene View的SceneCanvas;
 
-### Run server
+### Duality
+[Getting Started](https://docs.duality2d.net/pages/v3/getting-started.html):It’s an extensible 2D game engine;
+[Turn-based game framework in Duality (C#)](https://hub.packtpub.com/turn-based-game-framework-duality-c/):This post presents a simple turn-based game framework using the Duality game engine;
 
-``` bash
-$ hexo server
-```
+## Other
 
-More info: [Server](https://hexo.io/docs/server.html)
+### Tutorial
+[C++, OpenGL and more...](https://www.mbsoftworks.sk/index.php?page=tutorials&series=1&tutorial=24):...;
+[GAME DEVELOPMENT TUTORIALS](https://www.construct.net/en/tutorials?flang=45):Read our free tutorials on game development submitted by our staff and expert users in our community;
+[Performance optimization tips: Physics in Unity | Tutorial](https://gamasutra.com/blogs/MikeMarrone/20210312/378423/Game_Dev_Digest_Issue_85__Platforms_Performance_and_Tutorials.php):...;
 
-### Generate static files
+### ECS
+[entity-component-system](https://github.com/pvigier/ecs):A simple and easy to use entity-component-system C++ library;
 
-``` bash
-$ hexo generate
-```
+### Library
+[Clipper - an open source freeware library](http://www.angusj.com/delphi/clipper.php):The Clipper library performs line & polygon clipping - intersection, union, difference & exclusive-or,and line & polygon offsetting. The library is based on Vatti's clipping algorithm;
+[The Unity Library](https://unity.stelabouras.com/):The Unity Library;
 
-More info: [Generating](https://hexo.io/docs/generating.html)
-
-### Deploy to remote sites
-
-``` bash
-$ hexo deploy
-```
-
-More info: [Deployment](https://hexo.io/docs/one-command-deployment.html)
+### Papers
+[10 Best Turn-Based Strategy Games in 2021 for Master Tacticians](https://www.highgroundgaming.com/best-turn-based-strategy-games/):10 Best Turn-Based Strategy Games in 2021 for Master Tacticians;
