@@ -332,6 +332,85 @@ public class MeshMap
 	public MeshMapUnitCoord PickMeshUnitCoord(Vector3 woldPos)
 	{
 		worldPos.y = 0;
+		Vector3 posInMeshMap = _worldToLocalMatrix.MultiplyPoint3x4(worldPos);
+		int x = Mathf.FloorToInt(posInMeshMap.z / _unitLen + tilePovitOffset);
+		int y = Mathf.FloorToInt(posInMeshMap.x / _unitLen + tilePovitOffset);
+		return new MeshMapUnitCoord(x, y, _level);
+	}
+	public Vector3 RayCastMeshMapPos(Vector3 origin, Vector3 dir)
+	{
+		Vector3 centerPos = Vector3.zero;
+		float t = (_origionPos.y - origion.y)/dir.y;
+		centerPos = origion + t* dir;
+		centerPos.y = _origionPos.y;
+		return centerPos;
+	}
+	void UpdateMatrix()
+	{
+		_lcoalToWorldMatrix = _translateMatrix * rotateMatrix * _scaleMatrix;
+		_worldToLocalMatrix = _localToWorldMatrix.inverse;
+	}
+	public Rect _visibleGridRigion {get;private set;}
+	Vector3[] cornerPos = new Vector3[4];
+	public void CalcualteVisibleGrid()
+	{
+		_visibleMeshQuad = new Quad(Vector2.positiveInfinity, Vector2.negativeInfinity);
+		_visibleMeshSubQuad.Clear();
+		_visibleMeshCenterPosList.Clear();
+		_visibleMeshCenterPosIndices.Clear();
+		_visibleMeshOutlineVertexIndices.Clear();
+		_visibleMeshOutlineVertexPosList.Clear();
+		_visibleMeshUnitCoordList.Clear();
+		CalcCenterMeshUnitCoord();
+		float radius = Mathf.Sqrt(_visibleAreaSzie.x * _visibleAreaSzie.x + _visibleAreaSize.z * _visibleAreaSize.z)/2;
+		float unitLenInWorld = _unitLen * _scale;
+		int halfCount = Mathf.CeilToInt(radius / unitLenInWorld) + 1;
+		float yStart = (-halfCount + _meshUnitCoord.y) * _unitLen;
+		int outlineIndicesCount = 0;
+		int centerIndicesCount =0;
+		Vector3 centerOffset = new Vector3(_unitLen *(0.5f - tilePovitOffset), 0, _unitLen * (0.5f - tilePovitOffset));
+		_visibleGridRigion = new Rect((-halfCount + _meshUnitCoord.x) * _unitLen,
+			(-halfCount + _meshUnitCoord.y) * _unitLen,
+				halfCount * _unitLen * 2, halfCount * _unitLen * 2);
+		for(int j = -halfCount + _meshUnitCoord.y; j<= halfCount + _meshUnitCoord.y; ++j)
+		{
+			float xStart =(-halfCount + _meshUnitCoord.x) * _unitLen;
+			for(int i=-halfCount + _meshUnitCoord.x; i<=halfCount+_meshUnitCoord.x; ++i)
+			{
+				Vector3 posOnMesh = new Vector3(xStart, 0, yStart);
+				xStart += _unitLen;
+
+				Vector3 posOnWorld = _localToWorldMatrix.MultiplyPoint3x4(posOnMesh + centerOffset);
+				if(!MeshIsVisible(posOnWorld)) continue;
+
+				Quad quad = new Quad();
+				quad.MinX = posOnMesh.x - _unitLen * tilePovitOffset;
+				quad.MinY = posOnMesh.z - _unitLen * tilePovitOffset;
+				quad.MaxX = quad.MinX + _unitLen;
+				quad.MaxY = quad.MinY + _unitLen;
+				_visibleMeshSubQuad.Add(quad);
+				_visibleMeshQuad.Include(ref quad);
+				_visibleMeshCenterPosList.Add(posOnWorld);
+				_visibleMeshCenterPosIndices.Add(centerIndicesCount++);
+				_visibleMeshUnitCoordList.Add(new MeshMapUnitCoord(i,j,_level));
+
+				cornerPos[0] = new Vector3(posOnMesh.x - _unitLen * tilePovitOffset, posOnMesh.y, posOnMesh.z - _unitLen * tilePovitOffset);
+				cornerPos[1] = cornerPos[0] + new Vector3(_unitLen, 0,0);
+				cornerPos[2] = cornerPos[1] + new Vector3(0,0, _unitLen);
+				cornerPos[3] = cornerPos[2] + new Vector3(-_unitLen, 0,0);
+
+				_visibleMeshOutlineVertexIndices.Add(outlineIndicesCount++);
+				_visibleMeshOutlineVertexPosList.Add(cornerPos[0]);
+				_visibleMeshOutlineVertexIndices.Add(outlineIndicesCount++);
+				_visibleMeshOutlineVertexPosList.Add(cornerPos[3]);
+				_visibleMeshOutlineVertexIndices.Add(outlineIndicesCount++);
+				_visibleMeshOutlineVertexPosList.Add(cornerPos[3]);
+				_visibleMeshOutlineVertexIndices.Add(outlineIndicesCount++);
+				_visibleMeshOutlineVertexPosList.Add(cornerPos[2]);
+			}
+			yStart += _unitLen;
+		}
+		_onMapUpdated?.Invoke();
 	}
 }
 ```
