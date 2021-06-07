@@ -1,5 +1,5 @@
 ---
-title: Mesh
+title: InfinitMap
 date: 2021-06-05 16:01:00
 categories:
 - [Gemotry, Mesh]
