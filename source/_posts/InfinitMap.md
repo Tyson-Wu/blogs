@@ -8,34 +8,6 @@ tags:
 - Mesh
 ---
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## 
 ```
 public struct MeshMapUnitCoord : IEquatable<MeshMapUnitCoord>
@@ -411,6 +383,22 @@ public class MeshMap
 			yStart += _unitLen;
 		}
 		_onMapUpdated?.Invoke();
+	}
+	bool MeshIsVisible(Vector3 pos)
+	{
+		float distance = 0;
+		Vector3 param;
+		for(int i=0;i<4;++i>)
+		{
+			param = _visibleAreaLineParam[i];
+			distance = param.x * pos.x + param.y * pos.z + param.z;
+			if(distance > _maxUnitDis) return false;
+		}
+		return true;
+	}
+	void CalcCenterMeshUnitCoord()
+	{
+		_meshUnitCoord = PickMeshUnitCoord(_visibleCenterPos, false);
 	}
 }
 ```

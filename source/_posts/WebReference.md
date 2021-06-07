@@ -62,6 +62,9 @@ date: 2021-05-27 17:01:34
 [Hierarchical A*: Searching Abstraction Hierarchies Efficiently](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.42.1704&rep=rep1&type=pdf):A*寻路算法优化；
 [Introduction to the A* Algorithm](https://www.redblobgames.com/pathfinding/a-star/introduction.html):Introduction to the A* Algorithm;
 [Creating natural paths on terrains using pathfinding](http://blog.runevision.com/2016/03/note-on-creating-natural-paths-in.html):道路自动生成；
+[Dijkstra’s shortest path algorithm | Greedy Algo-7](https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/)
+[Dijkstra's Shortest Path Algorithm - A Detailed and Visual Introduction](https://www.freecodecamp.org/news/dijkstras-shortest-path-algorithm-visual-introduction/)
+
 
 ### Graphs
 [Algorithm for Computing Visibility Graphs](http://www.science.smith.edu/~istreinu/Teaching/Courses/274/Spring98/Projects/Philip/fp/algVisibility.htm):基于障碍物构造图；
@@ -119,6 +122,27 @@ date: 2021-05-27 17:01:34
 
 ### Tree
 [JavaScript QuadTree Implementation](http://www.mikechambers.com/blog/2011/03/21/javascript-quadtree-implementation/):四叉树；
+[VP Tree](https://fribbels.github.io/vptree/writeup)
+
+### Queue
+[High-Speed-Priority-Queue-for-C-Sharp](https://github.com/BlueRaja/High-Speed-Priority-Queue-for-C-Sharp)
+[Priority Queue](https://www.dotnetlovers.com/article/231/priority-queue)
+[How to design a Priority Queue in C#](https://ericbackhage.net/c/how-to-design-a-priority-queue-in-c/)
+[Priority Queues with C#](https://visualstudiomagazine.com/articles/2012/11/01/priority-queues-with-c.aspx)
+
+## Algorithm
+
+### Sort
+
+[Quick Sort](https://www.log2base2.com/algorithms/sorting/quick-sort.html)
+[Quick Sort Algorithm](https://www.interviewbit.com/tutorial/quicksort-algorithm/)
+[Data Structure and Algorithms - Quick Sort](https://www.tutorialspoint.com/data_structures_algorithms/quick_sort_algorithm.htm)
+
+### AOI
+[Advanced uses of the MMORoom and MMO API](http://docs2x.smartfoxserver.com/AdvancedTopics/advanced-mmo-api)
+
+### Fog
+[How To: Implement a Fog of War – Part 1 – Chunky](http://bobkoon.com/how-to-implement-a-fog-of-war-part-1-chunky/)
 
 ## Engine
 
@@ -162,3 +186,4 @@ date: 2021-05-27 17:01:34
 
 ### Papers
 [10 Best Turn-Based Strategy Games in 2021 for Master Tacticians](https://www.highgroundgaming.com/best-turn-based-strategy-games/):10 Best Turn-Based Strategy Games in 2021 for Master Tacticians;
+[壹种念头Unity blog](https://cloud.tencent.com/developer/column/88095)
