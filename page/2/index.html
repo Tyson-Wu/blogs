@@ -163,6 +163,95 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/12/23/Joy-Stick-Function-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2020/12/23/Joy-Stick-Function-2/" class="post-title-link" itemprop="url">摇杆实现方法2</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-23 22:02:00" itemprop="dateCreated datePublished" datetime="2020-12-23T22:02:00+08:00">2020-12-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-06-17 19:12:22" itemprop="dateModified" datetime="2021-06-17T19:12:22+08:00">2021-06-17</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Component/" itemprop="url" rel="index"><span itemprop="name">Component</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>自己做了个飞行模拟的小游戏，发布到手机上需要用到摇杆来控制。原先是通过一个Joystick类来实现，摇杆位置固定，详细请参考<a href="https://tyson-wu.github.io/blogs/2020/12/23/Joy-Stick-Function/">这里</a><br>但是后面策划说要做成王者荣耀那种，摇杆的位置会根据手指的位置有一定的活动区域，所以我重新写了一份逻辑，并且对代码进行一定的逻辑细分，效果如下：<br><img src="/blogs/images/src/ezgif.com-gif-maker-2.gif" alt="wwwwwww"></p>
+<p>首先，我这里将摇杆分为几个部分：</p>
+<ul>
+<li>摇杆可触发区域，紫色区域，当手指放在该区域时，可以操控摇杆</li>
+<li>摇杆中心位置可活动区域，黄色区域，绿色的圆形摇杆背景图的中心点可到达的区域</li>
+<li>最后是白色的摇杆和绿色摇杆背景的组合</li>
+</ul>
+<p>前两个都挂载了一个区域判断的类-<code>TriggerAreaHandler</code>，主要用来判断屏幕点是否在该区域内，如图所示：<br><img src="/blogs/images/src/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20201223224837.png" alt="wwwwwww"><br>详细代码如下：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line">using System.Collections;</span><br><span class="line">using System.Collections.Generic;</span><br><span class="line">using UnityEngine;</span><br><span class="line">/// <span class="xml"><span class="tag">&lt;<span class="name">summary</span>&gt;</span></span></span><br><span class="line">/// 用于UI区域判定</span><br><span class="line">/// <span class="xml"><span class="tag">&lt;/<span class="name">summary</span>&gt;</span></span></span><br><span class="line">public class TriggerAreaHandler : MonoBehaviour</span><br><span class="line">&#123;</span><br><span class="line"><span class="code">    RectTransform[] _triggerArea = null;//触发区域</span></span><br><span class="line"><span class="code">    Camera _camera = null;//画布摄像机</span></span><br><span class="line"><span class="code">    Canvas _canvas = null;//画布</span></span><br><span class="line"><span class="code">    void InitTriggerArea()</span></span><br><span class="line"><span class="code">    &#123;//初始化区域</span></span><br><span class="line"><span class="code">        if (_triggerArea != null) return;</span></span><br><span class="line"><span class="code">        _triggerArea = GetComponentsInChildren&lt;RectTransform&gt;();</span></span><br><span class="line"><span class="code">        _canvas = GetComponentInParent&lt;Canvas&gt;();</span></span><br><span class="line"><span class="code">        _camera = _canvas.worldCamera;</span></span><br><span class="line"><span class="code">    &#125;</span></span><br><span class="line"><span class="code">    /// &lt;summary&gt;</span></span><br><span class="line"><span class="code">    /// 计算屏幕区域是否在当前区域内</span></span><br><span class="line"><span class="code">    /// &lt;/summary&gt;</span></span><br><span class="line"><span class="code">    /// &lt;param name=&quot;screenPos&quot;&gt;屏幕坐标&lt;/param&gt;</span></span><br><span class="line"><span class="code">    /// &lt;returns&gt;&lt;/returns&gt;</span></span><br><span class="line"><span class="code">    public bool CheckScreenPosInArea(Vector2 screenPos)</span></span><br><span class="line"><span class="code">    &#123;</span></span><br><span class="line"><span class="code">        InitTriggerArea();</span></span><br><span class="line"><span class="code">        for (int i=0;i&lt; _triggerArea.Length;++i)</span></span><br><span class="line"><span class="code">        &#123;</span></span><br><span class="line"><span class="code">            if (RectTransformUtility.RectangleContainsScreenPoint(_triggerArea[i], screenPos, _camera))</span></span><br><span class="line"><span class="code">                return true;</span></span><br><span class="line"><span class="code">        &#125;</span></span><br><span class="line"><span class="code">        return false;</span></span><br><span class="line"><span class="code">    &#125;</span></span><br><span class="line"><span class="code">    /// &lt;summary&gt;</span></span><br><span class="line"><span class="code">    /// 将屏幕点夹紧到该区域</span></span><br><span class="line"><span class="code">    /// &lt;/summary&gt;</span></span><br><span class="line"><span class="code">    /// &lt;param name=&quot;screenPos&quot;&gt;&lt;/param&gt;</span></span><br><span class="line"><span class="code">    /// &lt;returns&gt;&lt;/returns&gt;</span></span><br><span class="line"><span class="code">    public Vector2 Clamp(Vector2 screenPos)</span></span><br><span class="line"><span class="code">    &#123;</span></span><br><span class="line"><span class="code">        InitTriggerArea();</span></span><br><span class="line"><span class="code">        Vector2 clampPos = _camera.WorldToScreenPoint(_triggerArea[0].position);</span></span><br><span class="line"><span class="code">        float len = float.MaxValue;</span></span><br><span class="line"><span class="code">        InitTriggerArea();</span></span><br><span class="line"><span class="code">        for (int i = 0; i &lt; _triggerArea.Length; ++i)</span></span><br><span class="line"><span class="code">        &#123;</span></span><br><span class="line"><span class="code">            RectTransform rectTransform = _triggerArea[i];</span></span><br><span class="line"><span class="code">            if (RectTransformUtility.RectangleContainsScreenPoint(_triggerArea[i], screenPos, _camera))</span></span><br><span class="line"><span class="code">            &#123;</span></span><br><span class="line"><span class="code">                return screenPos;</span></span><br><span class="line"><span class="code">            &#125;</span></span><br><span class="line"><span class="code">            else</span></span><br><span class="line"><span class="code">            &#123;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">                Vector2 rectPos = _camera.WorldToScreenPoint(rectTransform.position);</span></span><br><span class="line"><span class="code">                Rect rect = RectTransformUtility.PixelAdjustRect(rectTransform, _canvas);</span></span><br><span class="line"><span class="code">                Vector2 clampPos_temp = Clamp(screenPos, rectPos, new Vector2(rect.width/2, rect.height/2));</span></span><br><span class="line"><span class="code">                float distance = (clampPos_temp - screenPos).sqrMagnitude;</span></span><br><span class="line"><span class="code">                if (distance &lt; len)</span></span><br><span class="line"><span class="code">                &#123;</span></span><br><span class="line"><span class="code">                    len = distance;</span></span><br><span class="line"><span class="code">                    clampPos = clampPos_temp;</span></span><br><span class="line"><span class="code">                &#125;</span></span><br><span class="line"><span class="code">            &#125;</span></span><br><span class="line"><span class="code">        &#125;</span></span><br><span class="line"><span class="code">        return clampPos;</span></span><br><span class="line"><span class="code">    &#125;</span></span><br><span class="line"><span class="code">    Vector2 Clamp(Vector2 value,Vector2 center, Vector2 halfSize)</span></span><br><span class="line"><span class="code">    &#123;</span></span><br><span class="line"><span class="code">        return new Vector2(Clamp(value.x, center.x - halfSize.x, center.x + halfSize.x),</span></span><br><span class="line"><span class="code">            Clamp(value.y, center.y - halfSize.y, center.y + halfSize.y));</span></span><br><span class="line"><span class="code">    &#125;</span></span><br><span class="line"><span class="code">    float Clamp(float value, float min, float max)</span></span><br><span class="line"><span class="code">    &#123;</span></span><br><span class="line"><span class="code">        value = value &gt; min ? value : min;</span></span><br><span class="line"><span class="code">        value = value &lt; max ? value : max;</span></span><br><span class="line"><span class="code">        return value;</span></span><br><span class="line"><span class="code">    &#125;</span></span><br><span class="line"><span class="code">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>第三部分的摇杆组合，主要是用来显示的，所以下面挂载了一个控制其显示的脚本-<code>JoyStickView</code>，该脚本控制摇杆组合的位置显示，如图所示：<br><img src="/blogs/images/src/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20201223225034.png" alt="wwwwwww"><br>代码如下：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line">using System.Collections;</span><br><span class="line">using System.Collections.Generic;</span><br><span class="line">using UnityEngine;</span><br><span class="line">/// <span class="xml"><span class="tag">&lt;<span class="name">summary</span>&gt;</span></span></span><br><span class="line">/// 控制摇杆显示</span><br><span class="line">/// <span class="xml"><span class="tag">&lt;/<span class="name">summary</span>&gt;</span></span></span><br><span class="line">public class JoyStickView : MonoBehaviour</span><br><span class="line">&#123;</span><br><span class="line"><span class="code">    [SerializeField] RectTransform _joyStickCenter;//摇杆的端点</span></span><br><span class="line"><span class="code">    [SerializeField] RectTransform _joyStickOutline;//摇杆端点区域背景,设置为摇杆端点的父节点</span></span><br><span class="line"><span class="code">    [SerializeField] float _joyStickAreaScale = 1;//在背景区域的基础上进行缩放，得到一个活动区域</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    bool _initSize = false;</span></span><br><span class="line"><span class="code">    Canvas _canvas = null;</span></span><br><span class="line"><span class="code">    Vector3 _joyStickOriginScreenPos0 = Vector3.zero; //摇杆初始原点</span></span><br><span class="line"><span class="code">    Vector3 _joyStickOriginScreenPos = Vector3.zero; //摇杆原点</span></span><br><span class="line"><span class="code">    float _joyStickRadius = 0;//摇杆真实的屏幕活动半径</span></span><br><span class="line"><span class="code">    /// &lt;summary&gt;</span></span><br><span class="line"><span class="code">    /// 获取摇杆屏幕活动半径</span></span><br><span class="line"><span class="code">    /// &lt;/summary&gt;</span></span><br><span class="line"><span class="code">    /// &lt;returns&gt;&lt;/returns&gt;</span></span><br><span class="line"><span class="code">    public float GetJoyStickRadius()</span></span><br><span class="line"><span class="code">    &#123;</span></span><br><span class="line"><span class="code">        return _joyStickRadius;</span></span><br><span class="line"><span class="code">    &#125;</span></span><br><span class="line"><span class="code">    /// &lt;summary&gt;</span></span><br><span class="line"><span class="code">    /// 计算背景区域的屏幕尺寸</span></span><br><span class="line"><span class="code">    /// 在所有函数之前调用</span></span><br><span class="line"><span class="code">    /// &lt;/summary&gt;</span></span><br><span class="line"><span class="code">    public void CalculateAreaSize()</span></span><br><span class="line"><span class="code">    &#123;</span></span><br><span class="line"><span class="code">        if (_initSize) return; </span></span><br><span class="line"><span class="code">        _initSize = true;</span></span><br><span class="line"><span class="code">        if(_canvas==null)  _canvas = GetComponentInParent&lt;Canvas&gt;();</span></span><br><span class="line"><span class="code">        _joyStickOriginScreenPos0 = _canvas.worldCamera.WorldToScreenPoint(_joyStickOutline.position);</span></span><br><span class="line"><span class="code">        _joyStickOriginScreenPos = _joyStickOriginScreenPos0;</span></span><br><span class="line"><span class="code">        SetJoyStickOriginPos(_joyStickOriginScreenPos0);</span></span><br><span class="line"><span class="code">        Rect rect = RectTransformUtility.PixelAdjustRect(_joyStickOutline, _canvas);</span></span><br><span class="line"><span class="code">        _joyStickRadius = _joyStickAreaScale * rect.width / 2;</span></span><br><span class="line"><span class="code">    &#125;</span></span><br><span class="line"><span class="code">    /// &lt;summary&gt;</span></span><br><span class="line"><span class="code">    /// 重置摇杆原点为初始原点</span></span><br><span class="line"><span class="code">    /// &lt;/summary&gt;</span></span><br><span class="line"><span class="code">    /// &lt;returns&gt;摇杆中心点在屏幕上的位置&lt;/returns&gt;</span></span><br><span class="line"><span class="code">    public Vector2 ResetJoyStickOrigionPos()</span></span><br><span class="line"><span class="code">    &#123;</span></span><br><span class="line"><span class="code">        SetJoyStickOriginPos(_joyStickOriginScreenPos0);</span></span><br><span class="line"><span class="code">        return _joyStickOriginScreenPos0;</span></span><br><span class="line"><span class="code">    &#125;</span></span><br><span class="line"><span class="code">    /// &lt;summary&gt;</span></span><br><span class="line"><span class="code">    /// 设置整个摇杆的位置</span></span><br><span class="line"><span class="code">    /// &lt;/summary&gt;</span></span><br><span class="line"><span class="code">    /// &lt;param name=&quot;screenPos&quot;&gt;屏幕坐标&lt;/param&gt;</span></span><br><span class="line"><span class="code">    public void SetJoyStickOriginPos(Vector3 screenPos)</span></span><br><span class="line"><span class="code">    &#123;</span></span><br><span class="line"><span class="code">        _joyStickOriginScreenPos.x = screenPos.x;</span></span><br><span class="line"><span class="code">        _joyStickOriginScreenPos.y = screenPos.y;</span></span><br><span class="line"><span class="code">        _joyStickOutline.position = _canvas.worldCamera.ScreenToWorldPoint(_joyStickOriginScreenPos);</span></span><br><span class="line"><span class="code">    &#125;</span></span><br><span class="line"><span class="code">    /// &lt;summary&gt;</span></span><br><span class="line"><span class="code">    /// 基于偏移向量，设置摇杆显示位置</span></span><br><span class="line"><span class="code">    /// &lt;/summary&gt;</span></span><br><span class="line"><span class="code">    /// &lt;param name=&quot;dir&quot;&gt;移动向量&lt;/param&gt;</span></span><br><span class="line"><span class="code">    public void SetJoyStick(Vector2 dir)</span></span><br><span class="line"><span class="code">    &#123;</span></span><br><span class="line"><span class="code">        Vector3 dir3 = dir.sqrMagnitude &gt; 1 ? dir.normalized : dir;</span></span><br><span class="line"><span class="code">        Vector3 joyStickScreenPos = dir3 * _joyStickRadius + _joyStickOriginScreenPos;</span></span><br><span class="line"><span class="code">        _joyStickCenter.position = _canvas.worldCamera.ScreenToWorldPoint(joyStickScreenPos);</span></span><br><span class="line"><span class="code">    &#125;</span></span><br><span class="line"><span class="code">    /// &lt;summary&gt;</span></span><br><span class="line"><span class="code">    /// 判断屏幕坐标是否在摇杆触发区域里</span></span><br><span class="line"><span class="code">    /// &lt;/summary&gt;</span></span><br><span class="line"><span class="code">    /// &lt;param name=&quot;screenPos&quot;&gt;屏幕坐标&lt;/param&gt;</span></span><br><span class="line"><span class="code">    /// &lt;returns&gt;&lt;/returns&gt;</span></span><br><span class="line"><span class="code">    public bool InJoyStickArea(Vector2 screenPos)</span></span><br><span class="line"><span class="code">    &#123;</span></span><br><span class="line"><span class="code">        float len = Vector2.Distance(screenPos, _joyStickOriginScreenPos);</span></span><br><span class="line"><span class="code">        return  len &lt; _joyStickRadius;</span></span><br><span class="line"><span class="code">    &#125;</span></span><br><span class="line"><span class="code">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>最后是整个摇杆逻辑实现部分-<code>JoyStickTrigger</code>，这个类里面记录了触发事件，以及对外的参数，如图所示：<br><img src="/blogs/images/src/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20201223223000.png"><br>同样的，通过属性器可以获取当前摇杆的状态参数，包括偏移方向以及强度，方向是360度，强度是[0-1]。详细代码如下：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line">using UnityEngine;</span><br><span class="line">using UnityEngine.EventSystems;</span><br><span class="line">/// <span class="xml"><span class="tag">&lt;<span class="name">summary</span>&gt;</span></span></span><br><span class="line">/// 摇杆控制模块</span><br><span class="line">/// <span class="xml"><span class="tag">&lt;/<span class="name">summary</span>&gt;</span></span></span><br><span class="line">public class JoyStickTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler</span><br><span class="line">&#123;</span><br><span class="line"><span class="code">    public static JoyStickTrigger instance;</span></span><br><span class="line"><span class="code">    [SerializeField] TriggerAreaHandler _joyStickCenterArea;//摇杆背景中心点活动区域</span></span><br><span class="line"><span class="code">    [SerializeField] TriggerAreaHandler _joyStickTriggerArea;//可激活摇杆的区域</span></span><br><span class="line"><span class="code">    [SerializeField] JoyStickView _joyStick;//摇杆</span></span><br><span class="line"><span class="code">    [SerializeField] float _sensitivity = 1;//摇杆灵敏度</span></span><br><span class="line"><span class="code">    [SerializeField] float _triggerAreaScale = 1;//摇杆控制区域</span></span><br><span class="line"><span class="code">    /// &lt;summary&gt;</span></span><br><span class="line"><span class="code">    /// 摇杆偏移方向</span></span><br><span class="line"><span class="code">    /// &lt;/summary&gt;</span></span><br><span class="line"><span class="code">    public Vector2 MoveDir &#123; get; private set; &#125;</span></span><br><span class="line"><span class="code">    /// &lt;summary&gt;</span></span><br><span class="line"><span class="code">    /// 摇杆偏移长度[0-1]</span></span><br><span class="line"><span class="code">    /// &lt;/summary&gt;</span></span><br><span class="line"><span class="code">    public float MoveLen &#123; get; private set; &#125;</span></span><br><span class="line"><span class="code">    /// &lt;summary&gt;</span></span><br><span class="line"><span class="code">    /// 是否在操控摇杆</span></span><br><span class="line"><span class="code">    /// &lt;/summary&gt;</span></span><br><span class="line"><span class="code">    public bool IsDraging &#123; get &#123; return _onJoyStickActive; &#125; &#125;</span></span><br><span class="line"><span class="code">    /// &lt;summary&gt;</span></span><br><span class="line"><span class="code">    /// 摇杆横向偏移量</span></span><br><span class="line"><span class="code">    /// &lt;/summary&gt;</span></span><br><span class="line"><span class="code">    public float Horizontal &#123; get &#123; return MoveDir.x * MoveLen; &#125; &#125;</span></span><br><span class="line"><span class="code">    /// &lt;summary&gt;</span></span><br><span class="line"><span class="code">    /// 摇杆纵向偏移量</span></span><br><span class="line"><span class="code">    /// &lt;/summary&gt;</span></span><br><span class="line"><span class="code">    public float Vertical &#123; get &#123; return MoveDir.y * MoveLen; &#125; &#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    Vector2 _originScreenPos = Vector2.zero;//激活摇杆的手指点击位置</span></span><br><span class="line"><span class="code">    Vector2 _dragScreenPos = Vector2.zero;//实时拖动手指位置</span></span><br><span class="line"><span class="code">    Vector2 _interpolateScreenPos = Vector2.zero;//实时摇杆位置</span></span><br><span class="line"><span class="code">    bool _onJoyStickActive = false;//摇杆是否激活</span></span><br><span class="line"><span class="code">    void Awake()</span></span><br><span class="line"><span class="code">    &#123;</span></span><br><span class="line"><span class="code">        instance = this;</span></span><br><span class="line"><span class="code">    &#125;</span></span><br><span class="line"><span class="code">    void OnEnable()</span></span><br><span class="line"><span class="code">    &#123;</span></span><br><span class="line"><span class="code">        _joyStick.CalculateAreaSize();</span></span><br><span class="line"><span class="code">    &#125;</span></span><br><span class="line"><span class="code">    void OnDisable()</span></span><br><span class="line"><span class="code">    &#123;</span></span><br><span class="line"><span class="code">        OnPointerUp(null);</span></span><br><span class="line"><span class="code">    &#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    public void OnPointerDown(PointerEventData eventData)</span></span><br><span class="line"><span class="code">    &#123;</span></span><br><span class="line"><span class="code">        if (!_joyStickTriggerArea.CheckScreenPosInArea(eventData.position))</span></span><br><span class="line"><span class="code">            return;</span></span><br><span class="line"><span class="code">        _onJoyStickActive = true;</span></span><br><span class="line"><span class="code">        //_originScreenPos = eventData.position;</span></span><br><span class="line"><span class="code">        _originScreenPos = _joyStickCenterArea.Clamp(eventData.position);</span></span><br><span class="line"><span class="code">        _interpolateScreenPos = _dragScreenPos = eventData.position;</span></span><br><span class="line"><span class="code">        _joyStick.SetJoyStickOriginPos(_originScreenPos);</span></span><br><span class="line"><span class="code">    &#125;</span></span><br><span class="line"><span class="code">    public void OnDrag(PointerEventData eventData)</span></span><br><span class="line"><span class="code">    &#123;</span></span><br><span class="line"><span class="code">        if (!_onJoyStickActive) return;</span></span><br><span class="line"><span class="code">        _dragScreenPos = eventData.position;</span></span><br><span class="line"><span class="code">    &#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    public void OnPointerUp(PointerEventData eventData)</span></span><br><span class="line"><span class="code">    &#123;</span></span><br><span class="line"><span class="code">        _onJoyStickActive = false;</span></span><br><span class="line"><span class="code">        _dragScreenPos = _joyStick.ResetJoyStickOrigionPos();//手指位置归于原点</span></span><br><span class="line"><span class="code">        //_interpolateScreenPos += _dragScreenPos - _originScreenPos;//将插值点随摇杆位置一起归位</span></span><br><span class="line"><span class="code">        _interpolateScreenPos = _dragScreenPos;//</span></span><br><span class="line"><span class="code">        _originScreenPos = _dragScreenPos;//</span></span><br><span class="line"><span class="code">    &#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    private void Update()</span></span><br><span class="line"><span class="code">    &#123;</span></span><br><span class="line"><span class="code">        _interpolateScreenPos = Vector2.Lerp(_interpolateScreenPos, _dragScreenPos, Time.deltaTime * _sensitivity);</span></span><br><span class="line"><span class="code">        Vector2 dir = _interpolateScreenPos - _originScreenPos;</span></span><br><span class="line"><span class="code">        dir /= _joyStick.GetJoyStickRadius();</span></span><br><span class="line"><span class="code">        dir = dir.sqrMagnitude &gt; 1 ? dir.normalized : dir;</span></span><br><span class="line"><span class="code">        MoveDir = dir;</span></span><br><span class="line"><span class="code">        MoveLen = dir.magnitude;</span></span><br><span class="line"><span class="code">        _joyStick.SetJoyStick(dir);</span></span><br><span class="line"><span class="code">    &#125;</span></span><br><span class="line"><span class="code">&#125;</span></span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/12/23/Joy-Stick-Function/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -194,7 +283,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-07 21:09:38" itemprop="dateModified" datetime="2021-06-07T21:09:38+08:00">2021-06-07</time>
+                <time title="修改时间：2021-06-17 19:12:22" itemprop="dateModified" datetime="2021-06-17T19:12:22+08:00">2021-06-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -275,7 +364,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-07 21:09:38" itemprop="dateModified" datetime="2021-06-07T21:09:38+08:00">2021-06-07</time>
+                <time title="修改时间：2021-06-17 19:12:22" itemprop="dateModified" datetime="2021-06-17T19:12:22+08:00">2021-06-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -361,7 +450,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-07 21:09:38" itemprop="dateModified" datetime="2021-06-07T21:09:38+08:00">2021-06-07</time>
+                <time title="修改时间：2021-06-17 19:12:22" itemprop="dateModified" datetime="2021-06-17T19:12:22+08:00">2021-06-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -453,7 +542,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-07 21:09:38" itemprop="dateModified" datetime="2021-06-07T21:09:38+08:00">2021-06-07</time>
+                <time title="修改时间：2021-06-17 19:12:22" itemprop="dateModified" datetime="2021-06-17T19:12:22+08:00">2021-06-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -564,7 +653,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-07 21:09:38" itemprop="dateModified" datetime="2021-06-07T21:09:38+08:00">2021-06-07</time>
+                <time title="修改时间：2021-06-17 19:12:22" itemprop="dateModified" datetime="2021-06-17T19:12:22+08:00">2021-06-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -653,7 +742,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-07 21:09:38" itemprop="dateModified" datetime="2021-06-07T21:09:38+08:00">2021-06-07</time>
+                <time title="修改时间：2021-06-17 19:12:22" itemprop="dateModified" datetime="2021-06-17T19:12:22+08:00">2021-06-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -774,7 +863,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-07 21:09:38" itemprop="dateModified" datetime="2021-06-07T21:09:38+08:00">2021-06-07</time>
+                <time title="修改时间：2021-06-17 19:12:22" itemprop="dateModified" datetime="2021-06-17T19:12:22+08:00">2021-06-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -935,7 +1024,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-07 21:09:38" itemprop="dateModified" datetime="2021-06-07T21:09:38+08:00">2021-06-07</time>
+                <time title="修改时间：2021-06-17 19:12:22" itemprop="dateModified" datetime="2021-06-17T19:12:22+08:00">2021-06-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1012,7 +1101,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-07 21:09:38" itemprop="dateModified" datetime="2021-06-07T21:09:38+08:00">2021-06-07</time>
+                <time title="修改时间：2021-06-17 19:12:22" itemprop="dateModified" datetime="2021-06-17T19:12:22+08:00">2021-06-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1047,111 +1136,6 @@
 </ul>
 <p><a href="https://tyson-wu.github.io/myblog/2020/11/20/Markdown-Syntax/">Syntax</a>介绍了Markdown格式转换的语法细节。我们还可所以使用<a target="_blank" rel="noopener" href="https://daringfireball.net/projects/markdown/dingus">Dingus</a>进行在线验证。<br>重新设计Markdown格式转换语法的目的，是为了使它更易读。新语法的核心思想是，编写好的Markdown文案是可发布的、且不带格式的纯文本。虽然Markdown的语法受现有的一些文本-HTML过滤器的影响，但其最大的灵感来源是纯文本邮件的格式。<br>感受Markdown语法最直接的方法是查看使用Mardkown格式语法的文档。例如，我们可以直接浏览<a target="_blank" rel="noopener" href="http://daringfireball.net/projects/markdown/index.text">源文件</a>。</p>
 <p>Markdown是基于BSD开源声明的开源免费软件。更多细节，请查看<a target="_blank" rel="noopener" href="https://daringfireball.net/projects/markdown/license">声明</a>。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/11/19/Camera-Depth-Texture/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2020/11/19/Camera-Depth-Texture/" class="post-title-link" itemprop="url">Camera’s Depth Texture</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-11-19 17:01:34" itemprop="dateCreated datePublished" datetime="2020-11-19T17:01:34+08:00">2020-11-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-07 21:09:38" itemprop="dateModified" datetime="2021-06-07T21:09:38+08:00">2021-06-07</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Shader/Depth-Texture/" itemprop="url" rel="index"><span itemprop="name">Depth Texture</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/class-Camera.html">Camera</a>可以创建深度图、深度+法向纹理、运动向量图。这算是一种简化版的G-buffer，这些纹理图可以用在post-processing中，从而实现自定义的光照模型。我们也可以使用<a href="/blogs/2020/11/22/Rendering-with-Replaced-Shaders/">Shader Replacement</a>创建这类纹理图。<br>Camera虽然内置了创建深度图的功能，但是通常该功能是关闭的，需要在脚本中通过<a target="_blank" rel="noopener" href="https://docs.unity3d.com/ScriptReference/Camera-depthTextureMode.html">Camera.depthTextureMode</a>来启用该功能。<br>Unity提供了三种深度图纹理模式：</p>
-<ul>
-<li>DepthTextureMode.Depth：纯<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-DepthTextures.html">深度图</a>。默认情况下生成的深度值的范围是[0-1]，且是非线性分布。</li>
-<li>DepthTextureMode.DepthNormals：同时包含深度和法向量信息。</li>
-<li>DepthTextureMode.MotionVectors：在屏幕空间内，每个像素点在当前帧的运动向量。这是一张RG16的纹理图，只有两个通道，每个通道深度为16。</li>
-</ul>
-<p>这几种模式采用的是位标记，也就是说可以两两组合。例如，我需要深度图和运动向量图，可以执行以下操作：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">camera.depthTextureMode = DepthTextureMode.Depth | DepthTextureMode.MotionVectors;</span><br></pre></td></tr></table></figure>
-
-<h2 id="DepthTextureMode-Depth-texture"><a href="#DepthTextureMode-Depth-texture" class="headerlink" title="DepthTextureMode.Depth texture"></a>DepthTextureMode.Depth texture</h2><p>此模式会创建一张屏幕大小的<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-DepthTextures.html">深度图</a>。<br>深度图渲染是在ShadowCaster pass中执行的，ShadowCaster pass也是用来实现阴影采集的Shader pass。因此，如果游戏物体所挂载的Shader不支持Shadow casting，也就是Shader中没有shadow caster pass，那么这个游戏物体不会被渲染到深度图中。<br>因此，当我们需要渲染某些物体的深度图时，需要保证：</p>
-<ul>
-<li>这些物体所挂载的Shader或者其fallback中的Shader具有shadow casting pass。或者</li>
-<li>使用<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-SurfaceShaders.html">surface shader</a>，然后加入addshadow标识符，使得表面着色器能够生成shadow pass。</li>
-</ul>
-<p>需要注意的是，只有”RenderType”=”Opaque”的物体会被渲染到深度图中。这些物体被认为是实体，在渲染队列中的编号&lt;=2500。</p>
-<h2 id="DepthTextureMode-DepthNormals-texture"><a href="#DepthTextureMode-DepthNormals-texture" class="headerlink" title="DepthTextureMode.DepthNormals texture"></a>DepthTextureMode.DepthNormals texture</h2><p>此模式会创建一张屏幕大小、深度为8、32位的纹理图。其中基于观察坐标系的法向量被存储到R&amp;G通道中，而深度被存到B&amp;A通道中。其中法向量是采用立体投影的方式进行编码，而深度是16位精度的浮点数。<br>在[UnityCG.cginc]文件中有一个DecodeDepthNormal可以用来对这里的深度以及法向量进行解码。其中解码后的深度值是范围为[0,1]的小数。<br>可以参考<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/PostProcessing-AmbientOcclusion.html">屏幕空间环境遮罩</a>的图像后处理教程。</p>
-<h2 id="DepthTextureMode-MotionVectors-texture"><a href="#DepthTextureMode-MotionVectors-texture" class="headerlink" title="DepthTextureMode.MotionVectors texture"></a>DepthTextureMode.MotionVectors texture</h2><p>此模式会创建一张屏幕大小的、两通道的、RG16的纹理图，每个通道占16位。基于屏幕空间的运动向量就是被编码到这两个通道中，分别表示U、V两个坐标值。<br>当采样值的范围在[-1,1]时，这表示的是上一帧与当前帧的UV偏移值，因为UV坐标的坐标值范围是[0-1]。</p>
-<h2 id="Tips-amp-Tricks"><a href="#Tips-amp-Tricks" class="headerlink" title="Tips&amp;Tricks"></a>Tips&amp;Tricks</h2><p>当Camera启用渲染深度图或深度+法向图时，Camera inspactor会有相应的提示语。<br>使用Camera.depthTextureMode方式获取深度图，当我们想关闭该功能时，需要手动设置：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">camera.depthTextureMode = DepthTextureMode.None;</span><br></pre></td></tr></table></figure>
-<p>当我们在实现复杂Shader或者图像效果时，我们要考虑到<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-PlatformDifferences.html">不同平台之间的差异性</a>。</p>
-<h2 id="Shader-variables"><a href="#Shader-variables" class="headerlink" title="Shader variables"></a>Shader variables</h2><p>当我们想在Shader中使用由camera.depthTextureMode方法生成深度图时，在Shader中可以声明_CameraDepthTexture变量：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sampler2D _CameraDepthTexture;</span><br></pre></td></tr></table></figure>
-<p>_CameraDepthTexture是全局Shader属性，任何Shader都可以声明并访问该变量。_CameraDepthTexture总是指向摄像机的主深度图(我理解的是当前帧第一张深度纹理)。还有_LastCameraDepthTexture，用来指向最后一个深度图(好绕。。。)。例如我们在脚本中使用第二个Camera来获取分辨率减半的纹理图。<br>如果生成的是运动向量图，那么可以使用_CameraMotionVectorsTexture这个全局属性。<br>这里强调这些纹理图是使用camera.depthTextureMode方式生成的。因为除此之外，还可以使用<a href="/blogs/2020/11/22/Rendering-with-Replaced-Shaders/">Relapcement Shader</a>的方式，但是这种方式生成的纹理不会自动写入到上面这几个全局变量中。</p>
-<h2 id="Under-the-hood"><a href="#Under-the-hood" class="headerlink" title="Under the hood"></a>Under the hood</h2><p>本节所讲的深度图，是Camera的内置功能，不需要使用者考虑如何实现。但是这种内置的深度图生成方法，却是与所使用的rendering path和硬件平台有关。通常情况下，Deferred Shading或者Legacy Deferred Lighting这两种rendering path，会自动生成深度图并存放在G-Buffer中。另外，有一些平台在渲染的时候，会自动将深度信息缓存到Depth buffer。如果前面两种情况都不满足的话，那么引擎会额外开一个Pass来生成深度图，这种额外的方式就是<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-ShaderReplacement.html">Shader Replacement</a>，因此我们需要准确的使用RenderType这个标签。例如”RenderType”=”Transparent”的物体的深度信息可能会采集不到。<br>MotionVectors纹理图是通过额外开启一个Pass生成的。只有运动的物体会被采集，通过对别前后帧物体的运动来计算像素运动向量。</p>
 
       
     </div>
@@ -1238,20 +1222,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-count">24</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/blogs/categories/">
           
-        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/blogs/tags/">
           
-        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

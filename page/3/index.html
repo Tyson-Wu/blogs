@@ -163,6 +163,111 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/11/19/Camera-Depth-Texture/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2020/11/19/Camera-Depth-Texture/" class="post-title-link" itemprop="url">Camera’s Depth Texture</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-19 17:01:34" itemprop="dateCreated datePublished" datetime="2020-11-19T17:01:34+08:00">2020-11-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-06-17 19:12:22" itemprop="dateModified" datetime="2021-06-17T19:12:22+08:00">2021-06-17</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Shader/Depth-Texture/" itemprop="url" rel="index"><span itemprop="name">Depth Texture</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/class-Camera.html">Camera</a>可以创建深度图、深度+法向纹理、运动向量图。这算是一种简化版的G-buffer，这些纹理图可以用在post-processing中，从而实现自定义的光照模型。我们也可以使用<a href="/blogs/2020/11/22/Rendering-with-Replaced-Shaders/">Shader Replacement</a>创建这类纹理图。<br>Camera虽然内置了创建深度图的功能，但是通常该功能是关闭的，需要在脚本中通过<a target="_blank" rel="noopener" href="https://docs.unity3d.com/ScriptReference/Camera-depthTextureMode.html">Camera.depthTextureMode</a>来启用该功能。<br>Unity提供了三种深度图纹理模式：</p>
+<ul>
+<li>DepthTextureMode.Depth：纯<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-DepthTextures.html">深度图</a>。默认情况下生成的深度值的范围是[0-1]，且是非线性分布。</li>
+<li>DepthTextureMode.DepthNormals：同时包含深度和法向量信息。</li>
+<li>DepthTextureMode.MotionVectors：在屏幕空间内，每个像素点在当前帧的运动向量。这是一张RG16的纹理图，只有两个通道，每个通道深度为16。</li>
+</ul>
+<p>这几种模式采用的是位标记，也就是说可以两两组合。例如，我需要深度图和运动向量图，可以执行以下操作：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">camera.depthTextureMode = DepthTextureMode.Depth | DepthTextureMode.MotionVectors;</span><br></pre></td></tr></table></figure>
+
+<h2 id="DepthTextureMode-Depth-texture"><a href="#DepthTextureMode-Depth-texture" class="headerlink" title="DepthTextureMode.Depth texture"></a>DepthTextureMode.Depth texture</h2><p>此模式会创建一张屏幕大小的<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-DepthTextures.html">深度图</a>。<br>深度图渲染是在ShadowCaster pass中执行的，ShadowCaster pass也是用来实现阴影采集的Shader pass。因此，如果游戏物体所挂载的Shader不支持Shadow casting，也就是Shader中没有shadow caster pass，那么这个游戏物体不会被渲染到深度图中。<br>因此，当我们需要渲染某些物体的深度图时，需要保证：</p>
+<ul>
+<li>这些物体所挂载的Shader或者其fallback中的Shader具有shadow casting pass。或者</li>
+<li>使用<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-SurfaceShaders.html">surface shader</a>，然后加入addshadow标识符，使得表面着色器能够生成shadow pass。</li>
+</ul>
+<p>需要注意的是，只有”RenderType”=”Opaque”的物体会被渲染到深度图中。这些物体被认为是实体，在渲染队列中的编号&lt;=2500。</p>
+<h2 id="DepthTextureMode-DepthNormals-texture"><a href="#DepthTextureMode-DepthNormals-texture" class="headerlink" title="DepthTextureMode.DepthNormals texture"></a>DepthTextureMode.DepthNormals texture</h2><p>此模式会创建一张屏幕大小、深度为8、32位的纹理图。其中基于观察坐标系的法向量被存储到R&amp;G通道中，而深度被存到B&amp;A通道中。其中法向量是采用立体投影的方式进行编码，而深度是16位精度的浮点数。<br>在[UnityCG.cginc]文件中有一个DecodeDepthNormal可以用来对这里的深度以及法向量进行解码。其中解码后的深度值是范围为[0,1]的小数。<br>可以参考<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/PostProcessing-AmbientOcclusion.html">屏幕空间环境遮罩</a>的图像后处理教程。</p>
+<h2 id="DepthTextureMode-MotionVectors-texture"><a href="#DepthTextureMode-MotionVectors-texture" class="headerlink" title="DepthTextureMode.MotionVectors texture"></a>DepthTextureMode.MotionVectors texture</h2><p>此模式会创建一张屏幕大小的、两通道的、RG16的纹理图，每个通道占16位。基于屏幕空间的运动向量就是被编码到这两个通道中，分别表示U、V两个坐标值。<br>当采样值的范围在[-1,1]时，这表示的是上一帧与当前帧的UV偏移值，因为UV坐标的坐标值范围是[0-1]。</p>
+<h2 id="Tips-amp-Tricks"><a href="#Tips-amp-Tricks" class="headerlink" title="Tips&amp;Tricks"></a>Tips&amp;Tricks</h2><p>当Camera启用渲染深度图或深度+法向图时，Camera inspactor会有相应的提示语。<br>使用Camera.depthTextureMode方式获取深度图，当我们想关闭该功能时，需要手动设置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">camera.depthTextureMode = DepthTextureMode.None;</span><br></pre></td></tr></table></figure>
+<p>当我们在实现复杂Shader或者图像效果时，我们要考虑到<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-PlatformDifferences.html">不同平台之间的差异性</a>。</p>
+<h2 id="Shader-variables"><a href="#Shader-variables" class="headerlink" title="Shader variables"></a>Shader variables</h2><p>当我们想在Shader中使用由camera.depthTextureMode方法生成深度图时，在Shader中可以声明_CameraDepthTexture变量：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sampler2D _CameraDepthTexture;</span><br></pre></td></tr></table></figure>
+<p>_CameraDepthTexture是全局Shader属性，任何Shader都可以声明并访问该变量。_CameraDepthTexture总是指向摄像机的主深度图(我理解的是当前帧第一张深度纹理)。还有_LastCameraDepthTexture，用来指向最后一个深度图(好绕。。。)。例如我们在脚本中使用第二个Camera来获取分辨率减半的纹理图。<br>如果生成的是运动向量图，那么可以使用_CameraMotionVectorsTexture这个全局属性。<br>这里强调这些纹理图是使用camera.depthTextureMode方式生成的。因为除此之外，还可以使用<a href="/blogs/2020/11/22/Rendering-with-Replaced-Shaders/">Relapcement Shader</a>的方式，但是这种方式生成的纹理不会自动写入到上面这几个全局变量中。</p>
+<h2 id="Under-the-hood"><a href="#Under-the-hood" class="headerlink" title="Under the hood"></a>Under the hood</h2><p>本节所讲的深度图，是Camera的内置功能，不需要使用者考虑如何实现。但是这种内置的深度图生成方法，却是与所使用的rendering path和硬件平台有关。通常情况下，Deferred Shading或者Legacy Deferred Lighting这两种rendering path，会自动生成深度图并存放在G-Buffer中。另外，有一些平台在渲染的时候，会自动将深度信息缓存到Depth buffer。如果前面两种情况都不满足的话，那么引擎会额外开一个Pass来生成深度图，这种额外的方式就是<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-ShaderReplacement.html">Shader Replacement</a>，因此我们需要准确的使用RenderType这个标签。例如”RenderType”=”Transparent”的物体的深度信息可能会采集不到。<br>MotionVectors纹理图是通过额外开启一个Pass生成的。只有运动的物体会被采集，通过对别前后帧物体的运动来计算像素运动向量。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/11/12/vertex-position-at-different-stage/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -194,7 +299,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-07 21:09:38" itemprop="dateModified" datetime="2021-06-07T21:09:38+08:00">2021-06-07</time>
+                <time title="修改时间：2021-06-17 19:12:22" itemprop="dateModified" datetime="2021-06-17T19:12:22+08:00">2021-06-17</time>
               </span>
 
           
@@ -268,7 +373,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-07 21:09:38" itemprop="dateModified" datetime="2021-06-07T21:09:38+08:00">2021-06-07</time>
+                <time title="修改时间：2021-06-17 19:12:22" itemprop="dateModified" datetime="2021-06-17T19:12:22+08:00">2021-06-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -373,7 +478,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-07 21:09:38" itemprop="dateModified" datetime="2021-06-07T21:09:38+08:00">2021-06-07</time>
+                <time title="修改时间：2021-06-17 19:12:22" itemprop="dateModified" datetime="2021-06-17T19:12:22+08:00">2021-06-17</time>
               </span>
 
           
@@ -486,20 +591,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-count">24</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/blogs/categories/">
           
-        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/blogs/tags/">
           
-        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

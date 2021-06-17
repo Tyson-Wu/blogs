@@ -20,21 +20,26 @@
     var CONFIG = {"hostname":"tyson-wu.github.io","root":"/blogs/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="获取当前选择的目录12345678910111213141516public static string GetCurrentAssetDirectory()&amp;#123;	foreach(var obj in Selection.GetFiltered&lt;Object&gt;(SelectionMode.Assets))	&amp;#123;		var path &#x3D; AssetDataBas">
+  <meta name="description" content="原文：Are Behavior Trees a Thing of the Past? 介绍基于游戏沉浸感、以及和NPC智能交互的需求，游戏开发者在游戏中使用的AI技术成为了新的焦点。曾经在游戏中普遍使用，也是游戏中AI决策的主要方案的行为树，已经显得乏力。当游戏开发者希望实现更为复杂的AI行为时，例如处理突发情况，行为树已经无法满足。因此，更为先进的AI技术——Utility AI，已经逐步取代行">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Unity Editor">
-<meta property="og:url" content="https://tyson-wu.github.io/blogs/2021/04/06/Unity-Editor/index.html">
+<meta property="og:title" content="Are Behavior Trees a Thing of the Past?">
+<meta property="og:url" content="https://tyson-wu.github.io/blogs/2021/06/16/Are-Behavior-Trees-a-Thing-of-the-Past/index.html">
 <meta property="og:site_name" content="TysonWu&#39;s Blog">
-<meta property="og:description" content="获取当前选择的目录12345678910111213141516public static string GetCurrentAssetDirectory()&amp;#123;	foreach(var obj in Selection.GetFiltered&lt;Object&gt;(SelectionMode.Assets))	&amp;#123;		var path &#x3D; AssetDataBas">
+<meta property="og:description" content="原文：Are Behavior Trees a Thing of the Past? 介绍基于游戏沉浸感、以及和NPC智能交互的需求，游戏开发者在游戏中使用的AI技术成为了新的焦点。曾经在游戏中普遍使用，也是游戏中AI决策的主要方案的行为树，已经显得乏力。当游戏开发者希望实现更为复杂的AI行为时，例如处理突发情况，行为树已经无法满足。因此，更为先进的AI技术——Utility AI，已经逐步取代行">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-04-06T02:01:00.000Z">
+<meta property="og:image" content="https://gamasutra.com/db_area/images/blog/apexgametools05.png">
+<meta property="og:image" content="https://gamasutra.com/db_area/images/blog/apexgametools011.png">
+<meta property="og:image" content="https://gamasutra.com/db_area/images/blog/271188/image02.png">
+<meta property="og:image" content="https://gamasutra.com/db_area/images/blog/271188/apexgametools00.png">
+<meta property="article:published_time" content="2021-06-16T07:01:00.000Z">
 <meta property="article:modified_time" content="2021-06-17T11:12:22.112Z">
 <meta property="article:author" content="Tyson Wu">
-<meta property="article:tag" content="Unity">
-<meta property="article:tag" content="Editor">
+<meta property="article:tag" content="行为树">
+<meta property="article:tag" content="Behavior Trees">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gamasutra.com/db_area/images/blog/apexgametools05.png">
 
-<link rel="canonical" href="https://tyson-wu.github.io/blogs/2021/04/06/Unity-Editor/">
+<link rel="canonical" href="https://tyson-wu.github.io/blogs/2021/06/16/Are-Behavior-Trees-a-Thing-of-the-Past/">
 
 
 <script id="page-configurations">
@@ -47,7 +52,7 @@
   };
 </script>
 
-  <title>Unity Editor | TysonWu's Blog</title>
+  <title>Are Behavior Trees a Thing of the Past? | TysonWu's Blog</title>
   
 
 
@@ -168,7 +173,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/04/06/Unity-Editor/">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/06/16/Are-Behavior-Trees-a-Thing-of-the-Past/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/blogs/images/avatar.png">
@@ -181,7 +186,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Unity Editor
+          Are Behavior Trees a Thing of the Past?
         </h1>
 
         <div class="post-meta">
@@ -191,7 +196,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-04-06 10:01:00" itemprop="dateCreated datePublished" datetime="2021-04-06T10:01:00+08:00">2021-04-06</time>
+              <time title="创建时间：2021-06-16 15:01:00" itemprop="dateCreated datePublished" datetime="2021-06-16T15:01:00+08:00">2021-06-16</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -206,11 +211,11 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                  <a href="/blogs/categories/%E7%BF%BB%E8%AF%91/" itemprop="url" rel="index"><span itemprop="name">翻译</span></a>
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Editor/" itemprop="url" rel="index"><span itemprop="name">Editor</span></a>
+                  <a href="/blogs/categories/%E7%BF%BB%E8%AF%91/%E8%A1%8C%E4%B8%BA%E6%A0%91/" itemprop="url" rel="index"><span itemprop="name">行为树</span></a>
                 </span>
             </span>
 
@@ -225,9 +230,23 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="获取当前选择的目录"><a href="#获取当前选择的目录" class="headerlink" title="获取当前选择的目录"></a>获取当前选择的目录</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public static string GetCurrentAssetDirectory()</span><br><span class="line">&#123;</span><br><span class="line">	foreach(var obj in Selection.GetFiltered&lt;Object&gt;(SelectionMode.Assets))</span><br><span class="line">	&#123;</span><br><span class="line">		var path &#x3D; AssetDataBase.GetAssetPath(obj);</span><br><span class="line">		if(string.IsNullOrEmpty(path))</span><br><span class="line">		&#123;</span><br><span class="line">			return path;</span><br><span class="line">		&#125;</span><br><span class="line">		else if(System.IO.File.Exists(path))</span><br><span class="line">		&#123;</span><br><span class="line">			return System.IO.Path.GetDirectory(path);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	return &quot;Assets&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="创建hlsl脚本"><a href="#创建hlsl脚本" class="headerlink" title="创建hlsl脚本"></a>创建hlsl脚本</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">public static class AssetsMenu</span><br><span class="line">&#123;</span><br><span class="line">	[MenuItem(&quot;Assets&#x2F;Create HLSL&quot;)]</span><br><span class="line">	public static void CreateHLSL()</span><br><span class="line">	&#123;</span><br><span class="line">		&#x2F;&#x2F;string projectPath &#x3D; Path.GetDirectoryName(Application.dataPath);</span><br><span class="line">		</span><br><span class="line">		string assetPath &#x3D; Path.Combine(GetCurrentAssetDirectory(), &quot;temp.hlsl&quot;);</span><br><span class="line">		assetPath &#x3D; AssetDataBase.generateuniqueAssetPath(assetPath);</span><br><span class="line">		</span><br><span class="line">		AssetDataBase.CreateAsset(new TextAsset(&quot;--&quot;, assetPath);</span><br><span class="line">		File.WriteAllText(assetPath, &quot;&quot;); &#x2F;&#x2F; clean</span><br><span class="line">		</span><br><span class="line">		AssetDataBase.SaveAssets();</span><br><span class="line">		AssetDataBase.Refresh();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <p>原文：<br><a target="_blank" rel="noopener" href="https://www.gamasutra.com/blogs/JakobRasmussen/20160427/271188/Are_Behavior_Trees_a_Thing_of_the_Past.php">Are Behavior Trees a Thing of the Past?</a></p>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>基于游戏沉浸感、以及和NPC智能交互的需求，游戏开发者在游戏中使用的AI技术成为了新的焦点。曾经在游戏中普遍使用，也是游戏中AI决策的主要方案的行为树，已经显得乏力。当游戏开发者希望实现更为复杂的AI行为时，例如处理突发情况，行为树已经无法满足。因此，更为先进的AI技术——Utility AI，已经逐步取代行为树的位置，开始在游戏中展现出更为优越的AI性能，开启一个新的游戏AI时代。</p>
+<h2 id="行为树是如何屹立游戏AI界（以及它的衰落）"><a href="#行为树是如何屹立游戏AI界（以及它的衰落）" class="headerlink" title="行为树是如何屹立游戏AI界（以及它的衰落）"></a>行为树是如何屹立游戏AI界（以及它的衰落）</h2><p>大多数AI开发者都知道有限状态机（FSM）是一种简单且实用AI方法。通过简单地定义状态、以及状态之间切换的条件，然后可以基于决策实现无限循环的AI行为。例如，FSM将持续保持某种状态，直到满足某种条件，才会从一种状态切换到另一种状态。</p>
+<p>任何两个状态之间都可以在特定条件下实现切换，很容易设计FSM来实现AI行为。但是，有利也有弊。在一些大型游戏中，构建FSM需要上百个状态，这么多的状态导致异常分析变的非常困难。Damian Isla在2005 GDC论坛中针对Halo 2的AI系统，详细的指出了这一点。<br><img src="https://gamasutra.com/db_area/images/blog/apexgametools05.png"></p>
+<p>为了解决这些问题，FSM进一步演化出层级结构，使得它易于设计和异常分析。分层结构使得FSM能够更好的处理大量的状态，但是并没有从根本上解决这个问题，当状态数量进一步增加时，FSM依然会变得难以管理。<br><img src="https://gamasutra.com/db_area/images/blog/apexgametools011.png"></p>
+<p>最终，在这种层级组织的思想上，进一步演化出任务组织的树状结构——行为树。和状态机一样，行为树也是由多个状态节点组成，同一时刻只占据一种状态。不同的是，状态机中，任意两个状态之间的跳转都需要单独配置跳转条件，而行为树则是将这些跳转条件进行拆分，这些拆分后的最小条件单元称为条件装饰器。状态机中的跳转仅仅是对当前状态中的条件进行判断，如果满足条件则跳转，而行为树是从根节点开始，定时进行条件遍历，每经过一个装饰器，会进行次条件判断，然后选择不同的状态分支，以此类推。如果最终筛选出的状态和当前状态不同，那么执行状态跳转。因此，行为树解决了FSM中存在的很多问题，例如，FSM中可能发生条件满足却没有跳转的情况，或者其他跳转异常。在Unreal引擎中就实现了一套非常不错的行为树机制。<br><img src="https://gamasutra.com/db_area/images/blog/271188/image02.png"></p>
+<p>相较于层级FSM，行为树能够实现更为复杂、同时容易理解的AI系统。并且这种树结构也便于实现可视化的异常分析。<br><img src="https://gamasutra.com/db_area/images/blog/271188/apexgametools00.png"></p>
+<p>然而，行为树也有很多缺陷。很多人试图通过实现各种扩展来消除这些缺陷。</p>
+<p>当行为树状态数量变得庞大时，每次条件遍历都需要花费大量的时间。因此，有人引入了子树方案，就是将整个行为树分割为多个嵌套的子树，每次条件遍历只需要遍历当前状态所处的子树就可以，这样可以减少遍历数量，只有满足特定条件，才能跳出子树。但是子树的存在，导致行为树在控制、异常处理方便，变得和FSM一样复杂。</p>
+<h2 id="顶级的AI需要满足什么条件"><a href="#顶级的AI需要满足什么条件" class="headerlink" title="顶级的AI需要满足什么条件"></a>顶级的AI需要满足什么条件</h2><p>这需要我们重新回顾一下顶级AI的特性。</p>
+<p>顶级AI需要具备更为复杂的、更深层次的、沉浸式的游戏世界的处理能力。例如在《Hitman》、《Witcher》、《Assassin’s Creed》中，NPC的数量、定制化数量、生活化的行为数量都变得越来越多。在《Call of Duty》、《The Division》中，对手的数量、以及深度的要求，可变且复杂的策略行为爆炸式的增长。静态的、脚本化的游戏设计不再适用，需要支持动态的、甚至可演化的场景来满足当下的游戏设计。</p>
+<p>这依赖于易于设计的、具有复杂行为表达能力的AI机制。例如，这样的AI能够提高突发处理能力，能够应对游戏设计者未曾预料的场景，能够像人类一样表达更为复杂的行为模式。</p>
+<p>以上提到AI技术显然无法处理更为庞大的数据输入。AI设计者不可能使用行为树、或状态机来表示所有可能的情况。更别说设计一套保证AI正常使用的测试用例。因此，我们需要一种更好、且更稳定的AI技术。</p>
+<p>处理复杂的行为可能是AI中主要的挑战。在游戏开发中的，有很多问题是由于数据量增加、而AI处理能力不足导致的。</p>
+<p>1、 技术性遗留问题 - 如果在游戏开发过程中，扩展AI的难度很大，那么后面需要修复的问题、以及所花费的时间将会暴增。<br>2、 生产效率 - 如果不能快速实现满足游戏设计方案的AI系统，那么游戏设计者无法快速原型化其思路。最终结果是游戏缺乏内容，或者内容偏向程序化、没有趣味性。<br>3、 质量 - 最终很多游戏只能放弃、或者最终只是实现无聊的智障游戏。</p>
+<h2 id="一个新的AI范例"><a href="#一个新的AI范例" class="headerlink" title="一个新的AI范例"></a>一个新的AI范例</h2><p>Killzone 2 就具有非常棒的AI设计。Guerilla 游戏使用了一个AI公共系统来实现动态决策，并且展示了如何使用简单的打分系统来实现AI决策，即便是在对游戏世界不了解的情况下，该AI决策系统也能达到一个良好的效果。同样的系统已经使用在其他游戏，例如《文明》。</p>
+<p>这种公共系统实现方式是，识别可选项，然后基于当前状态，对每一种选项进行打分，然后选出评分最高的选项最为决策项。这种方案具有很多优势：<br>1、设计简单 -<br>2、易于扩展 -<br>3、质量高 - </p>
 
     </div>
 
@@ -237,8 +256,8 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/blogs/tags/Unity/" rel="tag"># Unity</a>
-              <a href="/blogs/tags/Editor/" rel="tag"># Editor</a>
+              <a href="/blogs/tags/%E8%A1%8C%E4%B8%BA%E6%A0%91/" rel="tag"># 行为树</a>
+              <a href="/blogs/tags/Behavior-Trees/" rel="tag"># Behavior Trees</a>
           </div>
 
         
@@ -247,13 +266,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/blogs/2021/01/30/EmmyLua-for-IntelliJ-IDEA/" rel="prev" title="EmmyLua 的使用方法">
-      <i class="fa fa-chevron-left"></i> EmmyLua 的使用方法
+    <a href="/blogs/2021/06/05/InfinitMap/" rel="prev" title="InfinitMap">
+      <i class="fa fa-chevron-left"></i> InfinitMap
     </a></div>
-      <div class="post-nav-item">
-    <a href="/blogs/2021/04/06/URP_Render_1/" rel="next" title="URP 学习总结1">
-      URP 学习总结1 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -312,7 +328,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E9%80%89%E6%8B%A9%E7%9A%84%E7%9B%AE%E5%BD%95"><span class="nav-number">1.</span> <span class="nav-text">获取当前选择的目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAhlsl%E8%84%9A%E6%9C%AC"><span class="nav-number">2.</span> <span class="nav-text">创建hlsl脚本</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A1%8C%E4%B8%BA%E6%A0%91%E6%98%AF%E5%A6%82%E4%BD%95%E5%B1%B9%E7%AB%8B%E6%B8%B8%E6%88%8FAI%E7%95%8C%EF%BC%88%E4%BB%A5%E5%8F%8A%E5%AE%83%E7%9A%84%E8%A1%B0%E8%90%BD%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">行为树是如何屹立游戏AI界（以及它的衰落）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%B6%E7%BA%A7%E7%9A%84AI%E9%9C%80%E8%A6%81%E6%BB%A1%E8%B6%B3%E4%BB%80%E4%B9%88%E6%9D%A1%E4%BB%B6"><span class="nav-number">3.</span> <span class="nav-text">顶级的AI需要满足什么条件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E6%96%B0%E7%9A%84AI%E8%8C%83%E4%BE%8B"><span class="nav-number">4.</span> <span class="nav-text">一个新的AI范例</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
