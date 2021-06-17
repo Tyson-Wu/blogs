@@ -11,6 +11,9 @@ date: 2021-05-27 17:01:34
 [欧拉公式 e^{i*k}=cos(k)+i*sin(k) 的来历是什么？](https://www.zhihu.com/question/21999356):欧拉公式;
 [线性方程组矩阵解法](https://www.shuxuele.com/algebra/systems-linear-equations-matrices.html):线性方程组矩阵解法;
 [判断线段是否相交并求交点](https://blog.csdn.net/leonardohaig/article/details/110881364):判断线段是否相交并求交点;
+[The ryg blog](https://fgiesen.wordpress.com/)
+[Circular Harmonics](https://bit-hack.net/2014/03/30/circular-harmonics/)
+
 
 ### Noise
 [Poisson Disk Sampling](http://devmag.org.za/2009/05/03/poisson-disk-sampling/):泊松采样；
@@ -84,6 +87,8 @@ date: 2021-05-27 17:01:34
 [turn based military strategy games](https://sourceforge.net/directory/?q=turn%20based%20military%20strategy%20games):搜索游戏；
 [Turn-Based ToolKit (TBTK)](http://assetstore.unitylover.com/unity_asset/turn-based-toolkit-tbtk/):子走棋；
 [Light baked Prefabs & other tips to get 60 fps on low-end phones](https://unity.com/how-to/advanced/optimize-lighting-mobile-games?_ga=2.238992768.1610235152.1617097265-1411223696.1612421527):tips from Michelle Martin, software engineer at MetalPop Games, on how to optimize games for a range of mobile devices, so you can reach as many potential players as possible;
+[Extinction Eclipse](https://tuanisapps.itch.io/extinction-eclipse)
+[Michael Ganzorig](https://manlaig.github.io/projects)
 
 ## Render
 
@@ -116,7 +121,14 @@ date: 2021-05-27 17:01:34
 ## AI
 
 [GPGOAP](https://github.com/stolk/GPGOAP):面向目标的行为规划；
+[Goal-Oriented Action Planning (GOAP)](http://alumni.media.mit.edu/~jorkin/goap.html)
 [ReGoap](https://github.com/luxkun/ReGoap):Generic C# GOAP (Goal Oriented Action Planning) library with Unity3d examples;
+[Curvature](https://github.com/apoch/curvature)
+[ReflexityAI](https://github.com/FBast/ReflexityAI)
+[UnrealUtilityAI](https://github.com/Jay2645/UnrealUtilityAI)
+[Goal Oriented Action Planning for a Smarter AI](https://gamedevelopment.tutsplus.com/tutorials/goal-oriented-action-planning-for-a-smarter-ai--cms-20793)
+[Goal Oriented Action Planning Instructions](https://cryscan.github.io/project-chen/update/2021/02/17/goal-oriented-action-planning.html)
+
 
 ## Data Struct
 
@@ -140,9 +152,15 @@ date: 2021-05-27 17:01:34
 
 ### AOI
 [Advanced uses of the MMORoom and MMO API](http://docs2x.smartfoxserver.com/AdvancedTopics/advanced-mmo-api)
+[ARTIFICIAL INTELLIGENCE FOR GAMES](http://lecturer.ukdw.ac.id/~mahas/dossier/gameng_AIFG.pdf)
 
 ### Fog
 [How To: Implement a Fog of War – Part 1 – Chunky](http://bobkoon.com/how-to-implement-a-fog-of-war-part-1-chunky/)
+[Lode Storm – Implementing classic fog of war](https://bit-hack.net/2013/07/27/lode-storm-implementing-classic-fog-of-war/)
+[fog-of-war](https://github.com/topics/fog-of-war)
+[Advanced Fog of War](https://wiki.roll20.net/Advanced_Fog_of_War)
+[Unreal Engine 4 Fog Of War Tutorial – Ready To Use](http://phungdinhthang.com/2016/12/12/unreal-engine-4-fog-of-war-tutorial/?i=1)
+[Fog Of War in Unity](https://github.com/manlaig/FogOfWar)
 
 ## Engine
 
@@ -187,3 +205,9 @@ date: 2021-05-27 17:01:34
 ### Papers
 [10 Best Turn-Based Strategy Games in 2021 for Master Tacticians](https://www.highgroundgaming.com/best-turn-based-strategy-games/):10 Best Turn-Based Strategy Games in 2021 for Master Tacticians;
 [壹种念头Unity blog](https://cloud.tencent.com/developer/column/88095)
+
+
+## Bing Map
+
+[MVP - Bing Maps : une année supplémentaire !](http://blogs.developpeur.org/nicoboo/default.aspx)
+[Geocoding and Routing improvements added to Bing Maps](https://rbrundritt.wordpress.com/)
