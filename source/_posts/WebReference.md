@@ -165,6 +165,9 @@ date: 2021-05-27 17:01:34
 ## Engine
 
 ### Unity
+[Unity合集](https://mailchi.mp/3f4a331f4255/issue-3803533?e=697c40775c)：非常丰富；
+[Awesome Unity Open Source on GitHub (800+)](https://github.com/baba-s/awesome-unity-open-source-on-github):一大包Unity技术合集，力荐；
+[Animation Texture Baker for Unity](https://github.com/sugi-cho/Animation-Texture-Baker):动画烘焙成贴图;
 [Unity Tutorials: How To Create Custom Editor Window](https://weeklyhow.com/unity-custom-editor-window/):Create Custom Editor Window;
 [Unity Editor Built-in Icons](https://unitylist.com/p/5c3/Unity-editor-icons):Unity version: 2020.1.0f1 Icons what can load using EditorGUIUtility.IconContent;
 [Universal Render Pipeline](https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@7.1/manual/universalrp-asset.html):URP;
@@ -205,7 +208,7 @@ date: 2021-05-27 17:01:34
 ### Papers
 [10 Best Turn-Based Strategy Games in 2021 for Master Tacticians](https://www.highgroundgaming.com/best-turn-based-strategy-games/):10 Best Turn-Based Strategy Games in 2021 for Master Tacticians;
 [壹种念头Unity blog](https://cloud.tencent.com/developer/column/88095)
-
+[收录些关于渲染相关的文章](https://zhuanlan.zhihu.com/p/266712908)
 
 ## Bing Map
 
