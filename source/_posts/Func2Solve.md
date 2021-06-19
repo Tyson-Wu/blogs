@@ -163,9 +163,3 @@ void Start()
         return rst;
     }
 ```
-相关链接：
-[Math Open Reference](https://mathopenref.com/coordintersection.html)
-[Polygon Clipping](https://sean.cm/a/polygon-clipping-pt1)
-[Barend's Blog](https://barendgehrels.blogspot.com/2010/12/intersections-1.html)
-[Concave Polygon Intersection - Algorithm](https://cs.stackexchange.com/questions/99927/concave-polygon-intersection-algorithm)
-[Euclidean Shortest Paths](https://fribbels.github.io/shortestpath/writeup.html)
