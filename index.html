@@ -163,6 +163,112 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/06/19/Func2Solve/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/06/19/Func2Solve/" class="post-title-link" itemprop="url">二次函数解析</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-06-19 15:01:00 / 修改时间：22:53:00" itemprop="dateCreated datePublished" datetime="2021-06-19T15:01:00+08:00">2021-06-19</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Math/" itemprop="url" rel="index"><span itemprop="name">Math</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Math/Function/" itemprop="url" rel="index"><span itemprop="name">Function</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>如下如所示，已知A、B两点坐标，以及二次函数顶点的y坐标，求解二次函数的方程式：<br><img src="/blogs/images/src/func.jpg"></p>
+<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>首先，假设二次函数方程为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a * x * x + b * x + c &#x3D; y   ------------- 1 </span><br></pre></td></tr></table></figure>
+<p>同时假设，A、B、P三个点的坐标分别为<code>(x1, y1)</code>、<code>(x2, y2)</code>、<code>(x3, y3)</code>，其中<code>x3</code>未知。<br>因为A、B、P三个点都在函数曲线上，所以三个点都满足方程：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a * x1 * x1 + b * x1 + c &#x3D; y1   ------------- 2</span><br><span class="line">a * x2 * x2 + b * x2 + c &#x3D; y2   ------------- 3</span><br><span class="line">a * x3 * x3 + b * x3 + c &#x3D; y3   ------------- 4</span><br></pre></td></tr></table></figure>
+<p>将上面的式子2减去式3得到<code>式子5</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a * (x1 * x1 - x2 * x2)+ b * (x1 – x2) &#x3D; y1 – y2   ------------- 5</span><br></pre></td></tr></table></figure>
+<p><code>式子5</code>中消去参数c，只有a、b两个参数。将b用a表示，得：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">b &#x3D; ((y1 – y2) – a * (x1 * x1 – x2 * x2))&#x2F;(x1 – x2) </span><br><span class="line"> &#x3D; (y1 – y2)&#x2F;(x1 – x2) – a * (x1 * x1 – x2 * x2)&#x2F;(x1 – x2) ------------- 6</span><br></pre></td></tr></table></figure>
+<p>又因为:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">x1 * x1 – x2 * x2 &#x3D; (x1 + x2) * (x1 – x2) ------------- 7</span><br></pre></td></tr></table></figure>
+<p>所以：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">b &#x3D; (y1 – y2)&#x2F;(x1 – x2) – a * (x1 + x2) ------------- 8</span><br></pre></td></tr></table></figure>
+<p>令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">m &#x3D; (y1 – y2) &#x2F; (x1 – x2)</span><br><span class="line">n &#x3D; x1 + x2</span><br></pre></td></tr></table></figure>
+<p>所以：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">b &#x3D; m – a * n------------- 9</span><br></pre></td></tr></table></figure>
+<p>因为二次函数的顶点坐标为(-b/(2a), (4ac-b*b)/(4a))，这一点可以查百度。因此：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x3 &#x3D; -b&#x2F;(2a) ------------- 10</span><br><span class="line">y3 &#x3D; (4ac – b*b)&#x2F;(4a)</span><br></pre></td></tr></table></figure>
+<p>所以：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c &#x3D; y3 + b * b &#x2F;(4 a)------------- 11</span><br></pre></td></tr></table></figure>
+
+<p>=================================分段线=======================<br>将<code>式9、10</code>代入<code>式2</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">y1 – y3 &#x3D; a * x1 * x1 + (m – a * n) + (m –a * n) *(m –a * n)&#x2F;(4a)</span><br></pre></td></tr></table></figure>
+<p>化简得：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(4 * x1 * x1 – 4 * n * x1 + n * n) * a * a </span><br><span class="line">   + (4 * m * x1 – 2 * m * n – 4 * (y1 – y3)) * a</span><br><span class="line">     + m * m &#x3D; 0--------------12</span><br></pre></td></tr></table></figure>
+<p><code>式子12</code>是关于a的二次方程<br>假设：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">A1 &#x3D; 4 * x1 * x1 – 4 * n * x1 + n * n</span><br><span class="line">B1 &#x3D; 4 * m * x1 – 2 * m * n – 4 * (y1 – y3)</span><br><span class="line">C1 &#x3D; m * m</span><br></pre></td></tr></table></figure>
+<p>那么<code>式12</code>可以写成：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">A1 * a * a + B1 * b + C1 &#x3D; 0--------------13</span><br></pre></td></tr></table></figure>
+<p>二次方程的有两个根：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a1 &#x3D; -(B1 + sqrt(4A1C1 – B1 * B1))&#x2F;(2* A1)</span><br><span class="line">a2 &#x3D; -(B1 - sqrt(4A1C1 – B1 * B1))&#x2F;(2* A1)</span><br></pre></td></tr></table></figure>
+<p>这里可以取a1、a2中的任意一个作为a的值<br>根据式8可以计算b<br>根据式11可以计算c<br>根据式10可以计算x3<br>从上面分段线开始，是基于<code>式2</code>计算所有的参数，也就是基于点<code>(x1, y1)</code>，我们也可以基于<code>式3</code>进行计算，也就是基于点<code>(x2,y2)</code>，但是计算出的结果都是一致的</p>
+<h2 id="实现源码"><a href="#实现源码" class="headerlink" title="实现源码"></a>实现源码</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">void Start()</span><br><span class="line">    &#123;</span><br><span class="line">        float x1 &#x3D; 1.3245f;</span><br><span class="line">        float y1 &#x3D; 0.342f;</span><br><span class="line">        float x2 &#x3D; 11.24f;</span><br><span class="line">        float y2 &#x3D; 6.324f;</span><br><span class="line">        float y3 &#x3D; -8.213f;</span><br><span class="line">        if(Solve(x1, y1, x2, y2, y3, out var x3, out var a, out var b, out var c))</span><br><span class="line">        &#123;</span><br><span class="line">            Debug.LogError(string.Format(&quot;&#123;0&#125; &#x3D;&#x3D; &#123;1&#125;&quot;, y1, func(a, b, c, x1)));</span><br><span class="line">            Debug.LogError(string.Format(&quot;&#123;0&#125; &#x3D;&#x3D; &#123;1&#125;&quot;, y2, func(a, b, c, x2)));</span><br><span class="line">            Debug.LogError(string.Format(&quot;&#123;0&#125; &#x3D;&#x3D; &#123;1&#125;&quot;, y3, func(a, b, c, x3)));</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">            Debug.LogError(&quot;error&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    float func(float a, float b, float c, float x)</span><br><span class="line">    &#123;</span><br><span class="line">        return a * x * x + b * x + c;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; a * x * x + b * x + c &#x3D; y</span><br><span class="line">    bool Solve(float x1, float y1, float x2, float y2, float y3, out float x3, out float a, out float b, out float c)</span><br><span class="line">    &#123;</span><br><span class="line">        float eps &#x3D; 0.00001f;</span><br><span class="line">        bool rst &#x3D; true;</span><br><span class="line">        float m, n;</span><br><span class="line">        m &#x3D; (y1 - y2) &#x2F; (x1 - x2);</span><br><span class="line">        n &#x3D; x1 + x2;</span><br><span class="line"></span><br><span class="line">        float A1, B1, C1;</span><br><span class="line">        A1 &#x3D; 4 * x1 * x1 - 4 * n * x1 + n * n;</span><br><span class="line">        B1 &#x3D; 4 * m * x1 - 2 * m * n - 4 * (y1 - y3);</span><br><span class="line">        C1 &#x3D; m * m;</span><br><span class="line"></span><br><span class="line">        float A2, B2, C2;</span><br><span class="line">        A2 &#x3D; 4 * x2 * x2 - 4 * n * x2 + n * n;</span><br><span class="line">        B2 &#x3D; 4 * m * x2 - 2 * m * n - 4 * (y2 - y3);</span><br><span class="line">        C2 &#x3D; m * m;</span><br><span class="line"></span><br><span class="line">        float a1_1, a1_2;</span><br><span class="line">        a1_1 &#x3D; -(B1 + Mathf.Sqrt(B1 * B1 - 4 * A1 * C1)) &#x2F; (2 * A1);</span><br><span class="line">        a1_2 &#x3D; -(B1 - Mathf.Sqrt(B1 * B1 - 4 * A1 * C1)) &#x2F; (2 * A1);</span><br><span class="line">        float a2_1, a2_2;</span><br><span class="line">        a2_1 &#x3D; -(B2 + Mathf.Sqrt(B2 * B2 - 4 * A2 * C2)) &#x2F; (2 * A2);</span><br><span class="line">        a2_2 &#x3D; -(B2 - Mathf.Sqrt(B2 * B2 - 4 * A2 * C2)) &#x2F; (2 * A2);</span><br><span class="line"></span><br><span class="line">        if (Mathf.Abs(a1_1 - a2_1)&lt; eps)</span><br><span class="line">        &#123;</span><br><span class="line">            a &#x3D; a1_1;</span><br><span class="line">        &#125;</span><br><span class="line">        else if (Mathf.Abs(a1_2 - a2_2) &lt; eps)</span><br><span class="line">        &#123;</span><br><span class="line">            a &#x3D; a1_2;</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">            a &#x3D; 1;</span><br><span class="line">            rst &#x3D; false;</span><br><span class="line">        &#125;</span><br><span class="line">        b &#x3D; m - a * n;</span><br><span class="line">        c &#x3D; y3 + b * b &#x2F; (4 * a);</span><br><span class="line">        x3 &#x3D; - b &#x2F; (2 * a);</span><br><span class="line">        return rst;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>相关链接：<br><a target="_blank" rel="noopener" href="https://mathopenref.com/coordintersection.html">Math Open Reference</a><br><a target="_blank" rel="noopener" href="https://sean.cm/a/polygon-clipping-pt1">Polygon Clipping</a><br><a target="_blank" rel="noopener" href="https://barendgehrels.blogspot.com/2010/12/intersections-1.html">Barend’s Blog</a><br><a target="_blank" rel="noopener" href="https://cs.stackexchange.com/questions/99927/concave-polygon-intersection-algorithm">Concave Polygon Intersection - Algorithm</a><br><a target="_blank" rel="noopener" href="https://fribbels.github.io/shortestpath/writeup.html">Euclidean Shortest Paths</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/06/16/Are-Behavior-Trees-a-Thing-of-the-Past/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -194,7 +300,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-18 18:54:19" itemprop="dateModified" datetime="2021-06-18T18:54:19+08:00">2021-06-18</time>
+                <time title="修改时间：2021-06-19 22:53:00" itemprop="dateModified" datetime="2021-06-19T22:53:00+08:00">2021-06-19</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -288,7 +394,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-18 18:54:19" itemprop="dateModified" datetime="2021-06-18T18:54:19+08:00">2021-06-18</time>
+                <time title="修改时间：2021-06-19 22:53:00" itemprop="dateModified" datetime="2021-06-19T22:53:00+08:00">2021-06-19</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -368,7 +474,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-18 18:54:19" itemprop="dateModified" datetime="2021-06-18T18:54:19+08:00">2021-06-18</time>
+                <time title="修改时间：2021-06-19 22:53:00" itemprop="dateModified" datetime="2021-06-19T22:53:00+08:00">2021-06-19</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -452,7 +558,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-18 18:54:19" itemprop="dateModified" datetime="2021-06-18T18:54:19+08:00">2021-06-18</time>
+                <time title="修改时间：2021-06-19 22:53:00" itemprop="dateModified" datetime="2021-06-19T22:53:00+08:00">2021-06-19</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -543,7 +649,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-18 18:54:19" itemprop="dateModified" datetime="2021-06-18T18:54:19+08:00">2021-06-18</time>
+                <time title="修改时间：2021-06-19 22:53:00" itemprop="dateModified" datetime="2021-06-19T22:53:00+08:00">2021-06-19</time>
               </span>
 
           
@@ -630,7 +736,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-18 18:54:19" itemprop="dateModified" datetime="2021-06-18T18:54:19+08:00">2021-06-18</time>
+                <time title="修改时间：2021-06-19 22:53:00" itemprop="dateModified" datetime="2021-06-19T22:53:00+08:00">2021-06-19</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -710,7 +816,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-18 18:54:19" itemprop="dateModified" datetime="2021-06-18T18:54:19+08:00">2021-06-18</time>
+                <time title="修改时间：2021-06-19 22:53:00" itemprop="dateModified" datetime="2021-06-19T22:53:00+08:00">2021-06-19</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -800,7 +906,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-18 18:54:19" itemprop="dateModified" datetime="2021-06-18T18:54:19+08:00">2021-06-18</time>
+                <time title="修改时间：2021-06-19 22:53:00" itemprop="dateModified" datetime="2021-06-19T22:53:00+08:00">2021-06-19</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -885,7 +991,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-18 18:54:19" itemprop="dateModified" datetime="2021-06-18T18:54:19+08:00">2021-06-18</time>
+                <time title="修改时间：2021-06-19 22:53:00" itemprop="dateModified" datetime="2021-06-19T22:53:00+08:00">2021-06-19</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -915,155 +1021,6 @@
           <h2 id="获取当前选择的目录"><a href="#获取当前选择的目录" class="headerlink" title="获取当前选择的目录"></a>获取当前选择的目录</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public static string GetCurrentAssetDirectory()</span><br><span class="line">&#123;</span><br><span class="line">	foreach(var obj in Selection.GetFiltered&lt;Object&gt;(SelectionMode.Assets))</span><br><span class="line">	&#123;</span><br><span class="line">		var path &#x3D; AssetDataBase.GetAssetPath(obj);</span><br><span class="line">		if(string.IsNullOrEmpty(path))</span><br><span class="line">		&#123;</span><br><span class="line">			return path;</span><br><span class="line">		&#125;</span><br><span class="line">		else if(System.IO.File.Exists(path))</span><br><span class="line">		&#123;</span><br><span class="line">			return System.IO.Path.GetDirectory(path);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	return &quot;Assets&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="创建hlsl脚本"><a href="#创建hlsl脚本" class="headerlink" title="创建hlsl脚本"></a>创建hlsl脚本</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">public static class AssetsMenu</span><br><span class="line">&#123;</span><br><span class="line">	[MenuItem(&quot;Assets&#x2F;Create HLSL&quot;)]</span><br><span class="line">	public static void CreateHLSL()</span><br><span class="line">	&#123;</span><br><span class="line">		&#x2F;&#x2F;string projectPath &#x3D; Path.GetDirectoryName(Application.dataPath);</span><br><span class="line">		</span><br><span class="line">		string assetPath &#x3D; Path.Combine(GetCurrentAssetDirectory(), &quot;temp.hlsl&quot;);</span><br><span class="line">		assetPath &#x3D; AssetDataBase.generateuniqueAssetPath(assetPath);</span><br><span class="line">		</span><br><span class="line">		AssetDataBase.CreateAsset(new TextAsset(&quot;--&quot;, assetPath);</span><br><span class="line">		File.WriteAllText(assetPath, &quot;&quot;); &#x2F;&#x2F; clean</span><br><span class="line">		</span><br><span class="line">		AssetDataBase.SaveAssets();</span><br><span class="line">		AssetDataBase.Refresh();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/01/30/EmmyLua-for-IntelliJ-IDEA/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2021/01/30/EmmyLua-for-IntelliJ-IDEA/" class="post-title-link" itemprop="url">EmmyLua 的使用方法</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-01-30 10:38:34" itemprop="dateCreated datePublished" datetime="2021-01-30T10:38:34+08:00">2021-01-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-18 18:54:19" itemprop="dateModified" datetime="2021-06-18T18:54:19+08:00">2021-06-18</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Lua/" itemprop="url" rel="index"><span itemprop="name">Lua</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Lua/EmmyLua/" itemprop="url" rel="index"><span itemprop="name">EmmyLua</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>EmmyLua是Jetbrains IDE的一个插件，它提供了一套注解的语法，可以帮助IDE进行代码之间索引跳转，以及变量名称提示等功能。总而言之，EmmyLua是丰富IDE的功能，和实际的代码没有关系，IDE的跳转也只是限于注释之间。</p>
-<h2 id="类的声明"><a href="#类的声明" class="headerlink" title="类的声明"></a>类的声明</h2><p>EmmyLua使用@class来模拟面向对象编程，支持继承和属性</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">--- my supper class</span><br><span class="line">---@class Transport</span><br><span class="line">local p &#x3D; Class()</span><br><span class="line"></span><br><span class="line">--- 子类</span><br><span class="line">---@class Car : Transport</span><br><span class="line">local cls &#x3D; Class(p)</span><br><span class="line">function c:test()</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
-<p>其格式如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">--@class my_type[: parent_type] [@comment]</span><br></pre></td></tr></table></figure>
-<p>举个例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">---@class Car : Transport @define class Car extends Transport</span><br><span class="line">local cls &#x3D; class()</span><br><span class="line">function clas:test()</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
-<p>上面定义了一个Car类，我们可以使用@type Car来表明某个变量属于Car类</p>
-<h2 id="变量的声明"><a href="#变量的声明" class="headerlink" title="变量的声明"></a>变量的声明</h2><p>使用<code>@type</code>可以指明某个变量的类型</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">---@type Car</span><br><span class="line">local car1 &#x3D; getCar()</span><br><span class="line">---@type Car</span><br><span class="line">global_car &#x3D; getCar()</span><br><span class="line">global_car:test()</span><br></pre></td></tr></table></figure>
-<p>其格式如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@type my_type[|other_type] [@comment]</span><br></pre></td></tr></table></figure>
-<p>举个例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">---@type Car @instance of car</span><br><span class="line">local car1 &#x3D; &#123;&#125;</span><br><span class="line"></span><br><span class="line">---@type Car|Ship @transport tools, car or ship. Since lua is dynamic-typed, a variable may be of different types</span><br><span class="line">---use | to list all possible types</span><br><span class="line">local transport &#x3D; &#123;&#125;</span><br><span class="line"></span><br><span class="line">---@type Car @global variable type</span><br><span class="line">global_car &#x3D; &#123;&#125;</span><br><span class="line"></span><br><span class="line">local obj &#x3D; &#123;&#125;</span><br><span class="line">---@type Car @property type</span><br><span class="line">obj.car &#x3D; getCar()</span><br></pre></td></tr></table></figure>
-
-<h2 id="别名注释"><a href="#别名注释" class="headerlink" title="别名注释"></a>别名注释</h2><p>使用<code>@alias</code>将一些复杂不容易输入的类型注册为新的容易输入的类型<br>其格式如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@alias new_name type</span><br></pre></td></tr></table></figure>
-<p>举个例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">---@alias Handler fun( type: string, data: any):void</span><br><span class="line">---@param handler Handler</span><br><span class="line">function addHandler(handler)</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
-
-<h2 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h2><p>使用<code>@param</code>来指定函数的参数类型<br>其格式如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@param param_name my_type[|other_type] [@comment]</span><br></pre></td></tr></table></figure>
-<p>举个例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">---@param car Car</span><br><span class="line">local function setCar(car)</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">---@param car Car</span><br><span class="line">setCallback(function(car)</span><br><span class="line">end)</span><br><span class="line"></span><br><span class="line">---@param car Car</span><br><span class="line">for k, car in pairs(list) do</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
-
-<h2 id="函数返回值类型说明"><a href="#函数返回值类型说明" class="headerlink" title="函数返回值类型说明"></a>函数返回值类型说明</h2><p>其格式如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@return my_type[|other_type] [@comment]</span><br></pre></td></tr></table></figure>
-<p>举个例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">---@return Car|Ship</span><br><span class="line">local function crate()</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">---here car_or_ship doesn&#39;t need @type annotation, EmmyLua has already inferred the type via &quot;create&quot; function</span><br><span class="line">local car_or_ship &#x3D; create()</span><br><span class="line"></span><br><span class="line">---@return Car</span><br><span class="line">function factory:create()</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
-
-<h2 id="属性声明"><a href="#属性声明" class="headerlink" title="属性声明"></a>属性声明</h2><p>使用<code>@field</code>可以标明类所具有的属性，即使类中没有使用到这个属性<br>其格式如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@field [public|protected|private] field_name field_type[|other_type] [@comment]</span><br></pre></td></tr></table></figure>
-<p>举个例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">---@class Car</span><br><span class="line">---@field public name string @add name field to class Car, you&#39;ll see it in code completion</span><br><span class="line">local cls &#x3D; class()</span><br></pre></td></tr></table></figure>
-
-<h2 id="泛型声明"><a href="#泛型声明" class="headerlink" title="泛型声明"></a>泛型声明</h2><p>使用<code>@generic</code>来模拟一些高级语言的泛型<br>其格式如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@generic T1 [: parent_type] [, T2 [: parent_type]]</span><br></pre></td></tr></table></figure>
-<p>举个例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">---@generic T : Transport, K</span><br><span class="line">---@param param1 T</span><br><span class="line">---@param param2 K</span><br><span class="line">---@return T</span><br><span class="line">local function test(param1, param2)</span><br><span class="line">	-- todo</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">---@type Car</span><br><span class="line">local car &#x3D; ...</span><br><span class="line">local value &#x3D; test(car)</span><br></pre></td></tr></table></figure>
-<p>这里说明一下，上面的<code>T</code>和<code>K</code>都是类型，只不过<code>T</code>是继承自<code>Transport</code>的一种类型，而<code>K</code>可以是任何类型。<br>然后<code>param1</code>是类型<code>T</code>的实例</p>
-<h2 id="不定参数的注释"><a href="#不定参数的注释" class="headerlink" title="不定参数的注释"></a>不定参数的注释</h2><p>使用<code>@vararg</code>注解函数不定参数部分<br>其格式如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@vararg type</span><br></pre></td></tr></table></figure>
-<p>举个例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">---@vararg string</span><br><span class="line">---@return string</span><br><span class="line">local function format(...)</span><br><span class="line">	local tbl &#x3D; &#123;...&#125; --inferred as string[]</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
-
-<h2 id="嵌入其他语言"><a href="#嵌入其他语言" class="headerlink" title="嵌入其他语言"></a>嵌入其他语言</h2><p>使用<code>@language</code>可以在lua代码中嵌入其他语言<br>其格式如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@language language_id</span><br></pre></td></tr></table></figure>
-<p>举个例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">---@language JSON</span><br><span class="line">local jsonText &#x3D; [[&#123;</span><br><span class="line">	&quot;name&quot;:&quot;Emmy&quot;</span><br><span class="line">	&#125;]]</span><br></pre></td></tr></table></figure>
-
-<h2 id="数组类型声明"><a href="#数组类型声明" class="headerlink" title="数组类型声明"></a>数组类型声明</h2><p>使用<code>@type mytype[]</code>可以指定变量类型为数组<br>其格式如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@type my_type[]</span><br></pre></td></tr></table></figure>
-<p>举个例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">---@type Car[]</span><br><span class="line">local list &#x3D; &#123;&#125;</span><br><span class="line">local car &#x3D; list[1]</span><br><span class="line">-- car, and you &#39;ll see completion</span><br><span class="line"></span><br><span class="line">for i, car in pairs(list) do</span><br><span class="line">	-- car. and you&#39;ll see completion</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
-
-<h2 id="table类型声明"><a href="#table类型声明" class="headerlink" title="table类型声明"></a>table类型声明</h2><p>使用<code>@type table</code>可以表示某变量为表格类型<br>其格式如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@type table&lt;key_type, value_type&gt;</span><br></pre></td></tr></table></figure>
-<p>举个例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">---@type table&lt;string, Car&gt;</span><br><span class="line">local dict &#x3D; &#123;&#125;</span><br><span class="line">local car &#x3D; dict[&#39;key&#39;]</span><br><span class="line">-- car. and you&#39;ll see completion</span><br><span class="line">for key, car in pairs(dict) do</span><br><span class="line">	-- car. and you&#39;ll see completion</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
-
-<h2 id="函数声明"><a href="#函数声明" class="headerlink" title="函数声明"></a>函数声明</h2><p>使用<code>fun(param:my_type):return_type</code>来表示函数类型变量<br>其格式如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@type fun(param:my_type):return_type</span><br></pre></td></tr></table></figure>
-<p>举个例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@type fun(key:string):Car</span><br><span class="line">local carCreatorFn1</span><br><span class="line"></span><br><span class="line">local car &#x3D; carCreatorFn1(&#39;key&#39;)</span><br><span class="line">-- car. and you see code completion</span><br><span class="line"></span><br><span class="line">---@type fun():Car[]</span><br><span class="line">local carCreatorFn2</span><br><span class="line"></span><br><span class="line">for i, car in pairs(carCreatorFn2()) do</span><br><span class="line">	-- car. and you see completion</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
-
-<h2 id="字面常量类型声明"><a href="#字面常量类型声明" class="headerlink" title="字面常量类型声明"></a>字面常量类型声明</h2><p>字面常量也可以指定特定字符串来作为代码提示，结合别名，可以起到类似于枚举的效果<br>举个例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">---@alias Handler fun(type: string, data: any): void</span><br><span class="line"></span><br><span class="line">---@param event string | &quot;&#39;onClised&#39;&quot; | &quot;&#39;onData&#39;&quot;</span><br><span class="line">---@param handler Handler | &quot;function(type, data) print(data) end&quot;</span><br><span class="line">function addEventListener(event, handler)</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
-<p>上面的写法还是比较复杂，我们可以用<code>@alias</code>再简化一下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">---@alias Handler fun(type: string, data: any): void</span><br><span class="line">---@alias IOEventEnum string | &quot;&#39;onClised&#39;&quot; | &quot;&#39;onData&#39;&quot;</span><br><span class="line">---@param event IOEventEnum</span><br><span class="line">---@param handler Handler | &quot;function(type, data) print(data) end&quot;</span><br><span class="line">function addEventListener(event, handler)</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
-<pre><code>
-
-</code></pre>
 
       
     </div>
@@ -1150,20 +1107,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-count">25</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/blogs/categories/">
           
-        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-count">28</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/blogs/tags/">
           
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

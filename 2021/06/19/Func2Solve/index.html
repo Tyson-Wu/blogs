@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blogs/images/girl_180_0.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blogs/images/girl_32_0.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blogs/images/girl_16_0.png">
+  <link rel="mask-icon" href="/blogs/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blogs/css/main.css">
+
+
+<link rel="stylesheet" href="/blogs/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"tyson-wu.github.io","root":"/blogs/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="问题如下如所示，已知A、B两点坐标，以及二次函数顶点的y坐标，求解二次函数的方程式： 思路首先，假设二次函数方程为： 1a * x * x + b * x + c &#x3D; y   ------------- 1  同时假设，A、B、P三个点的坐标分别为(x1, y1)、(x2, y2)、(x3, y3)，其中x3未知。因为A、B、P三个点都在函数曲线上，所以三个点都满足方程： 123a *">
+<meta property="og:type" content="article">
+<meta property="og:title" content="二次函数解析">
+<meta property="og:url" content="https://tyson-wu.github.io/blogs/2021/06/19/Func2Solve/index.html">
+<meta property="og:site_name" content="TysonWu&#39;s Blog">
+<meta property="og:description" content="问题如下如所示，已知A、B两点坐标，以及二次函数顶点的y坐标，求解二次函数的方程式： 思路首先，假设二次函数方程为： 1a * x * x + b * x + c &#x3D; y   ------------- 1  同时假设，A、B、P三个点的坐标分别为(x1, y1)、(x2, y2)、(x3, y3)，其中x3未知。因为A、B、P三个点都在函数曲线上，所以三个点都满足方程： 123a *">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tyson-wu.github.io/blogs/images/src/func.jpg">
+<meta property="article:published_time" content="2021-06-19T07:01:00.000Z">
+<meta property="article:modified_time" content="2021-06-19T14:53:00.020Z">
+<meta property="article:author" content="Tyson Wu">
+<meta property="article:tag" content="Math">
+<meta property="article:tag" content="Function">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tyson-wu.github.io/blogs/images/src/func.jpg">
+
+<link rel="canonical" href="https://tyson-wu.github.io/blogs/2021/06/19/Func2Solve/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>二次函数解析 | TysonWu's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blogs/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">TysonWu's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">AiCooXiao</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blogs/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blogs/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/blogs/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blogs/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blogs/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/06/19/Func2Solve/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          二次函数解析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-06-19 15:01:00 / 修改时间：22:53:00" itemprop="dateCreated datePublished" datetime="2021-06-19T15:01:00+08:00">2021-06-19</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Math/" itemprop="url" rel="index"><span itemprop="name">Math</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Math/Function/" itemprop="url" rel="index"><span itemprop="name">Function</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>如下如所示，已知A、B两点坐标，以及二次函数顶点的y坐标，求解二次函数的方程式：<br><img src="/blogs/images/src/func.jpg"></p>
+<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>首先，假设二次函数方程为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a * x * x + b * x + c &#x3D; y   ------------- 1 </span><br></pre></td></tr></table></figure>
+<p>同时假设，A、B、P三个点的坐标分别为<code>(x1, y1)</code>、<code>(x2, y2)</code>、<code>(x3, y3)</code>，其中<code>x3</code>未知。<br>因为A、B、P三个点都在函数曲线上，所以三个点都满足方程：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a * x1 * x1 + b * x1 + c &#x3D; y1   ------------- 2</span><br><span class="line">a * x2 * x2 + b * x2 + c &#x3D; y2   ------------- 3</span><br><span class="line">a * x3 * x3 + b * x3 + c &#x3D; y3   ------------- 4</span><br></pre></td></tr></table></figure>
+<p>将上面的式子2减去式3得到<code>式子5</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a * (x1 * x1 - x2 * x2)+ b * (x1 – x2) &#x3D; y1 – y2   ------------- 5</span><br></pre></td></tr></table></figure>
+<p><code>式子5</code>中消去参数c，只有a、b两个参数。将b用a表示，得：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">b &#x3D; ((y1 – y2) – a * (x1 * x1 – x2 * x2))&#x2F;(x1 – x2) </span><br><span class="line"> &#x3D; (y1 – y2)&#x2F;(x1 – x2) – a * (x1 * x1 – x2 * x2)&#x2F;(x1 – x2) ------------- 6</span><br></pre></td></tr></table></figure>
+<p>又因为:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">x1 * x1 – x2 * x2 &#x3D; (x1 + x2) * (x1 – x2) ------------- 7</span><br></pre></td></tr></table></figure>
+<p>所以：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">b &#x3D; (y1 – y2)&#x2F;(x1 – x2) – a * (x1 + x2) ------------- 8</span><br></pre></td></tr></table></figure>
+<p>令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">m &#x3D; (y1 – y2) &#x2F; (x1 – x2)</span><br><span class="line">n &#x3D; x1 + x2</span><br></pre></td></tr></table></figure>
+<p>所以：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">b &#x3D; m – a * n------------- 9</span><br></pre></td></tr></table></figure>
+<p>因为二次函数的顶点坐标为(-b/(2a), (4ac-b*b)/(4a))，这一点可以查百度。因此：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x3 &#x3D; -b&#x2F;(2a) ------------- 10</span><br><span class="line">y3 &#x3D; (4ac – b*b)&#x2F;(4a)</span><br></pre></td></tr></table></figure>
+<p>所以：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c &#x3D; y3 + b * b &#x2F;(4 a)------------- 11</span><br></pre></td></tr></table></figure>
+
+<p>=================================分段线=======================<br>将<code>式9、10</code>代入<code>式2</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">y1 – y3 &#x3D; a * x1 * x1 + (m – a * n) + (m –a * n) *(m –a * n)&#x2F;(4a)</span><br></pre></td></tr></table></figure>
+<p>化简得：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(4 * x1 * x1 – 4 * n * x1 + n * n) * a * a </span><br><span class="line">   + (4 * m * x1 – 2 * m * n – 4 * (y1 – y3)) * a</span><br><span class="line">     + m * m &#x3D; 0--------------12</span><br></pre></td></tr></table></figure>
+<p><code>式子12</code>是关于a的二次方程<br>假设：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">A1 &#x3D; 4 * x1 * x1 – 4 * n * x1 + n * n</span><br><span class="line">B1 &#x3D; 4 * m * x1 – 2 * m * n – 4 * (y1 – y3)</span><br><span class="line">C1 &#x3D; m * m</span><br></pre></td></tr></table></figure>
+<p>那么<code>式12</code>可以写成：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">A1 * a * a + B1 * b + C1 &#x3D; 0--------------13</span><br></pre></td></tr></table></figure>
+<p>二次方程的有两个根：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a1 &#x3D; -(B1 + sqrt(4A1C1 – B1 * B1))&#x2F;(2* A1)</span><br><span class="line">a2 &#x3D; -(B1 - sqrt(4A1C1 – B1 * B1))&#x2F;(2* A1)</span><br></pre></td></tr></table></figure>
+<p>这里可以取a1、a2中的任意一个作为a的值<br>根据式8可以计算b<br>根据式11可以计算c<br>根据式10可以计算x3<br>从上面分段线开始，是基于<code>式2</code>计算所有的参数，也就是基于点<code>(x1, y1)</code>，我们也可以基于<code>式3</code>进行计算，也就是基于点<code>(x2,y2)</code>，但是计算出的结果都是一致的</p>
+<h2 id="实现源码"><a href="#实现源码" class="headerlink" title="实现源码"></a>实现源码</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">void Start()</span><br><span class="line">    &#123;</span><br><span class="line">        float x1 &#x3D; 1.3245f;</span><br><span class="line">        float y1 &#x3D; 0.342f;</span><br><span class="line">        float x2 &#x3D; 11.24f;</span><br><span class="line">        float y2 &#x3D; 6.324f;</span><br><span class="line">        float y3 &#x3D; -8.213f;</span><br><span class="line">        if(Solve(x1, y1, x2, y2, y3, out var x3, out var a, out var b, out var c))</span><br><span class="line">        &#123;</span><br><span class="line">            Debug.LogError(string.Format(&quot;&#123;0&#125; &#x3D;&#x3D; &#123;1&#125;&quot;, y1, func(a, b, c, x1)));</span><br><span class="line">            Debug.LogError(string.Format(&quot;&#123;0&#125; &#x3D;&#x3D; &#123;1&#125;&quot;, y2, func(a, b, c, x2)));</span><br><span class="line">            Debug.LogError(string.Format(&quot;&#123;0&#125; &#x3D;&#x3D; &#123;1&#125;&quot;, y3, func(a, b, c, x3)));</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">            Debug.LogError(&quot;error&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    float func(float a, float b, float c, float x)</span><br><span class="line">    &#123;</span><br><span class="line">        return a * x * x + b * x + c;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; a * x * x + b * x + c &#x3D; y</span><br><span class="line">    bool Solve(float x1, float y1, float x2, float y2, float y3, out float x3, out float a, out float b, out float c)</span><br><span class="line">    &#123;</span><br><span class="line">        float eps &#x3D; 0.00001f;</span><br><span class="line">        bool rst &#x3D; true;</span><br><span class="line">        float m, n;</span><br><span class="line">        m &#x3D; (y1 - y2) &#x2F; (x1 - x2);</span><br><span class="line">        n &#x3D; x1 + x2;</span><br><span class="line"></span><br><span class="line">        float A1, B1, C1;</span><br><span class="line">        A1 &#x3D; 4 * x1 * x1 - 4 * n * x1 + n * n;</span><br><span class="line">        B1 &#x3D; 4 * m * x1 - 2 * m * n - 4 * (y1 - y3);</span><br><span class="line">        C1 &#x3D; m * m;</span><br><span class="line"></span><br><span class="line">        float A2, B2, C2;</span><br><span class="line">        A2 &#x3D; 4 * x2 * x2 - 4 * n * x2 + n * n;</span><br><span class="line">        B2 &#x3D; 4 * m * x2 - 2 * m * n - 4 * (y2 - y3);</span><br><span class="line">        C2 &#x3D; m * m;</span><br><span class="line"></span><br><span class="line">        float a1_1, a1_2;</span><br><span class="line">        a1_1 &#x3D; -(B1 + Mathf.Sqrt(B1 * B1 - 4 * A1 * C1)) &#x2F; (2 * A1);</span><br><span class="line">        a1_2 &#x3D; -(B1 - Mathf.Sqrt(B1 * B1 - 4 * A1 * C1)) &#x2F; (2 * A1);</span><br><span class="line">        float a2_1, a2_2;</span><br><span class="line">        a2_1 &#x3D; -(B2 + Mathf.Sqrt(B2 * B2 - 4 * A2 * C2)) &#x2F; (2 * A2);</span><br><span class="line">        a2_2 &#x3D; -(B2 - Mathf.Sqrt(B2 * B2 - 4 * A2 * C2)) &#x2F; (2 * A2);</span><br><span class="line"></span><br><span class="line">        if (Mathf.Abs(a1_1 - a2_1)&lt; eps)</span><br><span class="line">        &#123;</span><br><span class="line">            a &#x3D; a1_1;</span><br><span class="line">        &#125;</span><br><span class="line">        else if (Mathf.Abs(a1_2 - a2_2) &lt; eps)</span><br><span class="line">        &#123;</span><br><span class="line">            a &#x3D; a1_2;</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">            a &#x3D; 1;</span><br><span class="line">            rst &#x3D; false;</span><br><span class="line">        &#125;</span><br><span class="line">        b &#x3D; m - a * n;</span><br><span class="line">        c &#x3D; y3 + b * b &#x2F; (4 * a);</span><br><span class="line">        x3 &#x3D; - b &#x2F; (2 * a);</span><br><span class="line">        return rst;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>相关链接：<br><a target="_blank" rel="noopener" href="https://mathopenref.com/coordintersection.html">Math Open Reference</a><br><a target="_blank" rel="noopener" href="https://sean.cm/a/polygon-clipping-pt1">Polygon Clipping</a><br><a target="_blank" rel="noopener" href="https://barendgehrels.blogspot.com/2010/12/intersections-1.html">Barend’s Blog</a><br><a target="_blank" rel="noopener" href="https://cs.stackexchange.com/questions/99927/concave-polygon-intersection-algorithm">Concave Polygon Intersection - Algorithm</a><br><a target="_blank" rel="noopener" href="https://fribbels.github.io/shortestpath/writeup.html">Euclidean Shortest Paths</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blogs/tags/Math/" rel="tag"># Math</a>
+              <a href="/blogs/tags/Function/" rel="tag"># Function</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blogs/2021/06/16/Are-Behavior-Trees-a-Thing-of-the-Past/" rel="prev" title="Are Behavior Trees a Thing of the Past?">
+      <i class="fa fa-chevron-left"></i> Are Behavior Trees a Thing of the Past?
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">1.</span> <span class="nav-text">问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF"><span class="nav-number">2.</span> <span class="nav-text">思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E6%BA%90%E7%A0%81"><span class="nav-number">3.</span> <span class="nav-text">实现源码</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Tyson Wu"
+      src="/blogs/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Tyson Wu</p>
+  <div class="site-description" itemprop="description">If you want, Just do it!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blogs/archives/">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blogs/categories/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blogs/tags/">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Tyson-Wu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Tyson-Wu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/zhao-wu-zhu-43" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhao-wu-zhu-43" rel="noopener" target="_blank"><i class="知乎 fa-fw"></i>知乎</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.cnblogs.com/Hi-blog/" title="https:&#x2F;&#x2F;www.cnblogs.com&#x2F;Hi-blog&#x2F;" rel="noopener" target="_blank">starnight_cyber</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tyson Wu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blogs/lib/anime.min.js"></script>
+  <script src="/blogs/lib/velocity/velocity.min.js"></script>
+  <script src="/blogs/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blogs/js/utils.js"></script>
+
+<script src="/blogs/js/motion.js"></script>
+
+
+<script src="/blogs/js/schemes/pisces.js"></script>
+
+
+<script src="/blogs/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
