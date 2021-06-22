@@ -163,6 +163,119 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/06/21/Compute_Shader/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/06/21/Compute_Shader/" class="post-title-link" itemprop="url">Compute Shader</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-21 15:01:00" itemprop="dateCreated datePublished" datetime="2021-06-21T15:01:00+08:00">2021-06-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-06-22 09:58:42" itemprop="dateModified" datetime="2021-06-22T09:58:42+08:00">2021-06-22</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/050-compute-shader/">Compute Shader</a></p>
+<p>至此，我们已经学会了如何使用固定管线来渲染纹理，但是目前的显卡能做的远远不止这些。除了使用固定管线，我们还可以使用compute shader来实现。</p>
+<p>你可能会问，为什么要用compute shader，目前的cpu其实已经很强大了，即便遇到大量的处理数据，我们也可以使用多线程来处理。是的，对于一些非图形任务，我们并不需要使用GPU。如果强行使用GPU来处理，很可能会产生各种未知错误，另外也无法使用常用的异常分析手段。优化就更麻烦了，因为需要考虑CPU与GPU之间的数据传输，而GPU并行处理也和CPU编程思路不一样。作为初学者，我们是否需要使用compute shader，首先要明白为什么要用compute shader，使用后是否能够达到比现有方法更好的效果。</p>
+<p>如果你觉得你需要使用compute shader，那么继续读下去。在Unity中，你可以使用<code>SystemInfo.supportsComputeShaders</code>方法来查看你的GPU是否支持compute shader。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/050/result.gif"></p>
+<h2 id="Basic-Compute-Shader"><a href="#Basic-Compute-Shader" class="headerlink" title="Basic Compute Shader"></a>Basic Compute Shader</h2><p>我们可以通过选中<code>Create&gt;Shader&gt;Compute Shader</code>来创建compute shader。默认创建的compute shader执行向图片中写入数据的操作。但是在本节，我将演示一个更简单的例子——写入一组坐标。</p>
+<p>在compute shader中，我们可以向<code>RWStructuredBuffer</code>中写入一组数据，而<code>StructuredBuffer</code>是只读数据。在它们后面补充数据单元类型，类型包括<code>vector</code>或者<code>struct</code>。在本节中，我们使用<code>float3</code>。</p>
+<p>我们把用于计算的方法块叫做<code>kernel</code>。我们必须在方法块前面添加<code>numthreads</code>标志符，同时方法块有一个输入参数，因为方法块是针对每一个元素进行并行计算的，所以需要一个索引值来表明当前方法块所对应的元素。在这里，我们定义x轴64线程，y、z轴都是1线程。只要支持compute shader的显卡，基本可以处理这种线程设置。因为整个线程设置是一维的，所以我们处理的数据也是一维的，而在并行处理中，我们只需要考虑单个元素的处理过程。因为我们的线程设置是基于三个维度，所以我们输入参数也是三个维度，参数中的值对应相应维度的线程。因为我们这里的数据都集中在x轴上，所以我们的参数也只需要考虑x轴的索引。和普通的Shader一样，我们需要为输入参数添加标志符，方便程序识别参数的语意，这里我们参数的标志符是<code>SV_DispatchThreadID</code>。</p>
+<p>为了区分compute shader中的普通方法块和核方法块，我们需要使用<code>pragma</code>标识符，语法为<code>#pragma kernel &lt;functionname&gt;</code>。当然，在一个compute shader中可以拥有多个核函数。例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 指定一个核函数，我们可以拥有多个核函数</span><br><span class="line">#pragma kernel Spheres</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 输出</span><br><span class="line">RWStructuredBuffer&lt;float3&gt; Result;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[numthreads(64, 1, 1)]</span><br><span class="line">void Spheres(uint3 id : SV_DispatchThreadID)</span><br><span class="line">&#123;</span><br><span class="line">	&#x2F;&#x2F; compute shader 代码</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先，让我们输出坐标<code>(id, 0, 0)</code>到<code>Result</code>中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[numthreads(64, 1, 1)]</span><br><span class="line">void Spheres(uint3 id : SV_DispathcThreadID)</span><br><span class="line">&#123;</span><br><span class="line">	Result[id.x] &#x3D; float3(id.x, 0, 0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Executing-Compute-Shaders"><a href="#Executing-Compute-Shaders" class="headerlink" title="Executing Compute Shaders"></a>Executing Compute Shaders</h2><p>和普通的Shader不同的是，compute shader并不是通过材质绑定的方式来执行，而是通过<code>C#</code>脚本来实现调用。</p>
+<p>我们可以创建一个GameObject，并且在它上面创建一个<code>C#</code>脚本，在脚本上创建一个<code>ComputeShader</code>变量来引用前面创建的compute shader。同时我们创建一个整形变量，用来存储核函数的签名，这个签名是核函数在GPU中的索引ID。首先在<code>Start</code>函数中我们调用<code>FindKernel(&lt;kernelname&gt;)</code>来获取核函数的签名。在得到核函数签名后，我们可以使用该签名来获取该核函数的线程设置，也就是在compute shader中的<code>[numthreads(64, 1, 1)]</code>。我们只提取x轴的线程数，其他两个维度可以用<code>_</code>来表示忽略。</p>
+<p>另外，我们在<code>C#</code>脚本中创建一个长度变量，用来指定compute shader中buffer的长度。知道buffer的长度，以及buffer中存储的数据类型<code>float3</code>，我们可以向GPU申请一块存储空间——<code>ComputeBuffer</code>。这个空间将会用来存储计算结果，也就是compute shader中的<code>Result</code>。创建<code>ComputeBuffer</code>需要两个参数，第一参数是元素的个数，第二个参数是元素的大小。我们的元素是<code>float3</code>，也就是大小为3个<code>float</code>。另外，我们需要在CPU中申请一块和<code>ComputeBuffer</code>同样大小的数组空间，以便于将计算后的结果转移到CPU，方便后续计算使用。在计算结束后，我们可以通过<code>ComputeBuffer.Dispose</code>方法来释放GPU申请的缓存空间。</p>
+<p>当一切设置好后，我们可以在<code>Update</code>中使用compute shader。首先，我们需要将我们在GPU创建的<code>ComputeBuffer</code>和compute shader中的buffer相关联。在调用compute shader之前，我们还需要计算整个核函数需要执行多少遍，这个叫做线程组。因为核函数单次批处理的数量有限，所以需要分为多组，分批次处理。例如这里我们单次x轴处理量为64，而总的需要处理的数量为buffer长度，那么线程组的个数为后者处以前者。然后通过<code>dispatch</code>方法来启用核函数，最终计算结果通过<code>GetData</code>函数传回到CPU中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">public class BasicComputeSpheres : MonoBehaviour</span><br><span class="line">&#123;</span><br><span class="line">    public int SphereAmount &#x3D; 17;</span><br><span class="line">    public ComputeShader Shader;</span><br><span class="line"></span><br><span class="line">    ComputeBuffer resultBuffer;</span><br><span class="line">    int kernel;</span><br><span class="line">    uint threadGroupSize;</span><br><span class="line">    Vector3[] output;</span><br><span class="line"></span><br><span class="line">    void Start()</span><br><span class="line">    &#123;</span><br><span class="line">        &#x2F;&#x2F; 获取核函数签名</span><br><span class="line">        kernel &#x3D; Shader.FindKernel(&quot;Spheres&quot;);</span><br><span class="line">		&#x2F;&#x2F; 获取核函数线程设置</span><br><span class="line">        Shader.GetKernelThreadGroupSizes(kernel, out threadGroupSize, out _, out _);</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;buffer on the gpu in the ram</span><br><span class="line">        resultBuffer &#x3D; new ComputeBuffer(SphereAmount, sizeof(float) * 3);</span><br><span class="line">        output &#x3D; new Vector3[SphereAmount];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    void Update()</span><br><span class="line">    &#123;</span><br><span class="line">		&#x2F;&#x2F;绑定数据</span><br><span class="line">        Shader.SetBuffer(kernel, &quot;Result&quot;, resultBuffer);</span><br><span class="line">        int threadGroups &#x3D; (int) ((SphereAmount + (threadGroupSize - 1)) &#x2F; threadGroupSize);</span><br><span class="line">        Shader.Dispatch(kernel, threadGroups, 1, 1);</span><br><span class="line">        resultBuffer.GetData(output);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    void OnDestroy()</span><br><span class="line">    &#123;</span><br><span class="line">        resultBuffer.Dispose();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在我们有了计算结果，但是并不能直观的去观察这些结果。有很多种方法可以直接在GPU中处理并显示这些结果，但是这并不是本文的重点。所以我选择使用生成一系列模型空间分布，来展示最终生成的结果。<br>在<code>Update</code>中直接将计算的坐标赋值给游戏物体空间坐标。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; in start method</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;spheres we use for visualisation</span><br><span class="line">instances &#x3D; new Transform[SphereAmount];</span><br><span class="line">for (int i &#x3D; 0; i &lt; SphereAmount; i++)</span><br><span class="line">&#123;</span><br><span class="line">    instances[i] &#x3D; Instantiate(Prefab, transform).transform;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;in update method</span><br><span class="line">for (int i &#x3D; 0; i &lt; instances.Length; i++)</span><br><span class="line">    instances[i].localPosition &#x3D; output[i];</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/050/Row.png"></p>
+<h2 id="A-tiny-bit-more-complex-Compute-Shader"><a href="#A-tiny-bit-more-complex-Compute-Shader" class="headerlink" title="A tiny bit more complex Compute Shader"></a>A tiny bit more complex Compute Shader</h2><p>为了达到一个更好的视觉效果，请继续阅读，别担心这里涉及到的也只是基本的hlsl语法。</p>
+<p>在compute shader中我加入了<a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/024-white-noise/">randomness</a>教程中关于噪声的函数，同时加入时间变量。在核函数中，我基于输入参数来构造一个长度为[0.1-1]的随机向量。然后采用叉乘的方法计算出与这些随机向量垂直的向量。然后使用时间变量的平方，加上一个比较大的奇数，得到一个关于时间的<code>sin</code>值和<code>cos</code>，最后将这两个值和两个随机向量相乘，并求和。在这个基础上乘以20，使得记过看起来更明显。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; Each #kernel tells which function to compile; you can have many kernels</span><br><span class="line">#pragma kernel Spheres</span><br><span class="line"></span><br><span class="line">#include &quot;Random.cginc&quot;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;variables</span><br><span class="line">RWStructuredBuffer&lt;float3&gt; Result;</span><br><span class="line">uniform float Time;</span><br><span class="line"></span><br><span class="line">[numthreads(64,1,1)]</span><br><span class="line">void Spheres (uint3 id : SV_DispatchThreadID)</span><br><span class="line">&#123;</span><br><span class="line">    &#x2F;&#x2F;generate 2 orthogonal vectors</span><br><span class="line">    float3 baseDir &#x3D; normalize(rand1dTo3d(id.x) - 0.5) * (rand1dTo1d(id.x)*0.9+0.1);</span><br><span class="line">    float3 orthogonal &#x3D; normalize(cross(baseDir, rand1dTo3d(id.x + 7.1393) - 0.5)) * (rand1dTo1d(id.x+3.7443)*0.9+0.1);</span><br><span class="line">    &#x2F;&#x2F;scale the time and give it a random offset</span><br><span class="line">    float scaledTime &#x3D; Time * 2 + rand1dTo1d(id.x) * 712.131234;</span><br><span class="line">    &#x2F;&#x2F;calculate a vector based on vectors</span><br><span class="line">    float3 dir &#x3D; baseDir * sin(scaledTime) + orthogonal * cos(scaledTime);</span><br><span class="line">    Result[id.x] &#x3D; dir * 20;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当然，我们很需要在<code>C#</code>脚本中向compute shader中传入时间变量。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Shader.SetFloat(&quot;Time&quot;, Time.time);</span><br></pre></td></tr></table></figure>
+
+<p>然后使用自发光材质，以及泛光后处理技术，最后呈现出下面绚烂的效果。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/050/result.gif"></p>
+<h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><p><a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/050_Compute_Shader/BasicCompute.compute">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/050_Compute_Shader/BasicCompute.compute</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; Each #kernel tells which function to compile; you can have many kernels</span><br><span class="line">#pragma kernel Spheres</span><br><span class="line"></span><br><span class="line">#include &quot;Random.cginc&quot;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;variables</span><br><span class="line">RWStructuredBuffer&lt;float3&gt; Result;</span><br><span class="line">uniform float Time;</span><br><span class="line"></span><br><span class="line">[numthreads(64,1,1)]</span><br><span class="line">void Spheres (uint3 id : SV_DispatchThreadID)</span><br><span class="line">&#123;</span><br><span class="line">    &#x2F;&#x2F;generate 2 orthogonal vectors</span><br><span class="line">    float3 baseDir &#x3D; normalize(rand1dTo3d(id.x) - 0.5) * (rand1dTo1d(id.x)*0.9+0.1);</span><br><span class="line">    float3 orthogonal &#x3D; normalize(cross(baseDir, rand1dTo3d(id.x + 7.1393) - 0.5)) * (rand1dTo1d(id.x+3.7443)*0.9+0.1);</span><br><span class="line">    &#x2F;&#x2F;scale the time and give it a random offset</span><br><span class="line">    float scaledTime &#x3D; Time * 2 + rand1dTo1d(id.x) * 712.131234;</span><br><span class="line">    &#x2F;&#x2F;calculate a vector based on vectors</span><br><span class="line">    float3 dir &#x3D; baseDir * sin(scaledTime) + orthogonal * cos(scaledTime);</span><br><span class="line">    Result[id.x] &#x3D; dir * 20;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/050_Compute_Shader/BasicComputeSpheres.cs">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/050_Compute_Shader/BasicComputeSpheres.cs</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">using System;</span><br><span class="line">using System.Collections;</span><br><span class="line">using System.Collections.Generic;</span><br><span class="line">using UnityEngine;</span><br><span class="line"></span><br><span class="line">public class BasicComputeSpheres : MonoBehaviour</span><br><span class="line">&#123;</span><br><span class="line">    public int SphereAmount &#x3D; 17;</span><br><span class="line">    public ComputeShader Shader;</span><br><span class="line"></span><br><span class="line">    public GameObject Prefab;</span><br><span class="line"></span><br><span class="line">    ComputeBuffer resultBuffer;</span><br><span class="line">    int kernel;</span><br><span class="line">    uint threadGroupSize;</span><br><span class="line">    Vector3[] output;</span><br><span class="line"></span><br><span class="line">    Transform[] instances;</span><br><span class="line"></span><br><span class="line">    void Start()</span><br><span class="line">    &#123;</span><br><span class="line">        &#x2F;&#x2F;program we&#39;re executing</span><br><span class="line">        kernel &#x3D; Shader.FindKernel(&quot;Spheres&quot;);</span><br><span class="line">        Shader.GetKernelThreadGroupSizes(kernel, out threadGroupSize, out _, out _);</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;buffer on the gpu in the ram</span><br><span class="line">        resultBuffer &#x3D; new ComputeBuffer(SphereAmount, sizeof(float) * 3);</span><br><span class="line">        output &#x3D; new Vector3[SphereAmount];</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;spheres we use for visualisation</span><br><span class="line">        instances &#x3D; new Transform[SphereAmount];</span><br><span class="line">        for (int i &#x3D; 0; i &lt; SphereAmount; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            instances[i] &#x3D; Instantiate(Prefab, transform).transform;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    void Update()</span><br><span class="line">    &#123;</span><br><span class="line">        Shader.SetFloat(&quot;Time&quot;, Time.time);</span><br><span class="line">        Shader.SetBuffer(kernel, &quot;Result&quot;, resultBuffer);</span><br><span class="line">        int threadGroups &#x3D; (int) ((SphereAmount + (threadGroupSize - 1)) &#x2F; threadGroupSize);</span><br><span class="line">        Shader.Dispatch(kernel, threadGroups, 1, 1);</span><br><span class="line">        resultBuffer.GetData(output);</span><br><span class="line"></span><br><span class="line">        for (int i &#x3D; 0; i &lt; instances.Length; i++)</span><br><span class="line">            instances[i].localPosition &#x3D; output[i];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    void OnDestroy()</span><br><span class="line">    &#123;</span><br><span class="line">        resultBuffer.Dispose();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>希望你能喜欢这个教程 :-)</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/06/19/Func2Solve/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -186,10 +299,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-06-19 15:01:00 / 修改时间：23:03:20" itemprop="dateCreated datePublished" datetime="2021-06-19T15:01:00+08:00">2021-06-19</time>
+              <time title="创建时间：2021-06-19 15:01:00" itemprop="dateCreated datePublished" datetime="2021-06-19T15:01:00+08:00">2021-06-19</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-06-22 09:58:42" itemprop="dateModified" datetime="2021-06-22T09:58:42+08:00">2021-06-22</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -298,7 +417,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-19 23:03:20" itemprop="dateModified" datetime="2021-06-19T23:03:20+08:00">2021-06-19</time>
+                <time title="修改时间：2021-06-22 09:58:42" itemprop="dateModified" datetime="2021-06-22T09:58:42+08:00">2021-06-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -392,7 +511,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-19 23:03:20" itemprop="dateModified" datetime="2021-06-19T23:03:20+08:00">2021-06-19</time>
+                <time title="修改时间：2021-06-22 09:58:42" itemprop="dateModified" datetime="2021-06-22T09:58:42+08:00">2021-06-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -472,7 +591,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-19 23:03:20" itemprop="dateModified" datetime="2021-06-19T23:03:20+08:00">2021-06-19</time>
+                <time title="修改时间：2021-06-22 09:58:42" itemprop="dateModified" datetime="2021-06-22T09:58:42+08:00">2021-06-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -556,7 +675,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-19 23:03:20" itemprop="dateModified" datetime="2021-06-19T23:03:20+08:00">2021-06-19</time>
+                <time title="修改时间：2021-06-22 09:58:42" itemprop="dateModified" datetime="2021-06-22T09:58:42+08:00">2021-06-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -647,7 +766,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-19 23:03:20" itemprop="dateModified" datetime="2021-06-19T23:03:20+08:00">2021-06-19</time>
+                <time title="修改时间：2021-06-22 09:58:42" itemprop="dateModified" datetime="2021-06-22T09:58:42+08:00">2021-06-22</time>
               </span>
 
           
@@ -734,7 +853,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-19 23:03:20" itemprop="dateModified" datetime="2021-06-19T23:03:20+08:00">2021-06-19</time>
+                <time title="修改时间：2021-06-22 09:58:42" itemprop="dateModified" datetime="2021-06-22T09:58:42+08:00">2021-06-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -814,7 +933,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-19 23:03:20" itemprop="dateModified" datetime="2021-06-19T23:03:20+08:00">2021-06-19</time>
+                <time title="修改时间：2021-06-22 09:58:42" itemprop="dateModified" datetime="2021-06-22T09:58:42+08:00">2021-06-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -904,7 +1023,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-19 23:03:20" itemprop="dateModified" datetime="2021-06-19T23:03:20+08:00">2021-06-19</time>
+                <time title="修改时间：2021-06-22 09:58:42" itemprop="dateModified" datetime="2021-06-22T09:58:42+08:00">2021-06-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -939,86 +1058,6 @@
 <p>unity_LightData.z : 表示该光源是否可见，可见为1.0，不可见为0.0</p>
 <p>float4 unity_LightIndices[2] : 每个模型最大辅光源个数为8， 这里面便存着实际光源的索引值</p>
 <p>物理含义<br>NdotH : 表示观察视角和镜面反射的重合度，重合度越高，观察的光越强<br>LdotH : 表示入射光和观察视角的重合度</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/04/06/Unity-Editor/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2021/04/06/Unity-Editor/" class="post-title-link" itemprop="url">Unity Editor</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-04-06 10:01:00" itemprop="dateCreated datePublished" datetime="2021-04-06T10:01:00+08:00">2021-04-06</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-19 23:03:20" itemprop="dateModified" datetime="2021-06-19T23:03:20+08:00">2021-06-19</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Editor/" itemprop="url" rel="index"><span itemprop="name">Editor</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="获取当前选择的目录"><a href="#获取当前选择的目录" class="headerlink" title="获取当前选择的目录"></a>获取当前选择的目录</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public static string GetCurrentAssetDirectory()</span><br><span class="line">&#123;</span><br><span class="line">	foreach(var obj in Selection.GetFiltered&lt;Object&gt;(SelectionMode.Assets))</span><br><span class="line">	&#123;</span><br><span class="line">		var path &#x3D; AssetDataBase.GetAssetPath(obj);</span><br><span class="line">		if(string.IsNullOrEmpty(path))</span><br><span class="line">		&#123;</span><br><span class="line">			return path;</span><br><span class="line">		&#125;</span><br><span class="line">		else if(System.IO.File.Exists(path))</span><br><span class="line">		&#123;</span><br><span class="line">			return System.IO.Path.GetDirectory(path);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	return &quot;Assets&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="创建hlsl脚本"><a href="#创建hlsl脚本" class="headerlink" title="创建hlsl脚本"></a>创建hlsl脚本</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">public static class AssetsMenu</span><br><span class="line">&#123;</span><br><span class="line">	[MenuItem(&quot;Assets&#x2F;Create HLSL&quot;)]</span><br><span class="line">	public static void CreateHLSL()</span><br><span class="line">	&#123;</span><br><span class="line">		&#x2F;&#x2F;string projectPath &#x3D; Path.GetDirectoryName(Application.dataPath);</span><br><span class="line">		</span><br><span class="line">		string assetPath &#x3D; Path.Combine(GetCurrentAssetDirectory(), &quot;temp.hlsl&quot;);</span><br><span class="line">		assetPath &#x3D; AssetDataBase.generateuniqueAssetPath(assetPath);</span><br><span class="line">		</span><br><span class="line">		AssetDataBase.CreateAsset(new TextAsset(&quot;--&quot;, assetPath);</span><br><span class="line">		File.WriteAllText(assetPath, &quot;&quot;); &#x2F;&#x2F; clean</span><br><span class="line">		</span><br><span class="line">		AssetDataBase.SaveAssets();</span><br><span class="line">		AssetDataBase.Refresh();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -1105,7 +1144,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-count">26</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1118,7 +1157,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/blogs/tags/">
           
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
