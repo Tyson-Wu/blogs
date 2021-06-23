@@ -186,6 +186,9 @@ date: 2021-05-27 17:01:34
 [Editor Window](https://riptutorial.com/unity3d/example/14519/editor-window):Create a basic EditorWindow;
 [Unity – Creating a custom map editor](https://www.synnaxium.com/en/2019/01/unity-custom-map-editor-part-1/):make a custom map editor in Unity;
 [unity编辑器扩展之SceneUI](https://zhuanlan.zhihu.com/p/114371275):unity编辑器扩展之SceneUI——贴在Scene View的SceneCanvas;
+[Code Generation in Unity](https://www.gamasutra.com/blogs/ByronMayne/20160121/258356/Code_Generation_in_Unity.php)
+[Compile C# at runtime in Unity3D](https://www.arcturuscollective.com/archives/22)
+[Creating a Node Based Editor in Unity](https://gram.gs/gramlog/creating-node-based-editor-unity/)
 
 ### Duality
 [Getting Started](https://docs.duality2d.net/pages/v3/getting-started.html):It’s an extensible 2D game engine;
