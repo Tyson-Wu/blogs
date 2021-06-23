@@ -20,21 +20,21 @@
     var CONFIG = {"hostname":"tyson-wu.github.io","root":"/blogs/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="获取当前选择的目录12345678910111213141516public static string GetCurrentAssetDirectory()&amp;#123;	foreach(var obj in Selection.GetFiltered&lt;Object&gt;(SelectionMode.Assets))	&amp;#123;		var path &#x3D; AssetDataBas">
+  <meta name="description" content="GOAP是以目标为导向的行为规划。其思路是对行为进行拆分，同时描述每个行为发生的前置条件，以及相应会产生的结果。然后将条件、结果、目标统一视为状态集合，那么只需要关心这三类状态集之间的关系，然后进行有效的拼接组合，其相应的行为之间的关系也就明了了。 提出问题首先，整个世界就是一个状态集，每个行为可以对部分状态产生影响，正向或反向。而有些行为可能需满足特定状态下才坑能发生。那么，以什么样的顺序执行哪">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Unity Editor">
-<meta property="og:url" content="https://tyson-wu.github.io/blogs/2021/04/06/Unity-Editor/index.html">
+<meta property="og:title" content="GOAP">
+<meta property="og:url" content="https://tyson-wu.github.io/blogs/2021/05/27/GOAP/index.html">
 <meta property="og:site_name" content="TysonWu&#39;s Blog">
-<meta property="og:description" content="获取当前选择的目录12345678910111213141516public static string GetCurrentAssetDirectory()&amp;#123;	foreach(var obj in Selection.GetFiltered&lt;Object&gt;(SelectionMode.Assets))	&amp;#123;		var path &#x3D; AssetDataBas">
+<meta property="og:description" content="GOAP是以目标为导向的行为规划。其思路是对行为进行拆分，同时描述每个行为发生的前置条件，以及相应会产生的结果。然后将条件、结果、目标统一视为状态集合，那么只需要关心这三类状态集之间的关系，然后进行有效的拼接组合，其相应的行为之间的关系也就明了了。 提出问题首先，整个世界就是一个状态集，每个行为可以对部分状态产生影响，正向或反向。而有些行为可能需满足特定状态下才坑能发生。那么，以什么样的顺序执行哪">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-04-06T02:01:00.000Z">
+<meta property="article:published_time" content="2021-05-27T07:01:00.000Z">
 <meta property="article:modified_time" content="2021-06-23T12:01:22.480Z">
 <meta property="article:author" content="Tyson Wu">
-<meta property="article:tag" content="Unity">
-<meta property="article:tag" content="Editor">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="GOAP">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://tyson-wu.github.io/blogs/2021/04/06/Unity-Editor/">
+<link rel="canonical" href="https://tyson-wu.github.io/blogs/2021/05/27/GOAP/">
 
 
 <script id="page-configurations">
@@ -47,7 +47,7 @@
   };
 </script>
 
-  <title>Unity Editor | TysonWu's Blog</title>
+  <title>GOAP | TysonWu's Blog</title>
   
 
 
@@ -168,7 +168,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/04/06/Unity-Editor/">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/05/27/GOAP/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/blogs/images/avatar.png">
@@ -181,7 +181,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Unity Editor
+          GOAP
         </h1>
 
         <div class="post-meta">
@@ -191,7 +191,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-04-06 10:01:00" itemprop="dateCreated datePublished" datetime="2021-04-06T10:01:00+08:00">2021-04-06</time>
+              <time title="创建时间：2021-05-27 15:01:00" itemprop="dateCreated datePublished" datetime="2021-05-27T15:01:00+08:00">2021-05-27</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -206,11 +206,11 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                  <a href="/blogs/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Editor/" itemprop="url" rel="index"><span itemprop="name">Editor</span></a>
+                  <a href="/blogs/categories/AI/GOAP/" itemprop="url" rel="index"><span itemprop="name">GOAP</span></a>
                 </span>
             </span>
 
@@ -225,9 +225,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="获取当前选择的目录"><a href="#获取当前选择的目录" class="headerlink" title="获取当前选择的目录"></a>获取当前选择的目录</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public static string GetCurrentAssetDirectory()</span><br><span class="line">&#123;</span><br><span class="line">	foreach(var obj in Selection.GetFiltered&lt;Object&gt;(SelectionMode.Assets))</span><br><span class="line">	&#123;</span><br><span class="line">		var path &#x3D; AssetDataBase.GetAssetPath(obj);</span><br><span class="line">		if(string.IsNullOrEmpty(path))</span><br><span class="line">		&#123;</span><br><span class="line">			return path;</span><br><span class="line">		&#125;</span><br><span class="line">		else if(System.IO.File.Exists(path))</span><br><span class="line">		&#123;</span><br><span class="line">			return System.IO.Path.GetDirectory(path);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	return &quot;Assets&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="创建hlsl脚本"><a href="#创建hlsl脚本" class="headerlink" title="创建hlsl脚本"></a>创建hlsl脚本</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">public static class AssetsMenu</span><br><span class="line">&#123;</span><br><span class="line">	[MenuItem(&quot;Assets&#x2F;Create HLSL&quot;)]</span><br><span class="line">	public static void CreateHLSL()</span><br><span class="line">	&#123;</span><br><span class="line">		&#x2F;&#x2F;string projectPath &#x3D; Path.GetDirectoryName(Application.dataPath);</span><br><span class="line">		</span><br><span class="line">		string assetPath &#x3D; Path.Combine(GetCurrentAssetDirectory(), &quot;temp.hlsl&quot;);</span><br><span class="line">		assetPath &#x3D; AssetDataBase.generateuniqueAssetPath(assetPath);</span><br><span class="line">		</span><br><span class="line">		AssetDataBase.CreateAsset(new TextAsset(&quot;--&quot;, assetPath);</span><br><span class="line">		File.WriteAllText(assetPath, &quot;&quot;); &#x2F;&#x2F; clean</span><br><span class="line">		</span><br><span class="line">		AssetDataBase.SaveAssets();</span><br><span class="line">		AssetDataBase.Refresh();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <p>GOAP是以目标为导向的行为规划。其思路是对行为进行拆分，同时描述每个行为发生的前置条件，以及相应会产生的结果。然后将条件、结果、目标统一视为状态集合，那么只需要关心这三类状态集之间的关系，然后进行有效的拼接组合，其相应的行为之间的关系也就明了了。</p>
+<h2 id="提出问题"><a href="#提出问题" class="headerlink" title="提出问题"></a>提出问题</h2><p>首先，整个世界就是一个状态集，每个行为可以对部分状态产生影响，正向或反向。而有些行为可能需满足特定状态下才坑能发生。<br>那么，以什么样的顺序执行哪些行为，才能达到相应的状态，实现特定的目标呢？</p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>上面的问题表明，我们需要求出一组有序的行为组合。而行为之所以有序，是因为行为之间有一定的相互依赖关系，例如只有伐木、做家具、卖家具，这三者是前后依赖关系。伐木可以得到木材，得到木材就是伐木的结果；做家具需要木材，得到木材就是做家具的条件；做家具得到家具，家具就是做家具的结果；买家具需要有家具，所以有家具是卖家具的条件。<br>假设我想卖家具，此时卖家具是我的目标，然后我从这三个行为里面查找，发现第三个行为刚好满足我的目标，但是从卖家具这个行为来看，我们首先得有家具，如果刚好有，那么完美。如果没有，那么有家具就是我们的新目标，然后根据这个新目标，我们查找到第二个行为刚好可以满足。至此我们得到做家具、卖家具这条行为组合，但是还没完，我们还需要判断做家具的条件是否满足，如果不满足，则需要继续查找它的上一个行为。<br>上面这个卖家具的问题简单的阐述了GOAP的一个从目标出发的、不断迭代的一个逆向查找解决方案的思路。但是，在实际应用中，遇到的问题可能会更复杂，状态会更多，同时状态之间的关联也不是一对一的。这时候我们就需要把握GOAP的一些关键信息，将其抽取出来。</p>
+<h2 id="泛化"><a href="#泛化" class="headerlink" title="泛化"></a>泛化</h2><p>为了将问题泛化，我们假设目标可以划分为多个状态的组合，而每个行为会对部分状态产生影响。这时候如何应用目标导向的思路呢？<br>首先我们也是找到最接近目标的行为。然后判断这个行为的条件是否满足，如果不满足，则将其条件也纳入目标中，形成一个新的目标。同时，对于该行为已经达成的状态，则从新目标中剔除。然后继续查找最接近新目标的行为，依此类推，不断迭代，直到新目标中的状态为空时。<br>这里提到最接近目标的行为。什么事最接近目标的行为呢？<br>以我想打扫卫生为例，环境状态为：我是否饥饿、地是否干净、桌子是否干净、是否有水、是否有生活垃圾；而我可以执行的行为有：吃饭、扫地、抹桌子、把水倒掉、把生活垃圾倒在地上。那么我的目标就是：地干净、桌子干净。<br>1、该行为的结果一定会对目标的状态集产生影响，即便不能立即达成目标，也能完成部分状态。如果没有这种正向的影响，说明这个行为和目标无关。如这里的吃饭；<br>2、该行为的结果不能对目标的状态集产生消极的影响。如把垃圾倒在地上，很明显倒完之后还得清理，所以对于打扫卫生来说并不是最接近目标的一步。<br>3、在执行该行为后，不能立即达到当前目标，也就是该行为的结果不能覆盖目标状态，这时候该行为的条件不能和目标状态相冲突。例如扫地和抹桌子都只能完成部分清理，假设我们选抹桌子为最后的行为，其条件为空，和目标状态冲突。如果说抹桌子的条件是地必须是脏的，这时候和目标状态地是干净的相冲突，在抹完桌子后肯定还得扫地，所以抹桌子不可以作为左后行为。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>假设世界有一系列状态组成，同时有一系列可选行为，这些行为分别有各自的状态前置条件、以及执行后能产生的状态影响。<br>那么我们需要达成某一目标时，首先分离出目标中的状态集。然后基于这个状态集，查找最近行为，在查找到最近行为后，将最近行为所达成的状态从目标状态集中剔除，然后将最近行为中未达成的前置条件纳入到新的目标状态集中。然后基于新的目标状态集进行新一轮的最近行为筛选，依此类推，直到新的目标状态为空时，说明我们筛选出的行为组合和目标状态已经形成了一个闭环。而我们的行为组合是从最后一个开始，倒序筛查的，所以需要进行颠倒才能得到正常的行为执行顺序。<br>而最近行为的标准，需要满足：</p>
+<ul>
+<li>能都达成部分目标</li>
+<li>其行为结果和目标没有冲突，不会对已经达成的目标产生破坏</li>
+<li>其前置条件和目标没有冲突，如果有冲突，其行为结果能够修复这种冲突</li>
+</ul>
 
     </div>
 
@@ -237,8 +244,8 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/blogs/tags/Unity/" rel="tag"># Unity</a>
-              <a href="/blogs/tags/Editor/" rel="tag"># Editor</a>
+              <a href="/blogs/tags/AI/" rel="tag"># AI</a>
+              <a href="/blogs/tags/GOAP/" rel="tag"># GOAP</a>
           </div>
 
         
@@ -247,12 +254,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/blogs/2021/01/30/EmmyLua-for-IntelliJ-IDEA/" rel="prev" title="EmmyLua 的使用方法">
-      <i class="fa fa-chevron-left"></i> EmmyLua 的使用方法
+    <a href="/blogs/2021/05/27/Line/" rel="prev" title="Line">
+      <i class="fa fa-chevron-left"></i> Line
     </a></div>
       <div class="post-nav-item">
-    <a href="/blogs/2021/04/06/URP_Render_1/" rel="next" title="URP 学习总结1">
-      URP 学习总结1 <i class="fa fa-chevron-right"></i>
+    <a href="/blogs/2021/05/27/WebReference/" rel="next" title="Web Reference">
+      Web Reference <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -312,7 +319,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E9%80%89%E6%8B%A9%E7%9A%84%E7%9B%AE%E5%BD%95"><span class="nav-number">1.</span> <span class="nav-text">获取当前选择的目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAhlsl%E8%84%9A%E6%9C%AC"><span class="nav-number">2.</span> <span class="nav-text">创建hlsl脚本</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%90%E5%87%BA%E9%97%AE%E9%A2%98"><span class="nav-number">1.</span> <span class="nav-text">提出问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%9B%E5%8C%96"><span class="nav-number">3.</span> <span class="nav-text">泛化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

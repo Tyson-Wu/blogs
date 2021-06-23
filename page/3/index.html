@@ -163,6 +163,167 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/11/21/Markdown-Basics/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2020/11/21/Markdown-Basics/" class="post-title-link" itemprop="url">Markdown Basics</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-21 13:01:34" itemprop="dateCreated datePublished" datetime="2020-11-21T13:01:34+08:00">2020-11-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-06-23 20:01:22" itemprop="dateModified" datetime="2021-06-23T20:01:22+08:00">2021-06-23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Markdown/" itemprop="url" rel="index"><span itemprop="name">Markdown</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Markdown/Basics/" itemprop="url" rel="index"><span itemprop="name">Basics</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="属性Markdown语法要点"><a href="#属性Markdown语法要点" class="headerlink" title="属性Markdown语法要点"></a>属性Markdown语法要点</h2><p>本节展示基本的Markdown用法。在<a target="_blank" rel="noopener" href="https://daringfireball.net/projects/markdown/syntax">Syntax</a>中提供了更为详细的语法介绍。下面通过同时显示了转换前和转换后的例子，展示Markdown语法与HTML格式的对照关系。<br>同时我们可以使用<a target="_blank" rel="noopener" href="https://daringfireball.net/projects/markdown/dingus">Dingus</a>在线语法验证工具来更好的理解Markdown语法。</p>
+<h2 id="段落、标题、引用"><a href="#段落、标题、引用" class="headerlink" title="段落、标题、引用"></a>段落、标题、引用</h2><p>段落由一行或多行连续的文本构成，段落之间通过一行或多行空格分隔。正常的段落不应该使用space或tabs进行缩进。</p>
+<p>Markdown提供两种风格的标题格式：Setext和atx：</p>
+<ul>
+<li>Setext风格是采用下滑线的形式来对标题进行标记。例如一级标题和二级标题，分别使用 = 和 - 来代表；</li>
+<li>atx风格的标题，采用1-6个置于行首的#号来表示。#号的个数代表标题的等级；</li>
+</ul>
+<blockquote>
+<p>块引用使用的是邮件风格的&gt;号表示。</p>
+</blockquote>
+<p>Markdown:</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">一级标题</span><br><span class="line">========</span><br><span class="line">二级标题</span><br><span class="line">--------</span><br><span class="line">然后这里是贝拉巴啦啦吧一堆描述的、正儿八经的段落。</span><br><span class="line">再来一段。</span><br><span class="line"></span><br><span class="line"><span class="section">### 三级标题</span></span><br><span class="line"><span class="quote">&gt; 这是块引用</span></span><br><span class="line"><span class="quote">&gt; </span></span><br><span class="line"><span class="quote">&gt; 这是块引用的第二段</span></span><br><span class="line"><span class="quote">&gt; 这是块引用的第三段</span></span><br><span class="line">&gt;</span><br><span class="line"><span class="quote">&gt; ## 这是块引用中的二级标题</span></span><br></pre></td></tr></table></figure>
+<p>HTML:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>一级标题<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h2</span>&gt;</span>二级标题<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>然后这里是贝拉巴啦啦吧一堆描述的、正儿八经的段落。<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>再来一段<span class="tag">&lt;<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h3</span>&gt;</span>三级标题<span class="tag">&lt;/<span class="name">h3</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">blockquote</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">p</span>&gt;</span>这是块引用<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">p</span>&gt;</span>这是块引用的第二段<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">p</span>&gt;</span>这是块引用的第三段<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">h2</span>&gt;</span>这是块引用中的二级标题<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">blockquote</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="短语强调"><a href="#短语强调" class="headerlink" title="短语强调"></a>短语强调</h2><p>Markdown使用 * 或 _ 来表示强调范围<br>Markdown：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">有些<span class="emphasis">*人*</span>就是特殊</span><br><span class="line">有些<span class="emphasis">_事_</span>就是漂亮</span><br><span class="line"></span><br><span class="line">还有些<span class="strong">**人**</span>特殊到无以复加</span><br><span class="line">还有些<span class="strong">__事__</span>漂亮到难以形容</span><br></pre></td></tr></table></figure>
+<p>HTML：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>有些<span class="tag">&lt;<span class="name">em</span>&gt;</span>人<span class="tag">&lt;/<span class="name">em</span>&gt;</span>就是特殊<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>有些<span class="tag">&lt;<span class="name">em</span>&gt;</span>事<span class="tag">&lt;/<span class="name">em</span>&gt;</span>就是漂亮<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>还有些<span class="tag">&lt;<span class="name">strong</span>&gt;</span>人<span class="tag">&lt;/<span class="name">strong</span>&gt;</span>特殊到无以复加<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>还有些<span class="tag">&lt;<span class="name">strong</span>&gt;</span>事<span class="tag">&lt;/<span class="name">strong</span>&gt;</span>漂亮到难以形容<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h2><p>无序号的列表使用 * 和 + 以及 - 号来表示。这三个符号表达的是一个意思;<br>例如这个：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">*</span> Candy</span><br><span class="line"><span class="bullet">*</span> Gum</span><br><span class="line"><span class="bullet">*</span> Booze</span><br></pre></td></tr></table></figure>
+<p>这个：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">+</span> Candy</span><br><span class="line"><span class="bullet">+</span> Gum</span><br><span class="line"><span class="bullet">+</span> Booze</span><br></pre></td></tr></table></figure>
+<p>还有这个：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> Candy</span><br><span class="line"><span class="bullet">-</span> Gum</span><br><span class="line"><span class="bullet">-</span> Booze</span><br></pre></td></tr></table></figure>
+<p>这三个输出的结果都是同样的HTML格式：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ul</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Candy<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Gum<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Booze<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>有需要的列表使用的是数字加 . 的方式：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">1.</span> Red</span><br><span class="line"><span class="bullet">2.</span> Green</span><br><span class="line"><span class="bullet">3.</span> Blue</span><br></pre></td></tr></table></figure>
+<p>HTML：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ol</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Red<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Green<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Blue<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ol</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>如果列表之间有空行，那么这些列表元素就会被认为是段落。如果单个元素由多个段落构成，那么需要将后续的段落进行缩进处理：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">1.</span> Red</span><br><span class="line"></span><br><span class="line"><span class="bullet">2.</span> Green</span><br><span class="line">green</span><br><span class="line"><span class="bullet">3.</span> Blue</span><br><span class="line">   blue</span><br><span class="line"></span><br><span class="line"><span class="bullet">4.</span> yellow</span><br><span class="line"></span><br><span class="line"><span class="bullet">5.</span> Orange</span><br></pre></td></tr></table></figure>
+<p>HTML:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ol</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>Red<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>Green</span><br><span class="line">green<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>Blue</span><br><span class="line">blue<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>yellow<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>Orange<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ol</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h2><p>Markdown提供两种链接方式：</p>
+<ul>
+<li>inline，内联方式；</li>
+<li>reference，引用方式；</li>
+</ul>
+<p>这两种方式都需要使用方括号来分隔需要显示的文本。<br>内联方式直接在方括号后面使用圆括号来表示链接，例如：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这是[<span class="string">链接名称</span>](<span class="link">http://example.com/</span>)。</span><br></pre></td></tr></table></figure>
+<p>HTML：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>这是<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://example.com/&quot;</span>&gt;</span>链接名称<span class="tag">&lt;/<span class="name">a</span>&gt;</span>。<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>另外，我们也可以给网址命个名：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这是[<span class="string">链接名称</span>](<span class="link">http://example.com/ &quot;黑网&quot;</span>)。</span><br></pre></td></tr></table></figure>
+<p>HTML：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>这是<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://example.com/&quot;</span> <span class="attr">title</span>=<span class="string">&quot;黑网&quot;</span>&gt;</span>链接名称<span class="tag">&lt;/<span class="name">a</span>&gt;</span>。<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>引用方式通过给链接命名的方式进行链接：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">我从[<span class="string">黑网</span>][<span class="symbol">1</span>]跳到[<span class="string">白网</span>][<span class="symbol">2</span>]再跳到[<span class="string">红网</span>][<span class="symbol">3</span>]</span><br><span class="line"></span><br><span class="line">[<span class="symbol">1</span>]: <span class="link">http://black-net.com/ &quot;黑网&quot;</span></span><br><span class="line">[<span class="symbol">2</span>]: <span class="link">http://white-net.com/ &quot;白网 1&quot;</span></span><br><span class="line">[<span class="symbol">3</span>]: <span class="link">http://red-net.com/ &quot;红网 2&quot;</span></span><br></pre></td></tr></table></figure>
+<p>HTML：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>我从<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://black-net.com/&quot;</span> <span class="attr">title</span>=<span class="string">&quot;黑网&quot;</span>&gt;</span>黑网<span class="tag">&lt;/<span class="name">a</span>&gt;</span>跳到<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://white-net.com/&quot;</span> <span class="attr">title</span>=<span class="string">&quot;白网 1&quot;</span>&gt;</span>白网<span class="tag">&lt;/<span class="name">a</span>&gt;</span>再跳到<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://red-net.com/&quot;</span> <span class="attr">title</span>=<span class="string">&quot;红网 2&quot;</span>&gt;</span>红网<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>上面的title属性可有可无。链接名由字母、数字、空格构成，不区分大小写：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">我在[<span class="string">红网a</span>][<span class="symbol">red 1</span>]看到你的照片</span><br><span class="line">[<span class="symbol">REd 1</span>]: <span class="link">http://red-a-net.com/</span></span><br></pre></td></tr></table></figure>
+<p>HTML:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>我在<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://red-a-net.com/&quot;</span>&gt;</span>红网a<span class="tag">&lt;/<span class="name">a</span>&gt;</span>看到你的照片<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="图片"><a href="#图片" class="headerlink" title="图片"></a>图片</h2><p>图片的语法和链接非常相似，也是有Inline和Reference两种方式，如下所示，其中Title属性是可有可无的：</p>
+<ul>
+<li>Inline，内联方式：<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">![<span class="string">alt text</span>](<span class="link">/path/to/img.jpg &quot;Title&quot;</span>)</span><br></pre></td></tr></table></figure></li>
+<li>Reference,引用方式：<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">![<span class="string">alt tex</span>][<span class="symbol">id</span>]</span><br><span class="line">[<span class="symbol">id</span>]: <span class="link">/path/to/img.jpg &quot;Title&quot;</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>无论哪种方式得到的结果都一样：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;/path/to/img.jpg&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;alt tex&quot;</span> <span class="attr">title</span>=<span class="string">&quot;Title&quot;</span> /&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="代码块"><a href="#代码块" class="headerlink" title="代码块"></a>代码块</h2><p>在普通的段落中，我们可以给使用反引号 ` ，也就是ECS键下面的那个 ` 键， 从而将代码插入到普通段落中。这样可以使得普通段落和代码块的之间界限分明。还有一点就是 &amp; 和 &lt; 、 &gt; 这几个符合是HTML的命令实体，需要转义后才能以普通字符的形式显示。但是在反引号 ` 包裹下的所有字符都只被当作普通字符，而不需要而外的转义操作。这就很方便在Markdown文档中编写HTML的示例代码：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">I strongly recommend against using any <span class="code">`&lt;blink&gt;`</span> tags.</span><br><span class="line"></span><br><span class="line">I wish SmartyPants used named entities like <span class="code">`&amp;mdash;`</span></span><br><span class="line">instead of decimal-encoded entites like <span class="code">`&amp;#8212;`</span>.</span><br></pre></td></tr></table></figure>
+<p>HTML：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>I strongly recommend against using any</span><br><span class="line"><span class="tag">&lt;<span class="name">code</span>&gt;</span><span class="symbol">&amp;lt;</span>blink<span class="symbol">&amp;gt;</span><span class="tag">&lt;/<span class="name">code</span>&gt;</span> tags.<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>I wish SmartyPants used named entities like</span><br><span class="line"><span class="tag">&lt;<span class="name">code</span>&gt;</span><span class="symbol">&amp;amp;</span>mdash;<span class="tag">&lt;/<span class="name">code</span>&gt;</span> instead of decimal-encoded</span><br><span class="line">entites like <span class="tag">&lt;<span class="name">code</span>&gt;</span><span class="symbol">&amp;amp;</span>#8212;<span class="tag">&lt;/<span class="name">code</span>&gt;</span>.<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>最终在网页上显示的效果：<br>I strongly recommend against using any <code>&lt;blink&gt;</code> tags.</p>
+<p>I wish SmartyPants used named entities like <code>&amp;mdash;</code><br>instead of decimal-encoded entites like <code>&amp;#8212;</code>.<br>如果希望将整个代码块进行格式化，那么将代码块中的每一行缩进4个spaces或1个tab。其所产生的效果和使用反引号 ` 标记的代码块一样，其中的 &amp; 、&lt; 、&gt; 这些符号都被自动转义了：<br>Markdown:</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">If you want your page to validate under XHTML 1.0 Strict,</span><br><span class="line">you&#x27;ve got to put paragraph tags in your blockquotes:</span><br><span class="line"></span><br><span class="line"><span class="code">    &lt;blockquote&gt;</span></span><br><span class="line"><span class="code">        &lt;p&gt;For example.&lt;/p&gt;</span></span><br><span class="line"><span class="code">    &lt;/blockquote&gt;</span></span><br></pre></td></tr></table></figure>
+<p>HTML:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>If you want your page to validate under XHTML 1.0 Strict,</span><br><span class="line">you&#x27;ve got to put paragraph tags in your blockquotes:<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">pre</span>&gt;</span><span class="tag">&lt;<span class="name">code</span>&gt;</span><span class="symbol">&amp;lt;</span>blockquote<span class="symbol">&amp;gt;</span></span><br><span class="line">    <span class="symbol">&amp;lt;</span>p<span class="symbol">&amp;gt;</span>For example.<span class="symbol">&amp;lt;</span>/p<span class="symbol">&amp;gt;</span></span><br><span class="line"><span class="symbol">&amp;lt;</span>/blockquote<span class="symbol">&amp;gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">code</span>&gt;</span><span class="tag">&lt;/<span class="name">pre</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>最终在网页上显示的效果：<br>If you want your page to validate under XHTML 1.0 Strict,<br>you’ve got to put paragraph tags in your blockquotes:</p>
+<pre><code>&lt;blockquote&gt;
+    &lt;p&gt;For example.&lt;/p&gt;
+&lt;/blockquote&gt;</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/11/21/Markdown-Syntax/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -194,7 +355,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-22 09:58:42" itemprop="dateModified" datetime="2021-06-22T09:58:42+08:00">2021-06-22</time>
+                <time title="修改时间：2021-06-23 20:01:22" itemprop="dateModified" datetime="2021-06-23T20:01:22+08:00">2021-06-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -271,7 +432,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-22 09:58:42" itemprop="dateModified" datetime="2021-06-22T09:58:42+08:00">2021-06-22</time>
+                <time title="修改时间：2021-06-23 20:01:22" itemprop="dateModified" datetime="2021-06-23T20:01:22+08:00">2021-06-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -356,7 +517,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-22 09:58:42" itemprop="dateModified" datetime="2021-06-22T09:58:42+08:00">2021-06-22</time>
+                <time title="修改时间：2021-06-23 20:01:22" itemprop="dateModified" datetime="2021-06-23T20:01:22+08:00">2021-06-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -461,7 +622,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-22 09:58:42" itemprop="dateModified" datetime="2021-06-22T09:58:42+08:00">2021-06-22</time>
+                <time title="修改时间：2021-06-23 20:01:22" itemprop="dateModified" datetime="2021-06-23T20:01:22+08:00">2021-06-23</time>
               </span>
 
           
@@ -535,7 +696,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-22 09:58:42" itemprop="dateModified" datetime="2021-06-22T09:58:42+08:00">2021-06-22</time>
+                <time title="修改时间：2021-06-23 20:01:22" itemprop="dateModified" datetime="2021-06-23T20:01:22+08:00">2021-06-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -640,7 +801,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-22 09:58:42" itemprop="dateModified" datetime="2021-06-22T09:58:42+08:00">2021-06-22</time>
+                <time title="修改时间：2021-06-23 20:01:22" itemprop="dateModified" datetime="2021-06-23T20:01:22+08:00">2021-06-23</time>
               </span>
 
           
@@ -753,20 +914,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-count">27</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/blogs/categories/">
           
-        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-count">30</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/blogs/tags/">
           
-        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
