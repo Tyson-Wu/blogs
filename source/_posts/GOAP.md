@@ -1,6 +1,6 @@
 ---
 title: GOAP
-date: 2021-05-27 15:01:00
+date: 2021-06-23 15:01:00
 categories:
 - [AI, GOAP]
 tags:
