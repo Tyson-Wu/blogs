@@ -14,7 +14,7 @@ tags:
 ### description
 depthNormalSamp是由[DepthTextureMode.DepthNormals](https://docs.unity3d.com/Manual/SL-CameraDepthTexture.html)模式创建的深度法向纹理。此方法将纹理数据解析为深度、法向量，并返回给depth、normal两个数据。得到的depth是一个范围为[0-1]的小数，normal是采用立体投影的方式编码，所以从三维向量变成二维向量。
 ### etc
-``` bash
+``` c++
 ...
 DecodeDepthNormal(tex2D(_CameraDepthNormalsTexture, i.scrPos.xy), depthValue, normalValues);
 ...
@@ -26,7 +26,7 @@ DecodeDepthNormal(tex2D(_CameraDepthNormalsTexture, i.scrPos.xy), depthValue, no
 参数是2维向量，计算顶点在摄像机空间下的深度值。如果需要获取深度图，应该在顶点着色器中使用该宏。有些具有本地深度图的平台上，该宏不起任何作用，因为这些平台会默认将深度信息存储在Z缓存中。和UNITY_OUTPUT_DEPTH(i)搭配使用
 ### etc
 
-``` bash
+``` c++
 Shader "Render Depth" {
     SubShader {
         Tags { "RenderType"="Opaque" }
@@ -82,7 +82,7 @@ Shader "Render Depth" {
 参数是深度图的值，从深度图中解析出实际的深度值。深度图中的深度值都是编码过的。
 ### etc
 下面代码第一行是从深度图中采集深度值，这个深度值范围是[0-1],但是属于非均匀分布，同样一个单位的长度，在靠近摄像机的情况下远大于远离摄像机的情况。第二行用来解析深度值，解析后的值是正常的距离单位，假设是3，则表示距离摄像机3个单位。
-``` bash
+``` c++
 float existingDepth01 = tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(i.screenPosition)).r;
 float existingDepthLinear = LinearEyeDepth(existingDepth01);
 ```
@@ -102,7 +102,7 @@ float existingDepthLinear = LinearEyeDepth(existingDepth01);
 ## tex2Dlod
 
 ### synopsis
-``` bash
+``` c++
 float4 tex2Dlod(sampler2D samp, float4 s)
 float4 tex2Dlod(sampler2D samp, float4 s, int texelOff)
 
@@ -123,7 +123,7 @@ texelOff : 像素偏移量。
 ## saturate
 
 ### synopsis
-``` bash
+``` c++
 float  saturate(float x);
 float1 saturate(float1 x);
 float2 saturate(float2 x);
@@ -150,7 +150,7 @@ x的值或其元素被限定在0-1中，例如，当x小于0时，返回0；当x
 ## tex2Dproj
 
 ### synopsis
-``` bash
+``` c++
 float4 tex2Dproj(sampler2D samp, float3 s)
 float4 tex2Dproj(sampler2D samp, float3 s, int texelOff)
 float4 tex2Dproj(sampler2D samp, float4 s)

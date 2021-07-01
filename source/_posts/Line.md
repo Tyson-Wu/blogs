@@ -11,7 +11,7 @@ tags:
 ## 线段相交
 
 对于平面上给定的两个线段line0、line1，求解其交点
-```
+``` C#
 public static bool LinesIntersect(Vector2 line0_start, Vector2 line0_end, Vector2 line1_start, Vector2 line1_end, out float line0_cross_line1, out float along_line0, out along_line1, out Vector2 intersect_point)
 {
 	var dir_line0 = line0_end - line0_start;

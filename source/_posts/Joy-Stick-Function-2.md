@@ -20,7 +20,7 @@ tags:
 前两个都挂载了一个区域判断的类-`TriggerAreaHandler`，主要用来判断屏幕点是否在该区域内，如图所示：
 ![wwwwwww](/blogs/images/src/微信图片_20201223224837.png)
 详细代码如下：
-``` markdown
+``` c#
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -104,7 +104,7 @@ public class TriggerAreaHandler : MonoBehaviour
 第三部分的摇杆组合，主要是用来显示的，所以下面挂载了一个控制其显示的脚本-`JoyStickView`，该脚本控制摇杆组合的位置显示，如图所示：
 ![wwwwwww](/blogs/images/src/微信图片_20201223225034.png)
 代码如下：
-``` markdown
+``` c#
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -189,7 +189,7 @@ public class JoyStickView : MonoBehaviour
 最后是整个摇杆逻辑实现部分-`JoyStickTrigger`，这个类里面记录了触发事件，以及对外的参数，如图所示：
 ![](/blogs/images/src/微信图片_20201223223000.png)
 同样的，通过属性器可以获取当前摇杆的状态参数，包括偏移方向以及强度，方向是360度，强度是[0-1]。详细代码如下：
-``` markdown
+``` c#
 using UnityEngine;
 using UnityEngine.EventSystems;
 /// <summary>

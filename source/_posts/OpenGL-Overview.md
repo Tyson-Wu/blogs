@@ -13,7 +13,7 @@ OpenGL 是图形硬件的软件接口，接口功能与硬件无关，可以在�
 
 OpenGL使用gl前置符来标记OpenGL内核命令，使用glu来标记OpenGL Utility库命令。另外，OpenGL所有以GL_开头的命令全部是大写。OpenGL也会用后置标志符来指明命令参数的个数以及类型。
 
-``` markdown
+``` c++
 glColor3f(1,0,0);		//使用三个浮点数设置颜色
 glColor4d(0,1,0,0.2);	//使用双精度浮点数设置颜色，并具有Alpha通道
 glVertex3fv(vertex);	//使用三维向量设置顶点坐标
@@ -23,7 +23,7 @@ glVertex3fv(vertex);	//使用三维向量设置顶点坐标
 
 OpenGL是一个状态机。其中设置的各种状态参数，包括模式、属性等，会一直有效，直到我们对其手动修改。绝大多数的状态值可以直接使用glEnable() 或 glDisable()来开启和禁用。我们也可以使用gllsEnabled()来获取某个状态值当前的开启状态。我们也可以使用glPushAttrib()和glPopAttrib()来保存或提取一组状态值。GL_ALL_ATTRIB_BITS参数表示保存或提取所有的状态值。在标准的OpenGL中，栈的个数不少于16个。我们可以使用[glinfo](http://www.songho.ca/opengl/files/glinfo.zip)来获取栈的大小信息。
 
-``` markdown
+``` c++
 glPushAttrib(GL_LIGHTING_BIT);			//
 	glDisable(GL_LIGHTING);
 	glEnable(GL_COLOR_MATERIAL);
@@ -41,7 +41,7 @@ glPopAttrib();		//提取GL_LIGHTING_BIT
 
 我们可以直接在glBegin()和glEnd()方法之间，指定一组顶点数据来绘制几何图元，例如点、线、三角形等等。这种绘制方式称为及时模式。我们也可以使用其他的方式进行绘制，例如[vertex array](http://www.songho.ca/opengl/gl_vertexarray.html)。
 
-``` markdown
+``` c++
 glBegin(GL_TRIANGLES);
 	glColor3f(1,0,0);		//设置颜色为红色
 	glVertex3fv(v1);		//设置三角形的三个顶点坐标

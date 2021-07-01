@@ -9,7 +9,7 @@ tags:
 ---
 
 ## 获取当前选择的目录
-```
+```C#
 public static string GetCurrentAssetDirectory()
 {
 	foreach(var obj in Selection.GetFiltered<Object>(SelectionMode.Assets))
@@ -26,10 +26,10 @@ public static string GetCurrentAssetDirectory()
 	}
 	return "Assets";
 }
-```
+```C#
 
 ## 创建hlsl脚本
-```
+```C#
 public static class AssetsMenu
 {
 	[MenuItem("Assets/Create HLSL")]
@@ -47,4 +47,4 @@ public static class AssetsMenu
 		AssetDataBase.Refresh();
 	}
 }
-```
+```C#

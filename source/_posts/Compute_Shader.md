@@ -27,7 +27,7 @@ tags:
 我们把用于计算的方法块叫做`kernel`。我们必须在方法块前面添加`numthreads`标志符，同时方法块有一个输入参数，因为方法块是针对每一个元素进行并行计算的，所以需要一个索引值来表明当前方法块所对应的元素。在这里，我们定义x轴64线程，y、z轴都是1线程。只要支持compute shader的显卡，基本可以处理这种线程设置。因为整个线程设置是一维的，所以我们处理的数据也是一维的，而在并行处理中，我们只需要考虑单个元素的处理过程。因为我们的线程设置是基于三个维度，所以我们输入参数也是三个维度，参数中的值对应相应维度的线程。因为我们这里的数据都集中在x轴上，所以我们的参数也只需要考虑x轴的索引。和普通的Shader一样，我们需要为输入参数添加标志符，方便程序识别参数的语意，这里我们参数的标志符是`SV_DispatchThreadID`。
 
 为了区分compute shader中的普通方法块和核方法块，我们需要使用`pragma`标识符，语法为`#pragma kernel <functionname>`。当然，在一个compute shader中可以拥有多个核函数。例如：
-```
+```c++
 // 指定一个核函数，我们可以拥有多个核函数
 #pragma kernel Spheres
 
@@ -43,7 +43,7 @@ void Spheres(uint3 id : SV_DispatchThreadID)
 ```
 
 首先，让我们输出坐标`(id, 0, 0)`到`Result`中：
-```
+```c++
 [numthreads(64, 1, 1)]
 void Spheres(uint3 id : SV_DispathcThreadID)
 {
@@ -60,7 +60,7 @@ void Spheres(uint3 id : SV_DispathcThreadID)
 另外，我们在`C#`脚本中创建一个长度变量，用来指定compute shader中buffer的长度。知道buffer的长度，以及buffer中存储的数据类型`float3`，我们可以向GPU申请一块存储空间——`ComputeBuffer`。这个空间将会用来存储计算结果，也就是compute shader中的`Result`。创建`ComputeBuffer`需要两个参数，第一参数是元素的个数，第二个参数是元素的大小。我们的元素是`float3`，也就是大小为3个`float`。另外，我们需要在CPU中申请一块和`ComputeBuffer`同样大小的数组空间，以便于将计算后的结果转移到CPU，方便后续计算使用。在计算结束后，我们可以通过`ComputeBuffer.Dispose`方法来释放GPU申请的缓存空间。
 
 当一切设置好后，我们可以在`Update`中使用compute shader。首先，我们需要将我们在GPU创建的`ComputeBuffer`和compute shader中的buffer相关联。在调用compute shader之前，我们还需要计算整个核函数需要执行多少遍，这个叫做线程组。因为核函数单次批处理的数量有限，所以需要分为多组，分批次处理。例如这里我们单次x轴处理量为64，而总的需要处理的数量为buffer长度，那么线程组的个数为后者处以前者。然后通过`dispatch`方法来启用核函数，最终计算结果通过`GetData`函数传回到CPU中。
-```
+```c++
 public class BasicComputeSpheres : MonoBehaviour
 {
     public int SphereAmount = 17;
@@ -101,7 +101,7 @@ public class BasicComputeSpheres : MonoBehaviour
 
 现在我们有了计算结果，但是并不能直观的去观察这些结果。有很多种方法可以直接在GPU中处理并显示这些结果，但是这并不是本文的重点。所以我选择使用生成一系列模型空间分布，来展示最终生成的结果。
 在`Update`中直接将计算的坐标赋值给游戏物体空间坐标。
-```
+```c++
 // in start method
 
 //spheres we use for visualisation
@@ -111,7 +111,7 @@ for (int i = 0; i < SphereAmount; i++)
     instances[i] = Instantiate(Prefab, transform).transform;
 }
 ```
-```
+```c++
 //in update method
 for (int i = 0; i < instances.Length; i++)
     instances[i].localPosition = output[i];
@@ -123,7 +123,7 @@ for (int i = 0; i < instances.Length; i++)
 为了达到一个更好的视觉效果，请继续阅读，别担心这里涉及到的也只是基本的hlsl语法。
 
 在compute shader中我加入了[randomness](https://www.ronja-tutorials.com/post/024-white-noise/)教程中关于噪声的函数，同时加入时间变量。在核函数中，我基于输入参数来构造一个长度为[0.1-1]的随机向量。然后采用叉乘的方法计算出与这些随机向量垂直的向量。然后使用时间变量的平方，加上一个比较大的奇数，得到一个关于时间的`sin`值和`cos`，最后将这两个值和两个随机向量相乘，并求和。在这个基础上乘以20，使得记过看起来更明显。
-```
+```c++
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel Spheres
 
@@ -148,7 +148,7 @@ void Spheres (uint3 id : SV_DispatchThreadID)
 ```
 
 当然，我们很需要在`C#`脚本中向compute shader中传入时间变量。
-```
+```c++
 Shader.SetFloat("Time", Time.time);
 ```
 
@@ -158,7 +158,7 @@ Shader.SetFloat("Time", Time.time);
 ## 源码
 
 [https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/050_Compute_Shader/BasicCompute.compute](https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/050_Compute_Shader/BasicCompute.compute)
-```
+```c++
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel Spheres
 
@@ -182,7 +182,7 @@ void Spheres (uint3 id : SV_DispatchThreadID)
 }
 ```
 [https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/050_Compute_Shader/BasicComputeSpheres.cs](https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/050_Compute_Shader/BasicComputeSpheres.cs)
-```
+```c++
 using System;
 using System.Collections;
 using System.Collections.Generic;

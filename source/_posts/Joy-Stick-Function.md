@@ -10,7 +10,7 @@ tags:
 ![wwwwwww](/blogs/images/src/ezgif.com-gif-maker-1.gif)
 自己做了个飞行模拟的小游戏，发布到手机上需要用到摇杆来控制，所以自己写了一个Joystick类，代码如下：
 
-``` makedown
+``` c#
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System;
