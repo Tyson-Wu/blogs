@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blogs/images/girl_180_0.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blogs/images/girl_32_0.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blogs/images/girl_16_0.png">
+  <link rel="mask-icon" href="/blogs/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blogs/css/main.css">
+
+
+<link rel="stylesheet" href="/blogs/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"tyson-wu.github.io","root":"/blogs/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="原文：Basic Transparency Summary对于不透明物体的渲染，是直接将计算所得到的像素颜色覆盖掉原有的颜色值。而透明物体的渲染方法恰恰相反，是保留原有颜色值，然后两者通过混合后，达到一种看是半透明的效果。为了阐明关键思想，这里以最简单的不受光材质为例。 如果你还不知道如果编写着色器，这里建议你先阅读我之前的教程 为了达到正确的渲染效果，首先我们需要告诉Unity：我们打算渲染一个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Basic Transparency">
+<meta property="og:url" content="https://tyson-wu.github.io/blogs/2021/06/25/Ronja_Basic_Transparency/index.html">
+<meta property="og:site_name" content="TysonWu&#39;s Blog">
+<meta property="og:description" content="原文：Basic Transparency Summary对于不透明物体的渲染，是直接将计算所得到的像素颜色覆盖掉原有的颜色值。而透明物体的渲染方法恰恰相反，是保留原有颜色值，然后两者通过混合后，达到一种看是半透明的效果。为了阐明关键思想，这里以最简单的不受光材质为例。 如果你还不知道如果编写着色器，这里建议你先阅读我之前的教程 为了达到正确的渲染效果，首先我们需要告诉Unity：我们打算渲染一个">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/006/SemitransparentCube.png">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/006/AdjustTint.gif">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/006/TextureTransparentCube.png">
+<meta property="article:published_time" content="2021-06-25T03:01:00.000Z">
+<meta property="article:modified_time" content="2021-07-01T14:00:42.703Z">
+<meta property="article:author" content="Tyson Wu">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="Shader">
+<meta property="article:tag" content="翻译">
+<meta property="article:tag" content="ronja">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.ronja-tutorials.com/assets/images/posts/006/SemitransparentCube.png">
+
+<link rel="canonical" href="https://tyson-wu.github.io/blogs/2021/06/25/Ronja_Basic_Transparency/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Basic Transparency | TysonWu's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blogs/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">TysonWu's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">AiCooXiao</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blogs/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blogs/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/blogs/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blogs/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blogs/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/06/25/Ronja_Basic_Transparency/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Basic Transparency
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-25 11:01:00" itemprop="dateCreated datePublished" datetime="2021-06-25T11:01:00+08:00">2021-06-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-01 22:00:42" itemprop="dateModified" datetime="2021-07-01T22:00:42+08:00">2021-07-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/006-simple-transparency/">Basic Transparency</a></p>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>对于不透明物体的渲染，是直接将计算所得到的像素颜色覆盖掉原有的颜色值。而透明物体的渲染方法恰恰相反，是保留原有颜色值，然后两者通过混合后，达到一种看是半透明的效果。为了阐明关键思想，这里以最简单的不受光材质为例。</p>
+<p>如果你还不知道如果编写着色器，这里建议你先阅读我之前的<a href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Basic_Shader/">教程</a><br><img src="https://www.ronja-tutorials.com/assets/images/posts/006/SemitransparentCube.png"></p>
+<p>为了达到正确的渲染效果，首先我们需要告诉Unity：我们打算渲染一个透明物体。因此，我们可以将<code>SubShader</code>块中的<code>Tags</code>块的渲染类型改为<code>Transparent</code>，以及将其中的渲染队列改为<code>Transparent</code>。渲染队列的设置是为了保证我们的半透明物体一定是在不透明物体之后渲染。如果不这么设置，根据上面说到的不透明渲染的方法，很可能有不透明物体直接覆盖在半透明物体区域，即便我们的半透明物体在不透明物体的前方。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Transparent&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Transparent&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来我们要定义混合模式，前面提到需要将半透明的像素颜色和已经渲染的像素颜色相混合，就是通过这个混合模式来决定的。混合模式的定义由两个关键字构成，第一个和半透明颜色相乘，第二个和已有的颜色相乘，然后两者相加。</p>
+<p>当我们渲染不透明物体时，我们将第一个参数设为1，第二个参数设为0，这样新的颜色值便会完全替换掉原先的颜色值。而在透明材质中，我们通常使用新颜色的透明通道作为第一个参数，而第二个参数为1减该透明通道值，这样我们就可以调整其透明通道来实现不同程度的透明效果。</p>
+<p>混合模式可以定义在<code>SubShader</code>块中，也可以定义在<code>Pass</code>块中，位置的不同决定其作用域的大小。但是必须定义在<code>hlsl</code>代码以外，因为这属于<code>Shaderlab</code>拓展的特性。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Blend SrcAlpha OneMinusSrcAlpha</span><br></pre></td></tr></table></figure>
+
+<p>你可以从下面网址找到更全面的混合模式设置介绍：<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-Blend.html">https://docs.unity3d.com/Manual/SL-Blend.html</a></p>
+<p>为了突出重点，精简逻辑，这里举两个小例子：</p>
+<ul>
+<li>当我们的片段着色器返回的透明通道值为<code>0.5</code>，那么根据前面设置的混合模式，将会将新的颜色值得一半和旧的颜色值得一一半进行混合。如果新颜色是白色，旧颜色是黑色，那么混合后的将是灰色；</li>
+<li>当我们的片段着色器返回的透明通道值为<code>0.9</code>，那么混合后，新颜色将占有90%的比例，而旧颜色只占有%10；</li>
+</ul>
+<p>因此，在前面不透明着色器脚本的基础上，做以上调整，该着色器就成功变成一个半透明着色器。因为公共变量<code>_Color</code>参与了片段着色器中的颜色计算，所以我们在材质面板修改其透明度，将会影响最终的混合效果。如下：<br><img src="https://www.ronja-tutorials.com/assets/images/posts/006/AdjustTint.gif"></p>
+<p>另一个需要修改的地方是关闭透明着色器的深度写入功能。一般来说，当模型被渲染到画面上是，其距离摄像机的深度信息会被记录到一张深度纹理是上。然后后面渲染的模型只需要与这张深度图相比较，就可以正确判断其相互之间的遮挡关系，其中被遮挡的部分将不会渲染到画面上。但是这并不适用于半透明物体，因为即便被遮挡也会被渲染。所以我们只能从其渲染队列方面考虑，将半透明物体限定在不透明物体之后渲染，并且半透明物体之间的渲染排序是由远及近。深度值写入的设置如下，和混合模式设置一样，都可以定义在<code>SubShader</code>或<code>Pass</code>块中。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Blend SrcAlpha OneMinusSrcAlpha</span><br><span class="line">ZWrite Off</span><br></pre></td></tr></table></figure>
+
+<p>如果我们的纹理贴图也存在半透明通道，那么最终渲染出来的效果将是各个部位的透明程度有差异。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/006/TextureTransparentCube.png"></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/006_Basic_Transparency&quot;</span>&#123;</span><br><span class="line">	Properties&#123;</span><br><span class="line">		_Color (<span class="string">&quot;Tint&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">		_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	SubShader&#123;</span><br><span class="line">		Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Transparent&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Transparent&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line">		Blend SrcAlpha OneMinusSrcAlpha</span><br><span class="line">		ZWrite off</span><br><span class="line"></span><br><span class="line">		Pass&#123;</span><br><span class="line">			CGPROGRAM</span><br><span class="line"></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UnityCG.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line">			sampler2D _MainTex;</span><br><span class="line">			float4 _MainTex_ST;</span><br><span class="line"></span><br><span class="line">			fixed4 _Color;</span><br><span class="line"></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">				float4 vertex : POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">				float4 position : SV_POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">				v2f o;</span><br><span class="line">				o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">				o.uv = TRANSFORM_TEX(v.uv, _MainTex);</span><br><span class="line">				<span class="keyword">return</span> o;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">				fixed4 col = tex2D(_MainTex, i.uv);</span><br><span class="line">				col *= _Color;</span><br><span class="line">				<span class="keyword">return</span> col;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>你可以在一下链接找到源码：<a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/006_Transparency/transparent.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/006_Transparency/transparent.shader</a></p>
+<p>希望你能喜欢这个教程哦！如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blogs/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/blogs/tags/Shader/" rel="tag"># Shader</a>
+              <a href="/blogs/tags/%E7%BF%BB%E8%AF%91/" rel="tag"># 翻译</a>
+              <a href="/blogs/tags/ronja/" rel="tag"># ronja</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blogs/2021/06/25/Ronja_Structure/" rel="prev" title="Structure of Shader">
+      <i class="fa fa-chevron-left"></i> Structure of Shader
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blogs/2021/06/29/Ronja_HLSL/" rel="next" title="HLSL">
+      HLSL <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Summary"><span class="nav-number">1.</span> <span class="nav-text">Summary</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Tyson Wu"
+      src="/blogs/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Tyson Wu</p>
+  <div class="site-description" itemprop="description">If you want, Just do it!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blogs/archives/">
+        
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blogs/categories/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blogs/tags/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Tyson-Wu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Tyson-Wu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/zhao-wu-zhu-43" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhao-wu-zhu-43" rel="noopener" target="_blank"><i class="知乎 fa-fw"></i>知乎</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.cnblogs.com/Hi-blog/" title="https:&#x2F;&#x2F;www.cnblogs.com&#x2F;Hi-blog&#x2F;" rel="noopener" target="_blank">starnight_cyber</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tyson Wu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blogs/lib/anime.min.js"></script>
+  <script src="/blogs/lib/velocity/velocity.min.js"></script>
+  <script src="/blogs/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blogs/js/utils.js"></script>
+
+<script src="/blogs/js/motion.js"></script>
+
+
+<script src="/blogs/js/schemes/pisces.js"></script>
+
+
+<script src="/blogs/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
