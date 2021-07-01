@@ -24,7 +24,7 @@ tags:
 ## ShaderLab
 
 在Unity中，着色器实际上就是一个以`.shader`结尾的文本文件。我们可以在资源面板下，依次选择`Create > Shader >`中的着色器模板，当然模板中的内容可能并不是我们想要的，不过没关系，下面我将介绍如何自定义着色器。为了易于上手，这里我以模板着色器`Create > Shader > Unlit`为参考，编写我们自己的着色器。当然这里我写的和`Unlit`之间最大的区别在于，我们这个是不会处理雾效，同时又增加了一个颜色属性，这样可以从整体对模型颜色进行调整。接下来我也会一步一步的讲解其实现逻辑。本教程目标是着色器小白，所以你如果有哪里不理解的地方，可以告诉我，促使我对其进行调整，以便于后续学习者能够更加顺畅。
-```
+```c++
 Shader "Tutorial/001-004_Basic_Unlit"{
 	//这些值将会显示在材质面板上
 	Properties{
@@ -119,7 +119,7 @@ Shader "Tutorial/001-004_Basic_Unlit"{
 `Properties`属性块，主要用来定义材质面板中的属性显示。通过材质面板来调整材质参数具有一定的局限性，因为整个调整是以材质球为单位，也就是说，如果多个模型使用同一个材质球，那么就无法做到材质差异化。这时候需要创建多个材质球，分别对应于不同的模型。在接下来得教程中我也会详细讨论`Properties`的使用。
 
 下面我们对`Shaderlab`的基本结构进行一个总结：
-```
+```c++
 Shader "Category/Name"{
 	Properties{
 		//用于材质面板显示、与配置的属性
@@ -151,7 +151,7 @@ Shader "Category/Name"{
 所有的教程都有配套源码，可以在教程结尾找到相关链接。因为目前我只是做了一些简单的分析介绍，所有源码在上面已经出现过了，这里直接简单的整理一下。
 - [https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/001-004_basic_unlit/basic_unlit.shader](https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/001-004_basic_unlit/basic_unlit.shader)
 
-```
+```c++
 Shader "Tutorial/001-004_Basic_Unlit"{
 	//这些值将会显示在材质面板上
 	Properties{
