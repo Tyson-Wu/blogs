@@ -163,6 +163,174 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Sprite_Shaders/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/07/01/Ronja_Sprite_Shaders/" class="post-title-link" itemprop="url">Sprite Shaders</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-07-01 15:01:00 / 修改时间：22:07:06" itemprop="dateCreated datePublished" datetime="2021-07-01T15:01:00+08:00">2021-07-01</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/007-sprite-shaders/">Sprite Shaders</a></p>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Basic_Transparency/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/07/01/Ronja_Basic_Transparency/" class="post-title-link" itemprop="url">Basic Transparency</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-07-01 14:01:00 / 修改时间：22:07:06" itemprop="dateCreated datePublished" datetime="2021-07-01T14:01:00+08:00">2021-07-01</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/006-simple-transparency/">Basic Transparency</a></p>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>对于不透明物体的渲染，是直接将计算所得到的像素颜色覆盖掉原有的颜色值。而透明物体的渲染方法恰恰相反，是保留原有颜色值，然后两者通过混合后，达到一种看是半透明的效果。为了阐明关键思想，这里以最简单的不受光材质为例。</p>
+<p>如果你还不知道如果编写着色器，这里建议你先阅读我之前的<a href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Basic_Shader/">教程</a><br><img src="https://www.ronja-tutorials.com/assets/images/posts/006/SemitransparentCube.png"></p>
+<p>为了达到正确的渲染效果，首先我们需要告诉Unity：我们打算渲染一个透明物体。因此，我们可以将<code>SubShader</code>块中的<code>Tags</code>块的渲染类型改为<code>Transparent</code>，以及将其中的渲染队列改为<code>Transparent</code>。渲染队列的设置是为了保证我们的半透明物体一定是在不透明物体之后渲染。如果不这么设置，根据上面说到的不透明渲染的方法，很可能有不透明物体直接覆盖在半透明物体区域，即便我们的半透明物体在不透明物体的前方。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Transparent&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Transparent&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来我们要定义混合模式，前面提到需要将半透明的像素颜色和已经渲染的像素颜色相混合，就是通过这个混合模式来决定的。混合模式的定义由两个关键字构成，第一个和半透明颜色相乘，第二个和已有的颜色相乘，然后两者相加。</p>
+<p>当我们渲染不透明物体时，我们将第一个参数设为1，第二个参数设为0，这样新的颜色值便会完全替换掉原先的颜色值。而在透明材质中，我们通常使用新颜色的透明通道作为第一个参数，而第二个参数为1减该透明通道值，这样我们就可以调整其透明通道来实现不同程度的透明效果。</p>
+<p>混合模式可以定义在<code>SubShader</code>块中，也可以定义在<code>Pass</code>块中，位置的不同决定其作用域的大小。但是必须定义在<code>hlsl</code>代码以外，因为这属于<code>Shaderlab</code>拓展的特性。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Blend SrcAlpha OneMinusSrcAlpha</span><br></pre></td></tr></table></figure>
+
+<p>你可以从下面网址找到更全面的混合模式设置介绍：<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-Blend.html">https://docs.unity3d.com/Manual/SL-Blend.html</a></p>
+<p>为了突出重点，精简逻辑，这里举两个小例子：</p>
+<ul>
+<li>当我们的片段着色器返回的透明通道值为<code>0.5</code>，那么根据前面设置的混合模式，将会将新的颜色值得一半和旧的颜色值得一一半进行混合。如果新颜色是白色，旧颜色是黑色，那么混合后的将是灰色；</li>
+<li>当我们的片段着色器返回的透明通道值为<code>0.9</code>，那么混合后，新颜色将占有90%的比例，而旧颜色只占有%10；</li>
+</ul>
+<p>因此，在前面不透明着色器脚本的基础上，做以上调整，该着色器就成功变成一个半透明着色器。因为公共变量<code>_Color</code>参与了片段着色器中的颜色计算，所以我们在材质面板修改其透明度，将会影响最终的混合效果。如下：<br><img src="https://www.ronja-tutorials.com/assets/images/posts/006/AdjustTint.gif"></p>
+<p>另一个需要修改的地方是关闭透明着色器的深度写入功能。一般来说，当模型被渲染到画面上是，其距离摄像机的深度信息会被记录到一张深度纹理是上。然后后面渲染的模型只需要与这张深度图相比较，就可以正确判断其相互之间的遮挡关系，其中被遮挡的部分将不会渲染到画面上。但是这并不适用于半透明物体，因为即便被遮挡也会被渲染。所以我们只能从其渲染队列方面考虑，将半透明物体限定在不透明物体之后渲染，并且半透明物体之间的渲染排序是由远及近。深度值写入的设置如下，和混合模式设置一样，都可以定义在<code>SubShader</code>或<code>Pass</code>块中。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Blend SrcAlpha OneMinusSrcAlpha</span><br><span class="line">ZWrite Off</span><br></pre></td></tr></table></figure>
+
+<p>如果我们的纹理贴图也存在半透明通道，那么最终渲染出来的效果将是各个部位的透明程度有差异。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/006/TextureTransparentCube.png"></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/006_Basic_Transparency&quot;</span>&#123;</span><br><span class="line">	Properties&#123;</span><br><span class="line">		_Color (<span class="string">&quot;Tint&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">		_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	SubShader&#123;</span><br><span class="line">		Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Transparent&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Transparent&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line">		Blend SrcAlpha OneMinusSrcAlpha</span><br><span class="line">		ZWrite off</span><br><span class="line"></span><br><span class="line">		Pass&#123;</span><br><span class="line">			CGPROGRAM</span><br><span class="line"></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UnityCG.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line">			sampler2D _MainTex;</span><br><span class="line">			float4 _MainTex_ST;</span><br><span class="line"></span><br><span class="line">			fixed4 _Color;</span><br><span class="line"></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">				float4 vertex : POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">				float4 position : SV_POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">				v2f o;</span><br><span class="line">				o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">				o.uv = TRANSFORM_TEX(v.uv, _MainTex);</span><br><span class="line">				<span class="keyword">return</span> o;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">				fixed4 col = tex2D(_MainTex, i.uv);</span><br><span class="line">				col *= _Color;</span><br><span class="line">				<span class="keyword">return</span> col;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>你可以在以下链接找到源码：<a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/006_Transparency/transparent.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/006_Transparency/transparent.shader</a></p>
+<p>希望你能喜欢这个教程哦！如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Surface_Shader_Basics/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -188,7 +356,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-07-01 13:01:00 / 修改时间：22:00:42" itemprop="dateCreated datePublished" datetime="2021-07-01T13:01:00+08:00">2021-07-01</time>
+              <time title="创建时间：2021-07-01 13:01:00 / 修改时间：22:07:06" itemprop="dateCreated datePublished" datetime="2021-07-01T13:01:00+08:00">2021-07-01</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -268,7 +436,7 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/005_surface&quot;</span> &#123;</span><br><span class="line">	Properties &#123;</span><br><span class="line">		_Color (<span class="string">&quot;Tint&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">		_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">		_Smoothness (<span class="string">&quot;Smoothness&quot;</span>, Range(<span class="number">0</span>, <span class="number">1</span>)) = <span class="number">0</span></span><br><span class="line">		_Metallic (<span class="string">&quot;Metalness&quot;</span>, Range(<span class="number">0</span>, <span class="number">1</span>)) = <span class="number">0</span></span><br><span class="line">		[HDR] _Emission (<span class="string">&quot;Emission&quot;</span>, color) = (<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	SubShader &#123;</span><br><span class="line">		Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Geometry&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line">		CGPROGRAM</span><br><span class="line"></span><br><span class="line">		<span class="meta">#<span class="meta-keyword">pragma</span> surface surf Standard fullforwardshadows</span></span><br><span class="line">		<span class="meta">#<span class="meta-keyword">pragma</span> target 3.0</span></span><br><span class="line"></span><br><span class="line">		sampler2D _MainTex;</span><br><span class="line">		fixed4 _Color;</span><br><span class="line"></span><br><span class="line">		half _Smoothness;</span><br><span class="line">		half _Metallic;</span><br><span class="line">		half3 _Emission;</span><br><span class="line"></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> <span class="title">Input</span> &#123;</span></span><br><span class="line">			float2 uv_MainTex;</span><br><span class="line">		&#125;;</span><br><span class="line"></span><br><span class="line">		<span class="function"><span class="keyword">void</span> <span class="title">surf</span> <span class="params">(Input i, inout SurfaceOutputStandard o)</span> </span>&#123;</span><br><span class="line">			fixed4 col = tex2D(_MainTex, i.uv_MainTex);</span><br><span class="line">			col *= _Color;</span><br><span class="line">			o.Albedo = col.rgb;</span><br><span class="line">			o.Metallic = _Metallic;</span><br><span class="line">			o.Smoothness = _Smoothness;</span><br><span class="line">			o.Emission = _Emission;</span><br><span class="line">		&#125;</span><br><span class="line">		ENDCG</span><br><span class="line">	&#125;</span><br><span class="line">	FallBack <span class="string">&quot;Standard&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><img src="https://www.ronja-tutorials.com/assets/images/posts/005/Result.png"></p>
 <p>希望本章的介绍能让你有所收获！</p>
-<p>你可以在一下链接找到源码：<a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/005_Surface_Basics/simple_surface.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/005_Surface_Basics/simple_surface.shader</a></p>
+<p>你可以在以下链接找到源码：<a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/005_Surface_Basics/simple_surface.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/005_Surface_Basics/simple_surface.shader</a></p>
 <p>希望你能喜欢这个教程哦！如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
 
       
@@ -314,7 +482,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-07-01 12:01:00 / 修改时间：22:00:42" itemprop="dateCreated datePublished" datetime="2021-07-01T12:01:00+08:00">2021-07-01</time>
+              <time title="创建时间：2021-07-01 12:01:00 / 修改时间：22:07:06" itemprop="dateCreated datePublished" datetime="2021-07-01T12:01:00+08:00">2021-07-01</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -410,7 +578,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-07-01 11:01:00 / 修改时间：22:00:42" itemprop="dateCreated datePublished" datetime="2021-07-01T11:01:00+08:00">2021-07-01</time>
+              <time title="创建时间：2021-07-01 11:01:00 / 修改时间：22:07:06" itemprop="dateCreated datePublished" datetime="2021-07-01T11:01:00+08:00">2021-07-01</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -518,7 +686,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-01 22:00:42" itemprop="dateModified" datetime="2021-07-01T22:00:42+08:00">2021-07-01</time>
+                <time title="修改时间：2021-07-01 22:07:06" itemprop="dateModified" datetime="2021-07-01T22:07:06+08:00">2021-07-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -620,108 +788,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/06/25/Ronja_Basic_Transparency/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2021/06/25/Ronja_Basic_Transparency/" class="post-title-link" itemprop="url">Basic Transparency</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-06-25 11:01:00" itemprop="dateCreated datePublished" datetime="2021-06-25T11:01:00+08:00">2021-06-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-01 22:00:42" itemprop="dateModified" datetime="2021-07-01T22:00:42+08:00">2021-07-01</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/006-simple-transparency/">Basic Transparency</a></p>
-<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>对于不透明物体的渲染，是直接将计算所得到的像素颜色覆盖掉原有的颜色值。而透明物体的渲染方法恰恰相反，是保留原有颜色值，然后两者通过混合后，达到一种看是半透明的效果。为了阐明关键思想，这里以最简单的不受光材质为例。</p>
-<p>如果你还不知道如果编写着色器，这里建议你先阅读我之前的<a href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Basic_Shader/">教程</a><br><img src="https://www.ronja-tutorials.com/assets/images/posts/006/SemitransparentCube.png"></p>
-<p>为了达到正确的渲染效果，首先我们需要告诉Unity：我们打算渲染一个透明物体。因此，我们可以将<code>SubShader</code>块中的<code>Tags</code>块的渲染类型改为<code>Transparent</code>，以及将其中的渲染队列改为<code>Transparent</code>。渲染队列的设置是为了保证我们的半透明物体一定是在不透明物体之后渲染。如果不这么设置，根据上面说到的不透明渲染的方法，很可能有不透明物体直接覆盖在半透明物体区域，即便我们的半透明物体在不透明物体的前方。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Transparent&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Transparent&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
-
-<p>接下来我们要定义混合模式，前面提到需要将半透明的像素颜色和已经渲染的像素颜色相混合，就是通过这个混合模式来决定的。混合模式的定义由两个关键字构成，第一个和半透明颜色相乘，第二个和已有的颜色相乘，然后两者相加。</p>
-<p>当我们渲染不透明物体时，我们将第一个参数设为1，第二个参数设为0，这样新的颜色值便会完全替换掉原先的颜色值。而在透明材质中，我们通常使用新颜色的透明通道作为第一个参数，而第二个参数为1减该透明通道值，这样我们就可以调整其透明通道来实现不同程度的透明效果。</p>
-<p>混合模式可以定义在<code>SubShader</code>块中，也可以定义在<code>Pass</code>块中，位置的不同决定其作用域的大小。但是必须定义在<code>hlsl</code>代码以外，因为这属于<code>Shaderlab</code>拓展的特性。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Blend SrcAlpha OneMinusSrcAlpha</span><br></pre></td></tr></table></figure>
-
-<p>你可以从下面网址找到更全面的混合模式设置介绍：<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-Blend.html">https://docs.unity3d.com/Manual/SL-Blend.html</a></p>
-<p>为了突出重点，精简逻辑，这里举两个小例子：</p>
-<ul>
-<li>当我们的片段着色器返回的透明通道值为<code>0.5</code>，那么根据前面设置的混合模式，将会将新的颜色值得一半和旧的颜色值得一一半进行混合。如果新颜色是白色，旧颜色是黑色，那么混合后的将是灰色；</li>
-<li>当我们的片段着色器返回的透明通道值为<code>0.9</code>，那么混合后，新颜色将占有90%的比例，而旧颜色只占有%10；</li>
-</ul>
-<p>因此，在前面不透明着色器脚本的基础上，做以上调整，该着色器就成功变成一个半透明着色器。因为公共变量<code>_Color</code>参与了片段着色器中的颜色计算，所以我们在材质面板修改其透明度，将会影响最终的混合效果。如下：<br><img src="https://www.ronja-tutorials.com/assets/images/posts/006/AdjustTint.gif"></p>
-<p>另一个需要修改的地方是关闭透明着色器的深度写入功能。一般来说，当模型被渲染到画面上是，其距离摄像机的深度信息会被记录到一张深度纹理是上。然后后面渲染的模型只需要与这张深度图相比较，就可以正确判断其相互之间的遮挡关系，其中被遮挡的部分将不会渲染到画面上。但是这并不适用于半透明物体，因为即便被遮挡也会被渲染。所以我们只能从其渲染队列方面考虑，将半透明物体限定在不透明物体之后渲染，并且半透明物体之间的渲染排序是由远及近。深度值写入的设置如下，和混合模式设置一样，都可以定义在<code>SubShader</code>或<code>Pass</code>块中。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Blend SrcAlpha OneMinusSrcAlpha</span><br><span class="line">ZWrite Off</span><br></pre></td></tr></table></figure>
-
-<p>如果我们的纹理贴图也存在半透明通道，那么最终渲染出来的效果将是各个部位的透明程度有差异。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/006/TextureTransparentCube.png"></p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/006_Basic_Transparency&quot;</span>&#123;</span><br><span class="line">	Properties&#123;</span><br><span class="line">		_Color (<span class="string">&quot;Tint&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">		_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	SubShader&#123;</span><br><span class="line">		Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Transparent&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Transparent&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line">		Blend SrcAlpha OneMinusSrcAlpha</span><br><span class="line">		ZWrite off</span><br><span class="line"></span><br><span class="line">		Pass&#123;</span><br><span class="line">			CGPROGRAM</span><br><span class="line"></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UnityCG.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line">			sampler2D _MainTex;</span><br><span class="line">			float4 _MainTex_ST;</span><br><span class="line"></span><br><span class="line">			fixed4 _Color;</span><br><span class="line"></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">				float4 vertex : POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">				float4 position : SV_POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">				v2f o;</span><br><span class="line">				o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">				o.uv = TRANSFORM_TEX(v.uv, _MainTex);</span><br><span class="line">				<span class="keyword">return</span> o;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">				fixed4 col = tex2D(_MainTex, i.uv);</span><br><span class="line">				col *= _Color;</span><br><span class="line">				<span class="keyword">return</span> col;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>你可以在一下链接找到源码：<a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/006_Transparency/transparent.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/006_Transparency/transparent.shader</a></p>
-<p>希望你能喜欢这个教程哦！如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/06/25/Ronja_Structure/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -753,7 +819,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-01 22:00:42" itemprop="dateModified" datetime="2021-07-01T22:00:42+08:00">2021-07-01</time>
+                <time title="修改时间：2021-07-01 22:07:06" itemprop="dateModified" datetime="2021-07-01T22:07:06+08:00">2021-07-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -856,7 +922,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-01 22:00:42" itemprop="dateModified" datetime="2021-07-01T22:00:42+08:00">2021-07-01</time>
+                <time title="修改时间：2021-07-01 22:07:06" itemprop="dateModified" datetime="2021-07-01T22:07:06+08:00">2021-07-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -943,7 +1009,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-01 22:00:42" itemprop="dateModified" datetime="2021-07-01T22:00:42+08:00">2021-07-01</time>
+                <time title="修改时间：2021-07-01 22:07:06" itemprop="dateModified" datetime="2021-07-01T22:07:06+08:00">2021-07-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1056,7 +1122,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-01 22:00:42" itemprop="dateModified" datetime="2021-07-01T22:00:42+08:00">2021-07-01</time>
+                <time title="修改时间：2021-07-01 22:07:06" itemprop="dateModified" datetime="2021-07-01T22:07:06+08:00">2021-07-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1117,100 +1183,6 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a1 &#x3D; -(B1 + sqrt(4A1C1 – B1 * B1))&#x2F;(2* A1)</span><br><span class="line">a2 &#x3D; -(B1 - sqrt(4A1C1 – B1 * B1))&#x2F;(2* A1)</span><br></pre></td></tr></table></figure>
 <p>这里可以取a1、a2中的任意一个作为a的值<br>根据式8可以计算b<br>根据式11可以计算c<br>根据式10可以计算x3<br>从上面分段线开始，是基于<code>式2</code>计算所有的参数，也就是基于点<code>(x1, y1)</code>，我们也可以基于<code>式3</code>进行计算，也就是基于点<code>(x2,y2)</code>，但是计算出的结果都是一致的</p>
 <h2 id="实现源码"><a href="#实现源码" class="headerlink" title="实现源码"></a>实现源码</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">void Start()</span><br><span class="line">    &#123;</span><br><span class="line">        float x1 &#x3D; 1.3245f;</span><br><span class="line">        float y1 &#x3D; 0.342f;</span><br><span class="line">        float x2 &#x3D; 11.24f;</span><br><span class="line">        float y2 &#x3D; 6.324f;</span><br><span class="line">        float y3 &#x3D; -8.213f;</span><br><span class="line">        if(Solve(x1, y1, x2, y2, y3, out var x3, out var a, out var b, out var c))</span><br><span class="line">        &#123;</span><br><span class="line">            Debug.LogError(string.Format(&quot;&#123;0&#125; &#x3D;&#x3D; &#123;1&#125;&quot;, y1, func(a, b, c, x1)));</span><br><span class="line">            Debug.LogError(string.Format(&quot;&#123;0&#125; &#x3D;&#x3D; &#123;1&#125;&quot;, y2, func(a, b, c, x2)));</span><br><span class="line">            Debug.LogError(string.Format(&quot;&#123;0&#125; &#x3D;&#x3D; &#123;1&#125;&quot;, y3, func(a, b, c, x3)));</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">            Debug.LogError(&quot;error&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    float func(float a, float b, float c, float x)</span><br><span class="line">    &#123;</span><br><span class="line">        return a * x * x + b * x + c;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; a * x * x + b * x + c &#x3D; y</span><br><span class="line">    bool Solve(float x1, float y1, float x2, float y2, float y3, out float x3, out float a, out float b, out float c)</span><br><span class="line">    &#123;</span><br><span class="line">        float eps &#x3D; 0.00001f;</span><br><span class="line">        bool rst &#x3D; true;</span><br><span class="line">        float m, n;</span><br><span class="line">        m &#x3D; (y1 - y2) &#x2F; (x1 - x2);</span><br><span class="line">        n &#x3D; x1 + x2;</span><br><span class="line"></span><br><span class="line">        float A1, B1, C1;</span><br><span class="line">        A1 &#x3D; 4 * x1 * x1 - 4 * n * x1 + n * n;</span><br><span class="line">        B1 &#x3D; 4 * m * x1 - 2 * m * n - 4 * (y1 - y3);</span><br><span class="line">        C1 &#x3D; m * m;</span><br><span class="line"></span><br><span class="line">        float A2, B2, C2;</span><br><span class="line">        A2 &#x3D; 4 * x2 * x2 - 4 * n * x2 + n * n;</span><br><span class="line">        B2 &#x3D; 4 * m * x2 - 2 * m * n - 4 * (y2 - y3);</span><br><span class="line">        C2 &#x3D; m * m;</span><br><span class="line"></span><br><span class="line">        float a1_1, a1_2;</span><br><span class="line">        a1_1 &#x3D; -(B1 + Mathf.Sqrt(B1 * B1 - 4 * A1 * C1)) &#x2F; (2 * A1);</span><br><span class="line">        a1_2 &#x3D; -(B1 - Mathf.Sqrt(B1 * B1 - 4 * A1 * C1)) &#x2F; (2 * A1);</span><br><span class="line">        float a2_1, a2_2;</span><br><span class="line">        a2_1 &#x3D; -(B2 + Mathf.Sqrt(B2 * B2 - 4 * A2 * C2)) &#x2F; (2 * A2);</span><br><span class="line">        a2_2 &#x3D; -(B2 - Mathf.Sqrt(B2 * B2 - 4 * A2 * C2)) &#x2F; (2 * A2);</span><br><span class="line"></span><br><span class="line">        if (Mathf.Abs(a1_1 - a2_1)&lt; eps)</span><br><span class="line">        &#123;</span><br><span class="line">            a &#x3D; a1_1;</span><br><span class="line">        &#125;</span><br><span class="line">        else if (Mathf.Abs(a1_2 - a2_2) &lt; eps)</span><br><span class="line">        &#123;</span><br><span class="line">            a &#x3D; a1_2;</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">            a &#x3D; 1;</span><br><span class="line">            rst &#x3D; false;</span><br><span class="line">        &#125;</span><br><span class="line">        b &#x3D; m - a * n;</span><br><span class="line">        c &#x3D; y3 + b * b &#x2F; (4 * a);</span><br><span class="line">        x3 &#x3D; - b &#x2F; (2 * a);</span><br><span class="line">        return rst;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/06/16/Are-Behavior-Trees-a-Thing-of-the-Past/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2021/06/16/Are-Behavior-Trees-a-Thing-of-the-Past/" class="post-title-link" itemprop="url">Are Behavior Trees a Thing of the Past?</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-06-16 15:01:00" itemprop="dateCreated datePublished" datetime="2021-06-16T15:01:00+08:00">2021-06-16</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-01 22:00:42" itemprop="dateModified" datetime="2021-07-01T22:00:42+08:00">2021-07-01</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/%E7%BF%BB%E8%AF%91/" itemprop="url" rel="index"><span itemprop="name">翻译</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/%E7%BF%BB%E8%AF%91/%E8%A1%8C%E4%B8%BA%E6%A0%91/" itemprop="url" rel="index"><span itemprop="name">行为树</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>原文：<br><a target="_blank" rel="noopener" href="https://www.gamasutra.com/blogs/JakobRasmussen/20160427/271188/Are_Behavior_Trees_a_Thing_of_the_Past.php">Are Behavior Trees a Thing of the Past?</a></p>
-<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>基于游戏沉浸感、以及和NPC智能交互的需求，游戏开发者在游戏中使用的AI技术成为了新的焦点。曾经在游戏中普遍使用，也是游戏中AI决策的主要方案的行为树，已经显得乏力。当游戏开发者希望实现更为复杂的AI行为时，例如处理突发情况，行为树已经无法满足。因此，更为先进的AI技术——Utility AI，已经逐步取代行为树的位置，开始在游戏中展现出更为优越的AI性能，开启一个新的游戏AI时代。</p>
-<h2 id="行为树是如何屹立游戏AI界（以及它的衰落）"><a href="#行为树是如何屹立游戏AI界（以及它的衰落）" class="headerlink" title="行为树是如何屹立游戏AI界（以及它的衰落）"></a>行为树是如何屹立游戏AI界（以及它的衰落）</h2><p>大多数AI开发者都知道有限状态机（FSM）是一种简单且实用AI方法。通过简单地定义状态、以及状态之间切换的条件，然后可以基于决策实现无限循环的AI行为。例如，FSM将持续保持某种状态，直到满足某种条件，才会从一种状态切换到另一种状态。</p>
-<p>任何两个状态之间都可以在特定条件下实现切换，很容易设计FSM来实现AI行为。但是，有利也有弊。在一些大型游戏中，构建FSM需要上百个状态，这么多的状态导致异常分析变的非常困难。Damian Isla在2005 GDC论坛中针对Halo 2的AI系统，详细的指出了这一点。<br><img src="https://gamasutra.com/db_area/images/blog/apexgametools05.png"></p>
-<p>为了解决这些问题，FSM进一步演化出层级结构，使得它易于设计和异常分析。分层结构使得FSM能够更好的处理大量的状态，但是并没有从根本上解决这个问题，当状态数量进一步增加时，FSM依然会变得难以管理。<br><img src="https://gamasutra.com/db_area/images/blog/apexgametools011.png"></p>
-<p>最终，在这种层级组织的思想上，进一步演化出任务组织的树状结构——行为树。和状态机一样，行为树也是由多个状态节点组成，同一时刻只占据一种状态。不同的是，状态机中，任意两个状态之间的跳转都需要单独配置跳转条件，而行为树则是将这些跳转条件进行拆分，这些拆分后的最小条件单元称为条件装饰器。状态机中的跳转仅仅是对当前状态中的条件进行判断，如果满足条件则跳转，而行为树是从根节点开始，定时进行条件遍历，每经过一个装饰器，会进行次条件判断，然后选择不同的状态分支，以此类推。如果最终筛选出的状态和当前状态不同，那么执行状态跳转。因此，行为树解决了FSM中存在的很多问题，例如，FSM中可能发生条件满足却没有跳转的情况，或者其他跳转异常。在Unreal引擎中就实现了一套非常不错的行为树机制。<br><img src="https://gamasutra.com/db_area/images/blog/271188/image02.png"></p>
-<p>相较于层级FSM，行为树能够实现更为复杂、同时容易理解的AI系统。并且这种树结构也便于实现可视化的异常分析。<br><img src="https://gamasutra.com/db_area/images/blog/271188/apexgametools00.png"></p>
-<p>然而，行为树也有很多缺陷。很多人试图通过实现各种扩展来消除这些缺陷。</p>
-<p>当行为树状态数量变得庞大时，每次条件遍历都需要花费大量的时间。因此，有人引入了子树方案，就是将整个行为树分割为多个嵌套的子树，每次条件遍历只需要遍历当前状态所处的子树就可以，这样可以减少遍历数量，只有满足特定条件，才能跳出子树。但是子树的存在，导致行为树在控制、异常处理方便，变得和FSM一样复杂。</p>
-<h2 id="顶级的AI需要满足什么条件"><a href="#顶级的AI需要满足什么条件" class="headerlink" title="顶级的AI需要满足什么条件"></a>顶级的AI需要满足什么条件</h2><p>这需要我们重新回顾一下顶级AI的特性。</p>
-<p>顶级AI需要具备更为复杂的、更深层次的、沉浸式的游戏世界的处理能力。例如在《Hitman》、《Witcher》、《Assassin’s Creed》中，NPC的数量、定制化数量、生活化的行为数量都变得越来越多。在《Call of Duty》、《The Division》中，对手的数量、以及深度的要求，可变且复杂的策略行为爆炸式的增长。静态的、脚本化的游戏设计不再适用，需要支持动态的、甚至可演化的场景来满足当下的游戏设计。</p>
-<p>这依赖于易于设计的、具有复杂行为表达能力的AI机制。例如，这样的AI能够提高突发处理能力，能够应对游戏设计者未曾预料的场景，能够像人类一样表达更为复杂的行为模式。</p>
-<p>以上提到AI技术显然无法处理更为庞大的数据输入。AI设计者不可能使用行为树、或状态机来表示所有可能的情况。更别说设计一套保证AI正常使用的测试用例。因此，我们需要一种更好、且更稳定的AI技术。</p>
-<p>处理复杂的行为可能是AI中主要的挑战。在游戏开发中的，有很多问题是由于数据量增加、而AI处理能力不足导致的。</p>
-<p>1、 技术性遗留问题 - 如果在游戏开发过程中，扩展AI的难度很大，那么后面需要修复的问题、以及所花费的时间将会暴增。<br>2、 生产效率 - 如果不能快速实现满足游戏设计方案的AI系统，那么游戏设计者无法快速原型化其思路。最终结果是游戏缺乏内容，或者内容偏向程序化、没有趣味性。<br>3、 质量 - 最终很多游戏只能放弃、或者最终只是实现无聊的智障游戏。</p>
-<h2 id="一个新的AI范例"><a href="#一个新的AI范例" class="headerlink" title="一个新的AI范例"></a>一个新的AI范例</h2><p>Killzone 2 就具有非常棒的AI设计。Guerilla 游戏使用了一个AI公共系统来实现动态决策，并且展示了如何使用简单的打分系统来实现AI决策，即便是在对游戏世界不了解的情况下，该AI决策系统也能达到一个良好的效果。同样的系统已经使用在其他游戏，例如《文明》。</p>
-<p>这种公共系统实现方式是，识别可选项，然后基于当前状态，对每一种选项进行打分，然后选出评分最高的选项最为决策项。这种方案具有很多优势：<br>1、设计简单 -<br>2、易于扩展 -<br>3、质量高 - </p>
-
       
     </div>
 
@@ -1296,7 +1268,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-count">30</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
