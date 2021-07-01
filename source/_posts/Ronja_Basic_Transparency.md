@@ -1,6 +1,6 @@
 ---
 title: Basic Transparency 
-date: 2021-06-25 11:01:00
+date: 2021-07-01 14:01:00
 categories:
 - [Unity, Shader]
 tags:
@@ -106,6 +106,6 @@ Shader "Tutorial/006_Basic_Transparency"{
 	}
 }
 ```
-你可以在一下链接找到源码：[https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/006_Transparency/transparent.shader](https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/006_Transparency/transparent.shader)
+你可以在以下链接找到源码：[https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/006_Transparency/transparent.shader](https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/006_Transparency/transparent.shader)
 
 希望你能喜欢这个教程哦！如果你想支持我，可以关注我的[推特](https://twitter.com/totallyRonja),或者通过[ko-fi](https://ko-fi.com/ronjatutorials)、或[patreon](https://www.patreon.com/RonjaTutorials)给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!
