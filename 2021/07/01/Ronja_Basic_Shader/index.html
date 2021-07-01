@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blogs/images/girl_180_0.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blogs/images/girl_32_0.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blogs/images/girl_16_0.png">
+  <link rel="mask-icon" href="/blogs/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blogs/css/main.css">
+
+
+<link rel="stylesheet" href="/blogs/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"tyson-wu.github.io","root":"/blogs/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="原文：Basic Shader Summary在前面三个教程中，我介绍了着色器工作的基本原理、与结构。接下来我进一步介绍如何修改其中的内容。 在此之前，我并没有介绍着色器的执行代码部分。因为作为入门介绍，我们需要从结构框架入手，而不应该拘泥于细节。在大致了解着色器的实现流程后，接下来让我们来发现更有趣的细节。 What we have so far下面的着色器脚本，如果你觉得有前三章没有阐述到位的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Basic Shader">
+<meta property="og:url" content="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Basic_Shader/index.html">
+<meta property="og:site_name" content="TysonWu&#39;s Blog">
+<meta property="og:description" content="原文：Basic Shader Summary在前面三个教程中，我介绍了着色器工作的基本原理、与结构。接下来我进一步介绍如何修改其中的内容。 在此之前，我并没有介绍着色器的执行代码部分。因为作为入门介绍，我们需要从结构框架入手，而不应该拘泥于细节。在大致了解着色器的实现流程后，接下来让我们来发现更有趣的细节。 What we have so far下面的着色器脚本，如果你觉得有前三章没有阐述到位的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/004/Result.png">
+<meta property="article:published_time" content="2021-07-01T04:01:00.000Z">
+<meta property="article:modified_time" content="2021-07-01T11:10:43.636Z">
+<meta property="article:author" content="Tyson Wu">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="Shader">
+<meta property="article:tag" content="翻译">
+<meta property="article:tag" content="ronja">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.ronja-tutorials.com/assets/images/posts/004/Result.png">
+
+<link rel="canonical" href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Basic_Shader/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Basic Shader | TysonWu's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blogs/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">TysonWu's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">AiCooXiao</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blogs/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blogs/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/blogs/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blogs/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blogs/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Basic_Shader/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Basic Shader
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-07-01 12:01:00 / 修改时间：19:10:43" itemprop="dateCreated datePublished" datetime="2021-07-01T12:01:00+08:00">2021-07-01</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/004-basic/">Basic Shader</a></p>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>在前面三个教程中，我介绍了着色器工作的基本原理、与结构。接下来我进一步介绍如何修改其中的内容。</p>
+<p>在此之前，我并没有介绍着色器的执行代码部分。因为作为入门介绍，我们需要从结构框架入手，而不应该拘泥于细节。在大致了解着色器的实现流程后，接下来让我们来发现更有趣的细节。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/004/Result.png"></p>
+<h2 id="What-we-have-so-far"><a href="#What-we-have-so-far" class="headerlink" title="What we have so far"></a>What we have so far</h2><p>下面的着色器脚本，如果你觉得有前三章没有阐述到位的地方，都可以告诉我。我必将事事有会响！</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/001-004_Basic_Unlit&quot;</span>&#123;</span><br><span class="line">	<span class="comment">//这些值将会显示在材质面板上</span></span><br><span class="line">	Properties&#123;</span><br><span class="line">		_Color (<span class="string">&quot;Tint&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">		_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	SubShader&#123;</span><br><span class="line">		<span class="comment">//当前的标签设置表示的是：不透明渲染，和其他不透明物体处以同一渲染队列</span></span><br><span class="line">		Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Geometry&quot;</span> &#125;</span><br><span class="line"></span><br><span class="line">		Pass&#123;</span><br><span class="line">			CGPROGRAM</span><br><span class="line"></span><br><span class="line">			<span class="comment">//这里包括一些工具函数、以及内置变量</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UnityCG.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//定义顶点、片段着色函数</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//材质所用的纹理、以及缩放偏移量</span></span><br><span class="line">			sampler2D _MainTex;</span><br><span class="line">			float4 _MainTex_ST;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//材质的颜色，具体一点是：当纹理为白色图片时，材质的颜色</span></span><br><span class="line">			fixed4 _Color;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//模型网格、UI等输入数据，基本代表了模型内在属性</span></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">				float4 vertex : POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//当经过顶点着色器处理后，处理的数据经过栅格化插值，然后传入片段着色器</span></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">				float4 position : SV_POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//顶点着色器函数，主要执行坐标的空间变换</span></span><br><span class="line">			<span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">				v2f o;</span><br><span class="line">				<span class="comment">//将模型各顶点坐标，转换到裁剪空间</span></span><br><span class="line">				o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">				<span class="comment">//基于图片的缩放偏移参数，对UV进行变换</span></span><br><span class="line">				o.uv = TRANSFORM_TEX(v.uv, _MainTex);</span><br><span class="line">				<span class="keyword">return</span> o;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//片段作色器，主要是计算像素点的颜色</span></span><br><span class="line">			<span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">			    <span class="comment">//基于UV坐标，进行纹理采样</span></span><br><span class="line">				fixed4 col = tex2D(_MainTex, i.uv);</span><br><span class="line">				<span class="comment">//将纹理颜色和材质颜色相乘</span></span><br><span class="line">				col *= _Color;</span><br><span class="line">				<span class="comment">//返回最终的像素点颜色</span></span><br><span class="line">				<span class="keyword">return</span> col;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	Fallback <span class="string">&quot;VertexLit&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Setting-up-the-shader-stages"><a href="#Setting-up-the-shader-stages" class="headerlink" title="Setting up the shader stages"></a>Setting up the shader stages</h2><p>之前提到的顶点着色器、片段着色器，在着色器脚本中实际上就是<code>HLSL</code>函数。只不过，这些函数对应这渲染管线中的特定阶段。为了将这些函数关联到指定阶段，我们可以使用<code>#pragma</code>关键字来说明。前面经常谈到的顶点着色器、和片段着色器是非常重要的两个阶段。因为顶点着色器负责将模型数据转换到裁剪空间，然后经由栅格化处理，进入到片段着色器，最终有片段着色器计算出像素颜色，并写入渲染对象。可以说这两个着色器代表了渲染的基本流程。其中关联函数的操作如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//定义顶点、片段着色函数</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//顶点着色器函数，主要执行坐标的空间变换</span></span><br><span class="line"><span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//片段作色器，主要是计算像素点的颜色</span></span><br><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Vertex-stage"><a href="#Vertex-stage" class="headerlink" title="Vertex stage"></a>Vertex stage</h2><p>在实现顶点着色器函数之前，我满需要定义好插值数据类型，前面提到过，这类数据是在顶点着色器中计算好，然后传递给片段着色器的。</p>
+<p>顶点着色器的主要功能就是执行空间变换，将顶点数据从模型坐标系转换到裁剪坐标系。空间转换可以借助矩阵乘法来实现。但是，很多时候我们并不需要知道乘法的具体实现，因为Unity为我们提供了很多矩阵变换相关的函数。我们可以使用宏命令来引入Unity预先编写好的工具函数。例如<code>#include UnityCG.cginc</code>。其中<code>UnityObjectToClipPos</code>便是实现模型坐标系到裁剪坐标系的工具函数。而<code>UnityCG.cginc</code>文件中处了定义了很多常用的工具函数外，还定义了很多宏操作。宏操作的使用方法和函数的使用类似。例如，用于UV转换的宏<code>TRANSFORM_TEX</code>，使用顶点UV，以及纹理变量为参数，最终得到转换后的UV坐标。</p>
+<p>编写好的顶点着色器函数如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//顶点着色器函数，主要执行坐标的空间变换</span></span><br><span class="line"><span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">    v2f o;</span><br><span class="line">    <span class="comment">//将模型各顶点坐标，转换到裁剪空间</span></span><br><span class="line">    o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">    <span class="comment">//基于图片的缩放偏移参数，对UV进行变换</span></span><br><span class="line">    o.uv = TRANSFORM_TEX(v.uv, _MainTex);</span><br><span class="line">    <span class="keyword">return</span> o;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Fragment-stage"><a href="#Fragment-stage" class="headerlink" title="Fragment stage"></a>Fragment stage</h2><p>在片段着色器中，我们使用由顶点着色器传来的插值数据、以及公共的纹理数据等，来进一步计算每个像素点的颜色。当然，我们可以直接返回白色，如<code>return float4(1,1,1,1);</code>。但是更实际的情况是，我们结合前面提到的数据，通过一些简单、或复杂的计算，来得到比较自然的颜色值。</p>
+<p>我们把使用纹理数据的过程叫做纹理采样。因为纹理数据是一整张包含无数像素点的图片，而我们的片段着色器计算的是一个单独像素的颜色。因此我们只需要纹理中的一个像素值。采样的方法也很简单，直接使用<code>tex2D</code>函数就可以，当然还有其他一些复杂一点的采样函数。这里我们以<code>tex2D</code>为例，需要两个参数，第一个是纹理变量，第二个是UV坐标。下面我们除了使用采样后的像素颜色，同时也叠加了公共变量<code>_Color</code>的值。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//片段作色器，主要是计算像素点的颜色</span></span><br><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    <span class="comment">//基于UV坐标，进行纹理采样</span></span><br><span class="line">    fixed4 col = tex2D(_MainTex, i.uv);</span><br><span class="line">    <span class="comment">//将纹理颜色和材质颜色相乘</span></span><br><span class="line">    col *= _Color;</span><br><span class="line">    <span class="comment">//返回最终的像素点颜色</span></span><br><span class="line">    <span class="keyword">return</span> col;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>把上面的各个步骤组合起来，恭喜你，创建了属于你自己的着色器脚本。</p>
+<h2 id="Source"><a href="#Source" class="headerlink" title="Source"></a>Source</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/001-004_basic_unlit/basic_unlit.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/001-004_basic_unlit/basic_unlit.shader</a></li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/001-004_Basic_Unlit&quot;</span>&#123;</span><br><span class="line">	<span class="comment">//这些值将会显示在材质面板上</span></span><br><span class="line">	Properties&#123;</span><br><span class="line">		_Color (<span class="string">&quot;Tint&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">		_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	SubShader&#123;</span><br><span class="line">		<span class="comment">//当前的标签设置表示的是：不透明渲染，和其他不透明物体处以同一渲染队列</span></span><br><span class="line">		Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Geometry&quot;</span> &#125;</span><br><span class="line"></span><br><span class="line">		Pass&#123;</span><br><span class="line">			CGPROGRAM</span><br><span class="line"></span><br><span class="line">			<span class="comment">//这里包括一些工具函数、以及内置变量</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UnityCG.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//定义顶点、片段着色函数</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//材质所用的纹理、以及缩放偏移量</span></span><br><span class="line">			sampler2D _MainTex;</span><br><span class="line">			float4 _MainTex_ST;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//材质的颜色，具体一点是：当纹理为白色图片时，材质的颜色</span></span><br><span class="line">			fixed4 _Color;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//模型网格、UI等输入数据，基本代表了模型内在属性</span></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">				float4 vertex : POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//当经过顶点着色器处理后，处理的数据经过栅格化插值，然后传入片段着色器</span></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">				float4 position : SV_POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//顶点着色器函数，主要执行坐标的空间变换</span></span><br><span class="line">			<span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">				v2f o;</span><br><span class="line">				<span class="comment">//将模型各顶点坐标，转换到裁剪空间</span></span><br><span class="line">				o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">				<span class="comment">//基于图片的缩放偏移参数，对UV进行变换</span></span><br><span class="line">				o.uv = TRANSFORM_TEX(v.uv, _MainTex);</span><br><span class="line">				<span class="keyword">return</span> o;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//片段作色器，主要是计算像素点的颜色</span></span><br><span class="line">			<span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">			    <span class="comment">//基于UV坐标，进行纹理采样</span></span><br><span class="line">				fixed4 col = tex2D(_MainTex, i.uv);</span><br><span class="line">				<span class="comment">//将纹理颜色和材质颜色相乘</span></span><br><span class="line">				col *= _Color;</span><br><span class="line">				<span class="comment">//返回最终的像素点颜色</span></span><br><span class="line">				<span class="keyword">return</span> col;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	Fallback <span class="string">&quot;VertexLit&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>希望你能喜欢这个教程哦！如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blogs/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/blogs/tags/Shader/" rel="tag"># Shader</a>
+              <a href="/blogs/tags/%E7%BF%BB%E8%AF%91/" rel="tag"># 翻译</a>
+              <a href="/blogs/tags/ronja/" rel="tag"># ronja</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blogs/2021/07/01/Ronja_Variables/" rel="prev" title="Variables">
+      <i class="fa fa-chevron-left"></i> Variables
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blogs/2021/07/01/Ronja_Surface_Shader_Basics/" rel="next" title="Surface Shader Basics">
+      Surface Shader Basics <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Summary"><span class="nav-number">1.</span> <span class="nav-text">Summary</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#What-we-have-so-far"><span class="nav-number">2.</span> <span class="nav-text">What we have so far</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Setting-up-the-shader-stages"><span class="nav-number">3.</span> <span class="nav-text">Setting up the shader stages</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Vertex-stage"><span class="nav-number">4.</span> <span class="nav-text">Vertex stage</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Fragment-stage"><span class="nav-number">5.</span> <span class="nav-text">Fragment stage</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Source"><span class="nav-number">6.</span> <span class="nav-text">Source</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Tyson Wu"
+      src="/blogs/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Tyson Wu</p>
+  <div class="site-description" itemprop="description">If you want, Just do it!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blogs/archives/">
+        
+          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blogs/categories/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blogs/tags/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Tyson-Wu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Tyson-Wu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/zhao-wu-zhu-43" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhao-wu-zhu-43" rel="noopener" target="_blank"><i class="知乎 fa-fw"></i>知乎</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.cnblogs.com/Hi-blog/" title="https:&#x2F;&#x2F;www.cnblogs.com&#x2F;Hi-blog&#x2F;" rel="noopener" target="_blank">starnight_cyber</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tyson Wu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blogs/lib/anime.min.js"></script>
+  <script src="/blogs/lib/velocity/velocity.min.js"></script>
+  <script src="/blogs/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blogs/js/utils.js"></script>
+
+<script src="/blogs/js/motion.js"></script>
+
+
+<script src="/blogs/js/schemes/pisces.js"></script>
+
+
+<script src="/blogs/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
