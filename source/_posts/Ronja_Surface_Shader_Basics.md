@@ -16,7 +16,7 @@ tags:
 
 在Unity中，我们可以创建一个空的着色器脚本，然后手动一行一行的去实现整个脚本。当然这种方式比较费时，毕竟着色器有一套固定的流程，因此可以将一部分代码复用，例如光照模型。如果能够直接配置一些参数就能自动生成相关代码，你一定会喜欢吧。Unity就是这么会投其所好，它实现了一种名叫表面着色器的东东，刚好能够满足咱懒人的需求。懒-是推动科技发展的第一生产力，至理名言啊！
 
-那什么是表面作色器呢？在进入正题之前，我建议你先了解最简单的无光照的着色器，如果你不清楚，可以参考我上一个[教程](https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Structure/)。
+那什么是表面作色器呢？在进入正题之前，我建议你先了解最简单的无光照的着色器，如果你不清楚，可以参考我上一个[教程](https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Basic_Shader/)。
 ![](https://www.ronja-tutorials.com/assets/images/posts/005/Result.png)
 
 ## Conversion to simple Surface Shader
