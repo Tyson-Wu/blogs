@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blogs/images/girl_180_0.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blogs/images/girl_32_0.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blogs/images/girl_16_0.png">
+  <link rel="mask-icon" href="/blogs/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blogs/css/main.css">
+
+
+<link rel="stylesheet" href="/blogs/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"tyson-wu.github.io","root":"/blogs/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="原文：Color Interpolation Summary很多时候，我们的模型需要使用多张纹理，并且同时应用这些纹理，例如地形材质。这时候我们需要通过一些插值的方法将这些纹理采集的颜色进行有效融合。 本教程是在上一个图片着色器的基础上实现的。但是你也可以根据其基本思路，以表面着色器的形式重写其功能。 Interpolate Colors首先，我们颜色混合着色器的第一个版本仅仅处理两个纯色之间的混">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Color Interpolation">
+<meta property="og:url" content="https://tyson-wu.github.io/blogs/2021/07/02/Ronja_Color_Interpolation/index.html">
+<meta property="og:site_name" content="TysonWu&#39;s Blog">
+<meta property="og:description" content="原文：Color Interpolation Summary很多时候，我们的模型需要使用多张纹理，并且同时应用这些纹理，例如地形材质。这时候我们需要通过一些插值的方法将这些纹理采集的颜色进行有效融合。 本教程是在上一个图片着色器的基础上实现的。但是你也可以根据其基本思路，以表面着色器的形式重写其功能。 Interpolate Colors首先，我们颜色混合着色器的第一个版本仅仅处理两个纯色之间的混">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/009/Result.png">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/009/BlendColors.gif">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/009/BlendTextures.gif">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/009/BlendWithTexture.png">
+<meta property="article:published_time" content="2021-07-02T03:01:00.000Z">
+<meta property="article:modified_time" content="2021-07-02T11:40:01.646Z">
+<meta property="article:author" content="Tyson Wu">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="Shader">
+<meta property="article:tag" content="翻译">
+<meta property="article:tag" content="ronja">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.ronja-tutorials.com/assets/images/posts/009/Result.png">
+
+<link rel="canonical" href="https://tyson-wu.github.io/blogs/2021/07/02/Ronja_Color_Interpolation/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Color Interpolation | TysonWu's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blogs/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">TysonWu's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">AiCooXiao</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blogs/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blogs/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/blogs/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blogs/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blogs/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/02/Ronja_Color_Interpolation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Color Interpolation
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-07-02 11:01:00 / 修改时间：19:40:01" itemprop="dateCreated datePublished" datetime="2021-07-02T11:01:00+08:00">2021-07-02</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/009-interpolating-colors/">Color Interpolation</a></p>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>很多时候，我们的模型需要使用多张纹理，并且同时应用这些纹理，例如地形材质。这时候我们需要通过一些插值的方法将这些纹理采集的颜色进行有效融合。</p>
+<p>本教程是在上一个<a href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Sprite_Shaders/">图片着色器</a>的基础上实现的。但是你也可以根据其基本思路，以表面着色器的形式重写其功能。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/009/Result.png"></p>
+<h2 id="Interpolate-Colors"><a href="#Interpolate-Colors" class="headerlink" title="Interpolate Colors"></a>Interpolate Colors</h2><p>首先，我们颜色混合着色器的第一个版本仅仅处理两个纯色之间的混合。因为这样我们就不需要考虑什么纹理、uv之类的。我们只需在加一个颜色变量、以及一个用于混合的参数，这个参数将决定两个颜色的混合权重，这里我们把它设为<code>Range</code>类，这样方便在材质面板上调节参数，同时确保参数的有效性。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//材质面板上显示的属性</span></span><br><span class="line">	Properties&#123;</span><br><span class="line">		_Color (<span class="string">&quot;Color&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>) <span class="comment">//the base color</span></span><br><span class="line">		_SecondaryColor (<span class="string">&quot;Secondary Color&quot;</span>, Color) = (<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>) <span class="comment">//the color to blend to</span></span><br><span class="line">		_Blend (<span class="string">&quot;Blend Value&quot;</span>, Range(<span class="number">0</span>,<span class="number">1</span>)) = <span class="number">0</span> <span class="comment">//0 is the first color, 1 the second</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//混合参数，或权重</span></span><br><span class="line"><span class="keyword">float</span> _Blend;</span><br><span class="line"></span><br><span class="line"><span class="comment">//用于混合的两个颜色</span></span><br><span class="line">fixed4 _Color;</span><br><span class="line">fixed4 _SecondaryColor;</span><br><span class="line">``</span><br><span class="line"></span><br><span class="line">虽然我们没有使用纹理的颜色，但是也可以保留顶点着色器中关于UV变换的操作，下一个版本还会用到它。而作为第一个版本，我么只修改片段着色器就可以，直接根据混合参数，将第二种颜色叠加到原先的颜色上。</span><br><span class="line">```c++</span><br><span class="line"><span class="comment">//片段着色器</span></span><br><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    fixed4 col = _Color + _SecondaryColor * _Blend;</span><br><span class="line">    <span class="keyword">return</span> col;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>!()[<a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/assets/images/posts/009/BlendColorsAdd.gif]">https://www.ronja-tutorials.com/assets/images/posts/009/BlendColorsAdd.gif]</a></p>
+<p>现在我们可以看到混合后颜色的变化了，但是我们始终无法将其颜色完全过度到第二种颜色。这是因为混合参数只改变第二种颜色混入的颜色，而第一种颜色依然存在。</p>
+<p>为了实现两种颜色之间的过渡渐变效果，我们需要保证两种颜色的权重和为1。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//片段着色器</span></span><br><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    fixed4 col = _Color * (<span class="number">1</span> - _Blend) + _SecondaryColor * _Blend;</span><br><span class="line">    <span class="keyword">return</span> col;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/009/BlendColors.gif"></p>
+<p>这种混合操作叫做线性插值，Unity内置的<code>lerp</code>函数就是实现这个线性插值功能。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//片段着色器</span></span><br><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    fixed4 col = lerp(_Color, _SecondaryColor, _Blend);</span><br><span class="line">    <span class="keyword">return</span> col;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最终两个颜色间的混合着色器源码如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/009_Color_Blending/Plain&quot;</span>&#123;</span><br><span class="line">	<span class="comment">//材质面板上显示的属性</span></span><br><span class="line">	Properties&#123;</span><br><span class="line">		_Color (<span class="string">&quot;Color&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>) <span class="comment">//基础颜色</span></span><br><span class="line">		_SecondaryColor (<span class="string">&quot;Secondary Color&quot;</span>, Color) = (<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>) <span class="comment">//用于混合的颜色</span></span><br><span class="line">		_Blend (<span class="string">&quot;Blend Value&quot;</span>, Range(<span class="number">0</span>,<span class="number">1</span>)) = <span class="number">0</span> <span class="comment">//混合权重，0 表示只显示基础颜色, 1 表示只显示混合颜色</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	SubShader&#123;</span><br><span class="line">		<span class="comment">//渲染不透明物体</span></span><br><span class="line">		Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Geometry&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line">		Pass&#123;</span><br><span class="line">			CGPROGRAM</span><br><span class="line"></span><br><span class="line">			<span class="comment">//引入内置变量和函数</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UnityCG.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//定义着色器函数</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//混合参数</span></span><br><span class="line">			<span class="keyword">float</span> _Blend;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//两个用于混合的颜色</span></span><br><span class="line">			fixed4 _Color;</span><br><span class="line">			fixed4 _SecondaryColor;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//输入的网格数据</span></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">				float4 vertex : POSITION;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//中间插值的变量，由顶点着色器到片段着色器</span></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">				float4 position : SV_POSITION;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//顶点着色器</span></span><br><span class="line">			<span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">				v2f o;</span><br><span class="line">				<span class="comment">//计算裁剪空间下的坐标</span></span><br><span class="line">				o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">				<span class="keyword">return</span> o;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//片段着色器</span></span><br><span class="line">			<span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">				fixed4 col = lerp(_Color, _SecondaryColor, _Blend);</span><br><span class="line">				<span class="keyword">return</span> col;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Interpolate-Textures"><a href="#Interpolate-Textures" class="headerlink" title="Interpolate Textures"></a>Interpolate Textures</h2><p>我们颜色混合着色器的第二个版本将考虑混合两张纹理贴图的颜色。首先我们删掉前面两个颜色变量，改成两个纹理变量。因为涉及到纹理，所以需要uv坐标来进行纹理采样。之前的纹理采样都执行了uv变换操作，实际上这一步并不是必须的，如果我们不打算缩放纹理的话，这一步就可以省略掉，与之相关的纹理参数也可以省掉。但是我们这里有两张纹理，每张纹理都打算使用各自的缩放参数，这时候可以在顶点着色器中执行uv变换，然后在传给片段着色器，也可以直接在片段着色器中进行uv变换。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//材质面板上显示的属性</span></span><br><span class="line">Properties&#123;</span><br><span class="line">    _MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125; <span class="comment">//基础纹理颜色</span></span><br><span class="line">    _SecondaryTex (<span class="string">&quot;Secondary Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;black&quot;</span> &#123;&#125; <span class="comment">//用于混合的纹理颜色</span></span><br><span class="line">    _Blend (<span class="string">&quot;Blend Value&quot;</span>, Range(<span class="number">0</span>,<span class="number">1</span>)) = <span class="number">0</span> <span class="comment">//混合权重，0 表示只显示基础颜色, 1 表示只显示混合颜色</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//定义着色器函数</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//输入的网格数据</span></span><br><span class="line">struct appdata&#123;</span><br><span class="line">    float4 vertex : POSITION;</span><br><span class="line">    float2 uv : TEXCOORD0;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">//中间插值的变量，由顶点着色器到片段着色器</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">    float4 position : SV_POSITION;</span><br><span class="line">    float2 uv : TEXCOORD0;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">//顶点着色器</span></span><br><span class="line"><span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">    v2f o;</span><br><span class="line">    <span class="comment">//计算裁剪空间下的坐标</span></span><br><span class="line">    o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">    <span class="keyword">return</span> o;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br></pre></td></tr></table></figure>
+<p>这里我们是在片段着色其中进行uv变换的。并且使用各自变换后的uv进行纹理采样。在得到采样颜色后，我们就可以和上一个版本一样进行线性插值了。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//片段着色器</span></span><br><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    <span class="comment">//分别进行uv变换</span></span><br><span class="line">    float2 main_uv = TRANSFORM_TEX(i.uv, _MainTex);</span><br><span class="line">    float2 secondary_uv = TRANSFORM_TEX(i.uv, _SecondaryTex);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//分别进行纹理采样</span></span><br><span class="line">    fixed4 main_color = tex2D(_MainTex, main_uv);</span><br><span class="line">    fixed4 secondary_color = tex2D(_SecondaryTex, secondary_uv);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//最终执行线性插值</span></span><br><span class="line">    fixed4 col = lerp(main_color, secondary_color, _Blend);</span><br><span class="line">    <span class="keyword">return</span> col;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/009/BlendTextures.gif"></p>
+<p>下面是我们这个图片混合着色器的完整脚本：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/009_Color_Blending/Texture&quot;</span>&#123;</span><br><span class="line">	<span class="comment">//材质面板属性显示</span></span><br><span class="line">	Properties&#123;</span><br><span class="line">		_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125; <span class="comment">//第一张图</span></span><br><span class="line">		_SecondaryTex (<span class="string">&quot;Secondary Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;black&quot;</span> &#123;&#125; <span class="comment">//第二张图</span></span><br><span class="line">		_Blend (<span class="string">&quot;Blend Value&quot;</span>, Range(<span class="number">0</span>,<span class="number">1</span>)) = <span class="number">0</span> <span class="comment">//0 表示只显示第一张图, 1 只显示第二张图</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	SubShader&#123;</span><br><span class="line">		<span class="comment">//不透明材质</span></span><br><span class="line">		Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Geometry&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line">		Pass&#123;</span><br><span class="line">			CGPROGRAM</span><br><span class="line"></span><br><span class="line">			<span class="comment">//引入内置变量和函数</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UnityCG.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//定义着色器函数</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//混合参数</span></span><br><span class="line">			<span class="keyword">float</span> _Blend;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//两张图</span></span><br><span class="line">			sampler2D _MainTex;</span><br><span class="line">			float4 _MainTex_ST;</span><br><span class="line"></span><br><span class="line">			sampler2D _SecondaryTex;</span><br><span class="line">			float4 _SecondaryTex_ST;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//输入的网格数据</span></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">				float4 vertex : POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//中间的插值数据</span></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">				float4 position : SV_POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//顶点着色器</span></span><br><span class="line">			<span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">				v2f o;</span><br><span class="line">				<span class="comment">//变换到裁剪空间</span></span><br><span class="line">				o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">				o.uv = v.uv;</span><br><span class="line">				<span class="keyword">return</span> o;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//片段着色器</span></span><br><span class="line">			<span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">				<span class="comment">//各自进行uv变换</span></span><br><span class="line">				float2 main_uv = TRANSFORM_TEX(i.uv, _MainTex);</span><br><span class="line">				float2 secondary_uv = TRANSFORM_TEX(i.uv, _SecondaryTex);</span><br><span class="line"></span><br><span class="line">				<span class="comment">//各自进行纹理采样</span></span><br><span class="line">				fixed4 main_color = tex2D(_MainTex, main_uv);</span><br><span class="line">				fixed4 secondary_color = tex2D(_SecondaryTex, secondary_uv);</span><br><span class="line"></span><br><span class="line">				<span class="comment">//线性插值</span></span><br><span class="line">				fixed4 col = lerp(main_color, secondary_color, _Blend);</span><br><span class="line">				<span class="keyword">return</span> col;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Interpolation-based-on-a-Texture"><a href="#Interpolation-based-on-a-Texture" class="headerlink" title="Interpolation based on a Texture"></a>Interpolation based on a Texture</h2><p>前面连个的混合参数都是一个统一的变量，这样模型表面每个区域的混合权重都一样。为了达到不同权重的混合效果，最后这个版本使用纹理来作为我们的混合参数。</p>
+<p>首先我们是将原先的混合变量用一个纹理变量替代。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//材质面板属性</span></span><br><span class="line">Properties&#123;</span><br><span class="line">    _MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125; <span class="comment">//第一张图</span></span><br><span class="line">    _SecondaryTex (<span class="string">&quot;Secondary Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;black&quot;</span> &#123;&#125; <span class="comment">//第二张图</span></span><br><span class="line">    _BlendTex (<span class="string">&quot;Blend Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;grey&quot;</span> <span class="comment">//混合权重图</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//混合权重</span></span><br><span class="line">sampler2D _BlendTex;</span><br><span class="line">float4 _BlendTex_ST;</span><br><span class="line"></span><br><span class="line"><span class="comment">//用于混合的图</span></span><br><span class="line">sampler2D _MainTex;</span><br><span class="line">float4 _MainTex_ST;</span><br><span class="line"></span><br><span class="line">sampler2D _SecondaryTex;</span><br><span class="line">float4 _SecondaryTex_ST;</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br></pre></td></tr></table></figure>
+
+<p>同样的，我们也对权重图进行uv变换，然后再进行采样。但是纹理采样的结果还是颜色，是一个向量，而我们的插值权重是一个标量，这时候我们可以选择其中一个合适的通道值来作为我们的插值权重。和前面一样，最后我们用这个权重值进行颜色插值。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//片段着色器</span></span><br><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    <span class="comment">//分别进行uv变换</span></span><br><span class="line">    float2 main_uv = TRANSFORM_TEX(i.uv, _MainTex);</span><br><span class="line">    float2 secondary_uv = TRANSFORM_TEX(i.uv, _SecondaryTex);</span><br><span class="line">    float2 blend_uv = TRANSFORM_TEX(i.uv, _BlendTex);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//分别进行纹理采样</span></span><br><span class="line">    fixed4 main_color = tex2D(_MainTex, main_uv);</span><br><span class="line">    fixed4 secondary_color = tex2D(_SecondaryTex, secondary_uv);</span><br><span class="line">    fixed4 blend_color = tex2D(_BlendTex, blend_uv);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//选其中红色通道作为混合权重</span></span><br><span class="line">    fixed blend_value = blend_color.r;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//最终的颜色插值</span></span><br><span class="line">    fixed4 col = lerp(main_color, secondary_color, blend_value);</span><br><span class="line">    <span class="keyword">return</span> col;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/009/BlendWithTexture.png"></p>
+<p>好了，下面是完整的着色器脚本：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/009_Color_Blending/TextureBasedBlending&quot;</span>&#123;</span><br><span class="line">	<span class="comment">//材质面板上的属性</span></span><br><span class="line">	Properties&#123;</span><br><span class="line">		_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125; <span class="comment">//第一张图</span></span><br><span class="line">		_SecondaryTex (<span class="string">&quot;Secondary Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;black&quot;</span> &#123;&#125; <span class="comment">//第二张图</span></span><br><span class="line">		_BlendTex (<span class="string">&quot;Blend Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;grey&quot;</span> <span class="comment">//权重图</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	SubShader&#123;</span><br><span class="line">		<span class="comment">//渲染不透明物体</span></span><br><span class="line">		Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Geometry&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line">		Pass&#123;</span><br><span class="line">			CGPROGRAM</span><br><span class="line"></span><br><span class="line">			<span class="comment">//引入内置变量和函数</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UnityCG.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//定义着色器函数</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//混合权重图</span></span><br><span class="line">			sampler2D _BlendTex;</span><br><span class="line">			float4 _BlendTex_ST;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//用于混合的两张纹理</span></span><br><span class="line">			sampler2D _MainTex;</span><br><span class="line">			float4 _MainTex_ST;</span><br><span class="line"></span><br><span class="line">			sampler2D _SecondaryTex;</span><br><span class="line">			float4 _SecondaryTex_ST;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//输入的模型数据</span></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">				float4 vertex : POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//中间的插值数据</span></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">				float4 position : SV_POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//顶点着色器</span></span><br><span class="line">			<span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">				v2f o;</span><br><span class="line">				<span class="comment">//变换到裁剪空间</span></span><br><span class="line">				o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">				o.uv = v.uv;</span><br><span class="line">				<span class="keyword">return</span> o;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//片段着色器</span></span><br><span class="line">			<span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">				<span class="comment">//分别进行uv变换</span></span><br><span class="line">				float2 main_uv = TRANSFORM_TEX(i.uv, _MainTex);</span><br><span class="line">				float2 secondary_uv = TRANSFORM_TEX(i.uv, _SecondaryTex);</span><br><span class="line">				float2 blend_uv = TRANSFORM_TEX(i.uv, _BlendTex);</span><br><span class="line"></span><br><span class="line">				<span class="comment">//分别进行纹理采样</span></span><br><span class="line">				fixed4 main_color = tex2D(_MainTex, main_uv);</span><br><span class="line">				fixed4 secondary_color = tex2D(_SecondaryTex, secondary_uv);</span><br><span class="line">				fixed4 blend_color = tex2D(_BlendTex, blend_uv);</span><br><span class="line"></span><br><span class="line">				<span class="comment">//选取一个通道作为混合权重</span></span><br><span class="line">				fixed blend_value = blend_color.r;</span><br><span class="line"></span><br><span class="line">				<span class="comment">//最终的颜色插值</span></span><br><span class="line">				fixed4 col = lerp(main_color, secondary_color, blend_value);</span><br><span class="line">				<span class="keyword">return</span> col;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>希望本文能让你了解着色器中颜色的基本使用、以及插值的实际应用。</p>
+<p>所有的源码都在以下链接可以找到：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/009_Color_Blending/ColorBlending_Plain.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/009_Color_Blending/ColorBlending_Plain.shader</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/009_Color_Blending/ColorBlending_Texture.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/009_Color_Blending/ColorBlending_Texture.shader</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/009_Color_Blending/ColorBlending_TextureBasedBlending.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/009_Color_Blending/ColorBlending_TextureBasedBlending.shader</a></li>
+</ul>
+<p>希望你能喜欢这个教程哦！如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blogs/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/blogs/tags/Shader/" rel="tag"># Shader</a>
+              <a href="/blogs/tags/%E7%BF%BB%E8%AF%91/" rel="tag"># 翻译</a>
+              <a href="/blogs/tags/ronja/" rel="tag"># ronja</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blogs/2021/07/02/Ronja_Planar_Mapping/" rel="prev" title="Planar Mapping">
+      <i class="fa fa-chevron-left"></i> Planar Mapping
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blogs/2021/07/02/Ronja_Triplanar_Mapping/" rel="next" title="Triplanar Mapping">
+      Triplanar Mapping <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Summary"><span class="nav-number">1.</span> <span class="nav-text">Summary</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Interpolate-Colors"><span class="nav-number">2.</span> <span class="nav-text">Interpolate Colors</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Interpolate-Textures"><span class="nav-number">3.</span> <span class="nav-text">Interpolate Textures</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Interpolation-based-on-a-Texture"><span class="nav-number">4.</span> <span class="nav-text">Interpolation based on a Texture</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Tyson Wu"
+      src="/blogs/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Tyson Wu</p>
+  <div class="site-description" itemprop="description">If you want, Just do it!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blogs/archives/">
+        
+          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blogs/categories/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blogs/tags/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Tyson-Wu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Tyson-Wu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/zhao-wu-zhu-43" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhao-wu-zhu-43" rel="noopener" target="_blank"><i class="知乎 fa-fw"></i>知乎</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.cnblogs.com/Hi-blog/" title="https:&#x2F;&#x2F;www.cnblogs.com&#x2F;Hi-blog&#x2F;" rel="noopener" target="_blank">starnight_cyber</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tyson Wu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blogs/lib/anime.min.js"></script>
+  <script src="/blogs/lib/velocity/velocity.min.js"></script>
+  <script src="/blogs/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blogs/js/utils.js"></script>
+
+<script src="/blogs/js/motion.js"></script>
+
+
+<script src="/blogs/js/schemes/pisces.js"></script>
+
+
+<script src="/blogs/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

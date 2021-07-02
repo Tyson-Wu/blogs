@@ -163,6 +163,316 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/06/23/GOAP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/06/23/GOAP/" class="post-title-link" itemprop="url">GOAP</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-23 15:01:00" itemprop="dateCreated datePublished" datetime="2021-06-23T15:01:00+08:00">2021-06-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-02 19:40:01" itemprop="dateModified" datetime="2021-07-02T19:40:01+08:00">2021-07-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/AI/GOAP/" itemprop="url" rel="index"><span itemprop="name">GOAP</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>GOAP是以目标为导向的行为规划。其思路是对行为进行拆分，同时描述每个行为发生的前置条件，以及相应会产生的结果。然后将条件、结果、目标统一视为状态集合，那么只需要关心这三类状态集之间的关系，然后进行有效的拼接组合，其相应的行为之间的关系也就明了了。</p>
+<h2 id="提出问题"><a href="#提出问题" class="headerlink" title="提出问题"></a>提出问题</h2><p>首先，整个世界就是一个状态集，每个行为可以对部分状态产生影响，正向或反向。而有些行为可能需满足特定状态下才坑能发生。<br>那么，以什么样的顺序执行哪些行为，才能达到相应的状态，实现特定的目标呢？</p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>上面的问题表明，我们需要求出一组有序的行为组合。而行为之所以有序，是因为行为之间有一定的相互依赖关系，例如只有伐木、做家具、卖家具，这三者是前后依赖关系。伐木可以得到木材，得到木材就是伐木的结果；做家具需要木材，得到木材就是做家具的条件；做家具得到家具，家具就是做家具的结果；买家具需要有家具，所以有家具是卖家具的条件。<br>假设我想卖家具，此时卖家具是我的目标，然后我从这三个行为里面查找，发现第三个行为刚好满足我的目标，但是从卖家具这个行为来看，我们首先得有家具，如果刚好有，那么完美。如果没有，那么有家具就是我们的新目标，然后根据这个新目标，我们查找到第二个行为刚好可以满足。至此我们得到做家具、卖家具这条行为组合，但是还没完，我们还需要判断做家具的条件是否满足，如果不满足，则需要继续查找它的上一个行为。<br>上面这个卖家具的问题简单的阐述了GOAP的一个从目标出发的、不断迭代的一个逆向查找解决方案的思路。但是，在实际应用中，遇到的问题可能会更复杂，状态会更多，同时状态之间的关联也不是一对一的。这时候我们就需要把握GOAP的一些关键信息，将其抽取出来。</p>
+<h2 id="泛化"><a href="#泛化" class="headerlink" title="泛化"></a>泛化</h2><p>为了将问题泛化，我们假设目标可以划分为多个状态的组合，而每个行为会对部分状态产生影响。这时候如何应用目标导向的思路呢？<br>首先我们也是找到最接近目标的行为。然后判断这个行为的条件是否满足，如果不满足，则将其条件也纳入目标中，形成一个新的目标。同时，对于该行为已经达成的状态，则从新目标中剔除。然后继续查找最接近新目标的行为，依此类推，不断迭代，直到新目标中的状态为空时。<br>这里提到最接近目标的行为。什么事最接近目标的行为呢？<br>以我想打扫卫生为例，环境状态为：我是否饥饿、地是否干净、桌子是否干净、是否有水、是否有生活垃圾；而我可以执行的行为有：吃饭、扫地、抹桌子、把水倒掉、把生活垃圾倒在地上。那么我的目标就是：地干净、桌子干净。<br>1、该行为的结果一定会对目标的状态集产生影响，即便不能立即达成目标，也能完成部分状态。如果没有这种正向的影响，说明这个行为和目标无关。如这里的吃饭；<br>2、该行为的结果不能对目标的状态集产生消极的影响。如把垃圾倒在地上，很明显倒完之后还得清理，所以对于打扫卫生来说并不是最接近目标的一步。<br>3、在执行该行为后，不能立即达到当前目标，也就是该行为的结果不能覆盖目标状态，这时候该行为的条件不能和目标状态相冲突。例如扫地和抹桌子都只能完成部分清理，假设我们选抹桌子为最后的行为，其条件为空，和目标状态冲突。如果说抹桌子的条件是地必须是脏的，这时候和目标状态地是干净的相冲突，在抹完桌子后肯定还得扫地，所以抹桌子不可以作为左后行为。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>假设世界有一系列状态组成，同时有一系列可选行为，这些行为分别有各自的状态前置条件、以及执行后能产生的状态影响。<br>那么我们需要达成某一目标时，首先分离出目标中的状态集。然后基于这个状态集，查找最近行为，在查找到最近行为后，将最近行为所达成的状态从目标状态集中剔除，然后将最近行为中未达成的前置条件纳入到新的目标状态集中。然后基于新的目标状态集进行新一轮的最近行为筛选，依此类推，直到新的目标状态为空时，说明我们筛选出的行为组合和目标状态已经形成了一个闭环。而我们的行为组合是从最后一个开始，倒序筛查的，所以需要进行颠倒才能得到正常的行为执行顺序。<br>而最近行为的标准，需要满足：</p>
+<ul>
+<li>能都达成部分目标</li>
+<li>其行为结果和目标没有冲突，不会对已经达成的目标产生破坏</li>
+<li>其前置条件和目标没有冲突，如果有冲突，其行为结果能够修复这种冲突</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/06/21/Compute_Shader/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/06/21/Compute_Shader/" class="post-title-link" itemprop="url">Compute Shader</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-21 15:01:00" itemprop="dateCreated datePublished" datetime="2021-06-21T15:01:00+08:00">2021-06-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-02 19:40:01" itemprop="dateModified" datetime="2021-07-02T19:40:01+08:00">2021-07-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/050-compute-shader/">Compute Shader</a></p>
+<p>至此，我们已经学会了如何使用固定管线来渲染纹理，但是目前的显卡能做的远远不止这些。除了使用固定管线，我们还可以使用compute shader来实现。</p>
+<p>你可能会问，为什么要用compute shader，目前的cpu其实已经很强大了，即便遇到大量的处理数据，我们也可以使用多线程来处理。是的，对于一些非图形任务，我们并不需要使用GPU。如果强行使用GPU来处理，很可能会产生各种未知错误，另外也无法使用常用的异常分析手段。优化就更麻烦了，因为需要考虑CPU与GPU之间的数据传输，而GPU并行处理也和CPU编程思路不一样。作为初学者，我们是否需要使用compute shader，首先要明白为什么要用compute shader，使用后是否能够达到比现有方法更好的效果。</p>
+<p>如果你觉得你需要使用compute shader，那么继续读下去。在Unity中，你可以使用<code>SystemInfo.supportsComputeShaders</code>方法来查看你的GPU是否支持compute shader。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/050/result.gif"></p>
+<h2 id="Basic-Compute-Shader"><a href="#Basic-Compute-Shader" class="headerlink" title="Basic Compute Shader"></a>Basic Compute Shader</h2><p>我们可以通过选中<code>Create&gt;Shader&gt;Compute Shader</code>来创建compute shader。默认创建的compute shader执行向图片中写入数据的操作。但是在本节，我将演示一个更简单的例子——写入一组坐标。</p>
+<p>在compute shader中，我们可以向<code>RWStructuredBuffer</code>中写入一组数据，而<code>StructuredBuffer</code>是只读数据。在它们后面补充数据单元类型，类型包括<code>vector</code>或者<code>struct</code>。在本节中，我们使用<code>float3</code>。</p>
+<p>我们把用于计算的方法块叫做<code>kernel</code>。我们必须在方法块前面添加<code>numthreads</code>标志符，同时方法块有一个输入参数，因为方法块是针对每一个元素进行并行计算的，所以需要一个索引值来表明当前方法块所对应的元素。在这里，我们定义x轴64线程，y、z轴都是1线程。只要支持compute shader的显卡，基本可以处理这种线程设置。因为整个线程设置是一维的，所以我们处理的数据也是一维的，而在并行处理中，我们只需要考虑单个元素的处理过程。因为我们的线程设置是基于三个维度，所以我们输入参数也是三个维度，参数中的值对应相应维度的线程。因为我们这里的数据都集中在x轴上，所以我们的参数也只需要考虑x轴的索引。和普通的Shader一样，我们需要为输入参数添加标志符，方便程序识别参数的语意，这里我们参数的标志符是<code>SV_DispatchThreadID</code>。</p>
+<p>为了区分compute shader中的普通方法块和核方法块，我们需要使用<code>pragma</code>标识符，语法为<code>#pragma kernel &lt;functionname&gt;</code>。当然，在一个compute shader中可以拥有多个核函数。例如：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 指定一个核函数，我们可以拥有多个核函数</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> kernel Spheres</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出</span></span><br><span class="line">RWStructuredBuffer&lt;float3&gt; Result;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[numthreads(<span class="number">64</span>, <span class="number">1</span>, <span class="number">1</span>)]</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Spheres</span><span class="params">(uint3 id : SV_DispatchThreadID)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">// compute shader 代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先，让我们输出坐标<code>(id, 0, 0)</code>到<code>Result</code>中：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[numthreads(<span class="number">64</span>, <span class="number">1</span>, <span class="number">1</span>)]</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Spheres</span><span class="params">(uint3 id : SV_DispathcThreadID)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Result[id.x] = float3(id.x, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Executing-Compute-Shaders"><a href="#Executing-Compute-Shaders" class="headerlink" title="Executing Compute Shaders"></a>Executing Compute Shaders</h2><p>和普通的Shader不同的是，compute shader并不是通过材质绑定的方式来执行，而是通过<code>C#</code>脚本来实现调用。</p>
+<p>我们可以创建一个GameObject，并且在它上面创建一个<code>C#</code>脚本，在脚本上创建一个<code>ComputeShader</code>变量来引用前面创建的compute shader。同时我们创建一个整形变量，用来存储核函数的签名，这个签名是核函数在GPU中的索引ID。首先在<code>Start</code>函数中我们调用<code>FindKernel(&lt;kernelname&gt;)</code>来获取核函数的签名。在得到核函数签名后，我们可以使用该签名来获取该核函数的线程设置，也就是在compute shader中的<code>[numthreads(64, 1, 1)]</code>。我们只提取x轴的线程数，其他两个维度可以用<code>_</code>来表示忽略。</p>
+<p>另外，我们在<code>C#</code>脚本中创建一个长度变量，用来指定compute shader中buffer的长度。知道buffer的长度，以及buffer中存储的数据类型<code>float3</code>，我们可以向GPU申请一块存储空间——<code>ComputeBuffer</code>。这个空间将会用来存储计算结果，也就是compute shader中的<code>Result</code>。创建<code>ComputeBuffer</code>需要两个参数，第一参数是元素的个数，第二个参数是元素的大小。我们的元素是<code>float3</code>，也就是大小为3个<code>float</code>。另外，我们需要在CPU中申请一块和<code>ComputeBuffer</code>同样大小的数组空间，以便于将计算后的结果转移到CPU，方便后续计算使用。在计算结束后，我们可以通过<code>ComputeBuffer.Dispose</code>方法来释放GPU申请的缓存空间。</p>
+<p>当一切设置好后，我们可以在<code>Update</code>中使用compute shader。首先，我们需要将我们在GPU创建的<code>ComputeBuffer</code>和compute shader中的buffer相关联。在调用compute shader之前，我们还需要计算整个核函数需要执行多少遍，这个叫做线程组。因为核函数单次批处理的数量有限，所以需要分为多组，分批次处理。例如这里我们单次x轴处理量为64，而总的需要处理的数量为buffer长度，那么线程组的个数为后者处以前者。然后通过<code>dispatch</code>方法来启用核函数，最终计算结果通过<code>GetData</code>函数传回到CPU中。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BasicComputeSpheres</span> :</span> MonoBehaviour</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> SphereAmount = <span class="number">17</span>;</span><br><span class="line">    <span class="keyword">public</span> ComputeShader Shader;</span><br><span class="line"></span><br><span class="line">    ComputeBuffer resultBuffer;</span><br><span class="line">    <span class="keyword">int</span> kernel;</span><br><span class="line">    uint threadGroupSize;</span><br><span class="line">    Vector3[] output;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Start</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 获取核函数签名</span></span><br><span class="line">        kernel = Shader.FindKernel(<span class="string">&quot;Spheres&quot;</span>);</span><br><span class="line">		<span class="comment">// 获取核函数线程设置</span></span><br><span class="line">        Shader.GetKernelThreadGroupSizes(kernel, out threadGroupSize, out _, out _);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//buffer on the gpu in the ram</span></span><br><span class="line">        resultBuffer = <span class="keyword">new</span> ComputeBuffer(SphereAmount, <span class="keyword">sizeof</span>(<span class="keyword">float</span>) * <span class="number">3</span>);</span><br><span class="line">        output = <span class="keyword">new</span> Vector3[SphereAmount];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Update</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">		<span class="comment">//绑定数据</span></span><br><span class="line">        Shader.SetBuffer(kernel, <span class="string">&quot;Result&quot;</span>, resultBuffer);</span><br><span class="line">        <span class="keyword">int</span> threadGroups = (<span class="keyword">int</span>) ((SphereAmount + (threadGroupSize - <span class="number">1</span>)) / threadGroupSize);</span><br><span class="line">        Shader.Dispatch(kernel, threadGroups, <span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">        resultBuffer.GetData(output);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnDestroy</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        resultBuffer.Dispose();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在我们有了计算结果，但是并不能直观的去观察这些结果。有很多种方法可以直接在GPU中处理并显示这些结果，但是这并不是本文的重点。所以我选择使用生成一系列模型空间分布，来展示最终生成的结果。<br>在<code>Update</code>中直接将计算的坐标赋值给游戏物体空间坐标。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// in start method</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//spheres we use for visualisation</span></span><br><span class="line">instances = <span class="keyword">new</span> Transform[SphereAmount];</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; SphereAmount; i++)</span><br><span class="line">&#123;</span><br><span class="line">    instances[i] = Instantiate(Prefab, transform).transform;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//in update method</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; instances.Length; i++)</span><br><span class="line">    instances[i].localPosition = output[i];</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/050/Row.png"></p>
+<h2 id="A-tiny-bit-more-complex-Compute-Shader"><a href="#A-tiny-bit-more-complex-Compute-Shader" class="headerlink" title="A tiny bit more complex Compute Shader"></a>A tiny bit more complex Compute Shader</h2><p>为了达到一个更好的视觉效果，请继续阅读，别担心这里涉及到的也只是基本的hlsl语法。</p>
+<p>在compute shader中我加入了<a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/024-white-noise/">randomness</a>教程中关于噪声的函数，同时加入时间变量。在核函数中，我基于输入参数来构造一个长度为[0.1-1]的随机向量。然后采用叉乘的方法计算出与这些随机向量垂直的向量。然后使用时间变量的平方，加上一个比较大的奇数，得到一个关于时间的<code>sin</code>值和<code>cos</code>，最后将这两个值和两个随机向量相乘，并求和。在这个基础上乘以20，使得记过看起来更明显。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Each #kernel tells which function to compile; you can have many kernels</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> kernel Spheres</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;Random.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">//variables</span></span><br><span class="line">RWStructuredBuffer&lt;float3&gt; Result;</span><br><span class="line">uniform <span class="keyword">float</span> Time;</span><br><span class="line"></span><br><span class="line">[numthreads(<span class="number">64</span>,<span class="number">1</span>,<span class="number">1</span>)]</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Spheres</span> <span class="params">(uint3 id : SV_DispatchThreadID)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//generate 2 orthogonal vectors</span></span><br><span class="line">    float3 baseDir = normalize(rand1dTo3d(id.x) - <span class="number">0.5</span>) * (rand1dTo1d(id.x)*<span class="number">0.9</span>+<span class="number">0.1</span>);</span><br><span class="line">    float3 orthogonal = normalize(cross(baseDir, rand1dTo3d(id.x + <span class="number">7.1393</span>) - <span class="number">0.5</span>)) * (rand1dTo1d(id.x+<span class="number">3.7443</span>)*<span class="number">0.9</span>+<span class="number">0.1</span>);</span><br><span class="line">    <span class="comment">//scale the time and give it a random offset</span></span><br><span class="line">    <span class="keyword">float</span> scaledTime = Time * <span class="number">2</span> + rand1dTo1d(id.x) * <span class="number">712.131234</span>;</span><br><span class="line">    <span class="comment">//calculate a vector based on vectors</span></span><br><span class="line">    float3 dir = baseDir * <span class="built_in">sin</span>(scaledTime) + orthogonal * <span class="built_in">cos</span>(scaledTime);</span><br><span class="line">    Result[id.x] = dir * <span class="number">20</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当然，我们很需要在<code>C#</code>脚本中向compute shader中传入时间变量。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Shader.SetFloat(<span class="string">&quot;Time&quot;</span>, Time.time);</span><br></pre></td></tr></table></figure>
+
+<p>然后使用自发光材质，以及泛光后处理技术，最后呈现出下面绚烂的效果。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/050/result.gif"></p>
+<h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><p><a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/050_Compute_Shader/BasicCompute.compute">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/050_Compute_Shader/BasicCompute.compute</a></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Each #kernel tells which function to compile; you can have many kernels</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> kernel Spheres</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;Random.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">//variables</span></span><br><span class="line">RWStructuredBuffer&lt;float3&gt; Result;</span><br><span class="line">uniform <span class="keyword">float</span> Time;</span><br><span class="line"></span><br><span class="line">[numthreads(<span class="number">64</span>,<span class="number">1</span>,<span class="number">1</span>)]</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Spheres</span> <span class="params">(uint3 id : SV_DispatchThreadID)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//generate 2 orthogonal vectors</span></span><br><span class="line">    float3 baseDir = normalize(rand1dTo3d(id.x) - <span class="number">0.5</span>) * (rand1dTo1d(id.x)*<span class="number">0.9</span>+<span class="number">0.1</span>);</span><br><span class="line">    float3 orthogonal = normalize(cross(baseDir, rand1dTo3d(id.x + <span class="number">7.1393</span>) - <span class="number">0.5</span>)) * (rand1dTo1d(id.x+<span class="number">3.7443</span>)*<span class="number">0.9</span>+<span class="number">0.1</span>);</span><br><span class="line">    <span class="comment">//scale the time and give it a random offset</span></span><br><span class="line">    <span class="keyword">float</span> scaledTime = Time * <span class="number">2</span> + rand1dTo1d(id.x) * <span class="number">712.131234</span>;</span><br><span class="line">    <span class="comment">//calculate a vector based on vectors</span></span><br><span class="line">    float3 dir = baseDir * <span class="built_in">sin</span>(scaledTime) + orthogonal * <span class="built_in">cos</span>(scaledTime);</span><br><span class="line">    Result[id.x] = dir * <span class="number">20</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/050_Compute_Shader/BasicComputeSpheres.cs">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/050_Compute_Shader/BasicComputeSpheres.cs</a></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BasicComputeSpheres</span> :</span> MonoBehaviour</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> SphereAmount = <span class="number">17</span>;</span><br><span class="line">    <span class="keyword">public</span> ComputeShader Shader;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> GameObject Prefab;</span><br><span class="line"></span><br><span class="line">    ComputeBuffer resultBuffer;</span><br><span class="line">    <span class="keyword">int</span> kernel;</span><br><span class="line">    uint threadGroupSize;</span><br><span class="line">    Vector3[] output;</span><br><span class="line"></span><br><span class="line">    Transform[] instances;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Start</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">//program we&#x27;re executing</span></span><br><span class="line">        kernel = Shader.FindKernel(<span class="string">&quot;Spheres&quot;</span>);</span><br><span class="line">        Shader.GetKernelThreadGroupSizes(kernel, out threadGroupSize, out _, out _);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//buffer on the gpu in the ram</span></span><br><span class="line">        resultBuffer = <span class="keyword">new</span> ComputeBuffer(SphereAmount, <span class="keyword">sizeof</span>(<span class="keyword">float</span>) * <span class="number">3</span>);</span><br><span class="line">        output = <span class="keyword">new</span> Vector3[SphereAmount];</span><br><span class="line"></span><br><span class="line">        <span class="comment">//spheres we use for visualisation</span></span><br><span class="line">        instances = <span class="keyword">new</span> Transform[SphereAmount];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; SphereAmount; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            instances[i] = Instantiate(Prefab, transform).transform;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Update</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        Shader.SetFloat(<span class="string">&quot;Time&quot;</span>, Time.time);</span><br><span class="line">        Shader.SetBuffer(kernel, <span class="string">&quot;Result&quot;</span>, resultBuffer);</span><br><span class="line">        <span class="keyword">int</span> threadGroups = (<span class="keyword">int</span>) ((SphereAmount + (threadGroupSize - <span class="number">1</span>)) / threadGroupSize);</span><br><span class="line">        Shader.Dispatch(kernel, threadGroups, <span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">        resultBuffer.GetData(output);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; instances.Length; i++)</span><br><span class="line">            instances[i].localPosition = output[i];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnDestroy</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        resultBuffer.Dispose();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>希望你能喜欢这个教程 :-)</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/06/19/Func2Solve/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/06/19/Func2Solve/" class="post-title-link" itemprop="url">二次函数解析</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-19 15:01:00" itemprop="dateCreated datePublished" datetime="2021-06-19T15:01:00+08:00">2021-06-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-02 19:40:01" itemprop="dateModified" datetime="2021-07-02T19:40:01+08:00">2021-07-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Math/" itemprop="url" rel="index"><span itemprop="name">Math</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Math/Function/" itemprop="url" rel="index"><span itemprop="name">Function</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>如下如所示，已知A、B两点坐标，以及二次函数顶点的y坐标，求解二次函数的方程式：<br><img src="/blogs/images/src/func.jpg"></p>
+<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>首先，假设二次函数方程为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a * x * x + b * x + c &#x3D; y   ------------- 1 </span><br></pre></td></tr></table></figure>
+<p>同时假设，A、B、P三个点的坐标分别为<code>(x1, y1)</code>、<code>(x2, y2)</code>、<code>(x3, y3)</code>，其中<code>x3</code>未知。<br>因为A、B、P三个点都在函数曲线上，所以三个点都满足方程：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a * x1 * x1 + b * x1 + c &#x3D; y1   ------------- 2</span><br><span class="line">a * x2 * x2 + b * x2 + c &#x3D; y2   ------------- 3</span><br><span class="line">a * x3 * x3 + b * x3 + c &#x3D; y3   ------------- 4</span><br></pre></td></tr></table></figure>
+<p>将上面的式子2减去式3得到<code>式子5</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a * (x1 * x1 - x2 * x2)+ b * (x1 – x2) &#x3D; y1 – y2   ------------- 5</span><br></pre></td></tr></table></figure>
+<p><code>式子5</code>中消去参数c，只有a、b两个参数。将b用a表示，得：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">b &#x3D; ((y1 – y2) – a * (x1 * x1 – x2 * x2))&#x2F;(x1 – x2) </span><br><span class="line"> &#x3D; (y1 – y2)&#x2F;(x1 – x2) – a * (x1 * x1 – x2 * x2)&#x2F;(x1 – x2) ------------- 6</span><br></pre></td></tr></table></figure>
+<p>又因为:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">x1 * x1 – x2 * x2 &#x3D; (x1 + x2) * (x1 – x2) ------------- 7</span><br></pre></td></tr></table></figure>
+<p>所以：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">b &#x3D; (y1 – y2)&#x2F;(x1 – x2) – a * (x1 + x2) ------------- 8</span><br></pre></td></tr></table></figure>
+<p>令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">m &#x3D; (y1 – y2) &#x2F; (x1 – x2)</span><br><span class="line">n &#x3D; x1 + x2</span><br></pre></td></tr></table></figure>
+<p>所以：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">b &#x3D; m – a * n------------- 9</span><br></pre></td></tr></table></figure>
+<p>因为二次函数的顶点坐标为(-b/(2a), (4ac-b*b)/(4a))，这一点可以查百度。因此：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x3 &#x3D; -b&#x2F;(2a) ------------- 10</span><br><span class="line">y3 &#x3D; (4ac – b*b)&#x2F;(4a)</span><br></pre></td></tr></table></figure>
+<p>所以：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c &#x3D; y3 + b * b &#x2F;(4 a)------------- 11</span><br></pre></td></tr></table></figure>
+
+<p>=================================分段线=======================<br>将<code>式9、10</code>代入<code>式2</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">y1 – y3 &#x3D; a * x1 * x1 + (m – a * n) + (m –a * n) *(m –a * n)&#x2F;(4a)</span><br></pre></td></tr></table></figure>
+<p>化简得：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(4 * x1 * x1 – 4 * n * x1 + n * n) * a * a </span><br><span class="line">   + (4 * m * x1 – 2 * m * n – 4 * (y1 – y3)) * a</span><br><span class="line">     + m * m &#x3D; 0--------------12</span><br></pre></td></tr></table></figure>
+<p><code>式子12</code>是关于a的二次方程<br>假设：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">A1 &#x3D; 4 * x1 * x1 – 4 * n * x1 + n * n</span><br><span class="line">B1 &#x3D; 4 * m * x1 – 2 * m * n – 4 * (y1 – y3)</span><br><span class="line">C1 &#x3D; m * m</span><br></pre></td></tr></table></figure>
+<p>那么<code>式12</code>可以写成：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">A1 * a * a + B1 * b + C1 &#x3D; 0--------------13</span><br></pre></td></tr></table></figure>
+<p>二次方程的有两个根：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a1 &#x3D; -(B1 + sqrt(4A1C1 – B1 * B1))&#x2F;(2* A1)</span><br><span class="line">a2 &#x3D; -(B1 - sqrt(4A1C1 – B1 * B1))&#x2F;(2* A1)</span><br></pre></td></tr></table></figure>
+<p>这里可以取a1、a2中的任意一个作为a的值<br>根据式8可以计算b<br>根据式11可以计算c<br>根据式10可以计算x3<br>从上面分段线开始，是基于<code>式2</code>计算所有的参数，也就是基于点<code>(x1, y1)</code>，我们也可以基于<code>式3</code>进行计算，也就是基于点<code>(x2,y2)</code>，但是计算出的结果都是一致的</p>
+<h2 id="实现源码"><a href="#实现源码" class="headerlink" title="实现源码"></a>实现源码</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">void Start()</span><br><span class="line">    &#123;</span><br><span class="line">        float x1 &#x3D; 1.3245f;</span><br><span class="line">        float y1 &#x3D; 0.342f;</span><br><span class="line">        float x2 &#x3D; 11.24f;</span><br><span class="line">        float y2 &#x3D; 6.324f;</span><br><span class="line">        float y3 &#x3D; -8.213f;</span><br><span class="line">        if(Solve(x1, y1, x2, y2, y3, out var x3, out var a, out var b, out var c))</span><br><span class="line">        &#123;</span><br><span class="line">            Debug.LogError(string.Format(&quot;&#123;0&#125; &#x3D;&#x3D; &#123;1&#125;&quot;, y1, func(a, b, c, x1)));</span><br><span class="line">            Debug.LogError(string.Format(&quot;&#123;0&#125; &#x3D;&#x3D; &#123;1&#125;&quot;, y2, func(a, b, c, x2)));</span><br><span class="line">            Debug.LogError(string.Format(&quot;&#123;0&#125; &#x3D;&#x3D; &#123;1&#125;&quot;, y3, func(a, b, c, x3)));</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">            Debug.LogError(&quot;error&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    float func(float a, float b, float c, float x)</span><br><span class="line">    &#123;</span><br><span class="line">        return a * x * x + b * x + c;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; a * x * x + b * x + c &#x3D; y</span><br><span class="line">    bool Solve(float x1, float y1, float x2, float y2, float y3, out float x3, out float a, out float b, out float c)</span><br><span class="line">    &#123;</span><br><span class="line">        float eps &#x3D; 0.00001f;</span><br><span class="line">        bool rst &#x3D; true;</span><br><span class="line">        float m, n;</span><br><span class="line">        m &#x3D; (y1 - y2) &#x2F; (x1 - x2);</span><br><span class="line">        n &#x3D; x1 + x2;</span><br><span class="line"></span><br><span class="line">        float A1, B1, C1;</span><br><span class="line">        A1 &#x3D; 4 * x1 * x1 - 4 * n * x1 + n * n;</span><br><span class="line">        B1 &#x3D; 4 * m * x1 - 2 * m * n - 4 * (y1 - y3);</span><br><span class="line">        C1 &#x3D; m * m;</span><br><span class="line"></span><br><span class="line">        float A2, B2, C2;</span><br><span class="line">        A2 &#x3D; 4 * x2 * x2 - 4 * n * x2 + n * n;</span><br><span class="line">        B2 &#x3D; 4 * m * x2 - 2 * m * n - 4 * (y2 - y3);</span><br><span class="line">        C2 &#x3D; m * m;</span><br><span class="line"></span><br><span class="line">        float a1_1, a1_2;</span><br><span class="line">        a1_1 &#x3D; -(B1 + Mathf.Sqrt(B1 * B1 - 4 * A1 * C1)) &#x2F; (2 * A1);</span><br><span class="line">        a1_2 &#x3D; -(B1 - Mathf.Sqrt(B1 * B1 - 4 * A1 * C1)) &#x2F; (2 * A1);</span><br><span class="line">        float a2_1, a2_2;</span><br><span class="line">        a2_1 &#x3D; -(B2 + Mathf.Sqrt(B2 * B2 - 4 * A2 * C2)) &#x2F; (2 * A2);</span><br><span class="line">        a2_2 &#x3D; -(B2 - Mathf.Sqrt(B2 * B2 - 4 * A2 * C2)) &#x2F; (2 * A2);</span><br><span class="line"></span><br><span class="line">        if (Mathf.Abs(a1_1 - a2_1)&lt; eps)</span><br><span class="line">        &#123;</span><br><span class="line">            a &#x3D; a1_1;</span><br><span class="line">        &#125;</span><br><span class="line">        else if (Mathf.Abs(a1_2 - a2_2) &lt; eps)</span><br><span class="line">        &#123;</span><br><span class="line">            a &#x3D; a1_2;</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">            a &#x3D; 1;</span><br><span class="line">            rst &#x3D; false;</span><br><span class="line">        &#125;</span><br><span class="line">        b &#x3D; m - a * n;</span><br><span class="line">        c &#x3D; y3 + b * b &#x2F; (4 * a);</span><br><span class="line">        x3 &#x3D; - b &#x2F; (2 * a);</span><br><span class="line">        return rst;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/06/16/Are-Behavior-Trees-a-Thing-of-the-Past/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -194,7 +504,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-01 22:07:06" itemprop="dateModified" datetime="2021-07-01T22:07:06+08:00">2021-07-01</time>
+                <time title="修改时间：2021-07-02 19:40:01" itemprop="dateModified" datetime="2021-07-02T19:40:01+08:00">2021-07-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -288,7 +598,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-01 22:07:06" itemprop="dateModified" datetime="2021-07-01T22:07:06+08:00">2021-07-01</time>
+                <time title="修改时间：2021-07-02 19:40:01" itemprop="dateModified" datetime="2021-07-02T19:40:01+08:00">2021-07-02</time>
               </span>
 
           
@@ -375,7 +685,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-01 22:07:06" itemprop="dateModified" datetime="2021-07-01T22:07:06+08:00">2021-07-01</time>
+                <time title="修改时间：2021-07-02 19:40:01" itemprop="dateModified" datetime="2021-07-02T19:40:01+08:00">2021-07-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -455,7 +765,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-01 22:07:06" itemprop="dateModified" datetime="2021-07-01T22:07:06+08:00">2021-07-01</time>
+                <time title="修改时间：2021-07-02 19:40:01" itemprop="dateModified" datetime="2021-07-02T19:40:01+08:00">2021-07-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -545,7 +855,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-01 22:07:06" itemprop="dateModified" datetime="2021-07-01T22:07:06+08:00">2021-07-01</time>
+                <time title="修改时间：2021-07-02 19:40:01" itemprop="dateModified" datetime="2021-07-02T19:40:01+08:00">2021-07-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -630,7 +940,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-01 22:07:06" itemprop="dateModified" datetime="2021-07-01T22:07:06+08:00">2021-07-01</time>
+                <time title="修改时间：2021-07-02 19:40:01" itemprop="dateModified" datetime="2021-07-02T19:40:01+08:00">2021-07-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -745,7 +1055,7 @@ public static class AssetsMenu
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-01 22:07:06" itemprop="dateModified" datetime="2021-07-01T22:07:06+08:00">2021-07-01</time>
+                <time title="修改时间：2021-07-02 19:40:01" itemprop="dateModified" datetime="2021-07-02T19:40:01+08:00">2021-07-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -859,266 +1169,10 @@ public static class AssetsMenu
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/12/23/Joy-Stick-Function-2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2020/12/23/Joy-Stick-Function-2/" class="post-title-link" itemprop="url">摇杆实现方法2</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-23 22:02:00" itemprop="dateCreated datePublished" datetime="2020-12-23T22:02:00+08:00">2020-12-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-01 22:07:06" itemprop="dateModified" datetime="2021-07-01T22:07:06+08:00">2021-07-01</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Component/" itemprop="url" rel="index"><span itemprop="name">Component</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>自己做了个飞行模拟的小游戏，发布到手机上需要用到摇杆来控制。原先是通过一个Joystick类来实现，摇杆位置固定，详细请参考<a href="https://tyson-wu.github.io/blogs/2020/12/23/Joy-Stick-Function/">这里</a><br>但是后面策划说要做成王者荣耀那种，摇杆的位置会根据手指的位置有一定的活动区域，所以我重新写了一份逻辑，并且对代码进行一定的逻辑细分，效果如下：<br><img src="/blogs/images/src/ezgif.com-gif-maker-2.gif" alt="wwwwwww"></p>
-<p>首先，我这里将摇杆分为几个部分：</p>
-<ul>
-<li>摇杆可触发区域，紫色区域，当手指放在该区域时，可以操控摇杆</li>
-<li>摇杆中心位置可活动区域，黄色区域，绿色的圆形摇杆背景图的中心点可到达的区域</li>
-<li>最后是白色的摇杆和绿色摇杆背景的组合</li>
-</ul>
-<p>前两个都挂载了一个区域判断的类-<code>TriggerAreaHandler</code>，主要用来判断屏幕点是否在该区域内，如图所示：<br><img src="/blogs/images/src/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20201223224837.png" alt="wwwwwww"><br>详细代码如下：</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 用于UI区域判定</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">TriggerAreaHandler</span> : <span class="title">MonoBehaviour</span></span><br><span class="line">&#123;</span><br><span class="line">    RectTransform[] _triggerArea = <span class="literal">null</span>;<span class="comment">//触发区域</span></span><br><span class="line">    Camera _camera = <span class="literal">null</span>;<span class="comment">//画布摄像机</span></span><br><span class="line">    Canvas _canvas = <span class="literal">null</span>;<span class="comment">//画布</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">InitTriggerArea</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;<span class="comment">//初始化区域</span></span><br><span class="line">        <span class="keyword">if</span> (_triggerArea != <span class="literal">null</span>) <span class="keyword">return</span>;</span><br><span class="line">        _triggerArea = GetComponentsInChildren&lt;RectTransform&gt;();</span><br><span class="line">        _canvas = GetComponentInParent&lt;Canvas&gt;();</span><br><span class="line">        _camera = _canvas.worldCamera;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 计算屏幕区域是否在当前区域内</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;screenPos&quot;&gt;</span>屏幕坐标<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="built_in">bool</span> <span class="title">CheckScreenPosInArea</span>(<span class="params">Vector2 screenPos</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        InitTriggerArea();</span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">int</span> i=<span class="number">0</span>;i&lt; _triggerArea.Length;++i)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (RectTransformUtility.RectangleContainsScreenPoint(_triggerArea[i], screenPos, _camera))</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 将屏幕点夹紧到该区域</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;screenPos&quot;&gt;</span><span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Vector2 <span class="title">Clamp</span>(<span class="params">Vector2 screenPos</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        InitTriggerArea();</span><br><span class="line">        Vector2 clampPos = _camera.WorldToScreenPoint(_triggerArea[<span class="number">0</span>].position);</span><br><span class="line">        <span class="built_in">float</span> len = <span class="built_in">float</span>.MaxValue;</span><br><span class="line">        InitTriggerArea();</span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; _triggerArea.Length; ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            RectTransform rectTransform = _triggerArea[i];</span><br><span class="line">            <span class="keyword">if</span> (RectTransformUtility.RectangleContainsScreenPoint(_triggerArea[i], screenPos, _camera))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">return</span> screenPos;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line"></span><br><span class="line">                Vector2 rectPos = _camera.WorldToScreenPoint(rectTransform.position);</span><br><span class="line">                Rect rect = RectTransformUtility.PixelAdjustRect(rectTransform, _canvas);</span><br><span class="line">                Vector2 clampPos_temp = Clamp(screenPos, rectPos, <span class="keyword">new</span> Vector2(rect.width/<span class="number">2</span>, rect.height/<span class="number">2</span>));</span><br><span class="line">                <span class="built_in">float</span> distance = (clampPos_temp - screenPos).sqrMagnitude;</span><br><span class="line">                <span class="keyword">if</span> (distance &lt; len)</span><br><span class="line">                &#123;</span><br><span class="line">                    len = distance;</span><br><span class="line">                    clampPos = clampPos_temp;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> clampPos;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function">Vector2 <span class="title">Clamp</span>(<span class="params">Vector2 <span class="keyword">value</span>,Vector2 center, Vector2 halfSize</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Vector2(Clamp(<span class="keyword">value</span>.x, center.x - halfSize.x, center.x + halfSize.x),</span><br><span class="line">            Clamp(<span class="keyword">value</span>.y, center.y - halfSize.y, center.y + halfSize.y));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="built_in">float</span> <span class="title">Clamp</span>(<span class="params"><span class="built_in">float</span> <span class="keyword">value</span>, <span class="built_in">float</span> min, <span class="built_in">float</span> max</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">value</span> = <span class="keyword">value</span> &gt; min ? <span class="keyword">value</span> : min;</span><br><span class="line">        <span class="keyword">value</span> = <span class="keyword">value</span> &lt; max ? <span class="keyword">value</span> : max;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">value</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>第三部分的摇杆组合，主要是用来显示的，所以下面挂载了一个控制其显示的脚本-<code>JoyStickView</code>，该脚本控制摇杆组合的位置显示，如图所示：<br><img src="/blogs/images/src/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20201223225034.png" alt="wwwwwww"><br>代码如下：</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 控制摇杆显示</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">JoyStickView</span> : <span class="title">MonoBehaviour</span></span><br><span class="line">&#123;</span><br><span class="line">    [<span class="meta">SerializeField</span>] RectTransform _joyStickCenter;<span class="comment">//摇杆的端点</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] RectTransform _joyStickOutline;<span class="comment">//摇杆端点区域背景,设置为摇杆端点的父节点</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] <span class="built_in">float</span> _joyStickAreaScale = <span class="number">1</span>;<span class="comment">//在背景区域的基础上进行缩放，得到一个活动区域</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">bool</span> _initSize = <span class="literal">false</span>;</span><br><span class="line">    Canvas _canvas = <span class="literal">null</span>;</span><br><span class="line">    Vector3 _joyStickOriginScreenPos0 = Vector3.zero; <span class="comment">//摇杆初始原点</span></span><br><span class="line">    Vector3 _joyStickOriginScreenPos = Vector3.zero; <span class="comment">//摇杆原点</span></span><br><span class="line">    <span class="built_in">float</span> _joyStickRadius = <span class="number">0</span>;<span class="comment">//摇杆真实的屏幕活动半径</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 获取摇杆屏幕活动半径</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="built_in">float</span> <span class="title">GetJoyStickRadius</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">return</span> _joyStickRadius;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 计算背景区域的屏幕尺寸</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 在所有函数之前调用</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">CalculateAreaSize</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">if</span> (_initSize) <span class="keyword">return</span>; </span><br><span class="line">        _initSize = <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">if</span>(_canvas==<span class="literal">null</span>)  _canvas = GetComponentInParent&lt;Canvas&gt;();</span><br><span class="line">        _joyStickOriginScreenPos0 = _canvas.worldCamera.WorldToScreenPoint(_joyStickOutline.position);</span><br><span class="line">        _joyStickOriginScreenPos = _joyStickOriginScreenPos0;</span><br><span class="line">        SetJoyStickOriginPos(_joyStickOriginScreenPos0);</span><br><span class="line">        Rect rect = RectTransformUtility.PixelAdjustRect(_joyStickOutline, _canvas);</span><br><span class="line">        _joyStickRadius = _joyStickAreaScale * rect.width / <span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 重置摇杆原点为初始原点</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span>摇杆中心点在屏幕上的位置<span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Vector2 <span class="title">ResetJoyStickOrigionPos</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        SetJoyStickOriginPos(_joyStickOriginScreenPos0);</span><br><span class="line">        <span class="keyword">return</span> _joyStickOriginScreenPos0;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 设置整个摇杆的位置</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;screenPos&quot;&gt;</span>屏幕坐标<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SetJoyStickOriginPos</span>(<span class="params">Vector3 screenPos</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _joyStickOriginScreenPos.x = screenPos.x;</span><br><span class="line">        _joyStickOriginScreenPos.y = screenPos.y;</span><br><span class="line">        _joyStickOutline.position = _canvas.worldCamera.ScreenToWorldPoint(_joyStickOriginScreenPos);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 基于偏移向量，设置摇杆显示位置</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;dir&quot;&gt;</span>移动向量<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SetJoyStick</span>(<span class="params">Vector2 dir</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Vector3 dir3 = dir.sqrMagnitude &gt; <span class="number">1</span> ? dir.normalized : dir;</span><br><span class="line">        Vector3 joyStickScreenPos = dir3 * _joyStickRadius + _joyStickOriginScreenPos;</span><br><span class="line">        _joyStickCenter.position = _canvas.worldCamera.ScreenToWorldPoint(joyStickScreenPos);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 判断屏幕坐标是否在摇杆触发区域里</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;screenPos&quot;&gt;</span>屏幕坐标<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="built_in">bool</span> <span class="title">InJoyStickArea</span>(<span class="params">Vector2 screenPos</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="built_in">float</span> len = Vector2.Distance(screenPos, _joyStickOriginScreenPos);</span><br><span class="line">        <span class="keyword">return</span>  len &lt; _joyStickRadius;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>最后是整个摇杆逻辑实现部分-<code>JoyStickTrigger</code>，这个类里面记录了触发事件，以及对外的参数，如图所示：<br><img src="/blogs/images/src/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20201223223000.png"><br>同样的，通过属性器可以获取当前摇杆的状态参数，包括偏移方向以及强度，方向是360度，强度是[0-1]。详细代码如下：</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> UnityEngine.EventSystems;</span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 摇杆控制模块</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">JoyStickTrigger</span> : <span class="title">MonoBehaviour</span>, <span class="title">IPointerDownHandler</span>, <span class="title">IPointerUpHandler</span>, <span class="title">IDragHandler</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> JoyStickTrigger instance;</span><br><span class="line">    [<span class="meta">SerializeField</span>] TriggerAreaHandler _joyStickCenterArea;<span class="comment">//摇杆背景中心点活动区域</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] TriggerAreaHandler _joyStickTriggerArea;<span class="comment">//可激活摇杆的区域</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] JoyStickView _joyStick;<span class="comment">//摇杆</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] <span class="built_in">float</span> _sensitivity = <span class="number">1</span>;<span class="comment">//摇杆灵敏度</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] <span class="built_in">float</span> _triggerAreaScale = <span class="number">1</span>;<span class="comment">//摇杆控制区域</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆偏移方向</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> Vector2 MoveDir &#123; <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆偏移长度[0-1]</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> MoveLen &#123; <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 是否在操控摇杆</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">bool</span> IsDraging &#123; <span class="keyword">get</span> &#123; <span class="keyword">return</span> _onJoyStickActive; &#125; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆横向偏移量</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> Horizontal &#123; <span class="keyword">get</span> &#123; <span class="keyword">return</span> MoveDir.x * MoveLen; &#125; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆纵向偏移量</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> Vertical &#123; <span class="keyword">get</span> &#123; <span class="keyword">return</span> MoveDir.y * MoveLen; &#125; &#125;</span><br><span class="line"></span><br><span class="line">    Vector2 _originScreenPos = Vector2.zero;<span class="comment">//激活摇杆的手指点击位置</span></span><br><span class="line">    Vector2 _dragScreenPos = Vector2.zero;<span class="comment">//实时拖动手指位置</span></span><br><span class="line">    Vector2 _interpolateScreenPos = Vector2.zero;<span class="comment">//实时摇杆位置</span></span><br><span class="line">    <span class="built_in">bool</span> _onJoyStickActive = <span class="literal">false</span>;<span class="comment">//摇杆是否激活</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Awake</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        instance = <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnEnable</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _joyStick.CalculateAreaSize();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnDisable</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        OnPointerUp(<span class="literal">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnPointerDown</span>(<span class="params">PointerEventData eventData</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">if</span> (!_joyStickTriggerArea.CheckScreenPosInArea(eventData.position))</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        _onJoyStickActive = <span class="literal">true</span>;</span><br><span class="line">        <span class="comment">//_originScreenPos = eventData.position;</span></span><br><span class="line">        _originScreenPos = _joyStickCenterArea.Clamp(eventData.position);</span><br><span class="line">        _interpolateScreenPos = _dragScreenPos = eventData.position;</span><br><span class="line">        _joyStick.SetJoyStickOriginPos(_originScreenPos);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnDrag</span>(<span class="params">PointerEventData eventData</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">if</span> (!_onJoyStickActive) <span class="keyword">return</span>;</span><br><span class="line">        _dragScreenPos = eventData.position;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnPointerUp</span>(<span class="params">PointerEventData eventData</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _onJoyStickActive = <span class="literal">false</span>;</span><br><span class="line">        _dragScreenPos = _joyStick.ResetJoyStickOrigionPos();<span class="comment">//手指位置归于原点</span></span><br><span class="line">        <span class="comment">//_interpolateScreenPos += _dragScreenPos - _originScreenPos;//将插值点随摇杆位置一起归位</span></span><br><span class="line">        _interpolateScreenPos = _dragScreenPos;<span class="comment">//</span></span><br><span class="line">        _originScreenPos = _dragScreenPos;<span class="comment">//</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Update</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _interpolateScreenPos = Vector2.Lerp(_interpolateScreenPos, _dragScreenPos, Time.deltaTime * _sensitivity);</span><br><span class="line">        Vector2 dir = _interpolateScreenPos - _originScreenPos;</span><br><span class="line">        dir /= _joyStick.GetJoyStickRadius();</span><br><span class="line">        dir = dir.sqrMagnitude &gt; <span class="number">1</span> ? dir.normalized : dir;</span><br><span class="line">        MoveDir = dir;</span><br><span class="line">        MoveLen = dir.magnitude;</span><br><span class="line">        _joyStick.SetJoyStick(dir);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/12/23/Joy-Stick-Function/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2020/12/23/Joy-Stick-Function/" class="post-title-link" itemprop="url">摇杆实现方法1</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-23 22:01:00" itemprop="dateCreated datePublished" datetime="2020-12-23T22:01:00+08:00">2020-12-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-01 22:07:06" itemprop="dateModified" datetime="2021-07-01T22:07:06+08:00">2021-07-01</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Component/" itemprop="url" rel="index"><span itemprop="name">Component</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><img src="/blogs/images/src/ezgif.com-gif-maker-1.gif" alt="wwwwwww"><br>自己做了个飞行模拟的小游戏，发布到手机上需要用到摇杆来控制，所以自己写了一个Joystick类，代码如下：</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> UnityEngine.EventSystems;</span><br><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> UGUI游戏摇杆</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Joystick</span> : <span class="title">MonoBehaviour</span>, <span class="title">IPointerDownHandler</span>, <span class="title">IPointerUpHandler</span>, <span class="title">IDragHandler</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Joystick instance;</span><br><span class="line">    [<span class="meta">SerializeField</span>] Camera uiCamera;<span class="comment">//摇杆对应的ui摄像机</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] RectTransform _triggerArea;<span class="comment">//触发启动摇杆区域</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] RectTransform _joyStickArea;<span class="comment">//摇杆活动区域</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] RectTransform centerTrans;<span class="comment">//摇杆图标</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] <span class="built_in">float</span> sensitivity = <span class="number">1</span>;<span class="comment">//摇杆灵敏度</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] <span class="built_in">float</span> triggerAreaScale = <span class="number">1</span>;<span class="comment">//摇杆控制区域</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆偏移方向</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> Vector2 moveDir &#123; <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆偏移长度[0-1]</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> moveLen &#123; <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 是否在操控摇杆</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">bool</span> isDraging &#123; <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆横向偏移量</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> Horizontal &#123; <span class="keyword">get</span> &#123; <span class="keyword">return</span> moveDir.x * moveLen; &#125; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆纵向偏移量</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> Vertical &#123; <span class="keyword">get</span> &#123; <span class="keyword">return</span> moveDir.y * moveLen; &#125; &#125;</span><br><span class="line"></span><br><span class="line">    Canvas _canvas;</span><br><span class="line">    Canvas canvas &#123; <span class="keyword">get</span> &#123; <span class="keyword">if</span> (_canvas == <span class="literal">null</span>) _canvas = transform.GetComponentInParent&lt;Canvas&gt;(); <span class="keyword">return</span> _canvas; &#125; &#125;</span><br><span class="line">    Vector3 targetScreenPointPos = Vector3.zero;</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">    <span class="built_in">float</span> radius = <span class="number">0f</span>;</span><br><span class="line">    Vector3 centerScreenPos;</span><br><span class="line">    <span class="built_in">float</span> depth &#123; <span class="keyword">get</span> &#123; <span class="keyword">return</span> centerScreenPos.z; &#125; &#125;</span><br><span class="line">    <span class="built_in">bool</span> hasInit = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Action onJoyStickPointerUp;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Start</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        instance = <span class="keyword">this</span>;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnEnable</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        InitParam();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnDisable</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        isDraging = <span class="literal">false</span>;</span><br><span class="line">        targetScreenPointPos = centerScreenPos;</span><br><span class="line">        centerTrans.localPosition = Vector3.zero;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">InitParam</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">if</span> (hasInit) <span class="keyword">return</span>;</span><br><span class="line">        hasInit = <span class="literal">true</span>;</span><br><span class="line">        centerScreenPos = uiCamera.WorldToScreenPoint(_joyStickArea.position);</span><br><span class="line">        Rect rect = RectTransformUtility.PixelAdjustRect(_joyStickArea, canvas);</span><br><span class="line">        radius = triggerAreaScale * rect.width/<span class="number">2</span>;</span><br><span class="line">        targetScreenPointPos = centerScreenPos;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnPointerDown</span>(<span class="params">PointerEventData eventData</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        InitParam();</span><br><span class="line">        Vector2 pointScreenPos = eventData.position;</span><br><span class="line">        <span class="comment">//if (Vector2.Distance(pointScreenPos, centerScreenPos) &gt; radius) return;</span></span><br><span class="line"></span><br><span class="line">        isDraging = <span class="literal">true</span>;</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        <span class="comment">//targetScreenPointPos = uiCamera.WorldToScreenPoint(eventData.pointerCurrentRaycast.worldPosition);</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnDrag</span>(<span class="params">PointerEventData eventData</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">if</span> (!isDraging) <span class="keyword">return</span>;</span><br><span class="line">        Vector3 pointScreenPos = eventData.position;</span><br><span class="line">        pointScreenPos.z = depth;</span><br><span class="line">        Vector3 dir = pointScreenPos - centerScreenPos;</span><br><span class="line">        <span class="built_in">float</span> len = dir.magnitude;</span><br><span class="line">        len = len &gt; radius ? radius : len;</span><br><span class="line">        dir = len * dir.normalized;</span><br><span class="line">        targetScreenPointPos = centerScreenPos + dir;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnPointerUp</span>(<span class="params">PointerEventData eventData</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        isDraging = <span class="literal">false</span>;</span><br><span class="line">        targetScreenPointPos = centerScreenPos;</span><br><span class="line">        onJoyStickPointerUp?.Invoke();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Update</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Vector3 screenPointPos = uiCamera.WorldToScreenPoint(centerTrans.position);</span><br><span class="line">        <span class="keyword">if</span>(Vector3.Distance(screenPointPos, targetScreenPointPos)&lt;<span class="number">4</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            screenPointPos = targetScreenPointPos;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            screenPointPos = Vector3.Lerp(screenPointPos, targetScreenPointPos, sensitivity * Time.deltaTime);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        centerTrans.position = uiCamera.ScreenToWorldPoint(screenPointPos);</span><br><span class="line">        moveDir = screenPointPos - centerScreenPos;</span><br><span class="line">        moveDir /= radius;</span><br><span class="line">        moveLen = moveDir.magnitude;</span><br><span class="line">        moveLen = moveLen &gt; <span class="number">1</span> ? <span class="number">1</span> : moveLen;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>通过属性器可以获取当前摇杆的状态参数，包括偏移方向以及强度，方向是360度，强度是[0-1]。还有几个<code>SerializeField</code>面板设置参数，结构如下图：<br><img src="/blogs/images/src/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20201223220715.png"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/12/20/OpenGL-Rendering-Pipeline/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2020/12/20/OpenGL-Rendering-Pipeline/" class="post-title-link" itemprop="url">OpenGL Rendering Pipeline</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-20 15:01:00" itemprop="dateCreated datePublished" datetime="2020-12-20T15:01:00+08:00">2020-12-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-01 22:07:06" itemprop="dateModified" datetime="2021-07-01T22:07:06+08:00">2021-07-01</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/OpenGL/" itemprop="url" rel="index"><span itemprop="name">OpenGL</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/OpenGL/Render-Pipeline/" itemprop="url" rel="index"><span itemprop="name">Render Pipeline</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>OpengGL 渲染管线包含一连串的、有序的处理过程；主要处理两类几何信息：顶点数据和片段数据；最终将处理结果存储到帧缓存中。另外，OpenGL 可以将处理后的数据传递给CPU–也就是我们的应用程序，下图中的灰色线条表示的就是从GPU到CPU的数据传输：<br><img src="http://www.songho.ca/opengl/files/gl_pipeline.gif"><br>OpenGL Pipeline</p>
-<h2 id="Display-List"><a href="#Display-List" class="headerlink" title="Display List"></a>Display List</h2><p>Display list 中存储的是一组OpenGL渲染命令，这些命令是已经编译好的、以供后续渲染操作。当然与渲染相关的所有数据，包括顶点、片段数据都可以存储在Display list中。如果将命令和数据都存储在一起，可能会提高渲染效率。特别是，如果OpenGL渲染程序是在服务端执行，那么使用Display list可以有效减少网络传输次数。因为Display list是服务端的渲染参数，并且由服务器进行执行，因此客户端只需要将命令和数据一同存储到Display list中，然后一次性发送给服务器。关于Display list更详细的介绍请参考<a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_displaylist.html">Display list</a></p>
-<h2 id="Vertex-Operation"><a href="#Vertex-Operation" class="headerlink" title="Vertex Operation"></a>Vertex Operation</h2><p>每个顶点坐标以及法向经过GL_MODELVIEW矩阵变换，使得坐标点或者法向从模型坐标系变换到摄像机坐标系。所以，如果这时候有光照参与的话，那么这些基于顶点的光照计算是使用变换后的顶点坐标和法向，也就是在观察坐标系下进行光照计算。然后使用光照计算后的颜色值替换掉原先的顶点颜色。想了解更多关于坐标变换的请参考<a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_transform.html">Transformation</a>。</p>
-<h2 id="Primitive-Assembly"><a href="#Primitive-Assembly" class="headerlink" title="Primitive Assembly"></a>Primitive Assembly</h2><p>在顶点变换后，点、线、多边形这些图元会使用投影矩阵，进一步从摄像机空间变换到裁剪空间，然后基于裁剪空间的裁剪平面进行裁剪，数学上的操作原理是将变换后的坐标的x、y、z这三个分量与[-w,w]进行比较，如果三个分量都在里面的话，说明这个点在裁剪包围盒内。经过裁剪后的图元数量会减少很多，然后也就是后续需要处理的数据量减少了。然后我们再做透视除法，也就是将x、y、z三个分量分别处以w，得到齐次设备空间坐标。齐次设备空间x、y、z三个坐标范围是在[-1,1]。然后再经过ViewPot变换，从三维场景变换到屏幕空间坐标系，也就是具体的像素坐标位置。图元拼装的最后一步是图元剔除，例如当前开启的是背面剔除，那么图元法向与视角方向内积小于零的会被剔除。</p>
-<h2 id="Pixel-Transfer-Operation"><a href="#Pixel-Transfer-Operation" class="headerlink" title="Pixel Transfer Operation"></a>Pixel Transfer Operation</h2><p>当从内存中读取像素数据，并且对像素值进行解析后，我们会对这些像素数据进行缩放、偏移、映射、裁剪操作。这些操作就叫做像素变换操作。这些变换后的数据可以存储在纹理图片中，也可以直接栅格化到片段中，进入后续的片段着色过程。</p>
-<h2 id="Texture-Memory"><a href="#Texture-Memory" class="headerlink" title="Texture Memory"></a>Texture Memory</h2><p>纹理图像被加载后是存储在纹理存储块中，当我们渲染模型时，可以直接从纹理存储块中读取纹理数据。</p>
-<h2 id="Rasterization"><a href="#Rasterization" class="headerlink" title="Rasterization"></a>Rasterization</h2><p>栅格化处理是指，将几何数据(包括顶点、法向、uv等)和像素数据转换到片段中，片段数据是一组矩形数组，包含颜色、深度、线宽、点的大小、以及抗锯齿算法模型(GL_POINT_SMOOTH, GL_LINE_SMOOTH, GL_POLYGON_SMOOTH)。如果渲染模式设置的是填充模式GL_FILL,那么多边形区域内的像素填充将发生在这个阶段。每一个片段对应于帧缓存中的一个像素。这里要提一下，帧缓存的尺寸和屏幕大小没有必然关系。</p>
-<h2 id="Fragment-Operation"><a href="#Fragment-Operation" class="headerlink" title="Fragment Operation"></a>Fragment Operation</h2><p>片段操作是渲染流程的最后一步，从片段数据转换为帧缓存中的像素值。这个阶段的第一步是像素生成；从纹理缓存开中的纹理元素被应用于每一个片段。然后计算雾的颜色。最后，需要进行各种测试，测试顺序为： 剪刀测试 –&gt; 透明通道测试 –&gt; 模板测试 –&gt;  深度测试。</p>
-<h2 id="Feedback"><a href="#Feedback" class="headerlink" title="Feedback"></a>Feedback</h2><p>OpenGL 可以通过glGet()、gllsEnabled()两个命令获取当前渲染过程中大部分的状态以及信息。如果需要，我们还可以使用glReadPixels()从帧缓存中截取一块像素数据，也可以使用glRenderMode(GL_FEEDBACK)来获取所有变换后的顶点数据。值得注意的是，glCopyPixels()并不是将像素数据返回到CPU，而实将其复制到其他的帧缓存，例如从前置帧到后置帧。这里前置和后置构成了双帧缓存机制。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/blogs/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/blogs/">1</a><span class="page-number current">2</span><a class="page-number" href="/blogs/page/3/">3</a><a class="extend next" rel="next" href="/blogs/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/blogs/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/blogs/">1</a><span class="page-number current">2</span><a class="page-number" href="/blogs/page/3/">3</a><a class="page-number" href="/blogs/page/4/">4</a><a class="extend next" rel="next" href="/blogs/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1186,7 +1240,7 @@ public static class AssetsMenu
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-count">33</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
