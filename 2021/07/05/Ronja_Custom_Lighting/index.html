@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blogs/images/girl_180_0.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blogs/images/girl_32_0.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blogs/images/girl_16_0.png">
+  <link rel="mask-icon" href="/blogs/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blogs/css/main.css">
+
+
+<link rel="stylesheet" href="/blogs/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"tyson-wu.github.io","root":"/blogs/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="原文：Custom Lighting Summary表面着色器真的非常方便，特别是在处理光照时，表面着色器可以使用PBR模型快速实现物理光照效果。但是有时候我们可能想实现其他一些光照效果，例如卡通风格的。这时候我们可以使用自定义光照函数来满足我们的需求。 本篇主要介绍表面着色器特有的一些功能。但是光照处理的基本原理可以应用到其他着色器中。只不过Unity会为表面着色器生成一个基本的可复用的光照框架">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Custom Lighting">
+<meta property="og:url" content="https://tyson-wu.github.io/blogs/2021/07/05/Ronja_Custom_Lighting/index.html">
+<meta property="og:site_name" content="TysonWu&#39;s Blog">
+<meta property="og:description" content="原文：Custom Lighting Summary表面着色器真的非常方便，特别是在处理光照时，表面着色器可以使用PBR模型快速实现物理光照效果。但是有时候我们可能想实现其他一些光照效果，例如卡通风格的。这时候我们可以使用自定义光照函数来满足我们的需求。 本篇主要介绍表面着色器特有的一些功能。但是光照处理的基本原理可以应用到其他着色器中。只不过Unity会为表面着色器生成一个基本的可复用的光照框架">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/013/Result.png">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/013/DotLight.png">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/013/HardRamp.png">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/013/DrawRamp.png">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/013/CorrectRampLighting.png">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/013/HotColdRamp.png">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/013/HotColdRampModel.png">
+<meta property="article:published_time" content="2021-07-05T14:01:00.000Z">
+<meta property="article:modified_time" content="2021-07-06T12:32:07.746Z">
+<meta property="article:author" content="Tyson Wu">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="Shader">
+<meta property="article:tag" content="翻译">
+<meta property="article:tag" content="ronja">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.ronja-tutorials.com/assets/images/posts/013/Result.png">
+
+<link rel="canonical" href="https://tyson-wu.github.io/blogs/2021/07/05/Ronja_Custom_Lighting/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Custom Lighting | TysonWu's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blogs/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">TysonWu's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">AiCooXiao</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blogs/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blogs/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/blogs/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blogs/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blogs/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/05/Ronja_Custom_Lighting/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Custom Lighting
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-07-05 22:01:00" itemprop="dateCreated datePublished" datetime="2021-07-05T22:01:00+08:00">2021-07-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-06 20:32:07" itemprop="dateModified" datetime="2021-07-06T20:32:07+08:00">2021-07-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/013-custom-lighting/">Custom Lighting</a></p>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>表面着色器真的非常方便，特别是在处理光照时，表面着色器可以使用PBR模型快速实现物理光照效果。但是有时候我们可能想实现其他一些光照效果，例如卡通风格的。这时候我们可以使用自定义光照函数来满足我们的需求。</p>
+<p>本篇主要介绍表面着色器特有的一些功能。但是光照处理的基本原理可以应用到其他着色器中。只不过Unity会为表面着色器生成一个基本的可复用的光照框架，如果我们使用其他着色器，那么必须手动补全这部分代码，但是这些并不是本文的重点，所以不做赘述。</p>
+<p>如果你是一个初学者，建议你从<a href="https://tyson-wu.github.io/blogs/2021/06/25/Ronja_Structure/">第一章</a>开始看。</p>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/013/Result.png"></p>
+<h2 id="Use-Custom-Lighting-Function"><a href="#Use-Custom-Lighting-Function" class="headerlink" title="Use Custom Lighting Function"></a>Use Custom Lighting Function</h2><p>首先我们需要将光照模型设置为我们自定义的光照函数。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//表面着色器</span></span><br><span class="line"><span class="comment">//表面着色函数以及我们的自定义光照函数</span></span><br><span class="line"><span class="comment">//fullforwardshadows 应用所有的阴影Pass</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> surface surf Custom fullforwardShadows</span></span><br></pre></td></tr></table></figure>
+
+<p>然后我们添加我们的自定义光照函数。光照函数的名字结构是<code>LightingX</code>，其中<code>X</code>是上面定义的光照函数，这里是<code>Custom</code>。在下面的自定义光照函数中使用的<code>SurfaceOutput</code>结构体，实际上是由<code>surf</code>表面着色器函数返回的数据，两者最终的数据结构必须一致。另外还有光照方向、以及光照衰减度，衰减度在后面会介绍。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//自定义光照函数，针对每个光源都会处理一遍</span></span><br><span class="line"><span class="function">float4 <span class="title">LightingCustom</span><span class="params">(SurfaceOutput s, float3 lightDir, <span class="keyword">float</span> atten)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>SurfaceOutput</code>和<code>SurfaceOutputSstandard</code>都是Unity预定义的数据结构，前者是针对非物理渲染的，后者是提供了物理渲染的基本参数。当然你也可以把他们当做是一个参考模板，然后实现自己的数据结构。使用的方法是，先在表面着色器函数中对该结构赋值，然后在自定义光照函数中使用。因为<code>SurfaceOutput</code>不包含光滑度、以及金属度的属性，所以在表面着色器删除对这两者的赋值。</p>
+<p>//表面着色器<br>void surf (Input i, inout SurfaceOutput o) {<br>    //纹理采样<br>    fixed4 col = tex2D(_MainTex, i.uv_MainTex);<br>    col *= _Color;<br>    o.Albedo = col.rgb;</p>
+<pre><code>//o.Emission = _Emission;</code></pre>
+<p>}</p>
+<p>现在我们有了自己的光照函数，但是该函数目前返回的是0，所以模型渲染后看不到光照效果。</p>
+<p>按理说光照为零的话，整个模型应该是纯黑色，但是我们现在却能看清模型的基本轮廓。这是因为，光照函数处理的是直接光源，但是在模型渲染的时候除了直接光源，还有间接光源作用。其中环境光就是一种间接光源，Unity会自动将天空盒的颜色来当成环境光的一部分，所以我们在环境光的作用下还能看清物体。如果你在Unity编辑器的场景窗口上方选择关闭环境光的按钮，那么整个模型最终就会变成纯黑色，并且其最终显示都完全受我们的自定义光照函数控制。当然这里我保留Unity编辑器的默认设置。</p>
+<h2 id="Implement-Lighting-Ramp"><a href="#Implement-Lighting-Ramp" class="headerlink" title="Implement Lighting Ramp"></a>Implement Lighting Ramp</h2><p>下面我们来实现简单的自定义光照函数。第一步我们先求解表面法向和入射光线方向向量的点乘，这两个参数正好在自定义光照函数的参数列表中。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//自定义光照函数</span></span><br><span class="line"><span class="function">float4 <span class="title">LightingCustom</span><span class="params">(SurfaceOutput s, float3 lightDir, <span class="keyword">float</span> atten)</span></span>&#123;</span><br><span class="line">    <span class="comment">//法向和光照入射方向的点乘，可以用来表示光照密度</span></span><br><span class="line">    <span class="keyword">float</span> towardsLight = dot(s.Normal, lightDir);</span><br><span class="line">    <span class="keyword">return</span> towardsLight;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/013/DotLight.png"></p>
+<p>下面我们实现的光照函数非常简单，涵盖了一般通用结构。我们使用光线入射向量来最为纹理纹理采样的参数，并将采样结果当成光源在该点的亮度。</p>
+<p>因此我们必须将点乘结果的取值范围从<code>[-1, 1]</code>映射为<code>[0, 1]</code>，因为后者是UV的取值范围。</p>
+<p>然后我们创建一个叫<code>ramp</code>的纹理变量。按照前面说的采样方法进行采样。然后在材质面板上设置纹理为半黑半白的图片。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//材质面板</span></span><br><span class="line">Properties &#123;</span><br><span class="line">    _Color (<span class="string">&quot;Tint&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">    _MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">    [HDR] _Emission (<span class="string">&quot;Emission&quot;</span>, color) = (<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">    _Ramp (<span class="string">&quot;Toon Ramp&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">sampler2D _Ramp;</span><br></pre></td></tr></table></figure>
+
+<p>下面是我们所用的<code>ramp</code>纹理。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/013/HardRamp.png"></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//自定义光照函数</span></span><br><span class="line"><span class="function">float4 <span class="title">LightingCustom</span><span class="params">(SurfaceOutput s, float3 lightDir, <span class="keyword">float</span> atten)</span></span>&#123;</span><br><span class="line">    <span class="comment">//入射光强</span></span><br><span class="line">    <span class="keyword">float</span> towardsLight = dot(s.Normal, lightDir);</span><br><span class="line">    <span class="comment">//数值区间映射</span></span><br><span class="line">    towardsLight = towardsLight * <span class="number">0.5</span> + <span class="number">0.5</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//纹理采样</span></span><br><span class="line">    float3 lightIntensity = tex2D(_Ramp, towardsLight).rgb;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> float4(lightIntensity, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/013/DrawRamp.png"></p>
+<p>在上图中，模型背光面也能看清模型表面纹理。这还是因为环境光的影响。</p>
+<p>为了让效果看起来更好，我们将模型颜色和光照密度相乘、同时应用衰减因子，最终的到一个具有颜色、且强度随距离变化的光源。模型最终的表现也和光源的颜色、和距离相关。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//自定义光照</span></span><br><span class="line"><span class="function">float4 <span class="title">LightingCustom</span><span class="params">(SurfaceOutput s, float3 lightDir, <span class="keyword">float</span> atten)</span></span>&#123;</span><br><span class="line">    <span class="comment">//法向和光入射方向点乘</span></span><br><span class="line">    <span class="keyword">float</span> towardsLight = dot(s.Normal, lightDir);</span><br><span class="line">    <span class="comment">//数值范围映射</span></span><br><span class="line">    towardsLight = towardsLight * <span class="number">0.5</span> + <span class="number">0.5</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//光强采样</span></span><br><span class="line">    float3 lightIntensity = tex2D(_Ramp, towardsLight).rgb;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//最终的颜色</span></span><br><span class="line">    float4 col;</span><br><span class="line">    <span class="comment">//应用光照</span></span><br><span class="line">    col.rgb = lightIntensity * s.Albedo * atten * _LightColor0.rgb;</span><br><span class="line">    <span class="comment">//赋值透明通道</span></span><br><span class="line">    col.a = s.Alpha; </span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> col;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/013/CorrectRampLighting.png"></p>
+<p>上面已经介绍完了一个完整的自定义光照着色器的实现。我们可以使用不同的<code>ramp</code>纹理来得到完全不同的渲染风格。比如下面，我们采样冷暖色条纹，实现的卡通效果。图片源于<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-SurfaceShaderLightingExamples.html">这里</a><br><img src="https://www.ronja-tutorials.com/assets/images/posts/013/HotColdRamp.png"><br><img src="https://www.ronja-tutorials.com/assets/images/posts/013/HotColdRampModel.png"></p>
+<p>在着色器我们还有一个<code>emission</code>没有用到，但是模型最终的显示中却受自发光这个变量的影响。</p>
+<p>上面这种卡通风格的着色器非常有用，在很多地方可以灵活运用。</p>
+<p>自定义光照函数非常强大，但是只能用在前向渲染中。即便是你把渲染路径改为延迟渲染，最终渲染管线依然会把这部分的渲染转移到前向渲染路径中。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/013_CustomSurfaceLighting&quot;</span> &#123;</span><br><span class="line">    <span class="comment">//材质面板</span></span><br><span class="line">    Properties &#123;</span><br><span class="line">        _Color (<span class="string">&quot;Tint&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">        _MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">        [HDR] _Emission (<span class="string">&quot;Emission&quot;</span>, color) = (<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">        _Ramp (<span class="string">&quot;Toon Ramp&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    SubShader &#123;</span><br><span class="line">        <span class="comment">//不透明物体</span></span><br><span class="line">        Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Geometry&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line">        CGPROGRAM</span><br><span class="line"></span><br><span class="line">        <span class="comment">//表面着色器</span></span><br><span class="line">        <span class="comment">//自定义表面着色器函数、自定义光照函数</span></span><br><span class="line">        <span class="comment">//fullforwardshadows 使用所有的阴影Pass</span></span><br><span class="line">        <span class="meta">#<span class="meta-keyword">pragma</span> surface surf Custom fullforwardshadows</span></span><br><span class="line">        <span class="meta">#<span class="meta-keyword">pragma</span> target 3.0</span></span><br><span class="line"></span><br><span class="line">        sampler2D _MainTex;</span><br><span class="line">        fixed4 _Color;</span><br><span class="line">        half3 _Emission;</span><br><span class="line"></span><br><span class="line">        sampler2D _Ramp;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//自定义光照函数</span></span><br><span class="line">        <span class="function">float4 <span class="title">LightingCustom</span><span class="params">(SurfaceOutput s, float3 lightDir, <span class="keyword">float</span> atten)</span></span>&#123;</span><br><span class="line">            <span class="comment">//点乘</span></span><br><span class="line">            <span class="keyword">float</span> towardsLight = dot(s.Normal, lightDir);</span><br><span class="line">            <span class="comment">//数值范围映射</span></span><br><span class="line">            towardsLight = towardsLight * <span class="number">0.5</span> + <span class="number">0.5</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//采样</span></span><br><span class="line">            float3 lightIntensity = tex2D(_Ramp, towardsLight).rgb;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//最终的颜色</span></span><br><span class="line">            float4 col;</span><br><span class="line">            <span class="comment">//计算光照</span></span><br><span class="line">            col.rgb = lightIntensity * s.Albedo * atten * _LightColor0.rgb;</span><br><span class="line">            <span class="comment">//使用透明通道</span></span><br><span class="line">            col.a = s.Alpha; </span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> col;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//输入结构体</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">Input</span> &#123;</span></span><br><span class="line">            float2 uv_MainTex;</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//表边着色器函数</span></span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">surf</span> <span class="params">(Input i, inout SurfaceOutput o)</span> </span>&#123;</span><br><span class="line">            <span class="comment">//纹理采样</span></span><br><span class="line">            fixed4 col = tex2D(_MainTex, i.uv_MainTex);</span><br><span class="line">            col *= _Color;</span><br><span class="line">            o.Albedo = col.rgb;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//o.Emission = _Emission;</span></span><br><span class="line">        &#125;</span><br><span class="line">        ENDCG</span><br><span class="line">    &#125;</span><br><span class="line">    FallBack <span class="string">&quot;Standard&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>希望本篇能帮助你理解表面着色器和自定义光照。</p>
+<p>你可以在以下链接找到源码：<br><a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/013_CustomSurfaceLighting/CustomLighting.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/013_CustomSurfaceLighting/CustomLighting.shader</a></p>
+<p>希望你能喜欢这个教程哦！如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blogs/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/blogs/tags/Shader/" rel="tag"># Shader</a>
+              <a href="/blogs/tags/%E7%BF%BB%E8%AF%91/" rel="tag"># 翻译</a>
+              <a href="/blogs/tags/ronja/" rel="tag"># ronja</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blogs/2021/07/05/Ronja_Fresnel/" rel="prev" title="Fresnel">
+      <i class="fa fa-chevron-left"></i> Fresnel
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blogs/2021/07/06/Ronja_Polygon_Clipping/" rel="next" title="Polygon Clipping">
+      Polygon Clipping <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Summary"><span class="nav-number">1.</span> <span class="nav-text">Summary</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Use-Custom-Lighting-Function"><span class="nav-number">2.</span> <span class="nav-text">Use Custom Lighting Function</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Implement-Lighting-Ramp"><span class="nav-number">3.</span> <span class="nav-text">Implement Lighting Ramp</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Tyson Wu"
+      src="/blogs/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Tyson Wu</p>
+  <div class="site-description" itemprop="description">If you want, Just do it!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blogs/archives/">
+        
+          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blogs/categories/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blogs/tags/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Tyson-Wu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Tyson-Wu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/zhao-wu-zhu-43" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhao-wu-zhu-43" rel="noopener" target="_blank"><i class="知乎 fa-fw"></i>知乎</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.cnblogs.com/Hi-blog/" title="https:&#x2F;&#x2F;www.cnblogs.com&#x2F;Hi-blog&#x2F;" rel="noopener" target="_blank">starnight_cyber</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tyson Wu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blogs/lib/anime.min.js"></script>
+  <script src="/blogs/lib/velocity/velocity.min.js"></script>
+  <script src="/blogs/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blogs/js/utils.js"></script>
+
+<script src="/blogs/js/motion.js"></script>
+
+
+<script src="/blogs/js/schemes/pisces.js"></script>
+
+
+<script src="/blogs/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

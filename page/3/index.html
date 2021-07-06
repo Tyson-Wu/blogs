@@ -163,6 +163,552 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/06/19/Func2Solve/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/06/19/Func2Solve/" class="post-title-link" itemprop="url">二次函数解析</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-19 15:01:00" itemprop="dateCreated datePublished" datetime="2021-06-19T15:01:00+08:00">2021-06-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-06 20:32:07" itemprop="dateModified" datetime="2021-07-06T20:32:07+08:00">2021-07-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Math/" itemprop="url" rel="index"><span itemprop="name">Math</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Math/Function/" itemprop="url" rel="index"><span itemprop="name">Function</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>如下如所示，已知A、B两点坐标，以及二次函数顶点的y坐标，求解二次函数的方程式：<br><img src="/blogs/images/src/func.jpg"></p>
+<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>首先，假设二次函数方程为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a * x * x + b * x + c &#x3D; y   ------------- 1 </span><br></pre></td></tr></table></figure>
+<p>同时假设，A、B、P三个点的坐标分别为<code>(x1, y1)</code>、<code>(x2, y2)</code>、<code>(x3, y3)</code>，其中<code>x3</code>未知。<br>因为A、B、P三个点都在函数曲线上，所以三个点都满足方程：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a * x1 * x1 + b * x1 + c &#x3D; y1   ------------- 2</span><br><span class="line">a * x2 * x2 + b * x2 + c &#x3D; y2   ------------- 3</span><br><span class="line">a * x3 * x3 + b * x3 + c &#x3D; y3   ------------- 4</span><br></pre></td></tr></table></figure>
+<p>将上面的式子2减去式3得到<code>式子5</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a * (x1 * x1 - x2 * x2)+ b * (x1 – x2) &#x3D; y1 – y2   ------------- 5</span><br></pre></td></tr></table></figure>
+<p><code>式子5</code>中消去参数c，只有a、b两个参数。将b用a表示，得：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">b &#x3D; ((y1 – y2) – a * (x1 * x1 – x2 * x2))&#x2F;(x1 – x2) </span><br><span class="line"> &#x3D; (y1 – y2)&#x2F;(x1 – x2) – a * (x1 * x1 – x2 * x2)&#x2F;(x1 – x2) ------------- 6</span><br></pre></td></tr></table></figure>
+<p>又因为:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">x1 * x1 – x2 * x2 &#x3D; (x1 + x2) * (x1 – x2) ------------- 7</span><br></pre></td></tr></table></figure>
+<p>所以：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">b &#x3D; (y1 – y2)&#x2F;(x1 – x2) – a * (x1 + x2) ------------- 8</span><br></pre></td></tr></table></figure>
+<p>令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">m &#x3D; (y1 – y2) &#x2F; (x1 – x2)</span><br><span class="line">n &#x3D; x1 + x2</span><br></pre></td></tr></table></figure>
+<p>所以：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">b &#x3D; m – a * n------------- 9</span><br></pre></td></tr></table></figure>
+<p>因为二次函数的顶点坐标为(-b/(2a), (4ac-b*b)/(4a))，这一点可以查百度。因此：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x3 &#x3D; -b&#x2F;(2a) ------------- 10</span><br><span class="line">y3 &#x3D; (4ac – b*b)&#x2F;(4a)</span><br></pre></td></tr></table></figure>
+<p>所以：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c &#x3D; y3 + b * b &#x2F;(4 a)------------- 11</span><br></pre></td></tr></table></figure>
+
+<p>=================================分段线=======================<br>将<code>式9、10</code>代入<code>式2</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">y1 – y3 &#x3D; a * x1 * x1 + (m – a * n) + (m –a * n) *(m –a * n)&#x2F;(4a)</span><br></pre></td></tr></table></figure>
+<p>化简得：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(4 * x1 * x1 – 4 * n * x1 + n * n) * a * a </span><br><span class="line">   + (4 * m * x1 – 2 * m * n – 4 * (y1 – y3)) * a</span><br><span class="line">     + m * m &#x3D; 0--------------12</span><br></pre></td></tr></table></figure>
+<p><code>式子12</code>是关于a的二次方程<br>假设：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">A1 &#x3D; 4 * x1 * x1 – 4 * n * x1 + n * n</span><br><span class="line">B1 &#x3D; 4 * m * x1 – 2 * m * n – 4 * (y1 – y3)</span><br><span class="line">C1 &#x3D; m * m</span><br></pre></td></tr></table></figure>
+<p>那么<code>式12</code>可以写成：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">A1 * a * a + B1 * b + C1 &#x3D; 0--------------13</span><br></pre></td></tr></table></figure>
+<p>二次方程的有两个根：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a1 &#x3D; -(B1 + sqrt(4A1C1 – B1 * B1))&#x2F;(2* A1)</span><br><span class="line">a2 &#x3D; -(B1 - sqrt(4A1C1 – B1 * B1))&#x2F;(2* A1)</span><br></pre></td></tr></table></figure>
+<p>这里可以取a1、a2中的任意一个作为a的值<br>根据式8可以计算b<br>根据式11可以计算c<br>根据式10可以计算x3<br>从上面分段线开始，是基于<code>式2</code>计算所有的参数，也就是基于点<code>(x1, y1)</code>，我们也可以基于<code>式3</code>进行计算，也就是基于点<code>(x2,y2)</code>，但是计算出的结果都是一致的</p>
+<h2 id="实现源码"><a href="#实现源码" class="headerlink" title="实现源码"></a>实现源码</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">void Start()</span><br><span class="line">    &#123;</span><br><span class="line">        float x1 &#x3D; 1.3245f;</span><br><span class="line">        float y1 &#x3D; 0.342f;</span><br><span class="line">        float x2 &#x3D; 11.24f;</span><br><span class="line">        float y2 &#x3D; 6.324f;</span><br><span class="line">        float y3 &#x3D; -8.213f;</span><br><span class="line">        if(Solve(x1, y1, x2, y2, y3, out var x3, out var a, out var b, out var c))</span><br><span class="line">        &#123;</span><br><span class="line">            Debug.LogError(string.Format(&quot;&#123;0&#125; &#x3D;&#x3D; &#123;1&#125;&quot;, y1, func(a, b, c, x1)));</span><br><span class="line">            Debug.LogError(string.Format(&quot;&#123;0&#125; &#x3D;&#x3D; &#123;1&#125;&quot;, y2, func(a, b, c, x2)));</span><br><span class="line">            Debug.LogError(string.Format(&quot;&#123;0&#125; &#x3D;&#x3D; &#123;1&#125;&quot;, y3, func(a, b, c, x3)));</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">            Debug.LogError(&quot;error&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    float func(float a, float b, float c, float x)</span><br><span class="line">    &#123;</span><br><span class="line">        return a * x * x + b * x + c;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; a * x * x + b * x + c &#x3D; y</span><br><span class="line">    bool Solve(float x1, float y1, float x2, float y2, float y3, out float x3, out float a, out float b, out float c)</span><br><span class="line">    &#123;</span><br><span class="line">        float eps &#x3D; 0.00001f;</span><br><span class="line">        bool rst &#x3D; true;</span><br><span class="line">        float m, n;</span><br><span class="line">        m &#x3D; (y1 - y2) &#x2F; (x1 - x2);</span><br><span class="line">        n &#x3D; x1 + x2;</span><br><span class="line"></span><br><span class="line">        float A1, B1, C1;</span><br><span class="line">        A1 &#x3D; 4 * x1 * x1 - 4 * n * x1 + n * n;</span><br><span class="line">        B1 &#x3D; 4 * m * x1 - 2 * m * n - 4 * (y1 - y3);</span><br><span class="line">        C1 &#x3D; m * m;</span><br><span class="line"></span><br><span class="line">        float A2, B2, C2;</span><br><span class="line">        A2 &#x3D; 4 * x2 * x2 - 4 * n * x2 + n * n;</span><br><span class="line">        B2 &#x3D; 4 * m * x2 - 2 * m * n - 4 * (y2 - y3);</span><br><span class="line">        C2 &#x3D; m * m;</span><br><span class="line"></span><br><span class="line">        float a1_1, a1_2;</span><br><span class="line">        a1_1 &#x3D; -(B1 + Mathf.Sqrt(B1 * B1 - 4 * A1 * C1)) &#x2F; (2 * A1);</span><br><span class="line">        a1_2 &#x3D; -(B1 - Mathf.Sqrt(B1 * B1 - 4 * A1 * C1)) &#x2F; (2 * A1);</span><br><span class="line">        float a2_1, a2_2;</span><br><span class="line">        a2_1 &#x3D; -(B2 + Mathf.Sqrt(B2 * B2 - 4 * A2 * C2)) &#x2F; (2 * A2);</span><br><span class="line">        a2_2 &#x3D; -(B2 - Mathf.Sqrt(B2 * B2 - 4 * A2 * C2)) &#x2F; (2 * A2);</span><br><span class="line"></span><br><span class="line">        if (Mathf.Abs(a1_1 - a2_1)&lt; eps)</span><br><span class="line">        &#123;</span><br><span class="line">            a &#x3D; a1_1;</span><br><span class="line">        &#125;</span><br><span class="line">        else if (Mathf.Abs(a1_2 - a2_2) &lt; eps)</span><br><span class="line">        &#123;</span><br><span class="line">            a &#x3D; a1_2;</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">            a &#x3D; 1;</span><br><span class="line">            rst &#x3D; false;</span><br><span class="line">        &#125;</span><br><span class="line">        b &#x3D; m - a * n;</span><br><span class="line">        c &#x3D; y3 + b * b &#x2F; (4 * a);</span><br><span class="line">        x3 &#x3D; - b &#x2F; (2 * a);</span><br><span class="line">        return rst;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/06/16/Are-Behavior-Trees-a-Thing-of-the-Past/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/06/16/Are-Behavior-Trees-a-Thing-of-the-Past/" class="post-title-link" itemprop="url">Are Behavior Trees a Thing of the Past?</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-16 15:01:00" itemprop="dateCreated datePublished" datetime="2021-06-16T15:01:00+08:00">2021-06-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-06 20:32:07" itemprop="dateModified" datetime="2021-07-06T20:32:07+08:00">2021-07-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/%E7%BF%BB%E8%AF%91/" itemprop="url" rel="index"><span itemprop="name">翻译</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/%E7%BF%BB%E8%AF%91/%E8%A1%8C%E4%B8%BA%E6%A0%91/" itemprop="url" rel="index"><span itemprop="name">行为树</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>原文：<br><a target="_blank" rel="noopener" href="https://www.gamasutra.com/blogs/JakobRasmussen/20160427/271188/Are_Behavior_Trees_a_Thing_of_the_Past.php">Are Behavior Trees a Thing of the Past?</a></p>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>基于游戏沉浸感、以及和NPC智能交互的需求，游戏开发者在游戏中使用的AI技术成为了新的焦点。曾经在游戏中普遍使用，也是游戏中AI决策的主要方案的行为树，已经显得乏力。当游戏开发者希望实现更为复杂的AI行为时，例如处理突发情况，行为树已经无法满足。因此，更为先进的AI技术——Utility AI，已经逐步取代行为树的位置，开始在游戏中展现出更为优越的AI性能，开启一个新的游戏AI时代。</p>
+<h2 id="行为树是如何屹立游戏AI界（以及它的衰落）"><a href="#行为树是如何屹立游戏AI界（以及它的衰落）" class="headerlink" title="行为树是如何屹立游戏AI界（以及它的衰落）"></a>行为树是如何屹立游戏AI界（以及它的衰落）</h2><p>大多数AI开发者都知道有限状态机（FSM）是一种简单且实用AI方法。通过简单地定义状态、以及状态之间切换的条件，然后可以基于决策实现无限循环的AI行为。例如，FSM将持续保持某种状态，直到满足某种条件，才会从一种状态切换到另一种状态。</p>
+<p>任何两个状态之间都可以在特定条件下实现切换，很容易设计FSM来实现AI行为。但是，有利也有弊。在一些大型游戏中，构建FSM需要上百个状态，这么多的状态导致异常分析变的非常困难。Damian Isla在2005 GDC论坛中针对Halo 2的AI系统，详细的指出了这一点。<br><img src="https://gamasutra.com/db_area/images/blog/apexgametools05.png"></p>
+<p>为了解决这些问题，FSM进一步演化出层级结构，使得它易于设计和异常分析。分层结构使得FSM能够更好的处理大量的状态，但是并没有从根本上解决这个问题，当状态数量进一步增加时，FSM依然会变得难以管理。<br><img src="https://gamasutra.com/db_area/images/blog/apexgametools011.png"></p>
+<p>最终，在这种层级组织的思想上，进一步演化出任务组织的树状结构——行为树。和状态机一样，行为树也是由多个状态节点组成，同一时刻只占据一种状态。不同的是，状态机中，任意两个状态之间的跳转都需要单独配置跳转条件，而行为树则是将这些跳转条件进行拆分，这些拆分后的最小条件单元称为条件装饰器。状态机中的跳转仅仅是对当前状态中的条件进行判断，如果满足条件则跳转，而行为树是从根节点开始，定时进行条件遍历，每经过一个装饰器，会进行次条件判断，然后选择不同的状态分支，以此类推。如果最终筛选出的状态和当前状态不同，那么执行状态跳转。因此，行为树解决了FSM中存在的很多问题，例如，FSM中可能发生条件满足却没有跳转的情况，或者其他跳转异常。在Unreal引擎中就实现了一套非常不错的行为树机制。<br><img src="https://gamasutra.com/db_area/images/blog/271188/image02.png"></p>
+<p>相较于层级FSM，行为树能够实现更为复杂、同时容易理解的AI系统。并且这种树结构也便于实现可视化的异常分析。<br><img src="https://gamasutra.com/db_area/images/blog/271188/apexgametools00.png"></p>
+<p>然而，行为树也有很多缺陷。很多人试图通过实现各种扩展来消除这些缺陷。</p>
+<p>当行为树状态数量变得庞大时，每次条件遍历都需要花费大量的时间。因此，有人引入了子树方案，就是将整个行为树分割为多个嵌套的子树，每次条件遍历只需要遍历当前状态所处的子树就可以，这样可以减少遍历数量，只有满足特定条件，才能跳出子树。但是子树的存在，导致行为树在控制、异常处理方便，变得和FSM一样复杂。</p>
+<h2 id="顶级的AI需要满足什么条件"><a href="#顶级的AI需要满足什么条件" class="headerlink" title="顶级的AI需要满足什么条件"></a>顶级的AI需要满足什么条件</h2><p>这需要我们重新回顾一下顶级AI的特性。</p>
+<p>顶级AI需要具备更为复杂的、更深层次的、沉浸式的游戏世界的处理能力。例如在《Hitman》、《Witcher》、《Assassin’s Creed》中，NPC的数量、定制化数量、生活化的行为数量都变得越来越多。在《Call of Duty》、《The Division》中，对手的数量、以及深度的要求，可变且复杂的策略行为爆炸式的增长。静态的、脚本化的游戏设计不再适用，需要支持动态的、甚至可演化的场景来满足当下的游戏设计。</p>
+<p>这依赖于易于设计的、具有复杂行为表达能力的AI机制。例如，这样的AI能够提高突发处理能力，能够应对游戏设计者未曾预料的场景，能够像人类一样表达更为复杂的行为模式。</p>
+<p>以上提到AI技术显然无法处理更为庞大的数据输入。AI设计者不可能使用行为树、或状态机来表示所有可能的情况。更别说设计一套保证AI正常使用的测试用例。因此，我们需要一种更好、且更稳定的AI技术。</p>
+<p>处理复杂的行为可能是AI中主要的挑战。在游戏开发中的，有很多问题是由于数据量增加、而AI处理能力不足导致的。</p>
+<p>1、 技术性遗留问题 - 如果在游戏开发过程中，扩展AI的难度很大，那么后面需要修复的问题、以及所花费的时间将会暴增。<br>2、 生产效率 - 如果不能快速实现满足游戏设计方案的AI系统，那么游戏设计者无法快速原型化其思路。最终结果是游戏缺乏内容，或者内容偏向程序化、没有趣味性。<br>3、 质量 - 最终很多游戏只能放弃、或者最终只是实现无聊的智障游戏。</p>
+<h2 id="一个新的AI范例"><a href="#一个新的AI范例" class="headerlink" title="一个新的AI范例"></a>一个新的AI范例</h2><p>Killzone 2 就具有非常棒的AI设计。Guerilla 游戏使用了一个AI公共系统来实现动态决策，并且展示了如何使用简单的打分系统来实现AI决策，即便是在对游戏世界不了解的情况下，该AI决策系统也能达到一个良好的效果。同样的系统已经使用在其他游戏，例如《文明》。</p>
+<p>这种公共系统实现方式是，识别可选项，然后基于当前状态，对每一种选项进行打分，然后选出评分最高的选项最为决策项。这种方案具有很多优势：<br>1、设计简单 -<br>2、易于扩展 -<br>3、质量高 - </p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/05/27/WebReference/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/05/27/WebReference/" class="post-title-link" itemprop="url">Web Reference</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-27 17:01:34" itemprop="dateCreated datePublished" datetime="2021-05-27T17:01:34+08:00">2021-05-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-06 20:32:07" itemprop="dateModified" datetime="2021-07-06T20:32:07+08:00">2021-07-06</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="Geometry"><a href="#Geometry" class="headerlink" title="Geometry"></a>Geometry</h2><h3 id="Math"><a href="#Math" class="headerlink" title="Math"></a>Math</h3><p><a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_projectionmatrix.html">OpenGL Projection Matrix</a>:Opengl中的矩阵应用；<br><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/21999356">欧拉公式 e^{i<em>k}=cos(k)+i</em>sin(k) 的来历是什么？</a>:欧拉公式;<br><a target="_blank" rel="noopener" href="https://www.shuxuele.com/algebra/systems-linear-equations-matrices.html">线性方程组矩阵解法</a>:线性方程组矩阵解法;<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/leonardohaig/article/details/110881364">判断线段是否相交并求交点</a>:判断线段是否相交并求交点;<br><a target="_blank" rel="noopener" href="https://fgiesen.wordpress.com/">The ryg blog</a><br><a target="_blank" rel="noopener" href="https://bit-hack.net/2014/03/30/circular-harmonics/">Circular Harmonics</a></p>
+<h3 id="Noise"><a href="#Noise" class="headerlink" title="Noise"></a>Noise</h3><p><a target="_blank" rel="noopener" href="http://devmag.org.za/2009/05/03/poisson-disk-sampling/">Poisson Disk Sampling</a>:泊松采样；<br><a target="_blank" rel="noopener" href="https://iquilezles.org/www/articles/warp/warp.htm">Warping</a>:Warping, or dommain distortion is a very common technique in computer graphics for generating procedural textures and geometry;<br><a target="_blank" rel="noopener" href="https://www.redblobgames.com/articles/noise/2d/">2D noise</a>:These are some quick &amp; dirty experiments I did with 2D noise;<br><a target="_blank" rel="noopener" href="https://github.com/KdotJPG/OpenSimplex2">OpenSimplex 2</a>:Successors to OpenSimplex Noise, plus updated OpenSimplex;</p>
+<h3 id="Polygon"><a href="#Polygon" class="headerlink" title="Polygon"></a>Polygon</h3><p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Even%E2%80%93odd_rule">Even–odd rule</a>:奇偶法判定点与多边形的关系；<br><a target="_blank" rel="noopener" href="https://sean.cm/a/polygon-clipping-pt1">Polygon Clipping (Part 1)</a>:多边形布尔运算；<br><a target="_blank" rel="noopener" href="https://sean.cm/a/polygon-clipping-pt2">Polygon Clipping (Part 2)</a>:多边形布尔运算；<br><a target="_blank" rel="noopener" href="https://barendgehrels.blogspot.com/2010/12/intersections-1.html">Barend’s Blog</a>:多边形布尔运算；<br><a target="_blank" rel="noopener" href="https://cs.stackexchange.com/questions/99927/concave-polygon-intersection-algorithm">Concave Polygon Intersection - Algorithm</a>:多边形布尔运算；<br><a target="_blank" rel="noopener" href="https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html">PNPOLY - Point Inclusion in Polygon Test W. Randolph Franklin (WRF)</a>:…;</p>
+<h3 id="Mesh"><a href="#Mesh" class="headerlink" title="Mesh"></a>Mesh</h3><p><a target="_blank" rel="noopener" href="https://0fps.net/2012/06/30/meshing-in-a-minecraft-game/">Meshing in a Minecraft Game</a>:网格合并贪心算法；<br><a target="_blank" rel="noopener" href="http://experilous.com/1/blog/post/procedural-planet-generation">planet generator</a>:行星网格；<br><a target="_blank" rel="noopener" href="http://eveliosdev.blogspot.com/2016/06/plate-tectonics.html">Evelios Development</a>:地图网格生成；<br><a target="_blank" rel="noopener" href="https://heredragonsabound.blogspot.com/2019/02/perlin-noise-procedural-content.html">Exploring procedural generation and display of fantasy maps</a>:地图生成；<br><a target="_blank" rel="noopener" href="https://squeakyspacebar.github.io/2017/07/12/Procedural-Map-Generation-With-Voronoi-Diagrams.html">Procedural Terrain Generation With Voronoi Diagrams</a>:地图生成；<br><a target="_blank" rel="noopener" href="https://github.com/squeakyspacebar/novatellus">a map generator based on Voronoi diagrams</a>:地图生成；<br><a target="_blank" rel="noopener" href="https://github.com/averrin/mapgen-viewer">Map generator based on Voronoi Diagram and Perlin noise</a>:地图生成；<br><a target="_blank" rel="noopener" href="https://github.com/Zalgo2462/VoronoiLib">VoronoiLib</a>:C# implementation of Fortune’s Algorithm;<br><a target="_blank" rel="noopener" href="https://leatherbee.org/index.php/2018/10/06/terrain-generation-3-voronoi-diagrams/">Terrain Generation 3: Voronoi Diagrams</a>:generating a small number of large Voronoi cells as tectonic plates;<br><a target="_blank" rel="noopener" href="https://github.com/michaellasky/ManyLandsGenerator">ManyLandsGenerator</a>:The Random Island Generator being developed for use in The Rogue Sea;<br><a target="_blank" rel="noopener" href="https://github.com/jceipek/Unity-delaunay">Unity-delaunay</a>:Port of as3delaunay to C# for Unity;<br><a target="_blank" rel="noopener" href="https://github.com/KHN190/miniHexMap">miniHexMap</a>:Create, edit, generate hex mesh in Unity Editor mode;<br><a target="_blank" rel="noopener" href="https://mapbox.github.io/delaunator/">Delaunator guide</a>:a fast library for Delaunay triangulation;<br><a target="_blank" rel="noopener" href="https://github.com/squeakyspacebar/csDelaunay">#csDelaunay</a>:This is a refactoring of PouletFrit’s C# port of as3delaunay;<br><a target="_blank" rel="noopener" href="https://github.com/PouletFrit/csDelaunay">csDelaunay</a>:This is a port and interpretation of actionscript library as3delaunay;<br><a target="_blank" rel="noopener" href="https://github.com/tyoden/VoronoiUnityDOTS">VoronoiUnityDOTS</a>:Fortune’s Voronoi diagram for Unity DOTS (Job System, Burst Compiler) - WIP;<br><a target="_blank" rel="noopener" href="https://github.com/LanLou123/Webgl-Erosion">Terrain erosion sandbox in WebGl</a>:Erosion simulation in Web Browser;</p>
+<h3 id="Path"><a href="#Path" class="headerlink" title="Path"></a>Path</h3><p><a target="_blank" rel="noopener" href="https://fribbels.github.io/shortestpath/writeup.html">Euclidean Shortest Paths</a>:避障寻路；<br><a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~16311/current/schedule/ppp/Lec12-MotionPlanning4.pdf">Motion Planning, Part IV Graph Search Part II</a>:路径规划；<br><a target="_blank" rel="noopener" href="https://aaai.org/ocs/index.php/AIIDE/AIIDE10/paper/view/2139/2547">A Comparison of High-Level Approaches for Speeding Up Pathfinding</a>:寻路优化；<br><a target="_blank" rel="noopener" href="http://citeseerx.ist.psu.edu/viewdoc/download;jsessionid=5E67F3A553B41B61F9F0FCA0DDF17128?doi=10.1.1.138.7223&rep=rep1&type=pdf">TRANSIT: Ultrafast Shortest-Path Queries with Linear-Time Preprocessing</a>:寻路；<br><a target="_blank" rel="noopener" href="https://www.aaai.org/ocs/index.php/AIIDE/AIIDE12/paper/view/5459/5688">TRANSIT Routing on Video Game Maps</a>:寻路；<br><a target="_blank" rel="noopener" href="https://harablog.wordpress.com/2009/02/05/hierarchical-clearance-based-pathfinding/">Shortest Path</a>:寻路；<br><a target="_blank" rel="noopener" href="https://harablog.files.wordpress.com/2009/01/haa.pdf">Hierarchical Path Planning for Multi-Size Agents in Heterogeneous Environments</a>:寻路；<br><a target="_blank" rel="noopener" href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.14.6477&rep=rep1&type=pdf">Fully Dynamic Constrained Delaunay Triangulations</a>:寻路；<br><a target="_blank" rel="noopener" href="http://algo2.iti.kit.edu/schultes/hwy/schultes_diss.pdf">Route Planning in Road Networks</a>:路网寻路方案；<br><a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/research/wp-content/uploads/2004/07/tr-2004-24.pdf">Computing the Sortest Path: A* Search Meets Graph Theory</a>:A<em>寻路；<br><a target="_blank" rel="noopener" href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.42.1704&rep=rep1&type=pdf">Hierarchical A*: Searching Abstraction Hierarchies Efficiently</a>:A</em>寻路算法优化；<br><a target="_blank" rel="noopener" href="https://www.redblobgames.com/pathfinding/a-star/introduction.html">Introduction to the A* Algorithm</a>:Introduction to the A* Algorithm;<br><a target="_blank" rel="noopener" href="http://blog.runevision.com/2016/03/note-on-creating-natural-paths-in.html">Creating natural paths on terrains using pathfinding</a>:道路自动生成；<br><a target="_blank" rel="noopener" href="https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/">Dijkstra’s shortest path algorithm | Greedy Algo-7</a><br><a target="_blank" rel="noopener" href="https://www.freecodecamp.org/news/dijkstras-shortest-path-algorithm-visual-introduction/">Dijkstra’s Shortest Path Algorithm - A Detailed and Visual Introduction</a></p>
+<h3 id="Graphs"><a href="#Graphs" class="headerlink" title="Graphs"></a>Graphs</h3><p><a target="_blank" rel="noopener" href="http://www.science.smith.edu/~istreinu/Teaching/Courses/274/Spring98/Projects/Philip/fp/algVisibility.htm">Algorithm for Computing Visibility Graphs</a>:基于障碍物构造图；<br><a target="_blank" rel="noopener" href="http://www.cs.kent.edu/~dragan/ST-Spring2016/visibility%20graphs.pdf">Visibility graphs</a>:视线图;<br><a target="_blank" rel="noopener" href="https://github.com/xw0/spherical_voronoi_core">spherical_voronoi_core</a>:Voronoi Tessellation of the Sphere;</p>
+<h2 id="Game"><a href="#Game" class="headerlink" title="Game"></a>Game</h2><h3 id="SLG"><a href="#SLG" class="headerlink" title="SLG"></a>SLG</h3><p><a target="_blank" rel="noopener" href="https://pvigier.github.io/2020/02/09/vagabond-building-generation.html">pvigier’s blog</a>:地图自动生成、寻路等一套完整的解决方案；<br><a target="_blank" rel="noopener" href="http://www-cs-students.stanford.edu/~amitp/games.html">The SimBlob Project</a>:地图自动生成、寻路等一套完整的解决方案；<br><a target="_blank" rel="noopener" href="https://thecolonistsgame.com/">The Colonists</a>:游戏；<br><a target="_blank" rel="noopener" href="http://www.82apps.com/factorytown/">Factory Town</a>:游戏；<br><a target="_blank" rel="noopener" href="https://store.steampowered.com/app/874390/The_Battle_of_Polytopia/">The Battle of Polytopia</a>:游戏；<br><a target="_blank" rel="noopener" href="https://civilization.com/zh-CN/new-frontier-pass/civilization-vi-vietnam-kublai-khan-pack/">文明VI: 新纪元季票</a>:游戏；<br><a target="_blank" rel="noopener" href="http://www.shiningrocksoftware.com/2011-05-16-the-doors-are-open/">Banished</a>:一些设计实现思路；<br><a target="_blank" rel="noopener" href="https://github.com/Wargus/stratagus">stratagus</a>:The Stratagus strategy game engine;<br><a target="_blank" rel="noopener" href="https://sourceforge.net/directory/?q=turn%20based%20military%20strategy%20games">turn based military strategy games</a>:搜索游戏；<br><a target="_blank" rel="noopener" href="http://assetstore.unitylover.com/unity_asset/turn-based-toolkit-tbtk/">Turn-Based ToolKit (TBTK)</a>:子走棋；<br><a target="_blank" rel="noopener" href="https://unity.com/how-to/advanced/optimize-lighting-mobile-games?_ga=2.238992768.1610235152.1617097265-1411223696.1612421527">Light baked Prefabs &amp; other tips to get 60 fps on low-end phones</a>:tips from Michelle Martin, software engineer at MetalPop Games, on how to optimize games for a range of mobile devices, so you can reach as many potential players as possible;<br><a target="_blank" rel="noopener" href="https://tuanisapps.itch.io/extinction-eclipse">Extinction Eclipse</a><br><a target="_blank" rel="noopener" href="https://manlaig.github.io/projects">Michael Ganzorig</a></p>
+<h2 id="Render"><a href="#Render" class="headerlink" title="Render"></a>Render</h2><h3 id="Color"><a href="#Color" class="headerlink" title="Color"></a>Color</h3><p><a target="_blank" rel="noopener" href="https://simonstechblog.blogspot.com/">Studying Gamut Clipping</a>:色域裁剪研究，用于将颜色限定在有效范围内；</p>
+<h3 id="Lighting"><a href="#Lighting" class="headerlink" title="Lighting"></a>Lighting</h3><p><a target="_blank" rel="noopener" href="https://theory.cpe.ku.ac.th/~pramook/files/prosem_paper.pdf">Spherical Harmonics</a>:球谐函数原理；<br><a target="_blank" rel="noopener" href="http://www.ppsloan.org/publications/StupidSH36.pdf">Stupid Spherical Harmonics (SH) Tricks</a>:球谐函数原理；<br><a target="_blank" rel="noopener" href="https://www.cs.cornell.edu/courses/cs5625/2016sp/slides/14sh-lighting.pdf">Spherical Harmonic Lighting</a>:球谐函数在光照中的应用；<br><a target="_blank" rel="noopener" href="https://lianera.github.io/post/2016/sh-lighting-exp/">Spherical Harmonics Lighting</a>:球谐函数光照应用；<br><a target="_blank" rel="noopener" href="https://zvxryb.github.io/blog/2015/08/20/sh-lighting-part1/">Spherical Harmonics Lighting: Part I</a>:球谐函数光照应用；<br><a target="_blank" rel="noopener" href="http://www.cse.chalmers.se/~uffe/xjobb/Readings/GlobalIllumination/Spherical%20Harmonic%20Lighting%20-%20the%20gritty%20details.pdf">Spherical Harmonic Lighting: The Gritty Details</a>:球谐函数光照应用；<br><a target="_blank" rel="noopener" href="https://www.gamasutra.com/view/news/128550/InDepth_Spherical_Harmonic_Lighting.php">In-Depth: Spherical Harmonic Lighting</a>:球鞋函数；<br><a target="_blank" rel="noopener" href="https://mynameismjp.wordpress.com/2016/10/09/sg-series-part-1-a-brief-and-incomplete-history-of-baked-lighting-representations/">SG SERIES PART 1: A BRIEF (AND INCOMPLETE) HISTORY OF BAKED LIGHTING REPRESENTATIONS</a>:烘焙光照介绍；<br><a target="_blank" rel="noopener" href="http://www.ppsloan.org/publications/">ppsloan</a>:一系列光照相关资料；<br><a target="_blank" rel="noopener" href="https://www.pbr-book.org/">Physically Based Rendering:From Theory To Implementation</a>:物理光照；<br><a target="_blank" rel="noopener" href="https://www.jordanstevenstechart.com/physically-based-rendering">Physically Based Rendering Algorithms: A Comprehensive Study In Unity3D</a>:物理光照详解；<br><a target="_blank" rel="noopener" href="https://www.codinblack.com/graphics-rendering-pipeline/">Graphics Rendering Pipeline</a>:渲染管线；<br><a target="_blank" rel="noopener" href="https://gameinstitute.qq.com/community/detail/115786">HLSL固有函数 【Intrinsic Functions (DirectX HLSL)】</a>:HLSL固有函数；<br><a target="_blank" rel="noopener" href="http://www.thetenthplanet.de/archives/255">The Blinn-Phong Normalization Zoo</a>:The Blinn-Phong Normalization Zoo;</p>
+<h3 id="Shader"><a href="#Shader" class="headerlink" title="Shader"></a>Shader</h3><p><a target="_blank" rel="noopener" href="https://origin.80.lv/articles/creating-a-stylized-waterfall-in-unity-part-1/">Creating A Stylized Waterfall in Unity: Part 1</a>:Math Roodhuizen allowed us to repost his guide to creating a RiME-style waterfall in Unity, Amplify Shader Editor, and Maya;<br><a target="_blank" rel="noopener" href="https://bronsonzgeb.com/index.php/2021/02/27/particle-metaballs-in-unity-using-urp-and-shader-graph-part-1/">Particle Metaballs in Unity using URP and Shader Graph Part 1</a>:This series will explain how to draw Metaballs in Unity using the Universal Render Pipeline (URP) and Shader Graph;<br><a target="_blank" rel="noopener" href="https://www.scratchapixel.com/lessons/advanced-rendering/rendering-distance-fields/introduction">Rendering Implicit Surfaces and Distance Fields: Sphere Tracing</a>:Rendering Implicit Surfaces and Distance Fields: Sphere Tracing;<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/">Shader Tutorials by Ronja</a>:The focus of this tutorials is on unity shaders with hlsl;</p>
+<h2 id="AI"><a href="#AI" class="headerlink" title="AI"></a>AI</h2><p><a target="_blank" rel="noopener" href="https://github.com/stolk/GPGOAP">GPGOAP</a>:面向目标的行为规划；<br><a target="_blank" rel="noopener" href="http://alumni.media.mit.edu/~jorkin/goap.html">Goal-Oriented Action Planning (GOAP)</a><br><a target="_blank" rel="noopener" href="https://github.com/luxkun/ReGoap">ReGoap</a>:Generic C# GOAP (Goal Oriented Action Planning) library with Unity3d examples;<br><a target="_blank" rel="noopener" href="https://github.com/apoch/curvature">Curvature</a><br><a target="_blank" rel="noopener" href="https://github.com/FBast/ReflexityAI">ReflexityAI</a><br><a target="_blank" rel="noopener" href="https://github.com/Jay2645/UnrealUtilityAI">UnrealUtilityAI</a><br><a target="_blank" rel="noopener" href="https://gamedevelopment.tutsplus.com/tutorials/goal-oriented-action-planning-for-a-smarter-ai--cms-20793">Goal Oriented Action Planning for a Smarter AI</a><br><a target="_blank" rel="noopener" href="https://cryscan.github.io/project-chen/update/2021/02/17/goal-oriented-action-planning.html">Goal Oriented Action Planning Instructions</a></p>
+<h2 id="Data-Struct"><a href="#Data-Struct" class="headerlink" title="Data Struct"></a>Data Struct</h2><h3 id="Tree"><a href="#Tree" class="headerlink" title="Tree"></a>Tree</h3><p><a target="_blank" rel="noopener" href="http://www.mikechambers.com/blog/2011/03/21/javascript-quadtree-implementation/">JavaScript QuadTree Implementation</a>:四叉树；<br><a target="_blank" rel="noopener" href="https://fribbels.github.io/vptree/writeup">VP Tree</a></p>
+<h3 id="Queue"><a href="#Queue" class="headerlink" title="Queue"></a>Queue</h3><p><a target="_blank" rel="noopener" href="https://github.com/BlueRaja/High-Speed-Priority-Queue-for-C-Sharp">High-Speed-Priority-Queue-for-C-Sharp</a><br><a target="_blank" rel="noopener" href="https://www.dotnetlovers.com/article/231/priority-queue">Priority Queue</a><br><a target="_blank" rel="noopener" href="https://ericbackhage.net/c/how-to-design-a-priority-queue-in-c/">How to design a Priority Queue in C#</a><br><a target="_blank" rel="noopener" href="https://visualstudiomagazine.com/articles/2012/11/01/priority-queues-with-c.aspx">Priority Queues with C#</a></p>
+<h2 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h2><h3 id="Sort"><a href="#Sort" class="headerlink" title="Sort"></a>Sort</h3><p><a target="_blank" rel="noopener" href="https://www.log2base2.com/algorithms/sorting/quick-sort.html">Quick Sort</a><br><a target="_blank" rel="noopener" href="https://www.interviewbit.com/tutorial/quicksort-algorithm/">Quick Sort Algorithm</a><br><a target="_blank" rel="noopener" href="https://www.tutorialspoint.com/data_structures_algorithms/quick_sort_algorithm.htm">Data Structure and Algorithms - Quick Sort</a></p>
+<h3 id="AOI"><a href="#AOI" class="headerlink" title="AOI"></a>AOI</h3><p><a target="_blank" rel="noopener" href="http://docs2x.smartfoxserver.com/AdvancedTopics/advanced-mmo-api">Advanced uses of the MMORoom and MMO API</a><br><a target="_blank" rel="noopener" href="http://lecturer.ukdw.ac.id/~mahas/dossier/gameng_AIFG.pdf">ARTIFICIAL INTELLIGENCE FOR GAMES</a></p>
+<h3 id="Fog"><a href="#Fog" class="headerlink" title="Fog"></a>Fog</h3><p><a target="_blank" rel="noopener" href="http://bobkoon.com/how-to-implement-a-fog-of-war-part-1-chunky/">How To: Implement a Fog of War – Part 1 – Chunky</a><br><a target="_blank" rel="noopener" href="https://bit-hack.net/2013/07/27/lode-storm-implementing-classic-fog-of-war/">Lode Storm – Implementing classic fog of war</a><br><a target="_blank" rel="noopener" href="https://github.com/topics/fog-of-war">fog-of-war</a><br><a target="_blank" rel="noopener" href="https://wiki.roll20.net/Advanced_Fog_of_War">Advanced Fog of War</a><br><a target="_blank" rel="noopener" href="http://phungdinhthang.com/2016/12/12/unreal-engine-4-fog-of-war-tutorial/?i=1">Unreal Engine 4 Fog Of War Tutorial – Ready To Use</a><br><a target="_blank" rel="noopener" href="https://github.com/manlaig/FogOfWar">Fog Of War in Unity</a></p>
+<h2 id="Engine"><a href="#Engine" class="headerlink" title="Engine"></a>Engine</h2><h3 id="Unity"><a href="#Unity" class="headerlink" title="Unity"></a>Unity</h3><p><a target="_blank" rel="noopener" href="https://mailchi.mp/3f4a331f4255/issue-3803533?e=697c40775c">Unity合集</a>：非常丰富；<br><a target="_blank" rel="noopener" href="https://github.com/baba-s/awesome-unity-open-source-on-github">Awesome Unity Open Source on GitHub (800+)</a>:一大包Unity技术合集，力荐；<br><a target="_blank" rel="noopener" href="https://github.com/sugi-cho/Animation-Texture-Baker">Animation Texture Baker for Unity</a>:动画烘焙成贴图;<br><a target="_blank" rel="noopener" href="https://weeklyhow.com/unity-custom-editor-window/">Unity Tutorials: How To Create Custom Editor Window</a>:Create Custom Editor Window;<br><a target="_blank" rel="noopener" href="https://unitylist.com/p/5c3/Unity-editor-icons">Unity Editor Built-in Icons</a>:Unity version: 2020.1.0f1 Icons what can load using EditorGUIUtility.IconContent;<br><a target="_blank" rel="noopener" href="https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@7.1/manual/universalrp-asset.html">Universal Render Pipeline</a>:URP;<br><a target="_blank" rel="noopener" href="https://www.cyanilux.com/tutorials/intro-to-shader-graph/">Intro to Shader Graph</a>:This post is a detailed introduction to using Shader Graph ;<br><a target="_blank" rel="noopener" href="https://cyangamedev.wordpress.com/2020/06/05/urp-shader-code/">Writing Shader Code for the Universal RP</a>:Writing Shader Code for the Universal RP;<br><a target="_blank" rel="noopener" href="https://github.com/Unity-Technologies/UniversalRenderingExamples">Universal Rendering Examples</a>:This project contains a collection of Custom Renderer examples. This will be updated as we refine the feature and add more options;<br><a target="_blank" rel="noopener" href="https://www.codinblack.com/the-big-shader-graph-tutorial-introduction/">The Big Shader Graph Tutorial: Introduction</a>:This is the first part of a fundamental tutorial about shader graph;<br><a target="_blank" rel="noopener" href="https://forum.unity.com/threads/urp-sampling-shadow-map-from-shader-graph.857581/">URP - Sampling Shadow Map from Shader Graph</a>:URP - Sampling Shadow Map from Shader Graph;<br><a target="_blank" rel="noopener" href="https://www.raywenderlich.com/138-introduction-to-unity-particle-systems">Introduction To Unity: Particle Systems</a>:Unity’s particle system is both robust and feature packed. In this tutorial, you’ll learn the ins-and-outs of it to create both fire and explosions;<br><a target="_blank" rel="noopener" href="https://forum.unity.com/threads/using-materialpropertyblocks-with-shadergraph-shaders-help-wanted.651547/">Using MaterialPropertyBlocks with ShaderGraph shaders</a>:Using MaterialPropertyBlocks with ShaderGraph shaders;<br><a target="_blank" rel="noopener" href="https://game-developers.org/how-to-use-terrain-with-urp-in-unity-2020-beginner-tutorial/">How to Use Terrain with URP in Unity 2020 | Beginner Tutorial</a>:How to Use Terrain with URP in Unity 2020 | Beginner Tutorial;<br><a target="_blank" rel="noopener" href="https://forum.unity.com/threads/bake-static-light-and-shadows-directly-into-texture-optimizing-for-mobile.824526/">Bake static light and shadows directly into texture ! optimizing for mobile</a>:Bake static light and shadows directly into texture ! optimizing for mobile;<br><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/gaming/acoustics/unity-baking">Project Acoustics Unity Bake Tutorial</a>:his article describes acoustics baking by using Project Acoustics in Unity;<br><a target="_blank" rel="noopener" href="https://support.unity.com/hc/en-us/articles/210223733-How-to-customize-Unity-script-templates">How to customize Unity script templates</a>:When I create a new script, the Unity Editor generates its content. For C# scripts it uses the file name as the class name;<br><a target="_blank" rel="noopener" href="https://github.com/joaoborks/myunitytools-script-template">Unity Tools - Script Template</a>:This tool adds custom Script Templates to Unity that will serve as alternatives for the default “C#Script” that I personally always modify before writing my scripts;<br><a target="_blank" rel="noopener" href="https://riptutorial.com/unity3d/example/14519/editor-window">Editor Window</a>:Create a basic EditorWindow;<br><a target="_blank" rel="noopener" href="https://www.synnaxium.com/en/2019/01/unity-custom-map-editor-part-1/">Unity – Creating a custom map editor</a>:make a custom map editor in Unity;<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/114371275">unity编辑器扩展之SceneUI</a>:unity编辑器扩展之SceneUI——贴在Scene View的SceneCanvas;<br><a target="_blank" rel="noopener" href="https://www.gamasutra.com/blogs/ByronMayne/20160121/258356/Code_Generation_in_Unity.php">Code Generation in Unity</a><br><a target="_blank" rel="noopener" href="https://www.arcturuscollective.com/archives/22">Compile C# at runtime in Unity3D</a><br><a target="_blank" rel="noopener" href="https://gram.gs/gramlog/creating-node-based-editor-unity/">Creating a Node Based Editor in Unity</a></p>
+<h3 id="Duality"><a href="#Duality" class="headerlink" title="Duality"></a>Duality</h3><p><a target="_blank" rel="noopener" href="https://docs.duality2d.net/pages/v3/getting-started.html">Getting Started</a>:It’s an extensible 2D game engine;<br><a target="_blank" rel="noopener" href="https://hub.packtpub.com/turn-based-game-framework-duality-c/">Turn-based game framework in Duality (C#)</a>:This post presents a simple turn-based game framework using the Duality game engine;</p>
+<h2 id="Other"><a href="#Other" class="headerlink" title="Other"></a>Other</h2><h3 id="Tutorial"><a href="#Tutorial" class="headerlink" title="Tutorial"></a>Tutorial</h3><p><a target="_blank" rel="noopener" href="https://www.mbsoftworks.sk/index.php?page=tutorials&series=1&tutorial=24">C++, OpenGL and more…</a>:…;<br><a target="_blank" rel="noopener" href="https://www.construct.net/en/tutorials?flang=45">GAME DEVELOPMENT TUTORIALS</a>:Read our free tutorials on game development submitted by our staff and expert users in our community;<br><a target="_blank" rel="noopener" href="https://gamasutra.com/blogs/MikeMarrone/20210312/378423/Game_Dev_Digest_Issue_85__Platforms_Performance_and_Tutorials.php">Performance optimization tips: Physics in Unity | Tutorial</a>:…;</p>
+<h3 id="ECS"><a href="#ECS" class="headerlink" title="ECS"></a>ECS</h3><p><a target="_blank" rel="noopener" href="https://github.com/pvigier/ecs">entity-component-system</a>:A simple and easy to use entity-component-system C++ library;</p>
+<h3 id="Library"><a href="#Library" class="headerlink" title="Library"></a>Library</h3><p><a target="_blank" rel="noopener" href="http://www.angusj.com/delphi/clipper.php">Clipper - an open source freeware library</a>:The Clipper library performs line &amp; polygon clipping - intersection, union, difference &amp; exclusive-or,and line &amp; polygon offsetting. The library is based on Vatti’s clipping algorithm;<br><a target="_blank" rel="noopener" href="https://unity.stelabouras.com/">The Unity Library</a>:The Unity Library;</p>
+<h3 id="Papers"><a href="#Papers" class="headerlink" title="Papers"></a>Papers</h3><p><a target="_blank" rel="noopener" href="https://www.highgroundgaming.com/best-turn-based-strategy-games/">10 Best Turn-Based Strategy Games in 2021 for Master Tacticians</a>:10 Best Turn-Based Strategy Games in 2021 for Master Tacticians;<br><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/column/88095">壹种念头Unity blog</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/266712908">收录些关于渲染相关的文章</a></p>
+<h2 id="Bing-Map"><a href="#Bing-Map" class="headerlink" title="Bing Map"></a>Bing Map</h2><p><a target="_blank" rel="noopener" href="http://blogs.developpeur.org/nicoboo/default.aspx">MVP - Bing Maps : une année supplémentaire !</a><br><a target="_blank" rel="noopener" href="https://rbrundritt.wordpress.com/">Geocoding and Routing improvements added to Bing Maps</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/05/27/Line/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/05/27/Line/" class="post-title-link" itemprop="url">Line</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-27 15:01:00" itemprop="dateCreated datePublished" datetime="2021-05-27T15:01:00+08:00">2021-05-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-06 20:32:07" itemprop="dateModified" datetime="2021-07-06T20:32:07+08:00">2021-07-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Math/" itemprop="url" rel="index"><span itemprop="name">Math</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Math/Line/" itemprop="url" rel="index"><span itemprop="name">Line</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="线段相交"><a href="#线段相交" class="headerlink" title="线段相交"></a>线段相交</h2><p>对于平面上给定的两个线段line0、line1，求解其交点</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">bool</span> <span class="title">LinesIntersect</span>(<span class="params">Vector2 line0_start, Vector2 line0_end, Vector2 line1_start, Vector2 line1_end, <span class="keyword">out</span> <span class="built_in">float</span> line0_cross_line1, <span class="keyword">out</span> <span class="built_in">float</span> along_line0, <span class="keyword">out</span> along_line1, <span class="keyword">out</span> Vector2 intersect_point</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">var</span> dir_line0 = line0_end - line0_start;</span><br><span class="line">	<span class="keyword">var</span> dir_line1 = line1_end - line1_start;</span><br><span class="line">	line0_cross_line1 = dir_line0.x * dir_line1.y - dir_line0.y * dir_line1.x;</span><br><span class="line">	along_line0 = <span class="number">0</span>;</span><br><span class="line">	along_line1 = <span class="number">0</span>;</span><br><span class="line">	intersect_point = Vector2.zero;</span><br><span class="line">	<span class="keyword">if</span>(line0_cross_line1 == <span class="number">0</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	<span class="keyword">var</span> dir_line_start01 = line0_start - line1_start;</span><br><span class="line">	along_line0 = (dir_line1.x * dir_line_start01.y - dir_line1.y * dir_line_start01.x) / line0_cross_line1;</span><br><span class="line">	along_line1 = (dir_line0.x * dir_line_start01.y - dir_line0.y * dir_line_start01.x) / line0_cross_line1;</span><br><span class="line">	<span class="comment">// if (along_line0 &lt; 0 || along_line0 &gt; 1 || along_line1 &lt; 0 || along_line1 &gt; 1) return false;</span></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>相关链接：<br><a target="_blank" rel="noopener" href="https://mathopenref.com/coordintersection.html">Math Open Reference</a><br><a target="_blank" rel="noopener" href="https://sean.cm/a/polygon-clipping-pt1">Polygon Clipping</a><br><a target="_blank" rel="noopener" href="https://barendgehrels.blogspot.com/2010/12/intersections-1.html">Barend’s Blog</a><br><a target="_blank" rel="noopener" href="https://cs.stackexchange.com/questions/99927/concave-polygon-intersection-algorithm">Concave Polygon Intersection - Algorithm</a><br><a target="_blank" rel="noopener" href="https://fribbels.github.io/shortestpath/writeup.html">Euclidean Shortest Paths</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/04/14/Spherical-harmonics-light/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/04/14/Spherical-harmonics-light/" class="post-title-link" itemprop="url">Basics of Spherical Harmonics And Light Probes</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-14 10:01:00" itemprop="dateCreated datePublished" datetime="2021-04-14T10:01:00+08:00">2021-04-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-06 20:32:07" itemprop="dateModified" datetime="2021-07-06T20:32:07+08:00">2021-07-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/URP/" itemprop="url" rel="index"><span itemprop="name">URP</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/URP/Light/" itemprop="url" rel="index"><span itemprop="name">Light</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="Basics-of-Spherical-Harmonics"><a href="#Basics-of-Spherical-Harmonics" class="headerlink" title="Basics of Spherical Harmonics"></a><a target="_blank" rel="noopener" href="https://computergraphics.stackexchange.com/questions/4164/what-are-spherical-harmonics-light-probes">Basics of Spherical Harmonics</a></h2><p>球谐函数是一种球面二维函数。在图形学中可以使用Cube六面体来表示空间区域，以及环境贴图等，但是它表示的还是三维空间。球谐空间是定义在频域的一种空间，具有很多有趣的属性，而且很多操作和光有一定的关联，因此在光照渲染中使用球谐空间可以提高性能。随着球谐空间“次”的提升，我们可以拟合出高频函数，如下图所示，l表示的是“次”。通过对下面基本函数的组合，我们可以拟合出球面上的二维函数。这些基础函数是由“associated legendre polynomials”-<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Associated_Legendre_polynomials">关联拉格朗日多项式</a>定义。但是我们并不需要自行推导这些函数，因为别人已经推导过了<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Table_of_spherical_harmonics#Real_spherical_harmonics">spherical harmonics</a></p>
+<p><img src="https://i.stack.imgur.com/QPNGz.png"></p>
+<p>在球谐函数中有一个高效的操作叫做<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Convolution">卷积</a>，通过卷积我们可以对两个球面函数求积和，这在光学中是一个非常常用的操作。例如我们用一个球谐函数表示入射光，另一个表示BRDF，这样的话，我们只需要简单的点乘两个球谐因子向量。</p>
+<p>另一个有趣的操作是可以实现低通滤波。因为球谐函数本身表示的是频域。我们只需要对球谐函数进行缩放，然后剔除小于零的值就行。但是也有一些操作，相较于空域来说，会比较复杂。例如，我们使用球谐函数来表达旋转函数时，随着球谐函数“次”的增高（高次球谐函数），计算量也会急剧升高。所以需要考虑球谐函数的适用场景。</p>
+<p>球谐函数通常只是用来拟合低频函数，因为高频函数需要增加球谐因子，以及运算量。因此我们不会用球谐函数来拟合高光反射。</p>
+<p>还有一个操作叫做“球谐投影”，用来将空域转换到球谐函数。这个操作是通过对空域数据和球谐基本函数进行卷积。相比于空域，转换后的球谐函数不会产生锯齿效果，即便是低次球谐函数也是如此。</p>
+<h2 id="Light-Probes"><a href="#Light-Probes" class="headerlink" title="Light Probes"></a>Light Probes</h2><p>前面介绍了球谐函数的一些操作和特性。下面来看一下如何将球谐函数应用到GI中。光照探针是用来采集某个空间位置的光照强度，也就是各个方向射向该位置的光照强度。因此需要用一个球面来记录这些光照强度。前面讲到球谐函数是用来拟合球面的二维函数。那么一个球谐函数就可以表示球面上各个点的亮度，三个球谐函数可以用来表示球面上各个点的颜色。</p>
+<p>光照探针只记录Lambertian漫反射光(入射光)，所以低次球谐函数就足够了。光照探针的球谐函数求解思路很简单，就是先基于光照探针位置捕捉一个Cube环境贴图，然后将环境贴图投影到球面，然后再拟合球谐函数，计算出球谐因子。</p>
+<p>当我们渲染模型时，我们通过筛选出附件几个光照探针，然后对这些光照探针进行插值，从而计算出指定空间点的入射光。例如，我们直接对附近光照探针的球谐因子进行插值，然后执行基于像素点法向量的卷积操作。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/04/06/URP_Render_1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/04/06/URP_Render_1/" class="post-title-link" itemprop="url">URP 学习总结1</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-06 10:01:00" itemprop="dateCreated datePublished" datetime="2021-04-06T10:01:00+08:00">2021-04-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-06 20:32:07" itemprop="dateModified" datetime="2021-07-06T20:32:07+08:00">2021-07-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/URP/" itemprop="url" rel="index"><span itemprop="name">URP</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="URP提供的工具函数"><a href="#URP提供的工具函数" class="headerlink" title="URP提供的工具函数"></a>URP提供的工具函数</h2><p><code>VertexPositionInputs GetVertexPositionInputs(positionOS)</code><br>计算出各个空间下的顶点坐标</p>
+<p><code>VertexNormalInputs GetVertexNormalInputs(normalOS)</code><br>计算出各个空间下的顶点法向坐标</p>
+<p><code>half3 VertexLighting(positionWS, normalWS)</code><br>获取指定顶点的顶点光照，当定义了<code>_ADDITIONAL_LIGHTS_VERTEX</code>，表明使用顶点光照，并返回光照值，否则返回零<br><code>uint GetAdditionalLightsCount()</code><br>获取作用在当前空间位置上的辅光源数量，其中<code>_AdditionalLightsCount.x</code>表示场景中所有被激活的灯光，在场景剔除的过程中，由渲染管线计算并提交。而<code>unity_LightData.y</code>应该是表示所有的光照数量。<br><code>Light GetAdditionalLight(lightIndex, positionWS)</code><br>获取指定辅光源作用在指定空间位置的光照值，<code>lightIndex</code>表示辅光源在当前空间点辅光源列表中的索引值。<br><code>int GetPerObjectLightIndex(lightIndex)</code><br>基于当前辅光源在当前空间点辅光源列表中的索引值，计算辅光源在所有激活光源中的索引值<br><code>Light GetAttitionalPerObjectLight</code>(perObjectLightIndex, positionWS)`<br>场景中的每个物体受部分光源的影响，具体受哪些光源的影响根据光源排序确定，然后每个物体记录其受光源的索引值。需要清楚地是所有的光源信息是统一存放在一个公共Buffer里面。</p>
+<p>shadowParams.x : 阴影强度<br>shadowParams.y : 1.0 表示软阴影， 0.0表示其他</p>
+<p>unity_LightData.x ：表示当前模型灯光在灯光缓存中的起始索引偏移值</p>
+<p>unity_LightData.z : 表示该光源是否可见，可见为1.0，不可见为0.0</p>
+<p>float4 unity_LightIndices[2] : 每个模型最大辅光源个数为8， 这里面便存着实际光源的索引值</p>
+<p>物理含义<br>NdotH : 表示观察视角和镜面反射的重合度，重合度越高，观察的光越强<br>LdotH : 表示入射光和观察视角的重合度</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/04/06/Unity-Editor/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -194,7 +740,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-05 21:10:50" itemprop="dateModified" datetime="2021-07-05T21:10:50+08:00">2021-07-05</time>
+                <time title="修改时间：2021-07-06 20:32:07" itemprop="dateModified" datetime="2021-07-06T20:32:07+08:00">2021-07-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -309,7 +855,7 @@ public static class AssetsMenu
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-05 21:10:50" itemprop="dateModified" datetime="2021-07-05T21:10:50+08:00">2021-07-05</time>
+                <time title="修改时间：2021-07-06 20:32:07" itemprop="dateModified" datetime="2021-07-06T20:32:07+08:00">2021-07-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -458,7 +1004,7 @@ public static class AssetsMenu
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-05 21:10:50" itemprop="dateModified" datetime="2021-07-05T21:10:50+08:00">2021-07-05</time>
+                <time title="修改时间：2021-07-06 20:32:07" itemprop="dateModified" datetime="2021-07-06T20:32:07+08:00">2021-07-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -547,7 +1093,7 @@ public static class AssetsMenu
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-05 21:10:50" itemprop="dateModified" datetime="2021-07-05T21:10:50+08:00">2021-07-05</time>
+                <time title="修改时间：2021-07-06 20:32:07" itemprop="dateModified" datetime="2021-07-06T20:32:07+08:00">2021-07-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -593,670 +1139,10 @@ public static class AssetsMenu
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/12/20/OpenGL-Rendering-Pipeline/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2020/12/20/OpenGL-Rendering-Pipeline/" class="post-title-link" itemprop="url">OpenGL Rendering Pipeline</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-20 15:01:00" itemprop="dateCreated datePublished" datetime="2020-12-20T15:01:00+08:00">2020-12-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-05 21:10:50" itemprop="dateModified" datetime="2021-07-05T21:10:50+08:00">2021-07-05</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/OpenGL/" itemprop="url" rel="index"><span itemprop="name">OpenGL</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/OpenGL/Render-Pipeline/" itemprop="url" rel="index"><span itemprop="name">Render Pipeline</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>OpengGL 渲染管线包含一连串的、有序的处理过程；主要处理两类几何信息：顶点数据和片段数据；最终将处理结果存储到帧缓存中。另外，OpenGL 可以将处理后的数据传递给CPU–也就是我们的应用程序，下图中的灰色线条表示的就是从GPU到CPU的数据传输：<br><img src="http://www.songho.ca/opengl/files/gl_pipeline.gif"><br>OpenGL Pipeline</p>
-<h2 id="Display-List"><a href="#Display-List" class="headerlink" title="Display List"></a>Display List</h2><p>Display list 中存储的是一组OpenGL渲染命令，这些命令是已经编译好的、以供后续渲染操作。当然与渲染相关的所有数据，包括顶点、片段数据都可以存储在Display list中。如果将命令和数据都存储在一起，可能会提高渲染效率。特别是，如果OpenGL渲染程序是在服务端执行，那么使用Display list可以有效减少网络传输次数。因为Display list是服务端的渲染参数，并且由服务器进行执行，因此客户端只需要将命令和数据一同存储到Display list中，然后一次性发送给服务器。关于Display list更详细的介绍请参考<a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_displaylist.html">Display list</a></p>
-<h2 id="Vertex-Operation"><a href="#Vertex-Operation" class="headerlink" title="Vertex Operation"></a>Vertex Operation</h2><p>每个顶点坐标以及法向经过GL_MODELVIEW矩阵变换，使得坐标点或者法向从模型坐标系变换到摄像机坐标系。所以，如果这时候有光照参与的话，那么这些基于顶点的光照计算是使用变换后的顶点坐标和法向，也就是在观察坐标系下进行光照计算。然后使用光照计算后的颜色值替换掉原先的顶点颜色。想了解更多关于坐标变换的请参考<a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_transform.html">Transformation</a>。</p>
-<h2 id="Primitive-Assembly"><a href="#Primitive-Assembly" class="headerlink" title="Primitive Assembly"></a>Primitive Assembly</h2><p>在顶点变换后，点、线、多边形这些图元会使用投影矩阵，进一步从摄像机空间变换到裁剪空间，然后基于裁剪空间的裁剪平面进行裁剪，数学上的操作原理是将变换后的坐标的x、y、z这三个分量与[-w,w]进行比较，如果三个分量都在里面的话，说明这个点在裁剪包围盒内。经过裁剪后的图元数量会减少很多，然后也就是后续需要处理的数据量减少了。然后我们再做透视除法，也就是将x、y、z三个分量分别处以w，得到齐次设备空间坐标。齐次设备空间x、y、z三个坐标范围是在[-1,1]。然后再经过ViewPot变换，从三维场景变换到屏幕空间坐标系，也就是具体的像素坐标位置。图元拼装的最后一步是图元剔除，例如当前开启的是背面剔除，那么图元法向与视角方向内积小于零的会被剔除。</p>
-<h2 id="Pixel-Transfer-Operation"><a href="#Pixel-Transfer-Operation" class="headerlink" title="Pixel Transfer Operation"></a>Pixel Transfer Operation</h2><p>当从内存中读取像素数据，并且对像素值进行解析后，我们会对这些像素数据进行缩放、偏移、映射、裁剪操作。这些操作就叫做像素变换操作。这些变换后的数据可以存储在纹理图片中，也可以直接栅格化到片段中，进入后续的片段着色过程。</p>
-<h2 id="Texture-Memory"><a href="#Texture-Memory" class="headerlink" title="Texture Memory"></a>Texture Memory</h2><p>纹理图像被加载后是存储在纹理存储块中，当我们渲染模型时，可以直接从纹理存储块中读取纹理数据。</p>
-<h2 id="Rasterization"><a href="#Rasterization" class="headerlink" title="Rasterization"></a>Rasterization</h2><p>栅格化处理是指，将几何数据(包括顶点、法向、uv等)和像素数据转换到片段中，片段数据是一组矩形数组，包含颜色、深度、线宽、点的大小、以及抗锯齿算法模型(GL_POINT_SMOOTH, GL_LINE_SMOOTH, GL_POLYGON_SMOOTH)。如果渲染模式设置的是填充模式GL_FILL,那么多边形区域内的像素填充将发生在这个阶段。每一个片段对应于帧缓存中的一个像素。这里要提一下，帧缓存的尺寸和屏幕大小没有必然关系。</p>
-<h2 id="Fragment-Operation"><a href="#Fragment-Operation" class="headerlink" title="Fragment Operation"></a>Fragment Operation</h2><p>片段操作是渲染流程的最后一步，从片段数据转换为帧缓存中的像素值。这个阶段的第一步是像素生成；从纹理缓存开中的纹理元素被应用于每一个片段。然后计算雾的颜色。最后，需要进行各种测试，测试顺序为： 剪刀测试 –&gt; 透明通道测试 –&gt; 模板测试 –&gt;  深度测试。</p>
-<h2 id="Feedback"><a href="#Feedback" class="headerlink" title="Feedback"></a>Feedback</h2><p>OpenGL 可以通过glGet()、gllsEnabled()两个命令获取当前渲染过程中大部分的状态以及信息。如果需要，我们还可以使用glReadPixels()从帧缓存中截取一块像素数据，也可以使用glRenderMode(GL_FEEDBACK)来获取所有变换后的顶点数据。值得注意的是，glCopyPixels()并不是将像素数据返回到CPU，而实将其复制到其他的帧缓存，例如从前置帧到后置帧。这里前置和后置构成了双帧缓存机制。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/12/19/OpenGL-Overview/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2020/12/19/OpenGL-Overview/" class="post-title-link" itemprop="url">OpenGL Overview</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-19 15:01:00" itemprop="dateCreated datePublished" datetime="2020-12-19T15:01:00+08:00">2020-12-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-05 21:10:50" itemprop="dateModified" datetime="2021-07-05T21:10:50+08:00">2021-07-05</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/OpenGL/" itemprop="url" rel="index"><span itemprop="name">OpenGL</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/OpenGL/Overview/" itemprop="url" rel="index"><span itemprop="name">Overview</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="OpenGL-Introduction"><a href="#OpenGL-Introduction" class="headerlink" title="OpenGL Introduction"></a>OpenGL Introduction</h2><p>OpenGL 是图形硬件的软件接口，接口功能与硬件无关，可以在不同的硬件平台上使用。OpenGL程序也可以通过网络的方式执行，例如客户端-服务器这种分布方式。OpenGL的客户端是指执行OpenGL程序的计算机，而服务端是指执行绘图操作的计算机。</p>
-<p>OpenGL使用gl前置符来标记OpenGL内核命令，使用glu来标记OpenGL Utility库命令。另外，OpenGL所有以GL_开头的命令全部是大写。OpenGL也会用后置标志符来指明命令参数的个数以及类型。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">glColor3f(<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>);		<span class="comment">//使用三个浮点数设置颜色</span></span><br><span class="line">glColor4d(<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0.2</span>);	<span class="comment">//使用双精度浮点数设置颜色，并具有Alpha通道</span></span><br><span class="line">glVertex3fv(vertex);	<span class="comment">//使用三维向量设置顶点坐标</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="State-Machine"><a href="#State-Machine" class="headerlink" title="State Machine"></a>State Machine</h2><p>OpenGL是一个状态机。其中设置的各种状态参数，包括模式、属性等，会一直有效，直到我们对其手动修改。绝大多数的状态值可以直接使用glEnable() 或 glDisable()来开启和禁用。我们也可以使用gllsEnabled()来获取某个状态值当前的开启状态。我们也可以使用glPushAttrib()和glPopAttrib()来保存或提取一组状态值。GL_ALL_ATTRIB_BITS参数表示保存或提取所有的状态值。在标准的OpenGL中，栈的个数不少于16个。我们可以使用<a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/files/glinfo.zip">glinfo</a>来获取栈的大小信息。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">glPushAttrib(GL_LIGHTING_BIT);			<span class="comment">//</span></span><br><span class="line">	glDisable(GL_LIGHTING);</span><br><span class="line">	glEnable(GL_COLOR_MATERIAL);</span><br><span class="line">glPushAttrib(GL_COLOR_BUFFER_BIT);</span><br><span class="line">	glDisable(GL_DITHER);</span><br><span class="line">	glEnable(GL_BLEND);</span><br><span class="line">	</span><br><span class="line">...<span class="comment">//其他代码</span></span><br><span class="line"></span><br><span class="line">glPopAttrib();		<span class="comment">//提取GL_COLOR_BUFFER_BIT</span></span><br><span class="line">glPopAttrib();		<span class="comment">//提取GL_LIGHTING_BIT</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="glBegin-和glEnd"><a href="#glBegin-和glEnd" class="headerlink" title="glBegin()和glEnd()"></a>glBegin()和glEnd()</h2><p>我们可以直接在glBegin()和glEnd()方法之间，指定一组顶点数据来绘制几何图元，例如点、线、三角形等等。这种绘制方式称为及时模式。我们也可以使用其他的方式进行绘制，例如<a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_vertexarray.html">vertex array</a>。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">glBegin(GL_TRIANGLES);</span><br><span class="line">	glColor3f(<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>);		<span class="comment">//设置颜色为红色</span></span><br><span class="line">	glVertex3fv(v1);		<span class="comment">//设置三角形的三个顶点坐标</span></span><br><span class="line">	glVertex3fv(v2);</span><br><span class="line">	glVertex3fv(v3);</span><br><span class="line">glEnd();</span><br></pre></td></tr></table></figure>
-
-<p>OpenGL中包含十种图元类型：GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP, GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS, GL_QUAD_STRIP, GL_POLYGON。</p>
-<p>这里需要注意的是，不是所有的命令都可以放在glBegin()和glEnd()之间，只有一小部分命令可以，例如glVertex*(), glColor*(), glNormal*(), glTexCoord*(), glMaterial*(), glCallList()等等。</p>
-<h2 id="glFlush-和glFinish"><a href="#glFlush-和glFinish" class="headerlink" title="glFlush()和glFinish()"></a>glFlush()和glFinish()</h2><p>类似于计算机的IO缓存，OpenGL命令也不是立刻执行的。所有的命令首先是存储在缓存中，包括网络缓存以及图形加速器，都是在缓存满了之后，再一并执行缓存中的命令。举个例子，我们的应用程序是通过网络连接的，那么最有效的数据传输方式是将所有数据打包到一起，然后一并发送。相比于每一个命令发送一次，这种批处理的方式效率更高。</p>
-<p>glFlush()是用来清空命令缓存，同时强制立即执行缓存中的所有命令。也就是说，使用glFlush()是一种手动执行的操作，它不需要等到命令缓存满了才执行。虽然glFlush()会立即执行缓存中的命令，但是其实际操作应该是将缓存中的命令插入到GPU已有命令的队列里面，当然这种插入是优先插入到最前面，等当前执行的操作完成之后，就会立即开始执行这些命令，然后这些命令执行完后，glFlush()会立即返回到CPU程序，而原先被强制插队的操作会依次执行。所以对glFlush()更为准确的描述应该是，在调用glFlush()后，缓存中的命令会在短暂的等待后立即执行，然后在这些命令执行完成后，glFlush()会立即返回到CPU程序，而原先在GPU中排队的操作会继续执行。</p>
-<p>glFinish()和glFlush()方法类似，都是清空命令缓存并强制立即执行缓存中的命令。但是glFinsh()会打断已经开始执行的操作，然后等命令缓存中的所有操作都执行完，再恢复原先被打断的操作。这里面打断，是指GPU中正在执行的操作被暂停。因此，glFinsh()方法，在命令缓存中的命令全部执行完后，不会立即返回到CPU程序，而是等之前未完成的操作全部执行完后，再返回到CPU程序。所以，我们可以是在一些同步任务(也就是GPU的执行操作和CPU的执行操作是串在一起的)中使用glFinsh(),也可以用于测量原先操作的执行时间，因为glFinsh()会等原先的操作执行完再返回。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/12/19/OpenGL-Transformation/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2020/12/19/OpenGL-Transformation/" class="post-title-link" itemprop="url">OepnGL Transformation</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-19 15:01:00" itemprop="dateCreated datePublished" datetime="2020-12-19T15:01:00+08:00">2020-12-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-05 21:10:50" itemprop="dateModified" datetime="2021-07-05T21:10:50+08:00">2021-07-05</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/OpenGL/" itemprop="url" rel="index"><span itemprop="name">OpenGL</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/OpenGL/Transformation/" itemprop="url" rel="index"><span itemprop="name">Transformation</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p>顶点、法向这些几何数据的坐标变换是发生在Vertex Operation，而<a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_pipeline.html">OpenGL Pipeline</a>图元拼装是发生在栅格化操作之前。<br><img src="http://www.songho.ca/opengl/files/gl_transform02.png"><br>OpenGL vertex transformation</p>
-<h3 id="Object-Coordinates"><a href="#Object-Coordinates" class="headerlink" title="Object Coordinates"></a>Object Coordinates</h3><p>模型坐标系表示的是模型的初始位置和朝向，也是模型在所有坐标变换之前的初始状态。我们可以使用glRotatef(), glTranslatef(), glScalef()来对模型进行坐标变换。</p>
-<h3 id="Eye-Coordinates"><a href="#Eye-Coordinates" class="headerlink" title="Eye Coordinates"></a>Eye Coordinates</h3><p>模型坐标经过GL_MODELVIEW矩阵变换后，进入摄像机坐标系。GL_MODELVIEW矩阵结合了模型矩阵和观测矩阵(Mview * Mmodel)。模型矩阵变换是从模型坐标系到世界坐标系，而观察矩阵变换是从世界坐标系到观察坐标系。<br><img src="http://www.songho.ca/opengl/files/gl_transform07.png"></p>
-<p>在OpenGL中，没有单独的观察矩阵(Mview)。因此，要模拟摄像机变换，也就是移动摄像机，我们通常是对场景中的物体做一个反向变换，例如，我们控制摄像机右移，实际上是将整个场景左移。更具体一点就是，在OpenGL中，摄像机的位置永远都是在原点，面向观察坐标系下的-z方向。关于GL_MODELVIEW更详细的介绍请参考<a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_transform.html#modelview">ModelView Matrix</a>。</p>
-<p>模型的法向主要是用来进行光照计算的，在OpenGL中，用于光照计算的法向是在观察坐标系下的法向。也就是我们先使用GL_MODELVIEW对法向进行变换，然后再进行光照计算。需要注意的是，法向的变换和坐标点的变换操作有所区别。我们这里坐标变换是直接将坐标左乘GL_MODELVIEW变换矩阵。但是法向变换是左乘GL_MODELVIEW变换矩阵逆矩阵的转置矩阵。关于法向变换请参考<a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_normaltransform.html">Normal Vector Transformation</a>。<br><img src="http://www.songho.ca/opengl/files/gl_normaltransform01.png"></p>
-<h3 id="Clip-Coordinates"><a href="#Clip-Coordinates" class="headerlink" title="Clip Coordinates"></a>Clip Coordinates</h3><p>使用GL_PROJECTION投影矩阵，从观察坐标系变换到裁剪坐标系。其中GL_PROJECTION定义了裁剪区域，以及投影方式，是透视投影还是正交投影呢。之所以称作裁剪坐标系，是因为我们可以通过变换后的坐标来实现裁剪操作。更具体一点就是，变换后的坐标(x,y,z,w)。其中w表示的裁剪边界，当(x,y,z)都在[-w,w]这个范围内时，说明这个点在裁剪区域内；而不在这个范围的点将会被剔除。如果某个图元的所有点都不在裁剪区域内，那么整个图元都会被剔除，如果部分顶点在裁剪区域内，那么不在区域内的点将会被剔除，但是会基于裁剪边界对图元进行一个缝合操作。关于GL_PROJECTION的更多介绍请参考<a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_transform.html#projection">Projection Matix</a>。<br><img src="http://www.songho.ca/opengl/files/gl_transform08.png"></p>
-<h3 id="Normalized-Device-Coordinates-NDC"><a href="#Normalized-Device-Coordinates-NDC" class="headerlink" title="Normalized Device Coordinates (NDC)"></a>Normalized Device Coordinates (NDC)</h3><p>经过裁剪变换后，在裁剪区域内的坐标点的x,y,z的范围在[-w,w]之间，将x,y,z除以w后，得到齐次设备空间坐标。这个操作叫做投影除法。齐次设备空间坐标的x,y,z的范围现在是[-1,1]。<br><img src="http://www.songho.ca/opengl/files/gl_transform12.png"></p>
-<h3 id="Window-Coordinates-Screen-Coordinates"><a href="#Window-Coordinates-Screen-Coordinates" class="headerlink" title="Window Coordinates (Screen Coordinates"></a>Window Coordinates (Screen Coordinates</h3><p>使用视窗变换(ViewPort)，从齐次设备空间变换到屏幕空间。通过对齐次设备空间进行缩放、平移，来对齐屏幕渲染窗口区域。这个时候，虽然属于屏幕坐标系，但是整个空间还是属于几何意义上的、连续的空间，和像素表示的离散的空间有本质的区别。因为我们的图形还是通过点、线、多边形图元表示，而离散的像素空间是使用单个像素表示。<br>屏幕空间下的坐标、法向等几何信息，最终通过栅格化处理，得到离散化的片段数据，坐标变换和栅格化操作之间的关系请参考<a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_pipeline.html">OpenGL pipeline</a>中的管线图。glViewport()方法是用来定义屏幕空间哪个矩形区域用来显示最终的渲染画面。glDepthRange()方法是用来确定屏幕坐标系的z值。最终得到的屏幕坐标是基于这两个方法所设置的参数决定的：</p>
-<ul>
-<li>glViewport(x,y,w,h);</li>
-<li>glDepthRange(n,f);</li>
-</ul>
-<p><img src="http://www.songho.ca/opengl/files/gl_transform13.png"><br><img src="/blogs/images/src/d626436913e4116bd6112677aa7b026.jpg" alt="wwwwwww"></p>
-<p>视窗变换只是简单的线性映射：</p>
-<p><img src="http://www.songho.ca/opengl/files/gl_transform14.png"></p>
-<h2 id="OpenGL-Transformation-Matrix"><a href="#OpenGL-Transformation-Matrix" class="headerlink" title="OpenGL Transformation Matrix"></a>OpenGL Transformation Matrix</h2><p><img src="http://www.songho.ca/opengl/files/gl_transform04.png"><br>OpenGL Transformation Matrix</p>
-<p>OpenGL使用<a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_matrix.html">4X4的矩阵</a>作为变换矩阵。值得注意的是，这16个元素是按列主序存储在一维数组里面。我们可以通过转置操作将其变为行主序。行主序是标准公约。</p>
-<p>OpenGL有4中不同类型的矩阵：GL_MODELVIEW, GL_PROJECTION, GL_TEXTURE, GL_COLOR。我们可以通过glMatrixMode()方法来切换当前矩阵类型。例如，我们想选择GL_MODELVIEW矩阵，那么可以使用<code>glMatrixMode(GL_MODELVIEW)</code>。</p>
-<h3 id="Model-View-Matrix-GL-MODELVIEW"><a href="#Model-View-Matrix-GL-MODELVIEW" class="headerlink" title="Model-View Matrix (GL_MODELVIEW)"></a>Model-View Matrix (GL_MODELVIEW)</h3><p>GL_MODELVIEW将观察矩阵和模型矩阵结合到一起。如果我们想从模型坐标系变换到观察坐标系，那么我们需要GL_MODELVIEW的逆矩阵进行变换。gluLookAt()主要用来设置观察矩阵。</p>
-<p><img src="http://www.songho.ca/opengl/files/gl_anglestoaxes01.png"><br>GL_MODELVIEW矩阵</p>
-<p>上图中，最右边的三个元素(m12,m13,14)，表示的是平移变换–glTranslatef()。元素m15表示的是<a target="_blank" rel="noopener" href="http://www.songho.ca/math/homogeneous/homogeneous.html">齐次坐标</a>，主要用来做透视变换用的。</p>
-<p>另外9个元素(m0,m1,m2),(m4,m5,m6),(m8,m9,10)是用来进行欧式变换以及仿射变换，相关的函数是glRotatef()和glScalef()。另外值得指出的是，这三组向量表示的是相互正交的轴。</p>
-<ul>
-<li>(m0,m1,m2) : +X轴,   left 向量，默认是(1,0,0)</li>
-<li>(m4,m5,m6) : +Y轴,    up  向量，默认是(0,1,0)</li>
-<li>(m8,m9,m10): +Z轴, forward向量，默认是(0,0,1)</li>
-</ul>
-<p>除了使用变换函数，如glRotatef()，来修改GL_MODELVIEW矩阵，我们也可以根据摄像机偏转角或者朝向来手动计算GL_MODELVIEW矩阵，例如以下几种方法：</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_anglestoaxes.html">Angles to Axes</a></li>
-<li><a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_lookattoaxes.html">Lookat to Axes</a></li>
-<li><a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_rotate.html">Rotation About Arbitrary Axis</a></li>
-<li><a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_matrix.html">Matrix4 class</a></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/11/22/Rendering-with-Replaced-Shaders/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2020/11/22/Rendering-with-Replaced-Shaders/" class="post-title-link" itemprop="url">Rendering with Replaced Shaders</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-11-22 18:01:34" itemprop="dateCreated datePublished" datetime="2020-11-22T18:01:34+08:00">2020-11-22</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-05 21:10:50" itemprop="dateModified" datetime="2021-07-05T21:10:50+08:00">2021-07-05</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>通常每个需要渲染的物体都自带材质以及相应的shader，但是有时候我们可能希望使用同一个Shader对场景中的进行渲染。例如，当我们对屏幕图像进行边缘检测时，需要知道每个像素点所对应三维空间点的法向量，然后根据法向量的差异来判断是否是边缘。还有一些情况我们需要场景的深度信息。无论是法向纹理还是深度散纹理等，都可以通过Relpace Shader来实现。<br>Replace Shader和普通shader没什么区别，我们只需要调用Camera.RenderWithShader或者<code>Camera.SetReplacementShader</code>函数，并指定需要用于替换的shader,以及shader的Tags值。<br>假如我们有以下三个shader，其中shaderA被设置为Relace Shader，且repalcementTag为”ReplacementTag”，其余两个都是挂载在模型上的shader：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Shader A&quot;</span></span><br><span class="line">&#123;</span><br><span class="line">	...</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">		Tags &#123;<span class="string">&quot;ReplacementTag&quot;</span>=<span class="string">&quot;true&quot;</span>&#125;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">		Tags &#123;<span class="string">&quot;OtherTag&quot;</span>=<span class="string">&quot;whatever&quot;</span>&#125;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Shader B&quot;</span></span><br><span class="line">&#123;</span><br><span class="line">	...</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">		Tags &#123;<span class="string">&quot;ReplacementTag&quot;</span>=<span class="string">&quot;false&quot;</span>&#125;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">		Tags &#123;<span class="string">&quot;OtherTag&quot;</span>=<span class="string">&quot;whatever&quot;</span>&#125;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Shader C&quot;</span></span><br><span class="line">&#123;</span><br><span class="line">	...</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">		Tags &#123;<span class="string">&quot;ReplacementTag&quot;</span>=<span class="string">&quot;true&quot;</span>&#125;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">		Tags &#123;<span class="string">&quot;OtherTag&quot;</span>=<span class="string">&quot;whatever&quot;</span>&#125;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这时候，只有挂载ShaderC的模型会被渲染。虽然ShaderB和ShaderC都含有“ReplacementTag”,但是ShaderA中的<code>&quot;ReplacementTag&quot;=&quot;true&quot;</code>，只有ShaderC中的第一个SubShader有匹配的Tag值。</p>
-<h2 id="Lit-Shader-replacement"><a href="#Lit-Shader-replacement" class="headerlink" title="Lit Shader replacement"></a>Lit Shader replacement</h2><p>replacement渲染需要指定一个camera来实现，被指定camera的渲染设置都会应用到repalcement渲染过程中，例如render path、light、shadow等。</p>
-<h2 id="Built-in-scene-depth-normals-texture"><a href="#Built-in-scene-depth-normals-texture" class="headerlink" title="Built-in scene depth/normals texture"></a>Built-in scene depth/normals texture</h2><p>camera本身内置了深度、法向纹理的渲染功能，只需要设置<code>Camera.depthTextureMode</code>，便可以开启这些功能，而渲染后的深度纹理可以用全局的<code>_CameraDepthTexture</code>变量来引用。<br>而这种内置的渲染功能的实际渲染方法与硬件相关。有些硬件就是通过replacement渲染的方式来实现的。因为ReplacementTag会对实际渲染的物体进行筛选，所以在编写Shader时，要正确使用“RenderType”这个标签。</p>
-<h2 id="Code-Example"><a href="#Code-Example" class="headerlink" title="Code Example"></a>Code Example</h2><p>在Start()函数中指定replacement shader:</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Start</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	camera.SetReplacementShader(EffiectShader,<span class="string">&quot;RenderType&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>EffiectShader需要包含”RenderType”这个标签，如果没有”RenderType”这个，那么不会有任何物体被渲染。另外，EffiectShader可以有多个SubShader，每个SubShader对应一个”RenderType”。例如，我们需要渲染透明物体，可以指定两个SubShader分别渲染”RenderType”=”Transparent”和”RenderType”=”TransparentCutout”。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;EffectShader&quot;</span> &#123;</span><br><span class="line">     SubShader &#123;</span><br><span class="line">         Tags &#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> &#125;</span><br><span class="line">         Pass &#123;</span><br><span class="line">             ...</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line">     SubShader &#123;</span><br><span class="line">         Tags &#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;SomethingElse&quot;</span> &#125;</span><br><span class="line">         Pass &#123;</span><br><span class="line">             ...</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line"> ...</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-<p>SetReplacementShader函数会查找场景中所有物体，这些物体自带的Shader的”RenderType”值和EffectShader中的”RenderType”值匹配的话，那么这些物体将会使用EffectShader中相对应的SubShader进行渲染。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/11/21/Git-on-the-Server-The-Protocols/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2020/11/21/Git-on-the-Server-The-Protocols/" class="post-title-link" itemprop="url">4.1 Git On the Server - The Protocols</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-11-21 17:01:34" itemprop="dateCreated datePublished" datetime="2020-11-21T17:01:34+08:00">2020-11-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-05 21:10:50" itemprop="dateModified" datetime="2021-07-05T21:10:50+08:00">2021-07-05</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Git/" itemprop="url" rel="index"><span itemprop="name">Git</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Git/Server/" itemprop="url" rel="index"><span itemprop="name">Server</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>学习本节之前，我们应该熟练使用Git完成日常版本维护工作。然而，在多人配合开发时，我们还需要一个远端Git仓库。远端仓库作为公共的Git仓库，可以保证即使某个成员的电脑处于关机状态，其他成员也可以知道彼此的开发进度以及修改内容。</p>
-<p>建立Git服务非常简单，首先，我们选择服务所使用的协议。本节将会介绍可选的协议，以及这些协议的优缺点。然后我们会再介绍这些协议相关的常用设置。最后，我们学习部分托管选项，如果我们不介意在其他服务器上托管代码，并且不想设置和维护自己的Git服务，这些托管选项可以帮我们实现这个目标。</p>
-<p>本章最后一节介绍的时如何搭建自己的Git服务，不感兴趣可以跳过，直接进入下一章节。下一章节讨论分布式源码控制环境的各种利弊。</p>
-<p>远端仓库只是一个纯粹的仓库，换句话来说，它只包含.git文件。</p>
-<h2 id="The-Protocols"><a href="#The-Protocols" class="headerlink" title="The Protocols"></a>The Protocols</h2><p>Git可以使用四种不同的协议来传输数据：Local、HTTP、Secure Shell(SSH)、 以及 Git。下面我们看下这些协议是什么以及在什么情况下需要。</p>
-<h3 id="Local-Protocol"><a href="#Local-Protocol" class="headerlink" title="Local Protocol"></a>Local Protocol</h3><p>Local是最基本的协议，当我们在本机上建立Git远端仓库时，就是通过Local协议来访问的。例如在所有成员可访问的共享文件系统上搭建的Git仓库。</p>
-<p>使用Local协议可以访问这种本机创建的Git仓库，包括上传和下载。例如克隆仓库：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> /srv/git/project.git</span><br></pre></td></tr></table></figure>
-<p>也可以这样写：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> file:///srv/git/project.git</span><br></pre></td></tr></table></figure>
-
-<p>上面两种写法有一些区别，第一种是类似于本机直接文件复制的操作。第二种数据会经过网络，所以会更慢一点。下面采用的第一种方法，因为速度会更快一点。<br>将本地Git仓库导入到一个现有的本地Git服务，我们执行下面的操作：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote add local_proj /srv/git/project.git</span><br></pre></td></tr></table></figure>
-
-<h4 id="The-Pros"><a href="#The-Pros" class="headerlink" title="The Pros"></a>The Pros</h4><p>基于文件系统的仓库的好处是，他们的建立方式简单，可以使用现有的文件权限以及网络进行访问。如果我们有一个共享文件系统，那么建立共享的Git服务是非常方便的。我们只要将纯数据仓库，也就是包含.git的文件放到一个共享路径下，然后像其他共享文件一样，设置其读写权限。</p>
-<p>相比于从网络远端访问Git仓库，这种共享本地本地仓库无疑是最快速的。</p>
-<h4 id="The-Cons"><a href="#The-Cons" class="headerlink" title="The Cons"></a>The Cons</h4><p>缺点是，这种方式难以从多个不同的地方进行访问。如果我们想在家访问的话，我们必须安装远程磁盘。相比于直接网络请求，这种方式很复杂也很慢。</p>
-<p>还有一点是，Local协议并不一定是最快的，这和仓库部署的位置有关。如果是本机上部署，无疑是最快的。如果是在NFS上部署，那么其访问速度反而比不上SSH。</p>
-<p>最后，这种协议无法保证仓库不受偶然性损坏。任何一个能够访问仓库的人，都能直接访问到.git文件，因此一旦发生手动修改.git文件，将导致仓库损坏。</p>
-<h3 id="The-HTTP-Protocols"><a href="#The-HTTP-Protocols" class="headerlink" title="The HTTP Protocols"></a>The HTTP Protocols</h3><p>Git可以通过HTTP协议进行通信，通信方式有两种。在Git 1.6.6版本之前，只有一种方法，这种方法很简单，通常只有只读功能。在1.6.6版本之后，加入一个新的、更智能的协议，这种协议和SSH类型，能够智能地调整数据传输方式。在最近几年，这种新的协议方式开始普及，因为它具有简单、智能通信方式。这种新的方式通常被称为Smart Http，而老的方式则被称为Dump Http。我们先看一下Smart Http.</p>
-<h4 id="Smart-Http"><a href="#Smart-Http" class="headerlink" title="Smart Http"></a>Smart Http</h4><p>Smart Http操作非常类型于SSH和Git协议。区别在于他是走标准的HTTPS端口，能够使用HTTP权限机制。这意味着，他比SSH更容易使用，因为我们可以使用账号密码权限，而不需要设置SSH Key值。</p>
-<p>Smart Http很可能称为Git种最流行的协议。因为他可以设置为像 git://协议一样的匿名服务，亦可以像SSH一样使用权限加密推送。但是他不需要为两种方式设置不同的URL，我们只需要一个URL就可以实现两种方式。如果我们像执行推送上传操作，但是远端仓库需要权限，这时候服务会提示账号密码，读取方式也一样。</p>
-<p>时结束，像GitHub这种服务，我们用来查看线上仓库的URL，可以用来执行克隆操作，如果我们权限足够的话，也可以进行推送上传操作。</p>
-<h4 id="Dump-Http"><a href="#Dump-Http" class="headerlink" title="Dump Http"></a>Dump Http</h4><p>如果远端服务不是以Smart Http方式响应，那么Git客户端会使用Dump Http协议。这种协议假定我们的Git仓库在网络服务中的管理方式像普通文件一样。Dump HTTP最吸引人的地方是他简洁的设置方式。基本上来说，我们只需要将Git仓库放在Http文档的根目录下，然后设置一个post-update连接。此时，任何可以访问您部署仓库的Web服务器的人也可以克隆您的存储库。若要允许通过 HTTP 读取对存储库的访问，请进行如下操作：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /var/www/htdocs/</span><br><span class="line">git <span class="built_in">clone</span> --bare /path/to/git_project git project.git</span><br><span class="line"><span class="built_in">cd</span> gitproject.git</span><br><span class="line">mv hooks/post-update.sample hooks/post-update</span><br><span class="line">chmod a+x hooks/post-update</span><br></pre></td></tr></table></figure>
-
-<h4 id="The-Pros-1"><a href="#The-Pros-1" class="headerlink" title="The Pros"></a>The Pros</h4><p>来重点看一下Smart Http协议。</p>
-<p>对于所有访问类型简化为只有一个URL，并且服务只有需要权限时才会提示账号密码，这些使得Smart Http使用起来非常容易。相比于SSH而言，使用账号密码进行身份验证也是其一大优势。因为用户不必去创建SSH key，也不用上传这个key到服务端。只要输入账号密码就可以访问Git服务。对于初级用户或者不了解SSH的用户，这是一个巨大的优势。但是Smart HTTP和SSH一样，属于快速有效的协议。</p>
-<p>我们还可以通过 HTTPS 为存储库提供只读服务，这意味着我们可以加密内容传输;我们甚至可以让客户端使用特定的签名 SSL 证书。</p>
-<p>还有就是，HTTP和HTTPS都是非常通用的协议，公司防火墙通常不会拦截这个端口。</p>
-<h4 id="The-Cons-1"><a href="#The-Cons-1" class="headerlink" title="The Cons"></a>The Cons</h4><p>相比于SSH，在使用HTTPS在些某些服务上部署Git会更麻烦点。除此之外，相比于HTTP部署的Git，其他协议的优势几乎没有。</p>
-<p>但是，如果我们使用签名验证的方式推送上传的话，HTTP提供凭证的方式会比SSH使用key的方式更麻烦。当然，有很多缓存凭证的工具可以解决这个问题，像macOS上的Keychin，Windows上的Credential Manager。查看<a target="_blank" rel="noopener" href="https://git-scm.com/book/en/v2/ch00/_credential_caching">凭证存储</a>了解如何在我们系统上设置安全的HTTP密码缓存。</p>
-<h3 id="SSH-Protocol"><a href="#SSH-Protocol" class="headerlink" title="SSH Protocol"></a>SSH Protocol</h3><p>自托管在SSH上时，一种常用的Git传输协议。因为在很多服务上都设置了SSH访问方式，即便没有，我们也可以很容易进行设置。SSH也是一个签名验证网络协议，因为他无处不在，非常容易设置与使用。</p>
-<p>通过SSH克隆Git仓库，我们需要指定一个以ssh://开头的URL：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> ssh://[user@]server/project.git</span><br></pre></td></tr></table></figure>
-
-<p>或者我们可以使用SCP形式的、更短的语法来使用SSH协议：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> [user@]server:project.git</span><br></pre></td></tr></table></figure>
-
-<h4 id="The-Pros-2"><a href="#The-Pros-2" class="headerlink" title="The Pros"></a>The Pros</h4><p>SSH的优势非常多。首先SHH是一个相对容易去设置的-SSH的守护程序遍地都是；很多网络管理者熟悉他；很多系统部署都需要他来设置，或者有工具去管理他们。第二，使用SSH方式访问是安全的-所有数据传输都是金国加密的，并且需要签名验证。第三，像HTTPS、Git、和Local协议，SSH是高效的，数据传输前经过不断的压缩。</p>
-<h4 id="The-Cons-2"><a href="#The-Cons-2" class="headerlink" title="The Cons"></a>The Cons</h4><p>SSH的缺点是，他不支持Git仓库的匿名访问。如果我们使用SSH，我们必须拥有计算机的SSH的访问权限，及时只是只读的权限。这使得SSH不利于开源项目，因为很多时候我们只想克隆一个开源项目。如果我们仅仅只是在公司内网使用Git服务，那么SSH可能是最合适的协议了。如果我们既想只读匿名访问，又想使用SSH，则我们需要设置SSH，使得我们可以推送上传，但是其他人只能下载。</p>
-<h3 id="The-Git-Protocol"><a href="#The-Git-Protocol" class="headerlink" title="The Git Protocol"></a>The Git Protocol</h3><p>最后是Git协议。它是一种特殊的、附加在Git中的进程守护协议。她监听一个具体的端口(9418)，这个端口提供一个类似于SSH协议的服务，但是没有签名验证。为了使用Git协议访问仓库，我们必须创建一个git-daemon-export-ok文件，如果没有这个文件，守护进程是不会管理这个仓库的，仓库的安全性得不到保证。无论Git仓库可供所有人克隆，也可以不供所有人克隆。这意味着，通常不会使用这个协议进行推送上传操作。我么可以开启推送权限，但是由于缺少签名验证，任何人只要知道我们项目的URL，都可能向我们项目仓库执行推送上传操作。因此很少会是哦也能够这个协议进行推送。</p>
-<h4 id="The-Pros-3"><a href="#The-Pros-3" class="headerlink" title="The Pros"></a>The Pros</h4><p>Git协议通常是最快的网络传输协议。如果我们刚好需要处理一个开源项目、或者一个不需要签名验证的只读权限的大项目，这时候可能会用到Git守护进程来维护我们的项目。Git协议的数据传输方式和SSH协议一样，只是没有了加密和签名验证。</p>
-<h4 id="The-Cons-3"><a href="#The-Cons-3" class="headerlink" title="The Cons"></a>The Cons</h4><p>缺点就是没有签名验证。我们不应该将Git协议作为我们项目唯一的访问方式。通常我们是将Git协议和SSH或HTTPS协议一起使用的，少数开发者使用SSH或HTTPS协议对项目进行推送操作。而其他人则使用git://对项目进行只读操作。从设置的角度来说，Git协议也可能是最复杂的协议。她必须执行Git的守护进程，这个进程需要xinetd、systemd配置，或者类似的配置。还需要防火访问端口9418，这不是所有公司防火墙允许的标准端口。在一些大公司中，这个端口通常被锁。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/11/21/Markdown-Basics/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2020/11/21/Markdown-Basics/" class="post-title-link" itemprop="url">Markdown Basics</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-11-21 13:01:34" itemprop="dateCreated datePublished" datetime="2020-11-21T13:01:34+08:00">2020-11-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-05 21:10:50" itemprop="dateModified" datetime="2021-07-05T21:10:50+08:00">2021-07-05</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Markdown/" itemprop="url" rel="index"><span itemprop="name">Markdown</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Markdown/Basics/" itemprop="url" rel="index"><span itemprop="name">Basics</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="属性Markdown语法要点"><a href="#属性Markdown语法要点" class="headerlink" title="属性Markdown语法要点"></a>属性Markdown语法要点</h2><p>本节展示基本的Markdown用法。在<a target="_blank" rel="noopener" href="https://daringfireball.net/projects/markdown/syntax">Syntax</a>中提供了更为详细的语法介绍。下面通过同时显示了转换前和转换后的例子，展示Markdown语法与HTML格式的对照关系。<br>同时我们可以使用<a target="_blank" rel="noopener" href="https://daringfireball.net/projects/markdown/dingus">Dingus</a>在线语法验证工具来更好的理解Markdown语法。</p>
-<h2 id="段落、标题、引用"><a href="#段落、标题、引用" class="headerlink" title="段落、标题、引用"></a>段落、标题、引用</h2><p>段落由一行或多行连续的文本构成，段落之间通过一行或多行空格分隔。正常的段落不应该使用space或tabs进行缩进。</p>
-<p>Markdown提供两种风格的标题格式：Setext和atx：</p>
-<ul>
-<li>Setext风格是采用下滑线的形式来对标题进行标记。例如一级标题和二级标题，分别使用 = 和 - 来代表；</li>
-<li>atx风格的标题，采用1-6个置于行首的#号来表示。#号的个数代表标题的等级；</li>
-</ul>
-<blockquote>
-<p>块引用使用的是邮件风格的&gt;号表示。</p>
-</blockquote>
-<p>Markdown:</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">一级标题</span><br><span class="line">========</span><br><span class="line">二级标题</span><br><span class="line">--------</span><br><span class="line">然后这里是贝拉巴啦啦吧一堆描述的、正儿八经的段落。</span><br><span class="line">再来一段。</span><br><span class="line"></span><br><span class="line"><span class="section">### 三级标题</span></span><br><span class="line"><span class="quote">&gt; 这是块引用</span></span><br><span class="line"><span class="quote">&gt; </span></span><br><span class="line"><span class="quote">&gt; 这是块引用的第二段</span></span><br><span class="line"><span class="quote">&gt; 这是块引用的第三段</span></span><br><span class="line">&gt;</span><br><span class="line"><span class="quote">&gt; ## 这是块引用中的二级标题</span></span><br></pre></td></tr></table></figure>
-<p>HTML:</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>一级标题<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h2</span>&gt;</span>二级标题<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>然后这里是贝拉巴啦啦吧一堆描述的、正儿八经的段落。<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>再来一段<span class="tag">&lt;<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h3</span>&gt;</span>三级标题<span class="tag">&lt;/<span class="name">h3</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">blockquote</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">p</span>&gt;</span>这是块引用<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">p</span>&gt;</span>这是块引用的第二段<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">p</span>&gt;</span>这是块引用的第三段<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">h2</span>&gt;</span>这是块引用中的二级标题<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">blockquote</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="短语强调"><a href="#短语强调" class="headerlink" title="短语强调"></a>短语强调</h2><p>Markdown使用 * 或 _ 来表示强调范围<br>Markdown：</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">有些<span class="emphasis">*人*</span>就是特殊</span><br><span class="line">有些<span class="emphasis">_事_</span>就是漂亮</span><br><span class="line"></span><br><span class="line">还有些<span class="strong">**人**</span>特殊到无以复加</span><br><span class="line">还有些<span class="strong">__事__</span>漂亮到难以形容</span><br></pre></td></tr></table></figure>
-<p>HTML：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>有些<span class="tag">&lt;<span class="name">em</span>&gt;</span>人<span class="tag">&lt;/<span class="name">em</span>&gt;</span>就是特殊<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>有些<span class="tag">&lt;<span class="name">em</span>&gt;</span>事<span class="tag">&lt;/<span class="name">em</span>&gt;</span>就是漂亮<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>还有些<span class="tag">&lt;<span class="name">strong</span>&gt;</span>人<span class="tag">&lt;/<span class="name">strong</span>&gt;</span>特殊到无以复加<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>还有些<span class="tag">&lt;<span class="name">strong</span>&gt;</span>事<span class="tag">&lt;/<span class="name">strong</span>&gt;</span>漂亮到难以形容<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h2><p>无序号的列表使用 * 和 + 以及 - 号来表示。这三个符号表达的是一个意思;<br>例如这个：</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">*</span> Candy</span><br><span class="line"><span class="bullet">*</span> Gum</span><br><span class="line"><span class="bullet">*</span> Booze</span><br></pre></td></tr></table></figure>
-<p>这个：</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">+</span> Candy</span><br><span class="line"><span class="bullet">+</span> Gum</span><br><span class="line"><span class="bullet">+</span> Booze</span><br></pre></td></tr></table></figure>
-<p>还有这个：</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> Candy</span><br><span class="line"><span class="bullet">-</span> Gum</span><br><span class="line"><span class="bullet">-</span> Booze</span><br></pre></td></tr></table></figure>
-<p>这三个输出的结果都是同样的HTML格式：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ul</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Candy<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Gum<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Booze<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>有需要的列表使用的是数字加 . 的方式：</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">1.</span> Red</span><br><span class="line"><span class="bullet">2.</span> Green</span><br><span class="line"><span class="bullet">3.</span> Blue</span><br></pre></td></tr></table></figure>
-<p>HTML：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ol</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Red<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Green<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Blue<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ol</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>如果列表之间有空行，那么这些列表元素就会被认为是段落。如果单个元素由多个段落构成，那么需要将后续的段落进行缩进处理：</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">1.</span> Red</span><br><span class="line"></span><br><span class="line"><span class="bullet">2.</span> Green</span><br><span class="line">green</span><br><span class="line"><span class="bullet">3.</span> Blue</span><br><span class="line">   blue</span><br><span class="line"></span><br><span class="line"><span class="bullet">4.</span> yellow</span><br><span class="line"></span><br><span class="line"><span class="bullet">5.</span> Orange</span><br></pre></td></tr></table></figure>
-<p>HTML:</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ol</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>Red<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>Green</span><br><span class="line">green<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>Blue</span><br><span class="line">blue<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>yellow<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>Orange<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ol</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h2><p>Markdown提供两种链接方式：</p>
-<ul>
-<li>inline，内联方式；</li>
-<li>reference，引用方式；</li>
-</ul>
-<p>这两种方式都需要使用方括号来分隔需要显示的文本。<br>内联方式直接在方括号后面使用圆括号来表示链接，例如：</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这是[<span class="string">链接名称</span>](<span class="link">http://example.com/</span>)。</span><br></pre></td></tr></table></figure>
-<p>HTML：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>这是<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://example.com/&quot;</span>&gt;</span>链接名称<span class="tag">&lt;/<span class="name">a</span>&gt;</span>。<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>另外，我们也可以给网址命个名：</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这是[<span class="string">链接名称</span>](<span class="link">http://example.com/ &quot;黑网&quot;</span>)。</span><br></pre></td></tr></table></figure>
-<p>HTML：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>这是<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://example.com/&quot;</span> <span class="attr">title</span>=<span class="string">&quot;黑网&quot;</span>&gt;</span>链接名称<span class="tag">&lt;/<span class="name">a</span>&gt;</span>。<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>引用方式通过给链接命名的方式进行链接：</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">我从[<span class="string">黑网</span>][<span class="symbol">1</span>]跳到[<span class="string">白网</span>][<span class="symbol">2</span>]再跳到[<span class="string">红网</span>][<span class="symbol">3</span>]</span><br><span class="line"></span><br><span class="line">[<span class="symbol">1</span>]: <span class="link">http://black-net.com/ &quot;黑网&quot;</span></span><br><span class="line">[<span class="symbol">2</span>]: <span class="link">http://white-net.com/ &quot;白网 1&quot;</span></span><br><span class="line">[<span class="symbol">3</span>]: <span class="link">http://red-net.com/ &quot;红网 2&quot;</span></span><br></pre></td></tr></table></figure>
-<p>HTML：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>我从<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://black-net.com/&quot;</span> <span class="attr">title</span>=<span class="string">&quot;黑网&quot;</span>&gt;</span>黑网<span class="tag">&lt;/<span class="name">a</span>&gt;</span>跳到<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://white-net.com/&quot;</span> <span class="attr">title</span>=<span class="string">&quot;白网 1&quot;</span>&gt;</span>白网<span class="tag">&lt;/<span class="name">a</span>&gt;</span>再跳到<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://red-net.com/&quot;</span> <span class="attr">title</span>=<span class="string">&quot;红网 2&quot;</span>&gt;</span>红网<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>上面的title属性可有可无。链接名由字母、数字、空格构成，不区分大小写：</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">我在[<span class="string">红网a</span>][<span class="symbol">red 1</span>]看到你的照片</span><br><span class="line">[<span class="symbol">REd 1</span>]: <span class="link">http://red-a-net.com/</span></span><br></pre></td></tr></table></figure>
-<p>HTML:</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>我在<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://red-a-net.com/&quot;</span>&gt;</span>红网a<span class="tag">&lt;/<span class="name">a</span>&gt;</span>看到你的照片<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="图片"><a href="#图片" class="headerlink" title="图片"></a>图片</h2><p>图片的语法和链接非常相似，也是有Inline和Reference两种方式，如下所示，其中Title属性是可有可无的：</p>
-<ul>
-<li>Inline，内联方式：<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">![<span class="string">alt text</span>](<span class="link">/path/to/img.jpg &quot;Title&quot;</span>)</span><br></pre></td></tr></table></figure></li>
-<li>Reference,引用方式：<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">![<span class="string">alt tex</span>][<span class="symbol">id</span>]</span><br><span class="line">[<span class="symbol">id</span>]: <span class="link">/path/to/img.jpg &quot;Title&quot;</span></span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<p>无论哪种方式得到的结果都一样：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;/path/to/img.jpg&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;alt tex&quot;</span> <span class="attr">title</span>=<span class="string">&quot;Title&quot;</span> /&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="代码块"><a href="#代码块" class="headerlink" title="代码块"></a>代码块</h2><p>在普通的段落中，我们可以给使用反引号 ` ，也就是ECS键下面的那个 ` 键， 从而将代码插入到普通段落中。这样可以使得普通段落和代码块的之间界限分明。还有一点就是 &amp; 和 &lt; 、 &gt; 这几个符合是HTML的命令实体，需要转义后才能以普通字符的形式显示。但是在反引号 ` 包裹下的所有字符都只被当作普通字符，而不需要而外的转义操作。这就很方便在Markdown文档中编写HTML的示例代码：</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">I strongly recommend against using any <span class="code">`&lt;blink&gt;`</span> tags.</span><br><span class="line"></span><br><span class="line">I wish SmartyPants used named entities like <span class="code">`&amp;mdash;`</span></span><br><span class="line">instead of decimal-encoded entites like <span class="code">`&amp;#8212;`</span>.</span><br></pre></td></tr></table></figure>
-<p>HTML：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>I strongly recommend against using any</span><br><span class="line"><span class="tag">&lt;<span class="name">code</span>&gt;</span><span class="symbol">&amp;lt;</span>blink<span class="symbol">&amp;gt;</span><span class="tag">&lt;/<span class="name">code</span>&gt;</span> tags.<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>I wish SmartyPants used named entities like</span><br><span class="line"><span class="tag">&lt;<span class="name">code</span>&gt;</span><span class="symbol">&amp;amp;</span>mdash;<span class="tag">&lt;/<span class="name">code</span>&gt;</span> instead of decimal-encoded</span><br><span class="line">entites like <span class="tag">&lt;<span class="name">code</span>&gt;</span><span class="symbol">&amp;amp;</span>#8212;<span class="tag">&lt;/<span class="name">code</span>&gt;</span>.<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>最终在网页上显示的效果：<br>I strongly recommend against using any <code>&lt;blink&gt;</code> tags.</p>
-<p>I wish SmartyPants used named entities like <code>&amp;mdash;</code><br>instead of decimal-encoded entites like <code>&amp;#8212;</code>.<br>如果希望将整个代码块进行格式化，那么将代码块中的每一行缩进4个spaces或1个tab。其所产生的效果和使用反引号 ` 标记的代码块一样，其中的 &amp; 、&lt; 、&gt; 这些符号都被自动转义了：<br>Markdown:</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">If you want your page to validate under XHTML 1.0 Strict,</span><br><span class="line">you&#x27;ve got to put paragraph tags in your blockquotes:</span><br><span class="line"></span><br><span class="line"><span class="code">    &lt;blockquote&gt;</span></span><br><span class="line"><span class="code">        &lt;p&gt;For example.&lt;/p&gt;</span></span><br><span class="line"><span class="code">    &lt;/blockquote&gt;</span></span><br></pre></td></tr></table></figure>
-<p>HTML:</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>If you want your page to validate under XHTML 1.0 Strict,</span><br><span class="line">you&#x27;ve got to put paragraph tags in your blockquotes:<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">pre</span>&gt;</span><span class="tag">&lt;<span class="name">code</span>&gt;</span><span class="symbol">&amp;lt;</span>blockquote<span class="symbol">&amp;gt;</span></span><br><span class="line">    <span class="symbol">&amp;lt;</span>p<span class="symbol">&amp;gt;</span>For example.<span class="symbol">&amp;lt;</span>/p<span class="symbol">&amp;gt;</span></span><br><span class="line"><span class="symbol">&amp;lt;</span>/blockquote<span class="symbol">&amp;gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">code</span>&gt;</span><span class="tag">&lt;/<span class="name">pre</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>最终在网页上显示的效果：<br>If you want your page to validate under XHTML 1.0 Strict,<br>you’ve got to put paragraph tags in your blockquotes:</p>
-<pre><code>&lt;blockquote&gt;
-    &lt;p&gt;For example.&lt;/p&gt;
-&lt;/blockquote&gt;</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/blogs/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/blogs/">1</a><a class="page-number" href="/blogs/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/blogs/page/4/">4</a><a class="extend next" rel="next" href="/blogs/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/blogs/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/blogs/">1</a><a class="page-number" href="/blogs/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/blogs/page/4/">4</a><a class="page-number" href="/blogs/page/5/">5</a><a class="extend next" rel="next" href="/blogs/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1324,7 +1210,7 @@ public static class AssetsMenu
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-count">41</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
