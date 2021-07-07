@@ -163,6 +163,325 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/01/30/EmmyLua-for-IntelliJ-IDEA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/01/30/EmmyLua-for-IntelliJ-IDEA/" class="post-title-link" itemprop="url">EmmyLua 的使用方法</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-30 10:38:34" itemprop="dateCreated datePublished" datetime="2021-01-30T10:38:34+08:00">2021-01-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-07 19:46:52" itemprop="dateModified" datetime="2021-07-07T19:46:52+08:00">2021-07-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Lua/" itemprop="url" rel="index"><span itemprop="name">Lua</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Lua/EmmyLua/" itemprop="url" rel="index"><span itemprop="name">EmmyLua</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>EmmyLua是Jetbrains IDE的一个插件，它提供了一套注解的语法，可以帮助IDE进行代码之间索引跳转，以及变量名称提示等功能。总而言之，EmmyLua是丰富IDE的功能，和实际的代码没有关系，IDE的跳转也只是限于注释之间。</p>
+<h2 id="类的声明"><a href="#类的声明" class="headerlink" title="类的声明"></a>类的声明</h2><p>EmmyLua使用@class来模拟面向对象编程，支持继承和属性</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">--- my supper class</span><br><span class="line">---@class Transport</span><br><span class="line">local p &#x3D; Class()</span><br><span class="line"></span><br><span class="line">--- 子类</span><br><span class="line">---@class Car : Transport</span><br><span class="line">local cls &#x3D; Class(p)</span><br><span class="line">function c:test()</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<p>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">--@class my_type[: parent_type] [@comment]</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">---@class Car : Transport @define class Car extends Transport</span><br><span class="line">local cls &#x3D; class()</span><br><span class="line">function clas:test()</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<p>上面定义了一个Car类，我们可以使用@type Car来表明某个变量属于Car类</p>
+<h2 id="变量的声明"><a href="#变量的声明" class="headerlink" title="变量的声明"></a>变量的声明</h2><p>使用<code>@type</code>可以指明某个变量的类型</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">---@type Car</span><br><span class="line">local car1 &#x3D; getCar()</span><br><span class="line">---@type Car</span><br><span class="line">global_car &#x3D; getCar()</span><br><span class="line">global_car:test()</span><br></pre></td></tr></table></figure>
+<p>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@type my_type[|other_type] [@comment]</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">---@type Car @instance of car</span><br><span class="line">local car1 &#x3D; &#123;&#125;</span><br><span class="line"></span><br><span class="line">---@type Car|Ship @transport tools, car or ship. Since lua is dynamic-typed, a variable may be of different types</span><br><span class="line">---use | to list all possible types</span><br><span class="line">local transport &#x3D; &#123;&#125;</span><br><span class="line"></span><br><span class="line">---@type Car @global variable type</span><br><span class="line">global_car &#x3D; &#123;&#125;</span><br><span class="line"></span><br><span class="line">local obj &#x3D; &#123;&#125;</span><br><span class="line">---@type Car @property type</span><br><span class="line">obj.car &#x3D; getCar()</span><br></pre></td></tr></table></figure>
+
+<h2 id="别名注释"><a href="#别名注释" class="headerlink" title="别名注释"></a>别名注释</h2><p>使用<code>@alias</code>将一些复杂不容易输入的类型注册为新的容易输入的类型<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@alias new_name type</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">---@alias Handler fun( type: string, data: any):void</span><br><span class="line">---@param handler Handler</span><br><span class="line">function addHandler(handler)</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h2 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h2><p>使用<code>@param</code>来指定函数的参数类型<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@param param_name my_type[|other_type] [@comment]</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">---@param car Car</span><br><span class="line">local function setCar(car)</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">---@param car Car</span><br><span class="line">setCallback(function(car)</span><br><span class="line">end)</span><br><span class="line"></span><br><span class="line">---@param car Car</span><br><span class="line">for k, car in pairs(list) do</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h2 id="函数返回值类型说明"><a href="#函数返回值类型说明" class="headerlink" title="函数返回值类型说明"></a>函数返回值类型说明</h2><p>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@return my_type[|other_type] [@comment]</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">---@return Car|Ship</span><br><span class="line">local function crate()</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">---here car_or_ship doesn&#39;t need @type annotation, EmmyLua has already inferred the type via &quot;create&quot; function</span><br><span class="line">local car_or_ship &#x3D; create()</span><br><span class="line"></span><br><span class="line">---@return Car</span><br><span class="line">function factory:create()</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h2 id="属性声明"><a href="#属性声明" class="headerlink" title="属性声明"></a>属性声明</h2><p>使用<code>@field</code>可以标明类所具有的属性，即使类中没有使用到这个属性<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@field [public|protected|private] field_name field_type[|other_type] [@comment]</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">---@class Car</span><br><span class="line">---@field public name string @add name field to class Car, you&#39;ll see it in code completion</span><br><span class="line">local cls &#x3D; class()</span><br></pre></td></tr></table></figure>
+
+<h2 id="泛型声明"><a href="#泛型声明" class="headerlink" title="泛型声明"></a>泛型声明</h2><p>使用<code>@generic</code>来模拟一些高级语言的泛型<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@generic T1 [: parent_type] [, T2 [: parent_type]]</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">---@generic T : Transport, K</span><br><span class="line">---@param param1 T</span><br><span class="line">---@param param2 K</span><br><span class="line">---@return T</span><br><span class="line">local function test(param1, param2)</span><br><span class="line">	-- todo</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">---@type Car</span><br><span class="line">local car &#x3D; ...</span><br><span class="line">local value &#x3D; test(car)</span><br></pre></td></tr></table></figure>
+<p>这里说明一下，上面的<code>T</code>和<code>K</code>都是类型，只不过<code>T</code>是继承自<code>Transport</code>的一种类型，而<code>K</code>可以是任何类型。<br>然后<code>param1</code>是类型<code>T</code>的实例</p>
+<h2 id="不定参数的注释"><a href="#不定参数的注释" class="headerlink" title="不定参数的注释"></a>不定参数的注释</h2><p>使用<code>@vararg</code>注解函数不定参数部分<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@vararg type</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">---@vararg string</span><br><span class="line">---@return string</span><br><span class="line">local function format(...)</span><br><span class="line">	local tbl &#x3D; &#123;...&#125; --inferred as string[]</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h2 id="嵌入其他语言"><a href="#嵌入其他语言" class="headerlink" title="嵌入其他语言"></a>嵌入其他语言</h2><p>使用<code>@language</code>可以在lua代码中嵌入其他语言<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@language language_id</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">---@language JSON</span><br><span class="line">local jsonText &#x3D; [[&#123;</span><br><span class="line">	&quot;name&quot;:&quot;Emmy&quot;</span><br><span class="line">	&#125;]]</span><br></pre></td></tr></table></figure>
+
+<h2 id="数组类型声明"><a href="#数组类型声明" class="headerlink" title="数组类型声明"></a>数组类型声明</h2><p>使用<code>@type mytype[]</code>可以指定变量类型为数组<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@type my_type[]</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">---@type Car[]</span><br><span class="line">local list &#x3D; &#123;&#125;</span><br><span class="line">local car &#x3D; list[1]</span><br><span class="line">-- car, and you &#39;ll see completion</span><br><span class="line"></span><br><span class="line">for i, car in pairs(list) do</span><br><span class="line">	-- car. and you&#39;ll see completion</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h2 id="table类型声明"><a href="#table类型声明" class="headerlink" title="table类型声明"></a>table类型声明</h2><p>使用<code>@type table</code>可以表示某变量为表格类型<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@type table&lt;key_type, value_type&gt;</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">---@type table&lt;string, Car&gt;</span><br><span class="line">local dict &#x3D; &#123;&#125;</span><br><span class="line">local car &#x3D; dict[&#39;key&#39;]</span><br><span class="line">-- car. and you&#39;ll see completion</span><br><span class="line">for key, car in pairs(dict) do</span><br><span class="line">	-- car. and you&#39;ll see completion</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h2 id="函数声明"><a href="#函数声明" class="headerlink" title="函数声明"></a>函数声明</h2><p>使用<code>fun(param:my_type):return_type</code>来表示函数类型变量<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@type fun(param:my_type):return_type</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@type fun(key:string):Car</span><br><span class="line">local carCreatorFn1</span><br><span class="line"></span><br><span class="line">local car &#x3D; carCreatorFn1(&#39;key&#39;)</span><br><span class="line">-- car. and you see code completion</span><br><span class="line"></span><br><span class="line">---@type fun():Car[]</span><br><span class="line">local carCreatorFn2</span><br><span class="line"></span><br><span class="line">for i, car in pairs(carCreatorFn2()) do</span><br><span class="line">	-- car. and you see completion</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h2 id="字面常量类型声明"><a href="#字面常量类型声明" class="headerlink" title="字面常量类型声明"></a>字面常量类型声明</h2><p>字面常量也可以指定特定字符串来作为代码提示，结合别名，可以起到类似于枚举的效果<br>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">---@alias Handler fun(type: string, data: any): void</span><br><span class="line"></span><br><span class="line">---@param event string | &quot;&#39;onClised&#39;&quot; | &quot;&#39;onData&#39;&quot;</span><br><span class="line">---@param handler Handler | &quot;function(type, data) print(data) end&quot;</span><br><span class="line">function addEventListener(event, handler)</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<p>上面的写法还是比较复杂，我们可以用<code>@alias</code>再简化一下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">---@alias Handler fun(type: string, data: any): void</span><br><span class="line">---@alias IOEventEnum string | &quot;&#39;onClised&#39;&quot; | &quot;&#39;onData&#39;&quot;</span><br><span class="line">---@param event IOEventEnum</span><br><span class="line">---@param handler Handler | &quot;function(type, data) print(data) end&quot;</span><br><span class="line">function addEventListener(event, handler)</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/12/23/Joy-Stick-Function-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2020/12/23/Joy-Stick-Function-2/" class="post-title-link" itemprop="url">摇杆实现方法2</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-23 22:02:00" itemprop="dateCreated datePublished" datetime="2020-12-23T22:02:00+08:00">2020-12-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-07 19:46:52" itemprop="dateModified" datetime="2021-07-07T19:46:52+08:00">2021-07-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Component/" itemprop="url" rel="index"><span itemprop="name">Component</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>自己做了个飞行模拟的小游戏，发布到手机上需要用到摇杆来控制。原先是通过一个Joystick类来实现，摇杆位置固定，详细请参考<a href="https://tyson-wu.github.io/blogs/2020/12/23/Joy-Stick-Function/">这里</a><br>但是后面策划说要做成王者荣耀那种，摇杆的位置会根据手指的位置有一定的活动区域，所以我重新写了一份逻辑，并且对代码进行一定的逻辑细分，效果如下：<br><img src="/blogs/images/src/ezgif.com-gif-maker-2.gif" alt="wwwwwww"></p>
+<p>首先，我这里将摇杆分为几个部分：</p>
+<ul>
+<li>摇杆可触发区域，紫色区域，当手指放在该区域时，可以操控摇杆</li>
+<li>摇杆中心位置可活动区域，黄色区域，绿色的圆形摇杆背景图的中心点可到达的区域</li>
+<li>最后是白色的摇杆和绿色摇杆背景的组合</li>
+</ul>
+<p>前两个都挂载了一个区域判断的类-<code>TriggerAreaHandler</code>，主要用来判断屏幕点是否在该区域内，如图所示：<br><img src="/blogs/images/src/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20201223224837.png" alt="wwwwwww"><br>详细代码如下：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 用于UI区域判定</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">TriggerAreaHandler</span> : <span class="title">MonoBehaviour</span></span><br><span class="line">&#123;</span><br><span class="line">    RectTransform[] _triggerArea = <span class="literal">null</span>;<span class="comment">//触发区域</span></span><br><span class="line">    Camera _camera = <span class="literal">null</span>;<span class="comment">//画布摄像机</span></span><br><span class="line">    Canvas _canvas = <span class="literal">null</span>;<span class="comment">//画布</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">InitTriggerArea</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;<span class="comment">//初始化区域</span></span><br><span class="line">        <span class="keyword">if</span> (_triggerArea != <span class="literal">null</span>) <span class="keyword">return</span>;</span><br><span class="line">        _triggerArea = GetComponentsInChildren&lt;RectTransform&gt;();</span><br><span class="line">        _canvas = GetComponentInParent&lt;Canvas&gt;();</span><br><span class="line">        _camera = _canvas.worldCamera;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 计算屏幕区域是否在当前区域内</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;screenPos&quot;&gt;</span>屏幕坐标<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="built_in">bool</span> <span class="title">CheckScreenPosInArea</span>(<span class="params">Vector2 screenPos</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        InitTriggerArea();</span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">int</span> i=<span class="number">0</span>;i&lt; _triggerArea.Length;++i)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (RectTransformUtility.RectangleContainsScreenPoint(_triggerArea[i], screenPos, _camera))</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 将屏幕点夹紧到该区域</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;screenPos&quot;&gt;</span><span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Vector2 <span class="title">Clamp</span>(<span class="params">Vector2 screenPos</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        InitTriggerArea();</span><br><span class="line">        Vector2 clampPos = _camera.WorldToScreenPoint(_triggerArea[<span class="number">0</span>].position);</span><br><span class="line">        <span class="built_in">float</span> len = <span class="built_in">float</span>.MaxValue;</span><br><span class="line">        InitTriggerArea();</span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; _triggerArea.Length; ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            RectTransform rectTransform = _triggerArea[i];</span><br><span class="line">            <span class="keyword">if</span> (RectTransformUtility.RectangleContainsScreenPoint(_triggerArea[i], screenPos, _camera))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">return</span> screenPos;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line"></span><br><span class="line">                Vector2 rectPos = _camera.WorldToScreenPoint(rectTransform.position);</span><br><span class="line">                Rect rect = RectTransformUtility.PixelAdjustRect(rectTransform, _canvas);</span><br><span class="line">                Vector2 clampPos_temp = Clamp(screenPos, rectPos, <span class="keyword">new</span> Vector2(rect.width/<span class="number">2</span>, rect.height/<span class="number">2</span>));</span><br><span class="line">                <span class="built_in">float</span> distance = (clampPos_temp - screenPos).sqrMagnitude;</span><br><span class="line">                <span class="keyword">if</span> (distance &lt; len)</span><br><span class="line">                &#123;</span><br><span class="line">                    len = distance;</span><br><span class="line">                    clampPos = clampPos_temp;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> clampPos;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function">Vector2 <span class="title">Clamp</span>(<span class="params">Vector2 <span class="keyword">value</span>,Vector2 center, Vector2 halfSize</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Vector2(Clamp(<span class="keyword">value</span>.x, center.x - halfSize.x, center.x + halfSize.x),</span><br><span class="line">            Clamp(<span class="keyword">value</span>.y, center.y - halfSize.y, center.y + halfSize.y));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="built_in">float</span> <span class="title">Clamp</span>(<span class="params"><span class="built_in">float</span> <span class="keyword">value</span>, <span class="built_in">float</span> min, <span class="built_in">float</span> max</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">value</span> = <span class="keyword">value</span> &gt; min ? <span class="keyword">value</span> : min;</span><br><span class="line">        <span class="keyword">value</span> = <span class="keyword">value</span> &lt; max ? <span class="keyword">value</span> : max;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">value</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第三部分的摇杆组合，主要是用来显示的，所以下面挂载了一个控制其显示的脚本-<code>JoyStickView</code>，该脚本控制摇杆组合的位置显示，如图所示：<br><img src="/blogs/images/src/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20201223225034.png" alt="wwwwwww"><br>代码如下：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 控制摇杆显示</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">JoyStickView</span> : <span class="title">MonoBehaviour</span></span><br><span class="line">&#123;</span><br><span class="line">    [<span class="meta">SerializeField</span>] RectTransform _joyStickCenter;<span class="comment">//摇杆的端点</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] RectTransform _joyStickOutline;<span class="comment">//摇杆端点区域背景,设置为摇杆端点的父节点</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] <span class="built_in">float</span> _joyStickAreaScale = <span class="number">1</span>;<span class="comment">//在背景区域的基础上进行缩放，得到一个活动区域</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">bool</span> _initSize = <span class="literal">false</span>;</span><br><span class="line">    Canvas _canvas = <span class="literal">null</span>;</span><br><span class="line">    Vector3 _joyStickOriginScreenPos0 = Vector3.zero; <span class="comment">//摇杆初始原点</span></span><br><span class="line">    Vector3 _joyStickOriginScreenPos = Vector3.zero; <span class="comment">//摇杆原点</span></span><br><span class="line">    <span class="built_in">float</span> _joyStickRadius = <span class="number">0</span>;<span class="comment">//摇杆真实的屏幕活动半径</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 获取摇杆屏幕活动半径</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="built_in">float</span> <span class="title">GetJoyStickRadius</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">return</span> _joyStickRadius;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 计算背景区域的屏幕尺寸</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 在所有函数之前调用</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">CalculateAreaSize</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">if</span> (_initSize) <span class="keyword">return</span>; </span><br><span class="line">        _initSize = <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">if</span>(_canvas==<span class="literal">null</span>)  _canvas = GetComponentInParent&lt;Canvas&gt;();</span><br><span class="line">        _joyStickOriginScreenPos0 = _canvas.worldCamera.WorldToScreenPoint(_joyStickOutline.position);</span><br><span class="line">        _joyStickOriginScreenPos = _joyStickOriginScreenPos0;</span><br><span class="line">        SetJoyStickOriginPos(_joyStickOriginScreenPos0);</span><br><span class="line">        Rect rect = RectTransformUtility.PixelAdjustRect(_joyStickOutline, _canvas);</span><br><span class="line">        _joyStickRadius = _joyStickAreaScale * rect.width / <span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 重置摇杆原点为初始原点</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span>摇杆中心点在屏幕上的位置<span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Vector2 <span class="title">ResetJoyStickOrigionPos</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        SetJoyStickOriginPos(_joyStickOriginScreenPos0);</span><br><span class="line">        <span class="keyword">return</span> _joyStickOriginScreenPos0;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 设置整个摇杆的位置</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;screenPos&quot;&gt;</span>屏幕坐标<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SetJoyStickOriginPos</span>(<span class="params">Vector3 screenPos</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _joyStickOriginScreenPos.x = screenPos.x;</span><br><span class="line">        _joyStickOriginScreenPos.y = screenPos.y;</span><br><span class="line">        _joyStickOutline.position = _canvas.worldCamera.ScreenToWorldPoint(_joyStickOriginScreenPos);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 基于偏移向量，设置摇杆显示位置</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;dir&quot;&gt;</span>移动向量<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SetJoyStick</span>(<span class="params">Vector2 dir</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Vector3 dir3 = dir.sqrMagnitude &gt; <span class="number">1</span> ? dir.normalized : dir;</span><br><span class="line">        Vector3 joyStickScreenPos = dir3 * _joyStickRadius + _joyStickOriginScreenPos;</span><br><span class="line">        _joyStickCenter.position = _canvas.worldCamera.ScreenToWorldPoint(joyStickScreenPos);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 判断屏幕坐标是否在摇杆触发区域里</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;screenPos&quot;&gt;</span>屏幕坐标<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="built_in">bool</span> <span class="title">InJoyStickArea</span>(<span class="params">Vector2 screenPos</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="built_in">float</span> len = Vector2.Distance(screenPos, _joyStickOriginScreenPos);</span><br><span class="line">        <span class="keyword">return</span>  len &lt; _joyStickRadius;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后是整个摇杆逻辑实现部分-<code>JoyStickTrigger</code>，这个类里面记录了触发事件，以及对外的参数，如图所示：<br><img src="/blogs/images/src/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20201223223000.png"><br>同样的，通过属性器可以获取当前摇杆的状态参数，包括偏移方向以及强度，方向是360度，强度是[0-1]。详细代码如下：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> UnityEngine.EventSystems;</span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 摇杆控制模块</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">JoyStickTrigger</span> : <span class="title">MonoBehaviour</span>, <span class="title">IPointerDownHandler</span>, <span class="title">IPointerUpHandler</span>, <span class="title">IDragHandler</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> JoyStickTrigger instance;</span><br><span class="line">    [<span class="meta">SerializeField</span>] TriggerAreaHandler _joyStickCenterArea;<span class="comment">//摇杆背景中心点活动区域</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] TriggerAreaHandler _joyStickTriggerArea;<span class="comment">//可激活摇杆的区域</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] JoyStickView _joyStick;<span class="comment">//摇杆</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] <span class="built_in">float</span> _sensitivity = <span class="number">1</span>;<span class="comment">//摇杆灵敏度</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] <span class="built_in">float</span> _triggerAreaScale = <span class="number">1</span>;<span class="comment">//摇杆控制区域</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆偏移方向</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> Vector2 MoveDir &#123; <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆偏移长度[0-1]</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> MoveLen &#123; <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 是否在操控摇杆</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">bool</span> IsDraging &#123; <span class="keyword">get</span> &#123; <span class="keyword">return</span> _onJoyStickActive; &#125; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆横向偏移量</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> Horizontal &#123; <span class="keyword">get</span> &#123; <span class="keyword">return</span> MoveDir.x * MoveLen; &#125; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆纵向偏移量</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> Vertical &#123; <span class="keyword">get</span> &#123; <span class="keyword">return</span> MoveDir.y * MoveLen; &#125; &#125;</span><br><span class="line"></span><br><span class="line">    Vector2 _originScreenPos = Vector2.zero;<span class="comment">//激活摇杆的手指点击位置</span></span><br><span class="line">    Vector2 _dragScreenPos = Vector2.zero;<span class="comment">//实时拖动手指位置</span></span><br><span class="line">    Vector2 _interpolateScreenPos = Vector2.zero;<span class="comment">//实时摇杆位置</span></span><br><span class="line">    <span class="built_in">bool</span> _onJoyStickActive = <span class="literal">false</span>;<span class="comment">//摇杆是否激活</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Awake</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        instance = <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnEnable</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _joyStick.CalculateAreaSize();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnDisable</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        OnPointerUp(<span class="literal">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnPointerDown</span>(<span class="params">PointerEventData eventData</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">if</span> (!_joyStickTriggerArea.CheckScreenPosInArea(eventData.position))</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        _onJoyStickActive = <span class="literal">true</span>;</span><br><span class="line">        <span class="comment">//_originScreenPos = eventData.position;</span></span><br><span class="line">        _originScreenPos = _joyStickCenterArea.Clamp(eventData.position);</span><br><span class="line">        _interpolateScreenPos = _dragScreenPos = eventData.position;</span><br><span class="line">        _joyStick.SetJoyStickOriginPos(_originScreenPos);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnDrag</span>(<span class="params">PointerEventData eventData</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">if</span> (!_onJoyStickActive) <span class="keyword">return</span>;</span><br><span class="line">        _dragScreenPos = eventData.position;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnPointerUp</span>(<span class="params">PointerEventData eventData</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _onJoyStickActive = <span class="literal">false</span>;</span><br><span class="line">        _dragScreenPos = _joyStick.ResetJoyStickOrigionPos();<span class="comment">//手指位置归于原点</span></span><br><span class="line">        <span class="comment">//_interpolateScreenPos += _dragScreenPos - _originScreenPos;//将插值点随摇杆位置一起归位</span></span><br><span class="line">        _interpolateScreenPos = _dragScreenPos;<span class="comment">//</span></span><br><span class="line">        _originScreenPos = _dragScreenPos;<span class="comment">//</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Update</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _interpolateScreenPos = Vector2.Lerp(_interpolateScreenPos, _dragScreenPos, Time.deltaTime * _sensitivity);</span><br><span class="line">        Vector2 dir = _interpolateScreenPos - _originScreenPos;</span><br><span class="line">        dir /= _joyStick.GetJoyStickRadius();</span><br><span class="line">        dir = dir.sqrMagnitude &gt; <span class="number">1</span> ? dir.normalized : dir;</span><br><span class="line">        MoveDir = dir;</span><br><span class="line">        MoveLen = dir.magnitude;</span><br><span class="line">        _joyStick.SetJoyStick(dir);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/12/23/Joy-Stick-Function/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2020/12/23/Joy-Stick-Function/" class="post-title-link" itemprop="url">摇杆实现方法1</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-23 22:01:00" itemprop="dateCreated datePublished" datetime="2020-12-23T22:01:00+08:00">2020-12-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-07 19:46:52" itemprop="dateModified" datetime="2021-07-07T19:46:52+08:00">2021-07-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Component/" itemprop="url" rel="index"><span itemprop="name">Component</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><img src="/blogs/images/src/ezgif.com-gif-maker-1.gif" alt="wwwwwww"><br>自己做了个飞行模拟的小游戏，发布到手机上需要用到摇杆来控制，所以自己写了一个Joystick类，代码如下：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> UnityEngine.EventSystems;</span><br><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> UGUI游戏摇杆</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Joystick</span> : <span class="title">MonoBehaviour</span>, <span class="title">IPointerDownHandler</span>, <span class="title">IPointerUpHandler</span>, <span class="title">IDragHandler</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Joystick instance;</span><br><span class="line">    [<span class="meta">SerializeField</span>] Camera uiCamera;<span class="comment">//摇杆对应的ui摄像机</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] RectTransform _triggerArea;<span class="comment">//触发启动摇杆区域</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] RectTransform _joyStickArea;<span class="comment">//摇杆活动区域</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] RectTransform centerTrans;<span class="comment">//摇杆图标</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] <span class="built_in">float</span> sensitivity = <span class="number">1</span>;<span class="comment">//摇杆灵敏度</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] <span class="built_in">float</span> triggerAreaScale = <span class="number">1</span>;<span class="comment">//摇杆控制区域</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆偏移方向</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> Vector2 moveDir &#123; <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆偏移长度[0-1]</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> moveLen &#123; <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 是否在操控摇杆</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">bool</span> isDraging &#123; <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆横向偏移量</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> Horizontal &#123; <span class="keyword">get</span> &#123; <span class="keyword">return</span> moveDir.x * moveLen; &#125; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆纵向偏移量</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> Vertical &#123; <span class="keyword">get</span> &#123; <span class="keyword">return</span> moveDir.y * moveLen; &#125; &#125;</span><br><span class="line"></span><br><span class="line">    Canvas _canvas;</span><br><span class="line">    Canvas canvas &#123; <span class="keyword">get</span> &#123; <span class="keyword">if</span> (_canvas == <span class="literal">null</span>) _canvas = transform.GetComponentInParent&lt;Canvas&gt;(); <span class="keyword">return</span> _canvas; &#125; &#125;</span><br><span class="line">    Vector3 targetScreenPointPos = Vector3.zero;</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">    <span class="built_in">float</span> radius = <span class="number">0f</span>;</span><br><span class="line">    Vector3 centerScreenPos;</span><br><span class="line">    <span class="built_in">float</span> depth &#123; <span class="keyword">get</span> &#123; <span class="keyword">return</span> centerScreenPos.z; &#125; &#125;</span><br><span class="line">    <span class="built_in">bool</span> hasInit = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Action onJoyStickPointerUp;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Start</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        instance = <span class="keyword">this</span>;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnEnable</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        InitParam();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnDisable</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        isDraging = <span class="literal">false</span>;</span><br><span class="line">        targetScreenPointPos = centerScreenPos;</span><br><span class="line">        centerTrans.localPosition = Vector3.zero;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">InitParam</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">if</span> (hasInit) <span class="keyword">return</span>;</span><br><span class="line">        hasInit = <span class="literal">true</span>;</span><br><span class="line">        centerScreenPos = uiCamera.WorldToScreenPoint(_joyStickArea.position);</span><br><span class="line">        Rect rect = RectTransformUtility.PixelAdjustRect(_joyStickArea, canvas);</span><br><span class="line">        radius = triggerAreaScale * rect.width/<span class="number">2</span>;</span><br><span class="line">        targetScreenPointPos = centerScreenPos;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnPointerDown</span>(<span class="params">PointerEventData eventData</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        InitParam();</span><br><span class="line">        Vector2 pointScreenPos = eventData.position;</span><br><span class="line">        <span class="comment">//if (Vector2.Distance(pointScreenPos, centerScreenPos) &gt; radius) return;</span></span><br><span class="line"></span><br><span class="line">        isDraging = <span class="literal">true</span>;</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        <span class="comment">//targetScreenPointPos = uiCamera.WorldToScreenPoint(eventData.pointerCurrentRaycast.worldPosition);</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnDrag</span>(<span class="params">PointerEventData eventData</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">if</span> (!isDraging) <span class="keyword">return</span>;</span><br><span class="line">        Vector3 pointScreenPos = eventData.position;</span><br><span class="line">        pointScreenPos.z = depth;</span><br><span class="line">        Vector3 dir = pointScreenPos - centerScreenPos;</span><br><span class="line">        <span class="built_in">float</span> len = dir.magnitude;</span><br><span class="line">        len = len &gt; radius ? radius : len;</span><br><span class="line">        dir = len * dir.normalized;</span><br><span class="line">        targetScreenPointPos = centerScreenPos + dir;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnPointerUp</span>(<span class="params">PointerEventData eventData</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        isDraging = <span class="literal">false</span>;</span><br><span class="line">        targetScreenPointPos = centerScreenPos;</span><br><span class="line">        onJoyStickPointerUp?.Invoke();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Update</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Vector3 screenPointPos = uiCamera.WorldToScreenPoint(centerTrans.position);</span><br><span class="line">        <span class="keyword">if</span>(Vector3.Distance(screenPointPos, targetScreenPointPos)&lt;<span class="number">4</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            screenPointPos = targetScreenPointPos;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            screenPointPos = Vector3.Lerp(screenPointPos, targetScreenPointPos, sensitivity * Time.deltaTime);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        centerTrans.position = uiCamera.ScreenToWorldPoint(screenPointPos);</span><br><span class="line">        moveDir = screenPointPos - centerScreenPos;</span><br><span class="line">        moveDir /= radius;</span><br><span class="line">        moveLen = moveDir.magnitude;</span><br><span class="line">        moveLen = moveLen &gt; <span class="number">1</span> ? <span class="number">1</span> : moveLen;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过属性器可以获取当前摇杆的状态参数，包括偏移方向以及强度，方向是360度，强度是[0-1]。还有几个<code>SerializeField</code>面板设置参数，结构如下图：<br><img src="/blogs/images/src/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20201223220715.png"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/12/20/OpenGL-Rendering-Pipeline/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -194,7 +513,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-06 20:32:07" itemprop="dateModified" datetime="2021-07-06T20:32:07+08:00">2021-07-06</time>
+                <time title="修改时间：2021-07-07 19:46:52" itemprop="dateModified" datetime="2021-07-07T19:46:52+08:00">2021-07-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -280,7 +599,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-06 20:32:07" itemprop="dateModified" datetime="2021-07-06T20:32:07+08:00">2021-07-06</time>
+                <time title="修改时间：2021-07-07 19:46:52" itemprop="dateModified" datetime="2021-07-07T19:46:52+08:00">2021-07-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -372,7 +691,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-06 20:32:07" itemprop="dateModified" datetime="2021-07-06T20:32:07+08:00">2021-07-06</time>
+                <time title="修改时间：2021-07-07 19:46:52" itemprop="dateModified" datetime="2021-07-07T19:46:52+08:00">2021-07-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -483,7 +802,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-06 20:32:07" itemprop="dateModified" datetime="2021-07-06T20:32:07+08:00">2021-07-06</time>
+                <time title="修改时间：2021-07-07 19:46:52" itemprop="dateModified" datetime="2021-07-07T19:46:52+08:00">2021-07-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -572,7 +891,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-06 20:32:07" itemprop="dateModified" datetime="2021-07-06T20:32:07+08:00">2021-07-06</time>
+                <time title="修改时间：2021-07-07 19:46:52" itemprop="dateModified" datetime="2021-07-07T19:46:52+08:00">2021-07-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -693,7 +1012,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-06 20:32:07" itemprop="dateModified" datetime="2021-07-06T20:32:07+08:00">2021-07-06</time>
+                <time title="修改时间：2021-07-07 19:46:52" itemprop="dateModified" datetime="2021-07-07T19:46:52+08:00">2021-07-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -854,7 +1173,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-06 20:32:07" itemprop="dateModified" datetime="2021-07-06T20:32:07+08:00">2021-07-06</time>
+                <time title="修改时间：2021-07-07 19:46:52" itemprop="dateModified" datetime="2021-07-07T19:46:52+08:00">2021-07-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -882,270 +1201,6 @@
 
       
           
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/11/21/Markdown-Main/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2020/11/21/Markdown-Main/" class="post-title-link" itemprop="url">Markdown Main</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-11-21 11:01:34" itemprop="dateCreated datePublished" datetime="2020-11-21T11:01:34+08:00">2020-11-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-06 20:32:07" itemprop="dateModified" datetime="2021-07-06T20:32:07+08:00">2021-07-06</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Markdown/" itemprop="url" rel="index"><span itemprop="name">Markdown</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Markdown/Main/" itemprop="url" rel="index"><span itemprop="name">Main</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h2><p><a target="_blank" rel="noopener" href="https://daringfireball.net/projects/downloads/Markdown_1.0.1.zip">Markdown 1.0.1</a></p>
-<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>Markdown是一种将text转换为HTML的工具。通过Markdown，我们可以编辑纯文本，然后转换得到一个有效的XHTML或HTML。<br>因此，Markdown包含两个部分：</p>
-<ul>
-<li>纯文本格式化语法；</li>
-<li>通过Perl语言写的软件工具，可以根据前面的语法将纯文本转换为HTML。</li>
-</ul>
-<p><a href="https://tyson-wu.github.io/myblog/2020/11/20/Markdown-Syntax/">Syntax</a>介绍了Markdown格式转换的语法细节。我们还可所以使用<a target="_blank" rel="noopener" href="https://daringfireball.net/projects/markdown/dingus">Dingus</a>进行在线验证。<br>重新设计Markdown格式转换语法的目的，是为了使它更易读。新语法的核心思想是，编写好的Markdown文案是可发布的、且不带格式的纯文本。虽然Markdown的语法受现有的一些文本-HTML过滤器的影响，但其最大的灵感来源是纯文本邮件的格式。<br>感受Markdown语法最直接的方法是查看使用Mardkown格式语法的文档。例如，我们可以直接浏览<a target="_blank" rel="noopener" href="http://daringfireball.net/projects/markdown/index.text">源文件</a>。</p>
-<p>Markdown是基于BSD开源声明的开源免费软件。更多细节，请查看<a target="_blank" rel="noopener" href="https://daringfireball.net/projects/markdown/license">声明</a>。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/11/19/Camera-Depth-Texture/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2020/11/19/Camera-Depth-Texture/" class="post-title-link" itemprop="url">Camera’s Depth Texture</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-11-19 17:01:34" itemprop="dateCreated datePublished" datetime="2020-11-19T17:01:34+08:00">2020-11-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-06 20:32:07" itemprop="dateModified" datetime="2021-07-06T20:32:07+08:00">2021-07-06</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Shader/Depth-Texture/" itemprop="url" rel="index"><span itemprop="name">Depth Texture</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/class-Camera.html">Camera</a>可以创建深度图、深度+法向纹理、运动向量图。这算是一种简化版的G-buffer，这些纹理图可以用在post-processing中，从而实现自定义的光照模型。我们也可以使用<a href="/blogs/2020/11/22/Rendering-with-Replaced-Shaders/">Shader Replacement</a>创建这类纹理图。<br>Camera虽然内置了创建深度图的功能，但是通常该功能是关闭的，需要在脚本中通过<a target="_blank" rel="noopener" href="https://docs.unity3d.com/ScriptReference/Camera-depthTextureMode.html">Camera.depthTextureMode</a>来启用该功能。<br>Unity提供了三种深度图纹理模式：</p>
-<ul>
-<li>DepthTextureMode.Depth：纯<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-DepthTextures.html">深度图</a>。默认情况下生成的深度值的范围是[0-1]，且是非线性分布。</li>
-<li>DepthTextureMode.DepthNormals：同时包含深度和法向量信息。</li>
-<li>DepthTextureMode.MotionVectors：在屏幕空间内，每个像素点在当前帧的运动向量。这是一张RG16的纹理图，只有两个通道，每个通道深度为16。</li>
-</ul>
-<p>这几种模式采用的是位标记，也就是说可以两两组合。例如，我需要深度图和运动向量图，可以执行以下操作：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">camera.depthTextureMode = DepthTextureMode.Depth | DepthTextureMode.MotionVectors;</span><br></pre></td></tr></table></figure>
-
-<h2 id="DepthTextureMode-Depth-texture"><a href="#DepthTextureMode-Depth-texture" class="headerlink" title="DepthTextureMode.Depth texture"></a>DepthTextureMode.Depth texture</h2><p>此模式会创建一张屏幕大小的<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-DepthTextures.html">深度图</a>。<br>深度图渲染是在ShadowCaster pass中执行的，ShadowCaster pass也是用来实现阴影采集的Shader pass。因此，如果游戏物体所挂载的Shader不支持Shadow casting，也就是Shader中没有shadow caster pass，那么这个游戏物体不会被渲染到深度图中。<br>因此，当我们需要渲染某些物体的深度图时，需要保证：</p>
-<ul>
-<li>这些物体所挂载的Shader或者其fallback中的Shader具有shadow casting pass。或者</li>
-<li>使用<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-SurfaceShaders.html">surface shader</a>，然后加入addshadow标识符，使得表面着色器能够生成shadow pass。</li>
-</ul>
-<p>需要注意的是，只有”RenderType”=”Opaque”的物体会被渲染到深度图中。这些物体被认为是实体，在渲染队列中的编号&lt;=2500。</p>
-<h2 id="DepthTextureMode-DepthNormals-texture"><a href="#DepthTextureMode-DepthNormals-texture" class="headerlink" title="DepthTextureMode.DepthNormals texture"></a>DepthTextureMode.DepthNormals texture</h2><p>此模式会创建一张屏幕大小、深度为8、32位的纹理图。其中基于观察坐标系的法向量被存储到R&amp;G通道中，而深度被存到B&amp;A通道中。其中法向量是采用立体投影的方式进行编码，而深度是16位精度的浮点数。<br>在[UnityCG.cginc]文件中有一个DecodeDepthNormal可以用来对这里的深度以及法向量进行解码。其中解码后的深度值是范围为[0,1]的小数。<br>可以参考<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/PostProcessing-AmbientOcclusion.html">屏幕空间环境遮罩</a>的图像后处理教程。</p>
-<h2 id="DepthTextureMode-MotionVectors-texture"><a href="#DepthTextureMode-MotionVectors-texture" class="headerlink" title="DepthTextureMode.MotionVectors texture"></a>DepthTextureMode.MotionVectors texture</h2><p>此模式会创建一张屏幕大小的、两通道的、RG16的纹理图，每个通道占16位。基于屏幕空间的运动向量就是被编码到这两个通道中，分别表示U、V两个坐标值。<br>当采样值的范围在[-1,1]时，这表示的是上一帧与当前帧的UV偏移值，因为UV坐标的坐标值范围是[0-1]。</p>
-<h2 id="Tips-amp-Tricks"><a href="#Tips-amp-Tricks" class="headerlink" title="Tips&amp;Tricks"></a>Tips&amp;Tricks</h2><p>当Camera启用渲染深度图或深度+法向图时，Camera inspactor会有相应的提示语。<br>使用Camera.depthTextureMode方式获取深度图，当我们想关闭该功能时，需要手动设置：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">camera.depthTextureMode = DepthTextureMode.None;</span><br></pre></td></tr></table></figure>
-<p>当我们在实现复杂Shader或者图像效果时，我们要考虑到<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-PlatformDifferences.html">不同平台之间的差异性</a>。</p>
-<h2 id="Shader-variables"><a href="#Shader-variables" class="headerlink" title="Shader variables"></a>Shader variables</h2><p>当我们想在Shader中使用由camera.depthTextureMode方法生成深度图时，在Shader中可以声明_CameraDepthTexture变量：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sampler2D _CameraDepthTexture;</span><br></pre></td></tr></table></figure>
-<p>_CameraDepthTexture是全局Shader属性，任何Shader都可以声明并访问该变量。_CameraDepthTexture总是指向摄像机的主深度图(我理解的是当前帧第一张深度纹理)。还有_LastCameraDepthTexture，用来指向最后一个深度图(好绕。。。)。例如我们在脚本中使用第二个Camera来获取分辨率减半的纹理图。<br>如果生成的是运动向量图，那么可以使用_CameraMotionVectorsTexture这个全局属性。<br>这里强调这些纹理图是使用camera.depthTextureMode方式生成的。因为除此之外，还可以使用<a href="/blogs/2020/11/22/Rendering-with-Replaced-Shaders/">Relapcement Shader</a>的方式，但是这种方式生成的纹理不会自动写入到上面这几个全局变量中。</p>
-<h2 id="Under-the-hood"><a href="#Under-the-hood" class="headerlink" title="Under the hood"></a>Under the hood</h2><p>本节所讲的深度图，是Camera的内置功能，不需要使用者考虑如何实现。但是这种内置的深度图生成方法，却是与所使用的rendering path和硬件平台有关。通常情况下，Deferred Shading或者Legacy Deferred Lighting这两种rendering path，会自动生成深度图并存放在G-Buffer中。另外，有一些平台在渲染的时候，会自动将深度信息缓存到Depth buffer。如果前面两种情况都不满足的话，那么引擎会额外开一个Pass来生成深度图，这种额外的方式就是<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-ShaderReplacement.html">Shader Replacement</a>，因此我们需要准确的使用RenderType这个标签。例如”RenderType”=”Transparent”的物体的深度信息可能会采集不到。<br>MotionVectors纹理图是通过额外开启一个Pass生成的。只有运动的物体会被采集，通过对别前后帧物体的运动来计算像素运动向量。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/11/12/vertex-position-at-different-stage/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2020/11/12/vertex-position-at-different-stage/" class="post-title-link" itemprop="url">顶点着色器中的坐标变化</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-11-12 19:01:34" itemprop="dateCreated datePublished" datetime="2020-11-12T19:01:34+08:00">2020-11-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-06 20:32:07" itemprop="dateModified" datetime="2021-07-06T20:32:07+08:00">2021-07-06</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote><p>We are all in the gutter, but some of us are looking at the stars.</p>
-</blockquote>
-
-<p>下图展示了顶点坐标在顶点着色器中的不同阶段的变化。<br><img src="/blogs/images/src/13765939_10153839732515897_1876395612751424638_o.jpg" alt="wwwwwww"></p>
-<p>其中NDC空间的z值，在DirectX和Opengl中的范围是不一样的：</p>
-<ul>
-<li>在DirectX中，NDC的z值范围是[0,1];</li>
-<li>在Opengl中，NDC的z值范围是[-1,1];</li>
-</ul>
-<p>其中裁剪是发生在裁剪空间，而不是NDC空间。具体一点是在MVP转换之后，在透视除法之前。这样做可以减少除法执行的次数，提高硬件效率。因为先裁剪后做透视除法，可以剔除大量不会被显示的顶点，进而减少透视除法的次数。</p>
-
       
     </div>
 
@@ -1231,7 +1286,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-count">44</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

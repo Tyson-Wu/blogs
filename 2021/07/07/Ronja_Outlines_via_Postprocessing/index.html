@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blogs/images/girl_180_0.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blogs/images/girl_32_0.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blogs/images/girl_16_0.png">
+  <link rel="mask-icon" href="/blogs/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blogs/css/main.css">
+
+
+<link rel="stylesheet" href="/blogs/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"tyson-wu.github.io","root":"/blogs/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="原文：Postprocessing with Normal Texture Summary边界后处理算是我最喜欢的后处理了。通过后处理的方式实现边缘绘制有很多优势，不需要修改模型原本的材质着色器，边缘检测的效果相比也更好。 阅读本文前，需要掌握深度法向纹理相关的知识，如果你不曾了解，建议你阅读我之前的教程。 Depth Outlines这里我们还是沿续上一篇关于深度法向贴图的教程，并且使用之前的脚">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Postprocessing with Normal Texture">
+<meta property="og:url" content="https://tyson-wu.github.io/blogs/2021/07/07/Ronja_Outlines_via_Postprocessing/index.html">
+<meta property="og:site_name" content="TysonWu&#39;s Blog">
+<meta property="og:description" content="原文：Postprocessing with Normal Texture Summary边界后处理算是我最喜欢的后处理了。通过后处理的方式实现边缘绘制有很多优势，不需要修改模型原本的材质着色器，边缘检测的效果相比也更好。 阅读本文前，需要掌握深度法向纹理相关的知识，如果你不曾了解，建议你阅读我之前的教程。 Depth Outlines这里我们还是沿续上一篇关于深度法向贴图的教程，并且使用之前的脚">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/019/Result.gif">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/019/LeftWhite.png">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/019/DepthOutlines.png">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/019/NormalOutlines.png">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/019/CombinedOutlines.png">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/019/Inspector.png">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/019/TweakedOutlines.png">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/019/Result.png">
+<meta property="article:published_time" content="2021-07-07T04:01:00.000Z">
+<meta property="article:modified_time" content="2021-07-07T11:46:52.677Z">
+<meta property="article:author" content="Tyson Wu">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="Shader">
+<meta property="article:tag" content="翻译">
+<meta property="article:tag" content="ronja">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.ronja-tutorials.com/assets/images/posts/019/Result.gif">
+
+<link rel="canonical" href="https://tyson-wu.github.io/blogs/2021/07/07/Ronja_Outlines_via_Postprocessing/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Postprocessing with Normal Texture | TysonWu's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blogs/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">TysonWu's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">AiCooXiao</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blogs/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blogs/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/blogs/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blogs/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blogs/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/07/Ronja_Outlines_via_Postprocessing/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Postprocessing with Normal Texture
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-07-07 12:01:00 / 修改时间：19:46:52" itemprop="dateCreated datePublished" datetime="2021-07-07T12:01:00+08:00">2021-07-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/018-postprocessing-normal/">Postprocessing with Normal Texture</a></p>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>边界后处理算是我最喜欢的后处理了。通过后处理的方式实现边缘绘制有很多优势，不需要修改模型原本的材质着色器，边缘检测的效果相比也更好。</p>
+<p>阅读本文前，需要掌握深度法向纹理相关的知识，如果你不曾了解，建议你阅读我之前的<a href="https://tyson-wu.github.io/blogs/2021/07/06/Ronja_Postprocessing_with_Normal_Texture/">教程</a>。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/019/Result.gif"></p>
+<h2 id="Depth-Outlines"><a href="#Depth-Outlines" class="headerlink" title="Depth Outlines"></a>Depth Outlines</h2><p>这里我们还是沿续上一篇关于深度法向贴图的<a href="https://tyson-wu.github.io/blogs/2021/07/06/Ronja_Postprocessing_with_Normal_Texture/">教程</a>，并且使用之前的脚本。</p>
+<p>首先我们将上一个教程中关于顶部着色的部分删掉，与之相关的变量也可以删掉，还有后处理脚本中的变换矩阵。然后我们将片段着色器中计算深度和法向之后的所有代码删除掉。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//材质面板</span></span><br><span class="line">Properties&#123;</span><br><span class="line">    [HideInInspector]_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//片段着色器</span></span><br><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    <span class="comment">//深度法向采样</span></span><br><span class="line">    float4 depthnormal = tex2D(_CameraDepthNormalsTexture, i.uv);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//深度法向解码</span></span><br><span class="line">    float3 normal;</span><br><span class="line">    <span class="keyword">float</span> depth;</span><br><span class="line">    DecodeDepthNormal(depthnormal, depth, normal);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//还原深度值</span></span><br><span class="line">    depth = depth * _ProjectionParams.z;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后删除后处理脚本中的向着色器传递矩阵的命令。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//场景渲染完后，会调用该函数</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">OnRenderImage</span><span class="params">(RenderTexture source, RenderTexture destination)</span></span>&#123;</span><br><span class="line">    <span class="comment">//执行后处理</span></span><br><span class="line">    Graphics.Blit(source, destination, postprocessMaterial);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>计算轮廓的方法是对判断定点周围进行采样，然后对比其与周围点之间的深度、法向差，差别越大，是轮廓点的概率就越大。</p>
+<p>对周围点进行准确采样，首先我们需要知道纹理的大小，因为采样时使用的UV坐标，其范围是0-1，需要根据纹理大小计算单个像素的uv步长。而这个纹理大小的参数和之前提到的纹理缩放偏移参数类似，都是和纹理相关的，所以有一定的命名规则。这个规则就是纹理变量的名称加上<code>_TexelSize</code>后缀。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//深度纹理图变量</span></span><br><span class="line">sampler2D _CameraDepthNormalsTexture;</span><br><span class="line"><span class="comment">//深度纹理图的尺寸，前两个是长宽的倒数，后两个是长宽</span></span><br><span class="line">float4 _CameraDepthNormalsTexture_TexelSize;</span><br></pre></td></tr></table></figure>
+<p>然后我们针对当前采样点偏移几个像素，计算其周围采样点的值。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//偏移offset个像素点，对周围进行采样</span></span><br><span class="line">float4 neighborDepthnormal = tex2D(_CameraDepthNormalsTexture, </span><br><span class="line">        uv + _CameraDepthNormalsTexture_TexelSize.xy * offset);</span><br><span class="line">float3 neighborNormal;</span><br><span class="line"><span class="keyword">float</span> neighborDepth;</span><br><span class="line">DecodeDepthNormal(neighborDepthnormal, neighborDepth, neighborNormal);</span><br><span class="line">neighborDepth = neighborDepth * _ProjectionParams.z;</span><br></pre></td></tr></table></figure>
+
+<p>然后我们求这两个采样点之间的差，并显示到屏幕上。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> difference = depth - neightborDepth;</span><br><span class="line"><span class="keyword">return</span> difference;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/019/LeftWhite.png"></p>
+<p>在上图中我们提取了图片左侧的轮廓。在处理剩下的采样点之前，我们先把采样部分的代码封装成一个函数，这样我们就不需要重复写这一段共同的代码了。这个函数需要中心点的深度值、uv、以及像素偏移值。</p>
+<p>然后我们将片段着色其中的代码拷贝到我们新创建的函数中，并且把相应部分的变量调整一下。然后在片段着色器中调用这个函数。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Compare</span><span class="params">(<span class="keyword">float</span> baseDepth, float2 uv, float2 offset)</span></span>&#123;</span><br><span class="line">    <span class="comment">//偏移offset个像素点，对周围进行采样</span></span><br><span class="line">    float4 neighborDepthnormal = tex2D(_CameraDepthNormalsTexture, </span><br><span class="line">            uv + _CameraDepthNormalsTexture_TexelSize.xy * offset);</span><br><span class="line">    float3 neighborNormal;</span><br><span class="line">    <span class="keyword">float</span> neighborDepth;</span><br><span class="line">    DecodeDepthNormal(neighborDepthnormal, neighborDepth, neighborNormal);</span><br><span class="line">    neighborDepth = neighborDepth * _ProjectionParams.z;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> baseDepth - neighborDepth;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> depthDifference = Compare(depth, i.uv, float2(<span class="number">1</span>, <span class="number">0</span>));</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> depthDifference;</span><br></pre></td></tr></table></figure>
+
+<p>修改完后运行程序，会发现效果和原来的一样，但是我们可以使用<code>Compare</code>快速的选择其他采样点。例如这里的上下左右四个方向，然后将所有结果求和。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//片段着色器</span></span><br><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    <span class="comment">//中心点的深度法向采样</span></span><br><span class="line">    float4 depthnormal = tex2D(_CameraDepthNormalsTexture, i.uv);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//法向深度解码</span></span><br><span class="line">    float3 normal;</span><br><span class="line">    <span class="keyword">float</span> depth;</span><br><span class="line">    DecodeDepthNormal(depthnormal, depth, normal);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//还原深度值</span></span><br><span class="line">    depth = depth * _ProjectionParams.z;</span><br><span class="line">    <span class="comment">//计算在上下左右四个方向的差值</span></span><br><span class="line">    <span class="keyword">float</span> depthDifference = Compare(depth, i.uv, float2(<span class="number">1</span>, <span class="number">0</span>));</span><br><span class="line">    depthDifference = depthDifference + Compare(depth, i.uv, float2(<span class="number">0</span>, <span class="number">1</span>));</span><br><span class="line">    depthDifference = depthDifference + Compare(depth, i.uv, float2(<span class="number">0</span>, <span class="number">-1</span>));</span><br><span class="line">    depthDifference = depthDifference + Compare(depth, i.uv, float2(<span class="number">-1</span>, <span class="number">0</span>));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> depthDifference;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/019/DepthOutlines.png"></p>
+<h2 id="Normal-Outlines"><a href="#Normal-Outlines" class="headerlink" title="Normal Outlines"></a>Normal Outlines</h2><p>使用深度图得到的轮廓已经蛮清晰了，但是我们还可以进一步使用法向数据来计算轮廓。我们同样是在<code>Compare</code>函数中实现法向采样，因为函数只能返回一个值，所以我们这里使用<code>inout</code>来返回结果。另外我们还需要向函数中传递中心点的法向，来求解其与周边的差值。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Compare</span><span class="params">(inout <span class="keyword">float</span> depthOutline, inout <span class="keyword">float</span> normalOutline,  <span class="keyword">float</span> baseDepth, float3 baseNormal, float2 uv, float2 offset)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在我们的<code>Compare</code>函数已经可以处理深度和法向两种计算轮廓的数据，那么我们也需要在片段着色器中做相应的改动。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Compare</span><span class="params">(inout <span class="keyword">float</span> depthOutline, inout <span class="keyword">float</span> normalOutline, </span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">float</span> baseDepth, float3 baseNormal, float2 uv, float2 offset)</span></span>&#123;</span><br><span class="line">    <span class="comment">//附近点采样</span></span><br><span class="line">    float4 neighborDepthnormal = tex2D(_CameraDepthNormalsTexture, </span><br><span class="line">            uv + _CameraDepthNormalsTexture_TexelSize.xy * offset);</span><br><span class="line">    float3 neighborNormal;</span><br><span class="line">    <span class="keyword">float</span> neighborDepth;</span><br><span class="line">    DecodeDepthNormal(neighborDepthnormal, neighborDepth, neighborNormal);</span><br><span class="line">    neighborDepth = neighborDepth * _ProjectionParams.z;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">float</span> depthDifference = baseDepth - neighborDepth;</span><br><span class="line">    depthOutline = depthOutline + depthDifference;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> depthDifference = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">float</span> normalDifference = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">Compare(depthDifference, normalDifference, depth, normal, i.uv, float2(<span class="number">1</span>, <span class="number">0</span>));</span><br><span class="line">Compare(depthDifference, normalDifference, depth, normal, i.uv, float2(<span class="number">0</span>, <span class="number">1</span>));</span><br><span class="line">Compare(depthDifference, normalDifference, depth, normal, i.uv, float2(<span class="number">0</span>, <span class="number">-1</span>));</span><br><span class="line">Compare(depthDifference, normalDifference, depth, normal, i.uv, float2(<span class="number">-1</span>, <span class="number">0</span>));</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> depthDifference;</span><br></pre></td></tr></table></figure>
+
+<p>上面对代码结构进行扩展，但是并没有改变实际的功能，因此输出的结果没有什么变化。现在我们继续处理临近点法向的差，求法向的差最简单且方便的做法是计算两个法向之间的点乘。法向越接近点乘越大，完全逆向时点乘为-1。这里我们希望差异越大越接近1，差异越小越接近0，所以需要做一个数值映射。ps:不过下面的法向差并不是通过点乘来实现的。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">float3 normalDifference = baseNormal - neighborNormal;</span><br><span class="line">normalDifference = normalDifference.r + normalDifference.g + normalDifference.b;</span><br><span class="line">normalOutline = normalOutline + normalDifference;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> normalDifference;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/019/NormalOutlines.png"></p>
+<p>上面得到的基于法向纹理的边缘检测结果和基于深度的有所不同，我们可以将两者结合得到一个更加清晰的轮廓。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> depthDifference + normalDifference;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/019/CombinedOutlines.png"></p>
+<h2 id="Customizable-Outlines"><a href="#Customizable-Outlines" class="headerlink" title="Customizable Outlines"></a>Customizable Outlines</h2><p>我们基本上实现了边缘绘制的效果，但是我们还可以加一些可控参数来对最终的轮廓效果进行微调。这里我们分别针对深度、法向轮廓引入两个因子，来控制两者的强弱，还有两个偏移量，来剔除弱边缘。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//材质面板属性</span></span><br><span class="line">Properties&#123;</span><br><span class="line">    [HideInInspector]_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">    _NormalMult (<span class="string">&quot;Normal Outline Multiplier&quot;</span>, Range(<span class="number">0</span>,<span class="number">4</span>)) = <span class="number">1</span></span><br><span class="line">    _NormalBias (<span class="string">&quot;Normal Outline Bias&quot;</span>, Range(<span class="number">1</span>,<span class="number">4</span>)) = <span class="number">1</span></span><br><span class="line">    _DepthMult (<span class="string">&quot;Depth Outline Multiplier&quot;</span>, Range(<span class="number">0</span>,<span class="number">4</span>)) = <span class="number">1</span></span><br><span class="line">    _DepthBias (<span class="string">&quot;Depth Outline Bias&quot;</span>, Range(<span class="number">1</span>,<span class="number">4</span>)) = <span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//hlsl 中对应的公共变量</span></span><br><span class="line"><span class="keyword">float</span> _NormalMult;</span><br><span class="line"><span class="keyword">float</span> _NormalBias;</span><br><span class="line"><span class="keyword">float</span> _DepthMult;</span><br><span class="line"><span class="keyword">float</span> _DepthBias;</span><br></pre></td></tr></table></figure>
+<p>这四个变量是在片段着色器中使用的，当计算完中心点与所有方向的临近点的差值后，将其乘以上面的因子，然后将结果限制在0-1之间，最后使用指数函数，来弱化弱边缘。最终将两种边缘求和。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">depthDifference = depthDifference * _DepthMult;</span><br><span class="line">depthDifference = saturate(depthDifference);</span><br><span class="line">depthDifference = <span class="built_in">pow</span>(depthDifference, _DepthBias);</span><br><span class="line"></span><br><span class="line">normalDifference = normalDifference * _NormalMult;</span><br><span class="line">normalDifference = saturate(normalDifference);</span><br><span class="line">normalDifference = <span class="built_in">pow</span>(normalDifference, _NormalBias);</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> depthDifference + normalDifference;</span><br></pre></td></tr></table></figure>
+
+<p>现在我们可以在材质面板上控制这些参数，从而对轮廓效果进行微调。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/019/Inspector.png"><br><img src="https://www.ronja-tutorials.com/assets/images/posts/019/TweakedOutlines.png"></p>
+<p>最后我们想给轮廓上色，同时将轮廓叠加到原图上。所以我们要定义一个轮廓颜色变量。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_OutlineColor (<span class="string">&quot;Outline Color&quot;</span>, Color) = (<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">float4 _OutlineColor;</span><br></pre></td></tr></table></figure>
+<p>我们只需要在片段着色其中对原图进行采样，然后根据轮廓值，对原图和轮廓颜色进行插值，轮廓值为1的采用轮廓颜色，为0的采用原图颜色。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> outline = normalDifference + depthDifference;</span><br><span class="line">float4 sourceColor = tex2D(_MainTex, i.uv);</span><br><span class="line">float4 color = lerp(sourceColor, _OutlineColor, outline);</span><br><span class="line"><span class="keyword">return</span> color;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/019/Result.png"></p>
+<p>使用后处理来实现轮廓效果有一个弊端，就是整个场景画面会无差别的执行轮廓效果。你无法指定哪些物体使用轮廓线，哪些不使用。而且容易出现锯齿等不自然的表现。</p>
+<p>虽然无差别执行轮廓效果的问题不容易解决，但是锯齿类的问题可以使用<code>FXAA</code>或<code>TXAA</code>来避免。</p>
+<p>另一个需要牢记的点是，后处理轮廓只适用于哪些表面较为光滑的模型。对于那些表面细节过多的模型，其表面细节轮廓被过度绘制，导致整个画面都是线条，这可能不是你想要的结果。</p>
+<h2 id="Source"><a href="#Source" class="headerlink" title="Source"></a>Source</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/019_OutlinesPostprocessed&quot;</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//材质面板属性</span></span><br><span class="line">    Properties&#123;</span><br><span class="line">        [HideInInspector]_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">        _OutlineColor (<span class="string">&quot;Outline Color&quot;</span>, Color) = (<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>)</span><br><span class="line">        _NormalMult (<span class="string">&quot;Normal Outline Multiplier&quot;</span>, Range(<span class="number">0</span>,<span class="number">4</span>)) = <span class="number">1</span></span><br><span class="line">        _NormalBias (<span class="string">&quot;Normal Outline Bias&quot;</span>, Range(<span class="number">1</span>,<span class="number">4</span>)) = <span class="number">1</span></span><br><span class="line">        _DepthMult (<span class="string">&quot;Depth Outline Multiplier&quot;</span>, Range(<span class="number">0</span>,<span class="number">4</span>)) = <span class="number">1</span></span><br><span class="line">        _DepthBias (<span class="string">&quot;Depth Outline Bias&quot;</span>, Range(<span class="number">1</span>,<span class="number">4</span>)) = <span class="number">1</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    SubShader&#123;</span><br><span class="line">        <span class="comment">// 关闭背面剔除</span></span><br><span class="line">        <span class="comment">// 禁用深度缓存</span></span><br><span class="line">        Cull Off</span><br><span class="line">        ZWrite Off </span><br><span class="line">        ZTest Always</span><br><span class="line"></span><br><span class="line">        Pass&#123;</span><br><span class="line">            CGPROGRAM</span><br><span class="line">            <span class="comment">//引入内置函数和变量</span></span><br><span class="line">            <span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UnityCG.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">            <span class="comment">//声明顶点、片段着色器</span></span><br><span class="line">            <span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">            <span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line">            <span class="comment">//用于后处理的原图</span></span><br><span class="line">            sampler2D _MainTex;</span><br><span class="line">            <span class="comment">//深度法向纹理</span></span><br><span class="line">            sampler2D _CameraDepthNormalsTexture;</span><br><span class="line">            <span class="comment">//深度法向纹理尺寸</span></span><br><span class="line">            float4 _CameraDepthNormalsTexture_TexelSize;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//轮廓条件参数</span></span><br><span class="line">            float4 _OutlineColor;</span><br><span class="line">            <span class="keyword">float</span> _NormalMult;</span><br><span class="line">            <span class="keyword">float</span> _NormalBias;</span><br><span class="line">            <span class="keyword">float</span> _DepthMult;</span><br><span class="line">            <span class="keyword">float</span> _DepthBias;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//模型网格数据</span></span><br><span class="line">            <span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">                float4 vertex : POSITION;</span><br><span class="line">                float2 uv : TEXCOORD0;</span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//中间插值数据</span></span><br><span class="line">            <span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">                float4 position : SV_POSITION;</span><br><span class="line">                float2 uv : TEXCOORD0;</span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//顶点着色器</span></span><br><span class="line">            <span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">                v2f o;</span><br><span class="line">                <span class="comment">//变换到裁剪坐标系</span></span><br><span class="line">                o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">                o.uv = v.uv;</span><br><span class="line">                <span class="keyword">return</span> o;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="function"><span class="keyword">void</span> <span class="title">Compare</span><span class="params">(inout <span class="keyword">float</span> depthOutline, inout <span class="keyword">float</span> normalOutline, </span></span></span><br><span class="line"><span class="function"><span class="params">                    <span class="keyword">float</span> baseDepth, float3 baseNormal, float2 uv, float2 offset)</span></span>&#123;</span><br><span class="line">                <span class="comment">//临近点采样</span></span><br><span class="line">                float4 neighborDepthnormal = tex2D(_CameraDepthNormalsTexture, </span><br><span class="line">                        uv + _CameraDepthNormalsTexture_TexelSize.xy * offset);</span><br><span class="line">                float3 neighborNormal;</span><br><span class="line">                <span class="keyword">float</span> neighborDepth;</span><br><span class="line">                DecodeDepthNormal(neighborDepthnormal, neighborDepth, neighborNormal);</span><br><span class="line">                neighborDepth = neighborDepth * _ProjectionParams.z;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">float</span> depthDifference = baseDepth - neighborDepth;</span><br><span class="line">                depthOutline = depthOutline + depthDifference;</span><br><span class="line"></span><br><span class="line">                float3 normalDifference = baseNormal - neighborNormal;</span><br><span class="line">                normalDifference = normalDifference.r + normalDifference.g + normalDifference.b;</span><br><span class="line">                normalOutline = normalOutline + normalDifference;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//片段着色器</span></span><br><span class="line">            <span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">                <span class="comment">//深度法向采样</span></span><br><span class="line">                float4 depthnormal = tex2D(_CameraDepthNormalsTexture, i.uv);</span><br><span class="line"></span><br><span class="line">                <span class="comment">//深度法向解码</span></span><br><span class="line">                float3 normal;</span><br><span class="line">                <span class="keyword">float</span> depth;</span><br><span class="line">                DecodeDepthNormal(depthnormal, depth, normal);</span><br><span class="line"></span><br><span class="line">                <span class="comment">//还原深度值</span></span><br><span class="line">                depth = depth * _ProjectionParams.z;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">float</span> depthDifference = <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">float</span> normalDifference = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">                Compare(depthDifference, normalDifference, depth, normal, i.uv, float2(<span class="number">1</span>, <span class="number">0</span>));</span><br><span class="line">                Compare(depthDifference, normalDifference, depth, normal, i.uv, float2(<span class="number">0</span>, <span class="number">1</span>));</span><br><span class="line">                Compare(depthDifference, normalDifference, depth, normal, i.uv, float2(<span class="number">0</span>, <span class="number">-1</span>));</span><br><span class="line">                Compare(depthDifference, normalDifference, depth, normal, i.uv, float2(<span class="number">-1</span>, <span class="number">0</span>));</span><br><span class="line"></span><br><span class="line">                depthDifference = depthDifference * _DepthMult;</span><br><span class="line">                depthDifference = saturate(depthDifference);</span><br><span class="line">                depthDifference = <span class="built_in">pow</span>(depthDifference, _DepthBias);</span><br><span class="line"></span><br><span class="line">                normalDifference = normalDifference * _NormalMult;</span><br><span class="line">                normalDifference = saturate(normalDifference);</span><br><span class="line">                normalDifference = <span class="built_in">pow</span>(normalDifference, _NormalBias);</span><br><span class="line"></span><br><span class="line">                <span class="keyword">float</span> outline = normalDifference + depthDifference;</span><br><span class="line">                float4 sourceColor = tex2D(_MainTex, i.uv);</span><br><span class="line">                float4 color = lerp(sourceColor, _OutlineColor, outline);</span><br><span class="line">                <span class="keyword">return</span> color;</span><br><span class="line">            &#125;</span><br><span class="line">            ENDCG</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"></span><br><span class="line"><span class="comment">//挂载到后处理摄像机上</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">OutlinesPostprocessed</span> : <span class="title">MonoBehaviour</span> &#123;</span><br><span class="line">    <span class="comment">//后处理材质</span></span><br><span class="line">    [<span class="meta">SerializeField</span>]</span><br><span class="line">    <span class="keyword">private</span> Material postprocessMaterial;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Camera cam;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Start</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="comment">//设置摄像机</span></span><br><span class="line">        cam = GetComponent&lt;Camera&gt;();</span><br><span class="line">        cam.depthTextureMode = cam.depthTextureMode | DepthTextureMode.DepthNormals;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//场景渲染完后，执行该函数</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">OnRenderImage</span>(<span class="params">RenderTexture source, RenderTexture destination</span>)</span>&#123;</span><br><span class="line">        <span class="comment">//执行后处理</span></span><br><span class="line">        Graphics.Blit(source, destination, postprocessMaterial);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>希望我的教程能够对你有所帮助。</p>
+<p>你可以在以下链接找到源码：<br><a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/019_OutlinesPostprocessed/OutlinesPostprocessed.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/019_OutlinesPostprocessed/OutlinesPostprocessed.shader</a><br><a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/019_OutlinesPostprocessed/OutlinesPostprocessed.cs">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/019_OutlinesPostprocessed/OutlinesPostprocessed.cs</a></p>
+<p>希望你能喜欢这个教程哦！如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blogs/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/blogs/tags/Shader/" rel="tag"># Shader</a>
+              <a href="/blogs/tags/%E7%BF%BB%E8%AF%91/" rel="tag"># 翻译</a>
+              <a href="/blogs/tags/ronja/" rel="tag"># ronja</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blogs/2021/07/06/Ronja_Postprocessing_with_Normal_Texture/" rel="prev" title="Postprocessing with Normal Texture">
+      <i class="fa fa-chevron-left"></i> Postprocessing with Normal Texture
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blogs/2021/07/07/Ronja_Hull_Outlines/" rel="next" title="Hull Outlines">
+      Hull Outlines <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Summary"><span class="nav-number">1.</span> <span class="nav-text">Summary</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Depth-Outlines"><span class="nav-number">2.</span> <span class="nav-text">Depth Outlines</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Normal-Outlines"><span class="nav-number">3.</span> <span class="nav-text">Normal Outlines</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Customizable-Outlines"><span class="nav-number">4.</span> <span class="nav-text">Customizable Outlines</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Source"><span class="nav-number">5.</span> <span class="nav-text">Source</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Tyson Wu"
+      src="/blogs/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Tyson Wu</p>
+  <div class="site-description" itemprop="description">If you want, Just do it!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blogs/archives/">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blogs/categories/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blogs/tags/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Tyson-Wu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Tyson-Wu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/zhao-wu-zhu-43" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhao-wu-zhu-43" rel="noopener" target="_blank"><i class="知乎 fa-fw"></i>知乎</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.cnblogs.com/Hi-blog/" title="https:&#x2F;&#x2F;www.cnblogs.com&#x2F;Hi-blog&#x2F;" rel="noopener" target="_blank">starnight_cyber</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tyson Wu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blogs/lib/anime.min.js"></script>
+  <script src="/blogs/lib/velocity/velocity.min.js"></script>
+  <script src="/blogs/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blogs/js/utils.js"></script>
+
+<script src="/blogs/js/motion.js"></script>
+
+
+<script src="/blogs/js/schemes/pisces.js"></script>
+
+
+<script src="/blogs/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
