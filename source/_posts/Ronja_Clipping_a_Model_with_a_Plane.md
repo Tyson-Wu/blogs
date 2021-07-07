@@ -1,6 +1,6 @@
 ---
 title: Clipping a Model with a Plane
-date: 2021-07-07 13:01:00
+date: 2021-07-07 19:01:00
 categories:
 - [Unity, Shader]
 tags:
