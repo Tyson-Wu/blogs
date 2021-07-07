@@ -163,6 +163,121 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/04/06/Unity-Editor/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/04/06/Unity-Editor/" class="post-title-link" itemprop="url">Unity Editor</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-06 10:01:00" itemprop="dateCreated datePublished" datetime="2021-04-06T10:01:00+08:00">2021-04-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-07 21:36:33" itemprop="dateModified" datetime="2021-07-07T21:36:33+08:00">2021-07-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Editor/" itemprop="url" rel="index"><span itemprop="name">Editor</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="获取当前选择的目录"><a href="#获取当前选择的目录" class="headerlink" title="获取当前选择的目录"></a>获取当前选择的目录</h2><pre><code class="C#">public static string GetCurrentAssetDirectory()
+&#123;
+    foreach(var obj in Selection.GetFiltered&lt;Object&gt;(SelectionMode.Assets))
+    &#123;
+        var path = AssetDataBase.GetAssetPath(obj);
+        if(string.IsNullOrEmpty(path))
+        &#123;
+            return path;
+        &#125;
+        else if(System.IO.File.Exists(path))
+        &#123;
+            return System.IO.Path.GetDirectory(path);
+        &#125;
+    &#125;
+    return &quot;Assets&quot;;
+&#125;
+```C#
+
+## 创建hlsl脚本
+```C#
+public static class AssetsMenu
+&#123;
+    [MenuItem(&quot;Assets/Create HLSL&quot;)]
+    public static void CreateHLSL()
+    &#123;
+        //string projectPath = Path.GetDirectoryName(Application.dataPath);
+
+        string assetPath = Path.Combine(GetCurrentAssetDirectory(), &quot;temp.hlsl&quot;);
+        assetPath = AssetDataBase.generateuniqueAssetPath(assetPath);
+
+        AssetDataBase.CreateAsset(new TextAsset(&quot;--&quot;, assetPath);
+        File.WriteAllText(assetPath, &quot;&quot;); // clean
+
+        AssetDataBase.SaveAssets();
+        AssetDataBase.Refresh();
+    &#125;
+&#125;
+```C#</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/01/30/EmmyLua-for-IntelliJ-IDEA/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -194,7 +309,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-07 19:46:52" itemprop="dateModified" datetime="2021-07-07T19:46:52+08:00">2021-07-07</time>
+                <time title="修改时间：2021-07-07 21:36:33" itemprop="dateModified" datetime="2021-07-07T21:36:33+08:00">2021-07-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -343,7 +458,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-07 19:46:52" itemprop="dateModified" datetime="2021-07-07T19:46:52+08:00">2021-07-07</time>
+                <time title="修改时间：2021-07-07 21:36:33" itemprop="dateModified" datetime="2021-07-07T21:36:33+08:00">2021-07-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -432,7 +547,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-07 19:46:52" itemprop="dateModified" datetime="2021-07-07T19:46:52+08:00">2021-07-07</time>
+                <time title="修改时间：2021-07-07 21:36:33" itemprop="dateModified" datetime="2021-07-07T21:36:33+08:00">2021-07-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -513,7 +628,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-07 19:46:52" itemprop="dateModified" datetime="2021-07-07T19:46:52+08:00">2021-07-07</time>
+                <time title="修改时间：2021-07-07 21:36:33" itemprop="dateModified" datetime="2021-07-07T21:36:33+08:00">2021-07-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -599,7 +714,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-07 19:46:52" itemprop="dateModified" datetime="2021-07-07T19:46:52+08:00">2021-07-07</time>
+                <time title="修改时间：2021-07-07 21:36:33" itemprop="dateModified" datetime="2021-07-07T21:36:33+08:00">2021-07-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -691,7 +806,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-07 19:46:52" itemprop="dateModified" datetime="2021-07-07T19:46:52+08:00">2021-07-07</time>
+                <time title="修改时间：2021-07-07 21:36:33" itemprop="dateModified" datetime="2021-07-07T21:36:33+08:00">2021-07-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -802,7 +917,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-07 19:46:52" itemprop="dateModified" datetime="2021-07-07T19:46:52+08:00">2021-07-07</time>
+                <time title="修改时间：2021-07-07 21:36:33" itemprop="dateModified" datetime="2021-07-07T21:36:33+08:00">2021-07-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -891,7 +1006,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-07 19:46:52" itemprop="dateModified" datetime="2021-07-07T19:46:52+08:00">2021-07-07</time>
+                <time title="修改时间：2021-07-07 21:36:33" itemprop="dateModified" datetime="2021-07-07T21:36:33+08:00">2021-07-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1012,7 +1127,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-07 19:46:52" itemprop="dateModified" datetime="2021-07-07T19:46:52+08:00">2021-07-07</time>
+                <time title="修改时间：2021-07-07 21:36:33" itemprop="dateModified" datetime="2021-07-07T21:36:33+08:00">2021-07-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1138,83 +1253,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/11/21/Markdown-Syntax/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2020/11/21/Markdown-Syntax/" class="post-title-link" itemprop="url">Markdown Syntax</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-11-21 12:01:34" itemprop="dateCreated datePublished" datetime="2020-11-21T12:01:34+08:00">2020-11-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-07 19:46:52" itemprop="dateModified" datetime="2021-07-07T19:46:52+08:00">2021-07-07</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Markdown/" itemprop="url" rel="index"><span itemprop="name">Markdown</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Markdown/Syntax/" itemprop="url" rel="index"><span itemprop="name">Syntax</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1286,7 +1324,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-count">45</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
