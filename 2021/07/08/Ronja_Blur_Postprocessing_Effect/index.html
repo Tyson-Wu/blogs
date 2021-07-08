@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blogs/images/girl_180_0.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blogs/images/girl_32_0.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blogs/images/girl_16_0.png">
+  <link rel="mask-icon" href="/blogs/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blogs/css/main.css">
+
+
+<link rel="stylesheet" href="/blogs/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"tyson-wu.github.io","root":"/blogs/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="原文：Blur Postprocessing Effect (Box and Gauss) Summary模糊效果是一个非常有用的效果，可以用来表现角色虚弱时的视线模糊，也可以用来作为过场动画。我们是通过平均屏幕局部区域的像素值来实现画面模糊的。模糊处理可以应用在很多方面，但是最常用的就是实现后处理效果。因此你可能需要提前阅读我之前的后处理教程。 Boxblur块模糊是最简单的一种模糊，只要才将局">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Blur Postprocessing Effect (Box and Gauss)">
+<meta property="og:url" content="https://tyson-wu.github.io/blogs/2021/07/08/Ronja_Blur_Postprocessing_Effect/index.html">
+<meta property="og:site_name" content="TysonWu&#39;s Blog">
+<meta property="og:description" content="原文：Blur Postprocessing Effect (Box and Gauss) Summary模糊效果是一个非常有用的效果，可以用来表现角色虚弱时的视线模糊，也可以用来作为过场动画。我们是通过平均屏幕局部区域的像素值来实现画面模糊的。模糊处理可以应用在很多方面，但是最常用的就是实现后处理效果。因此你可能需要提前阅读我之前的后处理教程。 Boxblur块模糊是最简单的一种模糊，只要才将局">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/023/Result.gif">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/023/VerticalBlur.gif">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/023/BoxBlur.gif">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/023/QualitySettings.gif">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/023/Gauss.svg">
+<meta property="og:image" content="https://www.ronja-tutorials.com/assets/images/posts/023/Result.gif">
+<meta property="article:published_time" content="2021-07-08T02:01:00.000Z">
+<meta property="article:modified_time" content="2021-07-08T11:28:00.659Z">
+<meta property="article:author" content="Tyson Wu">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="Shader">
+<meta property="article:tag" content="翻译">
+<meta property="article:tag" content="ronja">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.ronja-tutorials.com/assets/images/posts/023/Result.gif">
+
+<link rel="canonical" href="https://tyson-wu.github.io/blogs/2021/07/08/Ronja_Blur_Postprocessing_Effect/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Blur Postprocessing Effect (Box and Gauss) | TysonWu's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blogs/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">TysonWu's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">AiCooXiao</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blogs/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blogs/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/blogs/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blogs/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blogs/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/08/Ronja_Blur_Postprocessing_Effect/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Blur Postprocessing Effect (Box and Gauss)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-07-08 10:01:00 / 修改时间：19:28:00" itemprop="dateCreated datePublished" datetime="2021-07-08T10:01:00+08:00">2021-07-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/023-postprocessing-blur/">Blur Postprocessing Effect (Box and Gauss)</a></p>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>模糊效果是一个非常有用的效果，可以用来表现角色虚弱时的视线模糊，也可以用来作为过场动画。我们是通过平均屏幕局部区域的像素值来实现画面模糊的。模糊处理可以应用在很多方面，但是最常用的就是实现后处理效果。因此你可能需要提前阅读我之前的<a href="https://tyson-wu.github.io/blogs/2021/07/06/Ronja_Postprocessing_Basics/">后处理</a>教程。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/023/Result.gif"></p>
+<h2 id="Boxblur"><a href="#Boxblur" class="headerlink" title="Boxblur"></a>Boxblur</h2><p>块模糊是最简单的一种模糊，只要才将局部方块区域进行采样平均就行。为了连续对局部区域采样，我们需要使用<code>for</code>循环。然后将所有采样值求和，再除以采样个数，得到局部平均值。</p>
+<p>我们可以在前面的简单后处理脚本中做如下修改。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//片段着色器</span></span><br><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    <span class="comment">//起始值</span></span><br><span class="line">    float4 col = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">float</span> index=<span class="number">0</span>;index&lt;<span class="number">10</span>;index++)&#123;</span><br><span class="line">        <span class="comment">//将采样值叠加</span></span><br><span class="line">        col += tex2D(_MainTex, i.uv);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//求平均</span></span><br><span class="line">    col = col / <span class="number">10</span>;</span><br><span class="line">    <span class="keyword">return</span> col;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1D-Blur"><a href="#1D-Blur" class="headerlink" title="1D Blur"></a>1D Blur</h3><p>因为我们上面是连续对同一个点采样求平均，所以最终结果并没有什么变化。接下来我们将改为对不同位置进行采样。然后我们需要创建一个公共变量，来控制采样块的大小，采样块的大小是一个相对值而不是实际的像素个数，这样可以保证相同的参数对不同分辨率的图片效果一样。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//材质面板</span></span><br><span class="line">Properties&#123;</span><br><span class="line">    [HideInInspector]_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">    _BlurSize(<span class="string">&quot;Blur Size&quot;</span>, Range(<span class="number">0</span>,<span class="number">0.1</span>)) = <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> _BlurSize;</span><br></pre></td></tr></table></figure>
+
+<p>有个模糊尺寸，我们可以在每次采样中计算不同的采样点。我们将循环次数映射为0-1之间，然后减去0.5，这样得到的采样点刚好是围绕当前点。最后我们乘以模糊尺寸，就可以动态控制模糊块的大小了。<br>这里我们只处理<code>y</code>方向的采样点。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//循环采样</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">float</span> index=<span class="number">0</span>;index&lt;<span class="number">10</span>;index++)&#123;</span><br><span class="line">    <span class="comment">//计算y方向上不同的采样点坐标</span></span><br><span class="line">    float2 uv = i.uv + float2(<span class="number">0</span>, (index/<span class="number">9</span> - <span class="number">0.5</span>) * _BlurSize);</span><br><span class="line">    <span class="comment">//采样值叠加</span></span><br><span class="line">    col += tex2D(_MainTex, uv);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/023/VerticalBlur.gif"></p>
+<p>上面的采样点是沿着<code>y</code>方向的，所以模糊效果也是沿着<code>y</code>方向，但是我们希望<code>x</code>方向也模糊。我们可以在上面那个循环内再套一个循环，但是这并不是最好的方法。我们可以先执行<code>y</code>方向的模糊，然后再将模糊后的图片执行<code>x</code>方向的模糊。这样两次模糊后，就得到模糊块的平均值。</p>
+<h3 id="2D-Blur"><a href="#2D-Blur" class="headerlink" title="2D Blur"></a>2D Blur</h3><p>为了执行第二次模糊，我们重新实现一个<code>Pass</code>，我们可以将原来的代码复制过来，然后将偏移值改为沿着<code>x</code>方向。还有就是我们的模糊尺寸需要修改，如果不修改，模糊块的形状将和图片保持一致，这样就不能保证模糊块是一个方形。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//片段着色器</span></span><br><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    <span class="comment">//计算图片横纵比</span></span><br><span class="line">    <span class="keyword">float</span> invAspect = _ScreenParams.y / _ScreenParams.x;</span><br><span class="line">    <span class="comment">//用于累计的颜色变量</span></span><br><span class="line">    float4 col = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">//循环采样</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">float</span> index = <span class="number">0</span>; index &lt; <span class="number">10</span>; index++)&#123;</span><br><span class="line">        <span class="comment">//计算x方向的偏移，保证x、y两个方向的偏移像素个数相同</span></span><br><span class="line">        float2 uv = i.uv + float2((index/<span class="number">9</span> - <span class="number">0.5</span>) * _BlurSize * invAspect, <span class="number">0</span>);</span><br><span class="line">        <span class="comment">//采样值累加</span></span><br><span class="line">        col += tex2D(_MainTex, uv);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//求平均</span></span><br><span class="line">    col = col / <span class="number">10</span>;</span><br><span class="line">    <span class="keyword">return</span> col;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为了在后处理中连续使用两次<code>Pass</code>，我们需要对后处理脚本做一些修改。从前面的流程上来说，我们是先对原图进行纵向模糊，将结果存在一张临时纹理上，然后对这张临时纹理进行横向模糊，最终将结果写入目标图中。所以我们需要一张临时纹理，我们可以通过<code>RenderTexture.GetTemporary</code>函数来获取临时纹理。该函数是从纹理缓存池中获取，如果没有就会新建，然后释放该临时纹理，会将其放回纹理缓存池，以待下次使用。在执行纵向模糊时，我们要告诉Unity执行第一个<code>Pass</code>，因此可以向<code>blit</code>函数中的第四个参数传入0,表示执行第一个<code>Pass</code>，而目标图传入的是临时纹理。然后在执行横向模糊时，原图是临时纹理，目标图是最终的效果图，第四个参数传入1,表示执行第二个<code>Pass</code>。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//场景渲染完后执行该函数</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">OnRenderImage</span><span class="params">(RenderTexture source, RenderTexture destination)</span></span>&#123;</span><br><span class="line">    <span class="comment">//创建临时纹理，并执行两次模糊操作，然后释放临时纹理</span></span><br><span class="line">    var temporaryTexture = RenderTexture.GetTemporary(source.width, source.height);</span><br><span class="line">    Graphics.Blit(source, temporaryTexture, postprocessMaterial, <span class="number">0</span>);</span><br><span class="line">    Graphics.Blit(temporaryTexture, destination, postprocessMaterial, <span class="number">1</span>);</span><br><span class="line">    RenderTexture.ReleaseTemporary(temporaryTexture);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/023/BoxBlur.gif"></p>
+<h3 id="Customize-Sample-Amount"><a href="#Customize-Sample-Amount" class="headerlink" title="Customize Sample Amount"></a>Customize Sample Amount</h3><p>上面实现基本的模糊效果，但是我们可能希望控制采样个数，也就是循环次数。但是我们不能简单的将循环次数声明到公共变量，因为Unity在编译时必须确定到底采样几次，而变量是无法在编译时确定的。因为不能在循环语句中执行纹理采样，实际上前面循环在编译时就已经展开了，循环次数在编译时确定的。</p>
+<p>那么我们可以通过宏命令来定义变量，这样在编译时就是确定的了。我们在上面两个<code>Pass</code>中加入一下宏定义，然后将所有与采样次数相关的全部替换掉。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SAMPLES 10</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//片段着色器</span></span><br><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line"></span><br><span class="line">    float4 col = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">//循环采样，在编译时该循环会被展开</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">float</span> index = <span class="number">0</span>; index &lt; SAMPLES; index++)&#123;</span><br><span class="line">        <span class="comment">//计算UV偏移</span></span><br><span class="line">        float2 uv = i.uv + float2(<span class="number">0</span>, (index/(SAMPLES<span class="number">-1</span>) - <span class="number">0.5</span>) * _BlurSize);</span><br><span class="line">        <span class="comment">//采样值叠加</span></span><br><span class="line">        col += tex2D(_MainTex, uv);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//平均</span></span><br><span class="line">    col = col / SAMPLES;</span><br><span class="line">    <span class="keyword">return</span> col;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样我们就可以在代码中快速修改采样次数了。这里我们还可以进一步改进，将循环次数暴露在材质面板上，这样我们可以通过材质面板来快速修改采样次数。首先我们添加一个<code>KeywordEnum</code>属性，这个属性在材质面板上显示的是枚举变量，同时在着色器中定义相应的关键字。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//材质面板</span></span><br><span class="line">Properties&#123;</span><br><span class="line">    [HideInInspector]_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">    _BlurSize(<span class="string">&quot;Blur Size&quot;</span>, Range(<span class="number">0</span>,<span class="number">0.1</span>)) = <span class="number">0</span></span><br><span class="line">    [KeywordEnum(Low, Medium, High)] _Samples (<span class="string">&quot;Sample amount&quot;</span>, Float) = <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后在着色器代码中声明这些关键字。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> multi_compile _SAMPLES_LOW _SAMPLES_MEDIUM _SAMPLES_HIGH</span></span><br></pre></td></tr></table></figure>
+
+<p>着色器会根据这些关键字编译出不同的版本，也就是所谓的变体。当我们在材质面板上选择不同的关键字时，实际上就是切换不同的变体。然后我们针对不同的变体设置不同的采样次数。这样我们就可以通过材质面板来控制采样次数了。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">if</span> _SAMPLES_LOW</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> SAMPLES 10</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">elif</span> _SAMPLES_MEDIUM</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> SAMPLES 30</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> SAMPLES 100</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/023/QualitySettings.gif"></p>
+<h2 id="Gaussian-Blur"><a href="#Gaussian-Blur" class="headerlink" title="Gaussian Blur"></a>Gaussian Blur</h2><p>再复杂一点，我们可以使用高斯模糊。前面将的模糊是计算局部平均值，而高斯模糊将中心点的权重增加，其权重分布符合高斯分布。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/023/Gauss.svg"></p>
+<p>这个函数需要两个参数，一个是离中心点的距离，一个是标准差。在上一个模糊方法中我们已经计算了离中心点的距离，这里需要增加一个变量来控制标准差。另外还需要一个变量来选择使用普通的模糊还是高斯模糊。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//材质面板</span></span><br><span class="line">Properties&#123;</span><br><span class="line">    [HideInInspector]_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">    _BlurSize(<span class="string">&quot;Blur Size&quot;</span>, Range(<span class="number">0</span>,<span class="number">0.1</span>)) = <span class="number">0</span></span><br><span class="line">    [KeywordEnum(BoxLow, BoxMedium, BoxHigh, GaussLow, GaussHigh)] _Samples (<span class="string">&quot;Sample amount&quot;</span>, Float) = <span class="number">0</span></span><br><span class="line">    [Toggle(GAUSS)] _Gauss (<span class="string">&quot;Gaussian Blur&quot;</span>, <span class="keyword">float</span>) = <span class="number">0</span></span><br><span class="line">    _StandardDeviation(<span class="string">&quot;Standard Deviation (Gauss only)&quot;</span>, Range(<span class="number">0</span>, <span class="number">0.1</span>)) = <span class="number">0.02</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> shader_feature GAUSS</span></span><br></pre></td></tr></table></figure>
+
+<p>高斯函数中还需要的东西有圆周率和自然数，这里我一并定义了。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PI 3.14159265359</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> E 2.71828182846</span></span><br></pre></td></tr></table></figure>
+
+<p>当使用高斯函数时，我们无法确定其总的权重，所以这里引入一个新的变量<code>sum</code>，当我们使用高斯模糊时，我们将其初始化为0，然后在后面累计计算高斯的总权重，在使用普通模糊时，因为每个点的权重都是1，所以总权重就是点的个数。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">if</span> GAUSS</span></span><br><span class="line">    <span class="keyword">float</span> sum = <span class="number">0</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">    <span class="keyword">float</span> sum = SAMPLES;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<p>然后我们来修改片段着色器中的循环采样部分。首先我们计算采样点离中心点的偏移值，这个在高斯模糊中会用到。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">float</span> index = <span class="number">0</span>; index &lt; SAMPLES; index++)&#123;</span><br><span class="line">    <span class="keyword">float</span> offset = (index/(SAMPLES<span class="number">-1</span>) - <span class="number">0.5</span>) * _BlurSize;</span><br><span class="line">    <span class="comment">//计算采样点的坐标</span></span><br><span class="line">    float2 uv = i.uv + float2(<span class="number">0</span>, offset);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> !GAUSS</span></span><br><span class="line">    col += tex2D(_MainTex, uv);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">    <span class="comment">//计算高斯权重</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来我们实现高斯模糊部分，首先我们计算标准差的平方，因为在高斯函数中用到两次了。然后根据高斯函数编写表达式。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//计算高斯权重</span></span><br><span class="line"><span class="keyword">float</span> stDevSquared = _StandardDeviation*_StandardDeviation;</span><br><span class="line"><span class="keyword">float</span> gauss = (<span class="number">1</span> / <span class="built_in">sqrt</span>(<span class="number">2</span>*PI*stDevSquared)) * <span class="built_in">pow</span>(E, -((offset*offset)/(<span class="number">2</span>*stDevSquared)));</span><br></pre></td></tr></table></figure>
+
+<p>我们将计算好的高斯权重累计到<code>sum</code>变量中，并且将其与纹理采样结果进行加权平均。</p>
+<p>最后还有一个问题是标准差不能为零，所以我们加一个段保护代码，如果为零则不执行高斯模糊。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//片段着色器</span></span><br><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> GAUSS</span></span><br><span class="line">    <span class="comment">//当标准差为0时，不执行高斯模糊</span></span><br><span class="line">    <span class="keyword">if</span>(_StandardDeviation == <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> tex2D(_MainTex, i.uv);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    <span class="comment">//颜色累计</span></span><br><span class="line">    float4 col = <span class="number">0</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> GAUSS</span></span><br><span class="line">    <span class="keyword">float</span> sum = <span class="number">0</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">    <span class="keyword">float</span> sum = SAMPLES;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    <span class="comment">//循环采样</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">float</span> index = <span class="number">0</span>; index &lt; SAMPLES; index++)&#123;</span><br><span class="line">        <span class="comment">//计算离中心点的偏移</span></span><br><span class="line">        <span class="keyword">float</span> offset = (index/(SAMPLES<span class="number">-1</span>) - <span class="number">0.5</span>) * _BlurSize;</span><br><span class="line">        <span class="comment">//计算采样点坐标</span></span><br><span class="line">        float2 uv = i.uv + float2(<span class="number">0</span>, offset);</span><br><span class="line">    <span class="meta">#<span class="meta-keyword">if</span> !GAUSS</span></span><br><span class="line">        <span class="comment">//采样值累加</span></span><br><span class="line">        col += tex2D(_MainTex, uv);</span><br><span class="line">    <span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">        <span class="comment">//计算高斯权重</span></span><br><span class="line">        <span class="keyword">float</span> stDevSquared = _StandardDeviation*_StandardDeviation;</span><br><span class="line">        <span class="keyword">float</span> gauss = (<span class="number">1</span> / <span class="built_in">sqrt</span>(<span class="number">2</span>*PI*stDevSquared)) * <span class="built_in">pow</span>(E, -((offset*offset)/(<span class="number">2</span>*stDevSquared)));</span><br><span class="line">        <span class="comment">//计算总权重</span></span><br><span class="line">        sum += gauss;</span><br><span class="line">        <span class="comment">//加权</span></span><br><span class="line">        col += tex2D(_MainTex, uv) * gauss;</span><br><span class="line">    <span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//平均</span></span><br><span class="line">    col = col / sum;</span><br><span class="line">    <span class="keyword">return</span> col;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/023/Result.gif"></p>
+<p>上面这个模糊我想有两点可以优化，一是使用<code>include</code>文件，将公用代码写入其中，然后可以在多处进行引用，实现代码复用。另一个是将高斯权重计算转移到<code>C#</code>代码中，然后将结果传入着色器，因为在着色器中计算高斯函数非常浪费。</p>
+<h2 id="Source"><a href="#Source" class="headerlink" title="Source"></a>Source</h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"></span><br><span class="line"><span class="comment">//必须挂载到后处理摄像机上</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">PostprocessingBlur</span> : <span class="title">MonoBehaviour</span> &#123;</span><br><span class="line">	<span class="comment">//后处理材质</span></span><br><span class="line">	[<span class="meta">SerializeField</span>]</span><br><span class="line">	<span class="keyword">private</span> Material postprocessMaterial;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//场景渲染完成后，执行该函数</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">OnRenderImage</span>(<span class="params">RenderTexture source, RenderTexture destination</span>)</span>&#123;</span><br><span class="line">		<span class="comment">//新建临时纹理，执行模糊处理，然后回收临时纹理</span></span><br><span class="line">		<span class="keyword">var</span> temporaryTexture = RenderTexture.GetTemporary(source.width, source.height);</span><br><span class="line">		Graphics.Blit(source, temporaryTexture, postprocessMaterial, <span class="number">0</span>);</span><br><span class="line">		Graphics.Blit(temporaryTexture, destination, postprocessMaterial, <span class="number">1</span>);</span><br><span class="line">		RenderTexture.ReleaseTemporary(temporaryTexture);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/023_Postprocessing_Blur&quot;</span>&#123;</span><br><span class="line">	<span class="comment">//材质面板</span></span><br><span class="line">	Properties&#123;</span><br><span class="line">		[HideInInspector]_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">		_BlurSize(<span class="string">&quot;Blur Size&quot;</span>, Range(<span class="number">0</span>,<span class="number">0.5</span>)) = <span class="number">0</span></span><br><span class="line">		[KeywordEnum(Low, Medium, High)] _Samples (<span class="string">&quot;Sample amount&quot;</span>, Float) = <span class="number">0</span></span><br><span class="line">		[Toggle(GAUSS)] _Gauss (<span class="string">&quot;Gaussian Blur&quot;</span>, <span class="keyword">float</span>) = <span class="number">0</span></span><br><span class="line">		[PowerSlider(<span class="number">3</span>)]_StandardDeviation(<span class="string">&quot;Standard Deviation (Gauss only)&quot;</span>, Range(<span class="number">0.00</span>, <span class="number">0.3</span>)) = <span class="number">0.02</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	SubShader&#123;</span><br><span class="line">		<span class="comment">// 双面渲染</span></span><br><span class="line">		<span class="comment">// 禁用深度缓存</span></span><br><span class="line">		Cull Off</span><br><span class="line">		ZWrite Off </span><br><span class="line">		ZTest Always</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">		<span class="comment">//纵向模糊</span></span><br><span class="line">		Pass&#123;</span><br><span class="line">			CGPROGRAM</span><br><span class="line">			<span class="comment">//引入内置函数和变量</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UnityCG.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//声明顶点着色器和片段着色器</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> multi_compile _SAMPLES_LOW _SAMPLES_MEDIUM _SAMPLES_HIGH</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> shader_feature GAUSS</span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//模糊处理的原图、以及模糊参数</span></span><br><span class="line">			sampler2D _MainTex;</span><br><span class="line">			<span class="keyword">float</span> _BlurSize;</span><br><span class="line">			<span class="keyword">float</span> _StandardDeviation;</span><br><span class="line"></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">define</span> PI 3.14159265359</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">define</span> E 2.71828182846</span></span><br><span class="line"></span><br><span class="line">		<span class="meta">#<span class="meta-keyword">if</span> _SAMPLES_LOW</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">define</span> SAMPLES 10</span></span><br><span class="line">		<span class="meta">#<span class="meta-keyword">elif</span> _SAMPLES_MEDIUM</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">define</span> SAMPLES 30</span></span><br><span class="line">		<span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">define</span> SAMPLES 100</span></span><br><span class="line">		<span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//模型网格数据</span></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">				float4 vertex : POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//中间插值数据</span></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">				float4 position : SV_POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//顶点着色器</span></span><br><span class="line">			<span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">				v2f o;</span><br><span class="line">				<span class="comment">//变换到参见坐标系</span></span><br><span class="line">				o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">				o.uv = v.uv;</span><br><span class="line">				<span class="keyword">return</span> o;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//片段着色器</span></span><br><span class="line">			<span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">			<span class="meta">#<span class="meta-keyword">if</span> GAUSS</span></span><br><span class="line">				<span class="comment">//当标准差为0时，不执行模糊操作</span></span><br><span class="line">				<span class="keyword">if</span>(_StandardDeviation == <span class="number">0</span>)</span><br><span class="line">				<span class="keyword">return</span> tex2D(_MainTex, i.uv);</span><br><span class="line">			<span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">				</span><br><span class="line">				float4 col = <span class="number">0</span>;</span><br><span class="line">			<span class="meta">#<span class="meta-keyword">if</span> GAUSS</span></span><br><span class="line">				<span class="keyword">float</span> sum = <span class="number">0</span>;</span><br><span class="line">			<span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">				<span class="keyword">float</span> sum = SAMPLES;</span><br><span class="line">			<span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">				<span class="comment">//循环执行采样</span></span><br><span class="line">				<span class="keyword">for</span>(<span class="keyword">float</span> index = <span class="number">0</span>; index &lt; SAMPLES; index++)&#123;</span><br><span class="line">					<span class="comment">//获取采样点到中心点的距离</span></span><br><span class="line">					<span class="keyword">float</span> offset = (index/(SAMPLES<span class="number">-1</span>) - <span class="number">0.5</span>) * _BlurSize;</span><br><span class="line">					<span class="comment">//计算采样点的坐标</span></span><br><span class="line">					float2 uv = i.uv + float2(<span class="number">0</span>, offset);</span><br><span class="line">				<span class="meta">#<span class="meta-keyword">if</span> !GAUSS</span></span><br><span class="line">					<span class="comment">//采样值累加</span></span><br><span class="line">					col += tex2D(_MainTex, uv);</span><br><span class="line">				<span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">					<span class="comment">//计算高斯权重</span></span><br><span class="line">					<span class="keyword">float</span> stDevSquared = _StandardDeviation*_StandardDeviation;</span><br><span class="line">					<span class="keyword">float</span> gauss = (<span class="number">1</span> / <span class="built_in">sqrt</span>(<span class="number">2</span>*PI*stDevSquared)) * <span class="built_in">pow</span>(E, -((offset*offset)/(<span class="number">2</span>*stDevSquared)));</span><br><span class="line">					<span class="comment">//总权重</span></span><br><span class="line">					sum += gauss;</span><br><span class="line">					<span class="comment">//加权</span></span><br><span class="line">					col += tex2D(_MainTex, uv) * gauss;</span><br><span class="line">				<span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">				&#125;</span><br><span class="line">				<span class="comment">//平均</span></span><br><span class="line">				col = col / sum;</span><br><span class="line">				<span class="keyword">return</span> col;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">//横向模糊</span></span><br><span class="line">		Pass&#123;</span><br><span class="line">			CGPROGRAM</span><br><span class="line">			<span class="comment">//引入内置函数和变量</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UnityCG.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> multi_compile _SAMPLES_LOW _SAMPLES_MEDIUM _SAMPLES_HIGH</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> shader_feature GAUSS</span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//声明顶点、片段着色器</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//用于模糊的原图、以及模糊参数</span></span><br><span class="line">			sampler2D _MainTex;</span><br><span class="line">			<span class="keyword">float</span> _BlurSize;</span><br><span class="line">			<span class="keyword">float</span> _StandardDeviation;</span><br><span class="line"></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">define</span> PI 3.14159265359</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">define</span> E 2.71828182846</span></span><br><span class="line"></span><br><span class="line">		<span class="meta">#<span class="meta-keyword">if</span> _SAMPLES_LOW</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">define</span> SAMPLES 10</span></span><br><span class="line">		<span class="meta">#<span class="meta-keyword">elif</span> _SAMPLES_MEDIUM</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">define</span> SAMPLES 30</span></span><br><span class="line">		<span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">define</span> SAMPLES 100</span></span><br><span class="line">		<span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//模型网格数据</span></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">				float4 vertex : POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//中间插值数据</span></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">				float4 position : SV_POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//顶点着色器</span></span><br><span class="line">			<span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">				v2f o;</span><br><span class="line">				<span class="comment">//计算裁剪坐标</span></span><br><span class="line">				o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">				o.uv = v.uv;</span><br><span class="line">				<span class="keyword">return</span> o;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//片段着色器</span></span><br><span class="line">			<span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">			<span class="meta">#<span class="meta-keyword">if</span> GAUSS</span></span><br><span class="line">				<span class="comment">//当标准差为0时，不执行模糊处理</span></span><br><span class="line">				<span class="keyword">if</span>(_StandardDeviation == <span class="number">0</span>)</span><br><span class="line">				<span class="keyword">return</span> tex2D(_MainTex, i.uv);</span><br><span class="line">			<span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">				<span class="comment">//计算横纵比</span></span><br><span class="line">				<span class="keyword">float</span> invAspect = _ScreenParams.y / _ScreenParams.x;</span><br><span class="line">				</span><br><span class="line">				float4 col = <span class="number">0</span>;</span><br><span class="line">			<span class="meta">#<span class="meta-keyword">if</span> GAUSS</span></span><br><span class="line">				<span class="keyword">float</span> sum = <span class="number">0</span>;</span><br><span class="line">			<span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">				<span class="keyword">float</span> sum = SAMPLES;</span><br><span class="line">			<span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">				<span class="comment">//循环采样</span></span><br><span class="line">				<span class="keyword">for</span>(<span class="keyword">float</span> index = <span class="number">0</span>; index &lt; SAMPLES; index++)&#123;</span><br><span class="line">					<span class="comment">//获取横向偏移值</span></span><br><span class="line">					<span class="keyword">float</span> offset = (index/(SAMPLES<span class="number">-1</span>) - <span class="number">0.5</span>) * _BlurSize * invAspect;</span><br><span class="line">					<span class="comment">//计算采样坐标</span></span><br><span class="line">					float2 uv = i.uv + float2(offset, <span class="number">0</span>);</span><br><span class="line">				<span class="meta">#<span class="meta-keyword">if</span> !GAUSS</span></span><br><span class="line">					<span class="comment">//采样值累加</span></span><br><span class="line">					col += tex2D(_MainTex, uv);</span><br><span class="line">				<span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">					<span class="comment">//计算高斯权重</span></span><br><span class="line">					<span class="keyword">float</span> stDevSquared = _StandardDeviation*_StandardDeviation;</span><br><span class="line">					<span class="keyword">float</span> gauss = (<span class="number">1</span> / <span class="built_in">sqrt</span>(<span class="number">2</span>*PI*stDevSquared)) * <span class="built_in">pow</span>(E, -((offset*offset)/(<span class="number">2</span>*stDevSquared)));</span><br><span class="line">					<span class="comment">//总权重</span></span><br><span class="line">					sum += gauss;</span><br><span class="line">					<span class="comment">//加权</span></span><br><span class="line">					col += tex2D(_MainTex, uv) * gauss;</span><br><span class="line">				<span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">				&#125;</span><br><span class="line">				<span class="comment">//平均</span></span><br><span class="line">				col = col / sum;</span><br><span class="line">				<span class="keyword">return</span> col;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>你可以在以下链接找到源码：<br><a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/023_PostprocessingBlur/PostprocessingBlur.cs">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/023_PostprocessingBlur/PostprocessingBlur.cs</a><br><a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/023_PostprocessingBlur/PostprocessingBlur.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/023_PostprocessingBlur/PostprocessingBlur.shader</a></p>
+<p>希望你能喜欢这个教程哦！如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blogs/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/blogs/tags/Shader/" rel="tag"># Shader</a>
+              <a href="/blogs/tags/%E7%BF%BB%E8%AF%91/" rel="tag"># 翻译</a>
+              <a href="/blogs/tags/ronja/" rel="tag"># ronja</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blogs/2021/07/07/Ronja_Stencil_Buffers/" rel="prev" title="Stencil Buffers">
+      <i class="fa fa-chevron-left"></i> Stencil Buffers
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blogs/2021/07/08/Ronja_White_Noise/" rel="next" title="White Noise">
+      White Noise <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Summary"><span class="nav-number">1.</span> <span class="nav-text">Summary</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Boxblur"><span class="nav-number">2.</span> <span class="nav-text">Boxblur</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1D-Blur"><span class="nav-number">2.1.</span> <span class="nav-text">1D Blur</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2D-Blur"><span class="nav-number">2.2.</span> <span class="nav-text">2D Blur</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Customize-Sample-Amount"><span class="nav-number">2.3.</span> <span class="nav-text">Customize Sample Amount</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Gaussian-Blur"><span class="nav-number">3.</span> <span class="nav-text">Gaussian Blur</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Source"><span class="nav-number">4.</span> <span class="nav-text">Source</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Tyson Wu"
+      src="/blogs/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Tyson Wu</p>
+  <div class="site-description" itemprop="description">If you want, Just do it!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blogs/archives/">
+        
+          <span class="site-state-item-count">48</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blogs/categories/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blogs/tags/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Tyson-Wu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Tyson-Wu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/zhao-wu-zhu-43" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhao-wu-zhu-43" rel="noopener" target="_blank"><i class="知乎 fa-fw"></i>知乎</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.cnblogs.com/Hi-blog/" title="https:&#x2F;&#x2F;www.cnblogs.com&#x2F;Hi-blog&#x2F;" rel="noopener" target="_blank">starnight_cyber</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tyson Wu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blogs/lib/anime.min.js"></script>
+  <script src="/blogs/lib/velocity/velocity.min.js"></script>
+  <script src="/blogs/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blogs/js/utils.js"></script>
+
+<script src="/blogs/js/motion.js"></script>
+
+
+<script src="/blogs/js/schemes/pisces.js"></script>
+
+
+<script src="/blogs/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

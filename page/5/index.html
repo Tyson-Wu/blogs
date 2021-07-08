@@ -163,6 +163,377 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/11/22/Rendering-with-Replaced-Shaders/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2020/11/22/Rendering-with-Replaced-Shaders/" class="post-title-link" itemprop="url">Rendering with Replaced Shaders</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-22 18:01:34" itemprop="dateCreated datePublished" datetime="2020-11-22T18:01:34+08:00">2020-11-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-08 19:28:00" itemprop="dateModified" datetime="2021-07-08T19:28:00+08:00">2021-07-08</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>通常每个需要渲染的物体都自带材质以及相应的shader，但是有时候我们可能希望使用同一个Shader对场景中的进行渲染。例如，当我们对屏幕图像进行边缘检测时，需要知道每个像素点所对应三维空间点的法向量，然后根据法向量的差异来判断是否是边缘。还有一些情况我们需要场景的深度信息。无论是法向纹理还是深度散纹理等，都可以通过Relpace Shader来实现。<br>Replace Shader和普通shader没什么区别，我们只需要调用Camera.RenderWithShader或者<code>Camera.SetReplacementShader</code>函数，并指定需要用于替换的shader,以及shader的Tags值。<br>假如我们有以下三个shader，其中shaderA被设置为Relace Shader，且repalcementTag为”ReplacementTag”，其余两个都是挂载在模型上的shader：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Shader A&quot;</span></span><br><span class="line">&#123;</span><br><span class="line">	...</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">		Tags &#123;<span class="string">&quot;ReplacementTag&quot;</span>=<span class="string">&quot;true&quot;</span>&#125;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">		Tags &#123;<span class="string">&quot;OtherTag&quot;</span>=<span class="string">&quot;whatever&quot;</span>&#125;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Shader B&quot;</span></span><br><span class="line">&#123;</span><br><span class="line">	...</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">		Tags &#123;<span class="string">&quot;ReplacementTag&quot;</span>=<span class="string">&quot;false&quot;</span>&#125;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">		Tags &#123;<span class="string">&quot;OtherTag&quot;</span>=<span class="string">&quot;whatever&quot;</span>&#125;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Shader C&quot;</span></span><br><span class="line">&#123;</span><br><span class="line">	...</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">		Tags &#123;<span class="string">&quot;ReplacementTag&quot;</span>=<span class="string">&quot;true&quot;</span>&#125;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">		Tags &#123;<span class="string">&quot;OtherTag&quot;</span>=<span class="string">&quot;whatever&quot;</span>&#125;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这时候，只有挂载ShaderC的模型会被渲染。虽然ShaderB和ShaderC都含有“ReplacementTag”,但是ShaderA中的<code>&quot;ReplacementTag&quot;=&quot;true&quot;</code>，只有ShaderC中的第一个SubShader有匹配的Tag值。</p>
+<h2 id="Lit-Shader-replacement"><a href="#Lit-Shader-replacement" class="headerlink" title="Lit Shader replacement"></a>Lit Shader replacement</h2><p>replacement渲染需要指定一个camera来实现，被指定camera的渲染设置都会应用到repalcement渲染过程中，例如render path、light、shadow等。</p>
+<h2 id="Built-in-scene-depth-normals-texture"><a href="#Built-in-scene-depth-normals-texture" class="headerlink" title="Built-in scene depth/normals texture"></a>Built-in scene depth/normals texture</h2><p>camera本身内置了深度、法向纹理的渲染功能，只需要设置<code>Camera.depthTextureMode</code>，便可以开启这些功能，而渲染后的深度纹理可以用全局的<code>_CameraDepthTexture</code>变量来引用。<br>而这种内置的渲染功能的实际渲染方法与硬件相关。有些硬件就是通过replacement渲染的方式来实现的。因为ReplacementTag会对实际渲染的物体进行筛选，所以在编写Shader时，要正确使用“RenderType”这个标签。</p>
+<h2 id="Code-Example"><a href="#Code-Example" class="headerlink" title="Code Example"></a>Code Example</h2><p>在Start()函数中指定replacement shader:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Start</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	camera.SetReplacementShader(EffiectShader,<span class="string">&quot;RenderType&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>EffiectShader需要包含”RenderType”这个标签，如果没有”RenderType”这个，那么不会有任何物体被渲染。另外，EffiectShader可以有多个SubShader，每个SubShader对应一个”RenderType”。例如，我们需要渲染透明物体，可以指定两个SubShader分别渲染”RenderType”=”Transparent”和”RenderType”=”TransparentCutout”。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;EffectShader&quot;</span> &#123;</span><br><span class="line">     SubShader &#123;</span><br><span class="line">         Tags &#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> &#125;</span><br><span class="line">         Pass &#123;</span><br><span class="line">             ...</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line">     SubShader &#123;</span><br><span class="line">         Tags &#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;SomethingElse&quot;</span> &#125;</span><br><span class="line">         Pass &#123;</span><br><span class="line">             ...</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line"> ...</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>SetReplacementShader函数会查找场景中所有物体，这些物体自带的Shader的”RenderType”值和EffectShader中的”RenderType”值匹配的话，那么这些物体将会使用EffectShader中相对应的SubShader进行渲染。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/11/21/Git-on-the-Server-The-Protocols/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2020/11/21/Git-on-the-Server-The-Protocols/" class="post-title-link" itemprop="url">4.1 Git On the Server - The Protocols</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-21 17:01:34" itemprop="dateCreated datePublished" datetime="2020-11-21T17:01:34+08:00">2020-11-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-08 19:28:00" itemprop="dateModified" datetime="2021-07-08T19:28:00+08:00">2021-07-08</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Git/" itemprop="url" rel="index"><span itemprop="name">Git</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Git/Server/" itemprop="url" rel="index"><span itemprop="name">Server</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>学习本节之前，我们应该熟练使用Git完成日常版本维护工作。然而，在多人配合开发时，我们还需要一个远端Git仓库。远端仓库作为公共的Git仓库，可以保证即使某个成员的电脑处于关机状态，其他成员也可以知道彼此的开发进度以及修改内容。</p>
+<p>建立Git服务非常简单，首先，我们选择服务所使用的协议。本节将会介绍可选的协议，以及这些协议的优缺点。然后我们会再介绍这些协议相关的常用设置。最后，我们学习部分托管选项，如果我们不介意在其他服务器上托管代码，并且不想设置和维护自己的Git服务，这些托管选项可以帮我们实现这个目标。</p>
+<p>本章最后一节介绍的时如何搭建自己的Git服务，不感兴趣可以跳过，直接进入下一章节。下一章节讨论分布式源码控制环境的各种利弊。</p>
+<p>远端仓库只是一个纯粹的仓库，换句话来说，它只包含.git文件。</p>
+<h2 id="The-Protocols"><a href="#The-Protocols" class="headerlink" title="The Protocols"></a>The Protocols</h2><p>Git可以使用四种不同的协议来传输数据：Local、HTTP、Secure Shell(SSH)、 以及 Git。下面我们看下这些协议是什么以及在什么情况下需要。</p>
+<h3 id="Local-Protocol"><a href="#Local-Protocol" class="headerlink" title="Local Protocol"></a>Local Protocol</h3><p>Local是最基本的协议，当我们在本机上建立Git远端仓库时，就是通过Local协议来访问的。例如在所有成员可访问的共享文件系统上搭建的Git仓库。</p>
+<p>使用Local协议可以访问这种本机创建的Git仓库，包括上传和下载。例如克隆仓库：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> /srv/git/project.git</span><br></pre></td></tr></table></figure>
+<p>也可以这样写：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> file:///srv/git/project.git</span><br></pre></td></tr></table></figure>
+
+<p>上面两种写法有一些区别，第一种是类似于本机直接文件复制的操作。第二种数据会经过网络，所以会更慢一点。下面采用的第一种方法，因为速度会更快一点。<br>将本地Git仓库导入到一个现有的本地Git服务，我们执行下面的操作：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote add local_proj /srv/git/project.git</span><br></pre></td></tr></table></figure>
+
+<h4 id="The-Pros"><a href="#The-Pros" class="headerlink" title="The Pros"></a>The Pros</h4><p>基于文件系统的仓库的好处是，他们的建立方式简单，可以使用现有的文件权限以及网络进行访问。如果我们有一个共享文件系统，那么建立共享的Git服务是非常方便的。我们只要将纯数据仓库，也就是包含.git的文件放到一个共享路径下，然后像其他共享文件一样，设置其读写权限。</p>
+<p>相比于从网络远端访问Git仓库，这种共享本地本地仓库无疑是最快速的。</p>
+<h4 id="The-Cons"><a href="#The-Cons" class="headerlink" title="The Cons"></a>The Cons</h4><p>缺点是，这种方式难以从多个不同的地方进行访问。如果我们想在家访问的话，我们必须安装远程磁盘。相比于直接网络请求，这种方式很复杂也很慢。</p>
+<p>还有一点是，Local协议并不一定是最快的，这和仓库部署的位置有关。如果是本机上部署，无疑是最快的。如果是在NFS上部署，那么其访问速度反而比不上SSH。</p>
+<p>最后，这种协议无法保证仓库不受偶然性损坏。任何一个能够访问仓库的人，都能直接访问到.git文件，因此一旦发生手动修改.git文件，将导致仓库损坏。</p>
+<h3 id="The-HTTP-Protocols"><a href="#The-HTTP-Protocols" class="headerlink" title="The HTTP Protocols"></a>The HTTP Protocols</h3><p>Git可以通过HTTP协议进行通信，通信方式有两种。在Git 1.6.6版本之前，只有一种方法，这种方法很简单，通常只有只读功能。在1.6.6版本之后，加入一个新的、更智能的协议，这种协议和SSH类型，能够智能地调整数据传输方式。在最近几年，这种新的协议方式开始普及，因为它具有简单、智能通信方式。这种新的方式通常被称为Smart Http，而老的方式则被称为Dump Http。我们先看一下Smart Http.</p>
+<h4 id="Smart-Http"><a href="#Smart-Http" class="headerlink" title="Smart Http"></a>Smart Http</h4><p>Smart Http操作非常类型于SSH和Git协议。区别在于他是走标准的HTTPS端口，能够使用HTTP权限机制。这意味着，他比SSH更容易使用，因为我们可以使用账号密码权限，而不需要设置SSH Key值。</p>
+<p>Smart Http很可能称为Git种最流行的协议。因为他可以设置为像 git://协议一样的匿名服务，亦可以像SSH一样使用权限加密推送。但是他不需要为两种方式设置不同的URL，我们只需要一个URL就可以实现两种方式。如果我们像执行推送上传操作，但是远端仓库需要权限，这时候服务会提示账号密码，读取方式也一样。</p>
+<p>时结束，像GitHub这种服务，我们用来查看线上仓库的URL，可以用来执行克隆操作，如果我们权限足够的话，也可以进行推送上传操作。</p>
+<h4 id="Dump-Http"><a href="#Dump-Http" class="headerlink" title="Dump Http"></a>Dump Http</h4><p>如果远端服务不是以Smart Http方式响应，那么Git客户端会使用Dump Http协议。这种协议假定我们的Git仓库在网络服务中的管理方式像普通文件一样。Dump HTTP最吸引人的地方是他简洁的设置方式。基本上来说，我们只需要将Git仓库放在Http文档的根目录下，然后设置一个post-update连接。此时，任何可以访问您部署仓库的Web服务器的人也可以克隆您的存储库。若要允许通过 HTTP 读取对存储库的访问，请进行如下操作：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /var/www/htdocs/</span><br><span class="line">git <span class="built_in">clone</span> --bare /path/to/git_project git project.git</span><br><span class="line"><span class="built_in">cd</span> gitproject.git</span><br><span class="line">mv hooks/post-update.sample hooks/post-update</span><br><span class="line">chmod a+x hooks/post-update</span><br></pre></td></tr></table></figure>
+
+<h4 id="The-Pros-1"><a href="#The-Pros-1" class="headerlink" title="The Pros"></a>The Pros</h4><p>来重点看一下Smart Http协议。</p>
+<p>对于所有访问类型简化为只有一个URL，并且服务只有需要权限时才会提示账号密码，这些使得Smart Http使用起来非常容易。相比于SSH而言，使用账号密码进行身份验证也是其一大优势。因为用户不必去创建SSH key，也不用上传这个key到服务端。只要输入账号密码就可以访问Git服务。对于初级用户或者不了解SSH的用户，这是一个巨大的优势。但是Smart HTTP和SSH一样，属于快速有效的协议。</p>
+<p>我们还可以通过 HTTPS 为存储库提供只读服务，这意味着我们可以加密内容传输;我们甚至可以让客户端使用特定的签名 SSL 证书。</p>
+<p>还有就是，HTTP和HTTPS都是非常通用的协议，公司防火墙通常不会拦截这个端口。</p>
+<h4 id="The-Cons-1"><a href="#The-Cons-1" class="headerlink" title="The Cons"></a>The Cons</h4><p>相比于SSH，在使用HTTPS在些某些服务上部署Git会更麻烦点。除此之外，相比于HTTP部署的Git，其他协议的优势几乎没有。</p>
+<p>但是，如果我们使用签名验证的方式推送上传的话，HTTP提供凭证的方式会比SSH使用key的方式更麻烦。当然，有很多缓存凭证的工具可以解决这个问题，像macOS上的Keychin，Windows上的Credential Manager。查看<a target="_blank" rel="noopener" href="https://git-scm.com/book/en/v2/ch00/_credential_caching">凭证存储</a>了解如何在我们系统上设置安全的HTTP密码缓存。</p>
+<h3 id="SSH-Protocol"><a href="#SSH-Protocol" class="headerlink" title="SSH Protocol"></a>SSH Protocol</h3><p>自托管在SSH上时，一种常用的Git传输协议。因为在很多服务上都设置了SSH访问方式，即便没有，我们也可以很容易进行设置。SSH也是一个签名验证网络协议，因为他无处不在，非常容易设置与使用。</p>
+<p>通过SSH克隆Git仓库，我们需要指定一个以ssh://开头的URL：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> ssh://[user@]server/project.git</span><br></pre></td></tr></table></figure>
+
+<p>或者我们可以使用SCP形式的、更短的语法来使用SSH协议：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> [user@]server:project.git</span><br></pre></td></tr></table></figure>
+
+<h4 id="The-Pros-2"><a href="#The-Pros-2" class="headerlink" title="The Pros"></a>The Pros</h4><p>SSH的优势非常多。首先SHH是一个相对容易去设置的-SSH的守护程序遍地都是；很多网络管理者熟悉他；很多系统部署都需要他来设置，或者有工具去管理他们。第二，使用SSH方式访问是安全的-所有数据传输都是金国加密的，并且需要签名验证。第三，像HTTPS、Git、和Local协议，SSH是高效的，数据传输前经过不断的压缩。</p>
+<h4 id="The-Cons-2"><a href="#The-Cons-2" class="headerlink" title="The Cons"></a>The Cons</h4><p>SSH的缺点是，他不支持Git仓库的匿名访问。如果我们使用SSH，我们必须拥有计算机的SSH的访问权限，及时只是只读的权限。这使得SSH不利于开源项目，因为很多时候我们只想克隆一个开源项目。如果我们仅仅只是在公司内网使用Git服务，那么SSH可能是最合适的协议了。如果我们既想只读匿名访问，又想使用SSH，则我们需要设置SSH，使得我们可以推送上传，但是其他人只能下载。</p>
+<h3 id="The-Git-Protocol"><a href="#The-Git-Protocol" class="headerlink" title="The Git Protocol"></a>The Git Protocol</h3><p>最后是Git协议。它是一种特殊的、附加在Git中的进程守护协议。她监听一个具体的端口(9418)，这个端口提供一个类似于SSH协议的服务，但是没有签名验证。为了使用Git协议访问仓库，我们必须创建一个git-daemon-export-ok文件，如果没有这个文件，守护进程是不会管理这个仓库的，仓库的安全性得不到保证。无论Git仓库可供所有人克隆，也可以不供所有人克隆。这意味着，通常不会使用这个协议进行推送上传操作。我么可以开启推送权限，但是由于缺少签名验证，任何人只要知道我们项目的URL，都可能向我们项目仓库执行推送上传操作。因此很少会是哦也能够这个协议进行推送。</p>
+<h4 id="The-Pros-3"><a href="#The-Pros-3" class="headerlink" title="The Pros"></a>The Pros</h4><p>Git协议通常是最快的网络传输协议。如果我们刚好需要处理一个开源项目、或者一个不需要签名验证的只读权限的大项目，这时候可能会用到Git守护进程来维护我们的项目。Git协议的数据传输方式和SSH协议一样，只是没有了加密和签名验证。</p>
+<h4 id="The-Cons-3"><a href="#The-Cons-3" class="headerlink" title="The Cons"></a>The Cons</h4><p>缺点就是没有签名验证。我们不应该将Git协议作为我们项目唯一的访问方式。通常我们是将Git协议和SSH或HTTPS协议一起使用的，少数开发者使用SSH或HTTPS协议对项目进行推送操作。而其他人则使用git://对项目进行只读操作。从设置的角度来说，Git协议也可能是最复杂的协议。她必须执行Git的守护进程，这个进程需要xinetd、systemd配置，或者类似的配置。还需要防火访问端口9418，这不是所有公司防火墙允许的标准端口。在一些大公司中，这个端口通常被锁。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/11/21/Markdown-Basics/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2020/11/21/Markdown-Basics/" class="post-title-link" itemprop="url">Markdown Basics</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-21 13:01:34" itemprop="dateCreated datePublished" datetime="2020-11-21T13:01:34+08:00">2020-11-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-08 19:28:00" itemprop="dateModified" datetime="2021-07-08T19:28:00+08:00">2021-07-08</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Markdown/" itemprop="url" rel="index"><span itemprop="name">Markdown</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Markdown/Basics/" itemprop="url" rel="index"><span itemprop="name">Basics</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="属性Markdown语法要点"><a href="#属性Markdown语法要点" class="headerlink" title="属性Markdown语法要点"></a>属性Markdown语法要点</h2><p>本节展示基本的Markdown用法。在<a target="_blank" rel="noopener" href="https://daringfireball.net/projects/markdown/syntax">Syntax</a>中提供了更为详细的语法介绍。下面通过同时显示了转换前和转换后的例子，展示Markdown语法与HTML格式的对照关系。<br>同时我们可以使用<a target="_blank" rel="noopener" href="https://daringfireball.net/projects/markdown/dingus">Dingus</a>在线语法验证工具来更好的理解Markdown语法。</p>
+<h2 id="段落、标题、引用"><a href="#段落、标题、引用" class="headerlink" title="段落、标题、引用"></a>段落、标题、引用</h2><p>段落由一行或多行连续的文本构成，段落之间通过一行或多行空格分隔。正常的段落不应该使用space或tabs进行缩进。</p>
+<p>Markdown提供两种风格的标题格式：Setext和atx：</p>
+<ul>
+<li>Setext风格是采用下滑线的形式来对标题进行标记。例如一级标题和二级标题，分别使用 = 和 - 来代表；</li>
+<li>atx风格的标题，采用1-6个置于行首的#号来表示。#号的个数代表标题的等级；</li>
+</ul>
+<blockquote>
+<p>块引用使用的是邮件风格的&gt;号表示。</p>
+</blockquote>
+<p>Markdown:</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">一级标题</span><br><span class="line">========</span><br><span class="line">二级标题</span><br><span class="line">--------</span><br><span class="line">然后这里是贝拉巴啦啦吧一堆描述的、正儿八经的段落。</span><br><span class="line">再来一段。</span><br><span class="line"></span><br><span class="line"><span class="section">### 三级标题</span></span><br><span class="line"><span class="quote">&gt; 这是块引用</span></span><br><span class="line"><span class="quote">&gt; </span></span><br><span class="line"><span class="quote">&gt; 这是块引用的第二段</span></span><br><span class="line"><span class="quote">&gt; 这是块引用的第三段</span></span><br><span class="line">&gt;</span><br><span class="line"><span class="quote">&gt; ## 这是块引用中的二级标题</span></span><br></pre></td></tr></table></figure>
+<p>HTML:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>一级标题<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h2</span>&gt;</span>二级标题<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>然后这里是贝拉巴啦啦吧一堆描述的、正儿八经的段落。<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>再来一段<span class="tag">&lt;<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h3</span>&gt;</span>三级标题<span class="tag">&lt;/<span class="name">h3</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">blockquote</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">p</span>&gt;</span>这是块引用<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">p</span>&gt;</span>这是块引用的第二段<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">p</span>&gt;</span>这是块引用的第三段<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">h2</span>&gt;</span>这是块引用中的二级标题<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">blockquote</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="短语强调"><a href="#短语强调" class="headerlink" title="短语强调"></a>短语强调</h2><p>Markdown使用 * 或 _ 来表示强调范围<br>Markdown：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">有些<span class="emphasis">*人*</span>就是特殊</span><br><span class="line">有些<span class="emphasis">_事_</span>就是漂亮</span><br><span class="line"></span><br><span class="line">还有些<span class="strong">**人**</span>特殊到无以复加</span><br><span class="line">还有些<span class="strong">__事__</span>漂亮到难以形容</span><br></pre></td></tr></table></figure>
+<p>HTML：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>有些<span class="tag">&lt;<span class="name">em</span>&gt;</span>人<span class="tag">&lt;/<span class="name">em</span>&gt;</span>就是特殊<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>有些<span class="tag">&lt;<span class="name">em</span>&gt;</span>事<span class="tag">&lt;/<span class="name">em</span>&gt;</span>就是漂亮<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>还有些<span class="tag">&lt;<span class="name">strong</span>&gt;</span>人<span class="tag">&lt;/<span class="name">strong</span>&gt;</span>特殊到无以复加<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>还有些<span class="tag">&lt;<span class="name">strong</span>&gt;</span>事<span class="tag">&lt;/<span class="name">strong</span>&gt;</span>漂亮到难以形容<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h2><p>无序号的列表使用 * 和 + 以及 - 号来表示。这三个符号表达的是一个意思;<br>例如这个：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">*</span> Candy</span><br><span class="line"><span class="bullet">*</span> Gum</span><br><span class="line"><span class="bullet">*</span> Booze</span><br></pre></td></tr></table></figure>
+<p>这个：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">+</span> Candy</span><br><span class="line"><span class="bullet">+</span> Gum</span><br><span class="line"><span class="bullet">+</span> Booze</span><br></pre></td></tr></table></figure>
+<p>还有这个：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> Candy</span><br><span class="line"><span class="bullet">-</span> Gum</span><br><span class="line"><span class="bullet">-</span> Booze</span><br></pre></td></tr></table></figure>
+<p>这三个输出的结果都是同样的HTML格式：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ul</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Candy<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Gum<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Booze<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>有需要的列表使用的是数字加 . 的方式：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">1.</span> Red</span><br><span class="line"><span class="bullet">2.</span> Green</span><br><span class="line"><span class="bullet">3.</span> Blue</span><br></pre></td></tr></table></figure>
+<p>HTML：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ol</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Red<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Green<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Blue<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ol</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>如果列表之间有空行，那么这些列表元素就会被认为是段落。如果单个元素由多个段落构成，那么需要将后续的段落进行缩进处理：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">1.</span> Red</span><br><span class="line"></span><br><span class="line"><span class="bullet">2.</span> Green</span><br><span class="line">green</span><br><span class="line"><span class="bullet">3.</span> Blue</span><br><span class="line">   blue</span><br><span class="line"></span><br><span class="line"><span class="bullet">4.</span> yellow</span><br><span class="line"></span><br><span class="line"><span class="bullet">5.</span> Orange</span><br></pre></td></tr></table></figure>
+<p>HTML:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ol</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>Red<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>Green</span><br><span class="line">green<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>Blue</span><br><span class="line">blue<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>yellow<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>Orange<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ol</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h2><p>Markdown提供两种链接方式：</p>
+<ul>
+<li>inline，内联方式；</li>
+<li>reference，引用方式；</li>
+</ul>
+<p>这两种方式都需要使用方括号来分隔需要显示的文本。<br>内联方式直接在方括号后面使用圆括号来表示链接，例如：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这是[<span class="string">链接名称</span>](<span class="link">http://example.com/</span>)。</span><br></pre></td></tr></table></figure>
+<p>HTML：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>这是<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://example.com/&quot;</span>&gt;</span>链接名称<span class="tag">&lt;/<span class="name">a</span>&gt;</span>。<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>另外，我们也可以给网址命个名：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这是[<span class="string">链接名称</span>](<span class="link">http://example.com/ &quot;黑网&quot;</span>)。</span><br></pre></td></tr></table></figure>
+<p>HTML：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>这是<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://example.com/&quot;</span> <span class="attr">title</span>=<span class="string">&quot;黑网&quot;</span>&gt;</span>链接名称<span class="tag">&lt;/<span class="name">a</span>&gt;</span>。<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>引用方式通过给链接命名的方式进行链接：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">我从[<span class="string">黑网</span>][<span class="symbol">1</span>]跳到[<span class="string">白网</span>][<span class="symbol">2</span>]再跳到[<span class="string">红网</span>][<span class="symbol">3</span>]</span><br><span class="line"></span><br><span class="line">[<span class="symbol">1</span>]: <span class="link">http://black-net.com/ &quot;黑网&quot;</span></span><br><span class="line">[<span class="symbol">2</span>]: <span class="link">http://white-net.com/ &quot;白网 1&quot;</span></span><br><span class="line">[<span class="symbol">3</span>]: <span class="link">http://red-net.com/ &quot;红网 2&quot;</span></span><br></pre></td></tr></table></figure>
+<p>HTML：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>我从<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://black-net.com/&quot;</span> <span class="attr">title</span>=<span class="string">&quot;黑网&quot;</span>&gt;</span>黑网<span class="tag">&lt;/<span class="name">a</span>&gt;</span>跳到<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://white-net.com/&quot;</span> <span class="attr">title</span>=<span class="string">&quot;白网 1&quot;</span>&gt;</span>白网<span class="tag">&lt;/<span class="name">a</span>&gt;</span>再跳到<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://red-net.com/&quot;</span> <span class="attr">title</span>=<span class="string">&quot;红网 2&quot;</span>&gt;</span>红网<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>上面的title属性可有可无。链接名由字母、数字、空格构成，不区分大小写：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">我在[<span class="string">红网a</span>][<span class="symbol">red 1</span>]看到你的照片</span><br><span class="line">[<span class="symbol">REd 1</span>]: <span class="link">http://red-a-net.com/</span></span><br></pre></td></tr></table></figure>
+<p>HTML:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>我在<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://red-a-net.com/&quot;</span>&gt;</span>红网a<span class="tag">&lt;/<span class="name">a</span>&gt;</span>看到你的照片<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="图片"><a href="#图片" class="headerlink" title="图片"></a>图片</h2><p>图片的语法和链接非常相似，也是有Inline和Reference两种方式，如下所示，其中Title属性是可有可无的：</p>
+<ul>
+<li>Inline，内联方式：<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">![<span class="string">alt text</span>](<span class="link">/path/to/img.jpg &quot;Title&quot;</span>)</span><br></pre></td></tr></table></figure></li>
+<li>Reference,引用方式：<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">![<span class="string">alt tex</span>][<span class="symbol">id</span>]</span><br><span class="line">[<span class="symbol">id</span>]: <span class="link">/path/to/img.jpg &quot;Title&quot;</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>无论哪种方式得到的结果都一样：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;/path/to/img.jpg&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;alt tex&quot;</span> <span class="attr">title</span>=<span class="string">&quot;Title&quot;</span> /&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="代码块"><a href="#代码块" class="headerlink" title="代码块"></a>代码块</h2><p>在普通的段落中，我们可以给使用反引号 ` ，也就是ECS键下面的那个 ` 键， 从而将代码插入到普通段落中。这样可以使得普通段落和代码块的之间界限分明。还有一点就是 &amp; 和 &lt; 、 &gt; 这几个符合是HTML的命令实体，需要转义后才能以普通字符的形式显示。但是在反引号 ` 包裹下的所有字符都只被当作普通字符，而不需要而外的转义操作。这就很方便在Markdown文档中编写HTML的示例代码：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">I strongly recommend against using any <span class="code">`&lt;blink&gt;`</span> tags.</span><br><span class="line"></span><br><span class="line">I wish SmartyPants used named entities like <span class="code">`&amp;mdash;`</span></span><br><span class="line">instead of decimal-encoded entites like <span class="code">`&amp;#8212;`</span>.</span><br></pre></td></tr></table></figure>
+<p>HTML：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>I strongly recommend against using any</span><br><span class="line"><span class="tag">&lt;<span class="name">code</span>&gt;</span><span class="symbol">&amp;lt;</span>blink<span class="symbol">&amp;gt;</span><span class="tag">&lt;/<span class="name">code</span>&gt;</span> tags.<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>I wish SmartyPants used named entities like</span><br><span class="line"><span class="tag">&lt;<span class="name">code</span>&gt;</span><span class="symbol">&amp;amp;</span>mdash;<span class="tag">&lt;/<span class="name">code</span>&gt;</span> instead of decimal-encoded</span><br><span class="line">entites like <span class="tag">&lt;<span class="name">code</span>&gt;</span><span class="symbol">&amp;amp;</span>#8212;<span class="tag">&lt;/<span class="name">code</span>&gt;</span>.<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>最终在网页上显示的效果：<br>I strongly recommend against using any <code>&lt;blink&gt;</code> tags.</p>
+<p>I wish SmartyPants used named entities like <code>&amp;mdash;</code><br>instead of decimal-encoded entites like <code>&amp;#8212;</code>.<br>如果希望将整个代码块进行格式化，那么将代码块中的每一行缩进4个spaces或1个tab。其所产生的效果和使用反引号 ` 标记的代码块一样，其中的 &amp; 、&lt; 、&gt; 这些符号都被自动转义了：<br>Markdown:</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">If you want your page to validate under XHTML 1.0 Strict,</span><br><span class="line">you&#x27;ve got to put paragraph tags in your blockquotes:</span><br><span class="line"></span><br><span class="line"><span class="code">    &lt;blockquote&gt;</span></span><br><span class="line"><span class="code">        &lt;p&gt;For example.&lt;/p&gt;</span></span><br><span class="line"><span class="code">    &lt;/blockquote&gt;</span></span><br></pre></td></tr></table></figure>
+<p>HTML:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>If you want your page to validate under XHTML 1.0 Strict,</span><br><span class="line">you&#x27;ve got to put paragraph tags in your blockquotes:<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">pre</span>&gt;</span><span class="tag">&lt;<span class="name">code</span>&gt;</span><span class="symbol">&amp;lt;</span>blockquote<span class="symbol">&amp;gt;</span></span><br><span class="line">    <span class="symbol">&amp;lt;</span>p<span class="symbol">&amp;gt;</span>For example.<span class="symbol">&amp;lt;</span>/p<span class="symbol">&amp;gt;</span></span><br><span class="line"><span class="symbol">&amp;lt;</span>/blockquote<span class="symbol">&amp;gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">code</span>&gt;</span><span class="tag">&lt;/<span class="name">pre</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>最终在网页上显示的效果：<br>If you want your page to validate under XHTML 1.0 Strict,<br>you’ve got to put paragraph tags in your blockquotes:</p>
+<pre><code>&lt;blockquote&gt;
+    &lt;p&gt;For example.&lt;/p&gt;
+&lt;/blockquote&gt;</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/11/21/Markdown-Syntax/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -194,7 +565,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-07 21:36:33" itemprop="dateModified" datetime="2021-07-07T21:36:33+08:00">2021-07-07</time>
+                <time title="修改时间：2021-07-08 19:28:00" itemprop="dateModified" datetime="2021-07-08T19:28:00+08:00">2021-07-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -271,7 +642,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-07 21:36:33" itemprop="dateModified" datetime="2021-07-07T21:36:33+08:00">2021-07-07</time>
+                <time title="修改时间：2021-07-08 19:28:00" itemprop="dateModified" datetime="2021-07-08T19:28:00+08:00">2021-07-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -356,7 +727,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-07 21:36:33" itemprop="dateModified" datetime="2021-07-07T21:36:33+08:00">2021-07-07</time>
+                <time title="修改时间：2021-07-08 19:28:00" itemprop="dateModified" datetime="2021-07-08T19:28:00+08:00">2021-07-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -461,7 +832,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-07 21:36:33" itemprop="dateModified" datetime="2021-07-07T21:36:33+08:00">2021-07-07</time>
+                <time title="修改时间：2021-07-08 19:28:00" itemprop="dateModified" datetime="2021-07-08T19:28:00+08:00">2021-07-08</time>
               </span>
 
           
@@ -535,7 +906,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-07 21:36:33" itemprop="dateModified" datetime="2021-07-07T21:36:33+08:00">2021-07-07</time>
+                <time title="修改时间：2021-07-08 19:28:00" itemprop="dateModified" datetime="2021-07-08T19:28:00+08:00">2021-07-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -676,7 +1047,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-count">48</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
