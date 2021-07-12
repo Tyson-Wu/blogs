@@ -12,7 +12,7 @@ tags:
 原文：
 [Value Noise](https://www.ronja-tutorials.com/post/025-value-noise/)
 
-[上一篇](https://tyson-wu.github.io/blogs/2021/07/08/Ronja_White_Noise/)文章介绍了如何在着色器中生成随机数。这里我想对前面生成的随机噪声图进行插值，得到一个光滑、渐变的噪声图。因为我们需要事先生成好的噪声图来进行插值，所以建议你先阅读[上一篇](https://tyson-wu.github.io/blogs/2021/07/08/Ronja_White_Noise/)来实现噪声图。本盘讲的值噪声和泊林噪声有点区别，就是这里是对块与块之间进行插值。
+[上一篇](https://tyson-wu.github.io/blogs/2021/07/08/Ronja_White_Noise/)文章介绍了如何在着色器中生成随机数。这里我想对前面生成的随机噪声图进行插值，得到一个光滑、渐变的噪声图。因为我们需要事先生成好的噪声图来进行插值，所以建议你先阅读[上一篇](https://tyson-wu.github.io/blogs/2021/07/08/Ronja_White_Noise/)来实现噪声图。本篇讲的值噪声和泊林噪声有点区别，首先两者都是在上一篇生成的随机噪声的基础上进一步平滑得到的，区别在于，本篇将上一篇得到的噪声当做值来处理，而泊林噪声则将其当做方向来处理。
 ![](https://www.ronja-tutorials.com/assets/images/posts/025/Result.gif)
 
 ## Show a Line
