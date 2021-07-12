@@ -163,6 +163,242 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/06/Ronja_Postprocessing_with_the_Depth_Texture/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/07/06/Ronja_Postprocessing_with_the_Depth_Texture/" class="post-title-link" itemprop="url">Postprocessing with the Depth Texture</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-07-06 15:01:00" itemprop="dateCreated datePublished" datetime="2021-07-06T15:01:00+08:00">2021-07-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-12 08:46:10" itemprop="dateModified" datetime="2021-07-12T08:46:10+08:00">2021-07-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/017-postprocessing-depth/">Postprocessing with the Depth Texture</a></p>
+<p>在上一篇教程中，我介绍了简单后处理效果的实现过程。但是在实际应用中，我们经常需要使用深度图来实现一些更高级的后处理效果。深度图是从摄像机视角采集的记录场景深度信息的纹理图。</p>
+<p>在理解如何借助深度图来实现复杂的后处理之前，建议你先阅读<a href="https://tyson-wu.github.io/blogs/2021/07/06/Ronja_Postprocessing_Basics/">上一篇</a>关于简单后处理效果的介绍。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/017/Result.gif"></p>
+<h2 id="Read-Depth"><a href="#Read-Depth" class="headerlink" title="Read Depth"></a>Read Depth</h2><p>这里我们沿用<a href="https://tyson-wu.github.io/blogs/2021/07/06/Ronja_Postprocessing_Basics/">上一篇</a>中实现的最简单的后处理脚本，然后在此基础上进行修改。</p>
+<p>首先我们需要对后处理脚本进行扩展，保证后处理摄像机生成深度图，供这里的后处理使用。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Start</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    Camera cam = GetComponent&lt;Camera&gt;();</span><br><span class="line">    cam.depthTextureMode = cam.depthTextureMode | DepthTextureMode.Depth;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面对后处理脚本修改完成后，接下来我们要对后处理着色器进行修改。</p>
+<p>为了在着色器中访问深度图，我们首先需要定义一个名叫<code>_CameraDepthTexture</code>的纹理，这个名字是Unity内置的。深度图的采样和其他纹理一样，我们可以将采样结果渲染到屏幕上，看看深度图到底长啥样。因为深度图只有一个值有效，所以在纹理中深度值是存储在R通道，我们可以直接进行访问。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//深度图</span></span><br><span class="line">sampler2D _CameraDepthTexture;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//片段着色器</span></span><br><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    <span class="comment">//深度采样</span></span><br><span class="line">    <span class="keyword">float</span> depth = tex2D(_CameraDepthTexture, i.uv).r;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> depth;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这一切都准备好后，启动游戏，不过这时候屏幕上显示的很可能是一片黑。这是因为深度值得存储位数有限，为了扩大深度值得记录范围，同时保证近景的深度精度，所以采用非线性编码，其中距离摄像机越近的区域深度值得精度越高，反之越低。当你将摄像机靠近物体时，你可能观察到更亮的颜色，这表明这个区域理摄像机很近。如果你将摄像机不断靠近，画面依然很黑，这时候你可以尝试将摄像机的近平面调大一点。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/017/Short.png"></p>
+<p>前面的深度编码是考虑到存储的限制，而我们使用深度值之前必须对其进行解码。庆幸的是，Unity为我们提供了解码函数，解码后的深度值是线性的，范围在0-1之间，0表示在摄像机位置，1表示在远平面上。如果解码后的深度图显示除了天空盒区域是白色，其他地方基本是黑色，你可以将远平面调小，这样可以观察到更多的模型。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//片段着色器</span></span><br><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    <span class="comment">//深度采样</span></span><br><span class="line">    <span class="keyword">float</span> depth = tex2D(_CameraDepthTexture, i.uv).r;</span><br><span class="line">    <span class="comment">//深度解码，解码后的深度值是线性的，范围0-1， 0为摄像机位置，1为远平面上</span></span><br><span class="line">    depth = Linear01Depth(depth);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> depth;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/017/LinearDepth.png"></p>
+<p>接下来的一步是基于摄像机参数，还原真实的深度值。这里有个<code>_ProjectionParams</code>是记录摄像机的投影参数，其中z值是远平面的大小。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//片段着色器</span></span><br><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    <span class="comment">//深度采样</span></span><br><span class="line">    <span class="keyword">float</span> depth = tex2D(_CameraDepthTexture, i.uv).r;</span><br><span class="line">    <span class="comment">//深度值解码</span></span><br><span class="line">    depth = Linear01Depth(depth);</span><br><span class="line">    <span class="comment">//还原深度值，得到点到摄像机的真实距离</span></span><br><span class="line">    depth = depth * _ProjectionParams.z;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> depth;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/017/CorrectDepth.png"></p>
+<p>因为场景中绝大多数的模型到摄像机的距离都大于一个单位，所以还原后的深度图显示在屏幕上将会是纯白色，但是这个深度值是与远平面无关的真实深度值，是点到摄像机的距离。</p>
+<h2 id="Generate-Wave"><a href="#Generate-Wave" class="headerlink" title="Generate Wave"></a>Generate Wave</h2><p>加下来我将基于这些信息来实现一种波效果，一种不断从玩家开始，向远处传播的效果。同时我们可以自定义某个时刻波距玩家的距离、以及波的拖尾长度、波的颜色。所以首先我们需要在着色器脚本中添加这些变量。这里我们使用<code>Header</code>属性标签来加粗标题，当然这只具有显示功能，不会影响着色器的实际使用。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//在编辑器上显示的属性</span></span><br><span class="line">Properties&#123;</span><br><span class="line">    [HideInInspector]_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">    [Header(Wave)]</span><br><span class="line">    _WaveDistance (<span class="string">&quot;Distance from player&quot;</span>, <span class="keyword">float</span>) = <span class="number">10</span></span><br><span class="line">    _WaveTrail (<span class="string">&quot;Length of the trail&quot;</span>, Range(<span class="number">0</span>,<span class="number">5</span>)) = <span class="number">1</span></span><br><span class="line">    _WaveColor (<span class="string">&quot;Color&quot;</span>, Color) = (<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//HLSL 内定义的变量</span></span><br><span class="line"><span class="keyword">float</span> _WaveDistance;</span><br><span class="line"><span class="keyword">float</span> _WaveTrail;</span><br><span class="line">float4 _WaveColor;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/017/Inspector.png"></p>
+<p>我们这个波的一头是突然截断、另一头是渐变的拖尾效果。我们首先实现这个突然截断的头部效果。在前面的教程中谈到过<code>step</code>这个函数可以实现跳变的效果。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">//计算波的头部</span></span><br><span class="line"><span class="keyword">float</span> waveFront = step(depth, _WaveDistance);</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> waveFront;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/017/Cutoff.gif"></p>
+<p>然后我们再使用<code>smoothstep</code>函数来实现尾部渐变效果，这个函数和<code>step</code>函数类似，只不过它有三个参数。如果第三个参数小于第一个参，那么返回0，如果大于第二个参数，那么返回1，其他情况返回一个0-1的值。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> waveTrail = smoothstep(_WaveDistance - _WaveTrail, _WaveDistance, depth);</span><br><span class="line"><span class="keyword">return</span> waveTrail;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/017/Trail.gif"></p>
+<p>你可能注意到上面两个波效果刚好相反，这正是我们想要的效果。因为我们将这两个波值相乘后，只有中间很窄的区域会为1，其他位置都将是0。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//计算前后波</span></span><br><span class="line"><span class="keyword">float</span> waveFront = step(depth, _WaveDistance);</span><br><span class="line"><span class="keyword">float</span> waveTrail = smoothstep(_WaveDistance - _WaveTrail, _WaveDistance, depth);</span><br><span class="line"><span class="keyword">float</span> wave = waveFront * waveTrail;</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> wave;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/017/WhiteWave.gif"></p>
+<p>现在我们得到了想要的波，打算将其应用到最终的显示画面上。首先需要采集原始画面，然后和我们的波进行线性插值，插值的时候可以把我们的波颜色也应用上。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//和原图混合</span></span><br><span class="line">fixed4 col = lerp(source, _WaveColor, wave);</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> col;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/017/HitSky.gif"></p>
+<p>上面的效果可以发现一些瑕疵，就是当波移动到远平面时，会突然高亮。虽然我们的天空盒就是在远平面处，但是我还是不想出现这种瑕疵。</p>
+<p>要解决这个问题，我通过判断深度值是否达到远平面，如果达到，那么直接返回原始图。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//片段着色器</span></span><br><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    <span class="comment">//深度采样</span></span><br><span class="line">    <span class="keyword">float</span> depth = tex2D(_CameraDepthTexture, i.uv).r;</span><br><span class="line">    <span class="comment">//深度解码</span></span><br><span class="line">    depth = Linear01Depth(depth);</span><br><span class="line">    <span class="comment">//还原深度值</span></span><br><span class="line">    depth = depth * _ProjectionParams.z;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//原图采样</span></span><br><span class="line">    fixed4 source = tex2D(_MainTex, i.uv);</span><br><span class="line">    <span class="comment">//当达到远平面时，直接返回原图</span></span><br><span class="line">    <span class="keyword">if</span>(depth &gt;= _ProjectionParams.z)</span><br><span class="line">        <span class="keyword">return</span> source;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//计算波</span></span><br><span class="line">    <span class="keyword">float</span> waveFront = step(depth, _WaveDistance);</span><br><span class="line">    <span class="keyword">float</span> waveTrail = smoothstep(_WaveDistance - _WaveTrail, _WaveDistance, depth);</span><br><span class="line">    <span class="keyword">float</span> wave = waveFront * waveTrail;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//波和原图混合</span></span><br><span class="line">    fixed4 col = lerp(source, _WaveColor, wave);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> col;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后，我想扩展后处理脚本来实现自动设置波位置，并且让它缓慢远离摄像机。我想控制波速以及是否启用波后处理效果。所以我必须记住当前波的位置。下面是我添加的新变量。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">SerializeField</span>]</span><br><span class="line"><span class="keyword">private</span> Material postprocessMaterial;</span><br><span class="line">[<span class="meta">SerializeField</span>]</span><br><span class="line"><span class="keyword">private</span> <span class="built_in">float</span> waveSpeed;</span><br><span class="line">[<span class="meta">SerializeField</span>]</span><br><span class="line"><span class="keyword">private</span> <span class="built_in">bool</span> waveActive;</span><br></pre></td></tr></table></figure>
+
+<p>然后我在后处理脚本中的<code>Update</code>函数中不断刷新波的位置。关闭波效将会重置波的位置，开启波效，波都会冲初始位置开始，慢慢的原理摄像机。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Update</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="comment">//启用时会不断移动波，关闭时会重置波的位置</span></span><br><span class="line">    <span class="keyword">if</span>(waveActive)&#123;</span><br><span class="line">        waveDistance = waveDistance + waveSpeed * Time.deltaTime;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        waveDistance = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后我在<code>OnRenderImage</code>函数中的后处理操作执行之前，将波距离参数传递给着色器，保证每次渲染都是在正确的位置。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/017/AutoWave.gif"></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/017_Depth_Postprocessing&quot;</span>&#123;</span><br><span class="line">    <span class="comment">//显示在编辑器上</span></span><br><span class="line">    Properties&#123;</span><br><span class="line">        [HideInInspector]_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">        [Header(Wave)]</span><br><span class="line">        _WaveDistance (<span class="string">&quot;Distance from player&quot;</span>, <span class="keyword">float</span>) = <span class="number">10</span></span><br><span class="line">        _WaveTrail (<span class="string">&quot;Length of the trail&quot;</span>, Range(<span class="number">0</span>,<span class="number">5</span>)) = <span class="number">1</span></span><br><span class="line">        _WaveColor (<span class="string">&quot;Color&quot;</span>, Color) = (<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    SubShader&#123;</span><br><span class="line">        <span class="comment">// 关闭剔除</span></span><br><span class="line">        <span class="comment">// 禁用深度缓存功能</span></span><br><span class="line">        Cull Off</span><br><span class="line">        ZWrite Off</span><br><span class="line">        ZTest Always</span><br><span class="line"></span><br><span class="line">        Pass&#123;</span><br><span class="line">            CGPROGRAM</span><br><span class="line">            <span class="comment">//引入内置函数和变量</span></span><br><span class="line">            <span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UnityCG.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">            <span class="comment">//声明顶点、片段着色器</span></span><br><span class="line">            <span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">            <span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line">            <span class="comment">//用于后处理的原图</span></span><br><span class="line">            sampler2D _MainTex;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//深度图</span></span><br><span class="line">            sampler2D _CameraDepthTexture;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//波参数</span></span><br><span class="line">            <span class="keyword">float</span> _WaveDistance;</span><br><span class="line">            <span class="keyword">float</span> _WaveTrail;</span><br><span class="line">            float4 _WaveColor;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">            <span class="comment">//模型网格数据</span></span><br><span class="line">            <span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">                float4 vertex : POSITION;</span><br><span class="line">                float2 uv : TEXCOORD0;</span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//中间插值数据</span></span><br><span class="line">            <span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">                float4 position : SV_POSITION;</span><br><span class="line">                float2 uv : TEXCOORD0;</span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//顶点着色器</span></span><br><span class="line">            <span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">                v2f o;</span><br><span class="line">                <span class="comment">//计算裁剪坐标</span></span><br><span class="line">                o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">                o.uv = v.uv;</span><br><span class="line">                <span class="keyword">return</span> o;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//片段着色器，后处理操作主要是在这里执行</span></span><br><span class="line">            <span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">                <span class="comment">//深度采样</span></span><br><span class="line">                <span class="keyword">float</span> depth = tex2D(_CameraDepthTexture, i.uv).r;</span><br><span class="line">                <span class="comment">//深度解码</span></span><br><span class="line">                depth = Linear01Depth(depth);</span><br><span class="line">                <span class="comment">//深度还原</span></span><br><span class="line">                depth = depth * _ProjectionParams.z;</span><br><span class="line"></span><br><span class="line">                <span class="comment">//原图采样</span></span><br><span class="line">                fixed4 source = tex2D(_MainTex, i.uv);</span><br><span class="line">                <span class="comment">//当达到远平面时，直接返回原图</span></span><br><span class="line">                <span class="keyword">if</span>(depth &gt;= _ProjectionParams.z)</span><br><span class="line">                    <span class="keyword">return</span> source;</span><br><span class="line"></span><br><span class="line">                <span class="comment">//计算波</span></span><br><span class="line">                <span class="keyword">float</span> waveFront = step(depth, _WaveDistance);</span><br><span class="line">                <span class="keyword">float</span> waveTrail = smoothstep(_WaveDistance - _WaveTrail, _WaveDistance, depth);</span><br><span class="line">                <span class="keyword">float</span> wave = waveFront * waveTrail;</span><br><span class="line"></span><br><span class="line">                <span class="comment">//原图与波混合</span></span><br><span class="line">                fixed4 col = lerp(source, _WaveColor, wave);</span><br><span class="line"></span><br><span class="line">                <span class="keyword">return</span> col;</span><br><span class="line">            &#125;</span><br><span class="line">            ENDCG</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"></span><br><span class="line"><span class="comment">//该脚本需要和摄像机绑定在同一物体</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">DepthPostprocessing</span> : <span class="title">MonoBehaviour</span> &#123;</span><br><span class="line">    <span class="comment">//用于后处理的材质</span></span><br><span class="line">    [<span class="meta">SerializeField</span>]</span><br><span class="line">    <span class="keyword">private</span> Material postprocessMaterial;</span><br><span class="line">    [<span class="meta">SerializeField</span>]</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">float</span> waveSpeed;</span><br><span class="line">    [<span class="meta">SerializeField</span>]</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">bool</span> waveActive;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">float</span> waveDistance;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Start</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="comment">//设置当前摄像机为深度采集模式</span></span><br><span class="line">        Camera cam = GetComponent&lt;Camera&gt;();</span><br><span class="line">        cam.depthTextureMode = cam.depthTextureMode | DepthTextureMode.Depth;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Update</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="comment">//启用时会不断移动波，关闭时会重置波的位置</span></span><br><span class="line">        <span class="keyword">if</span>(waveActive)&#123;</span><br><span class="line">            waveDistance = waveDistance + waveSpeed * Time.deltaTime;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            waveDistance = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//当当前绑定的摄像机渲染完一帧画面后，会调用该函数</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">OnRenderImage</span>(<span class="params">RenderTexture source, RenderTexture destination</span>)</span>&#123;</span><br><span class="line">        <span class="comment">//同步当前波距到着色器</span></span><br><span class="line">        postprocessMaterial.SetFloat(<span class="string">&quot;_WaveDistance&quot;</span>, waveDistance);</span><br><span class="line">		<span class="comment">//将原图按照材质着色器脚本逻辑，写入到结果图</span></span><br><span class="line">        Graphics.Blit(source, destination, postprocessMaterial);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>希望我的教程能够对你有所帮助。</p>
+<p>你可以在以下链接找到源码：<br><a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/017_DepthPostprocessing/DepthPostprocessing.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/017_DepthPostprocessing/DepthPostprocessing.shader</a><br><a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/017_DepthPostprocessing/DepthPostprocessing.cs">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/017_DepthPostprocessing/DepthPostprocessing.cs</a></p>
+<p>希望你能喜欢这个教程哦！如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/06/Ronja_Postprocessing_Basics/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/07/06/Ronja_Postprocessing_Basics/" class="post-title-link" itemprop="url">Postprocessing Basics</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-07-06 14:01:00" itemprop="dateCreated datePublished" datetime="2021-07-06T14:01:00+08:00">2021-07-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-12 08:46:10" itemprop="dateModified" datetime="2021-07-12T08:46:10+08:00">2021-07-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/016-postprocessing-basics/">Postprocessing Basics</a></p>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>目前为止，我将所有我实现的着色器应用到了模型上，并将其渲染到屏幕上。着色器还有一个常用的用途就是处理图片、以及我们刚渲染好的上一帧画面。我们对前面渲染好的画面进行处理的操作就叫做后处理。</p>
+<p>后处理所使用的着色器在语法和结构上和之间介绍的着色器一样。所以我建议你先了解前面关于着色器的<a href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Basic_Shader/">基础教程</a>。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/016/Result.jpg"></p>
+<h2 id="Postprocessing-Shader"><a href="#Postprocessing-Shader" class="headerlink" title="Postprocessing Shader"></a>Postprocessing Shader</h2><p>作为后处理的入门教程，这里我将展示如何实现简单的颜色取反效果。</p>
+<p>因为整个脚本和其他着色器类似，所以我将直接使用<a href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Basic_Shader/">着色器基础</a>教程中的着色器脚本，并在此基础上进行修改。</p>
+<p>当然，即便是最基础的着色器也有一些后处理用不到的变量，我们可以将它删除。例如这里的材质颜色、渲染标签<code>Tags</code>、纹理参数。</p>
+<p>然后我们还需要添加一些东西，使得我们的着色器更适用于后处理。例如在后处理中所有的属性变量都是通过脚本赋值的，所以在属性块中可以加入属性隐藏标签，另外后处理操作不应该对影响场景深度图，所以应该禁用深度写入等功能。</p>
+<p>基于上述修改，最终的着色器如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/016_Postprocessing&quot;</span>&#123;</span><br><span class="line">    <span class="comment">//材质面板，这里所有属性都将隐藏</span></span><br><span class="line">    Properties&#123;</span><br><span class="line">        [HideInInspector]_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    SubShader&#123;</span><br><span class="line">        <span class="comment">// 不需要背面剔除</span></span><br><span class="line">        <span class="comment">// 禁用深度缓存</span></span><br><span class="line">        Cull Off</span><br><span class="line">        ZWrite Off</span><br><span class="line">        ZTest Always</span><br><span class="line"></span><br><span class="line">        Pass&#123;</span><br><span class="line">            CGPROGRAM</span><br><span class="line">            <span class="comment">//引入内置函数和变量</span></span><br><span class="line">            <span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UnityCG.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">            <span class="comment">//声明顶点、片段着色器</span></span><br><span class="line">            <span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">            <span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line">            <span class="comment">//将要进行后处理的图片</span></span><br><span class="line">            sampler2D _MainTex;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//模型纹理数据，后处理会自动生成一个矩阵网格</span></span><br><span class="line">            <span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">                float4 vertex : POSITION;</span><br><span class="line">                float2 uv : TEXCOORD0;</span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//中间插值数据</span></span><br><span class="line">            <span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">                float4 position : SV_POSITION;</span><br><span class="line">                float2 uv : TEXCOORD0;</span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//顶点着色器</span></span><br><span class="line">            <span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">                v2f o;</span><br><span class="line">                <span class="comment">//变换到裁剪空间，后处理的渲染过程和普通着色器类似</span></span><br><span class="line">                o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">                o.uv = v.uv;</span><br><span class="line">                <span class="keyword">return</span> o;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//片段着色器，后处理主要是在这里执行</span></span><br><span class="line">            <span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">                <span class="comment">//原图片采样</span></span><br><span class="line">                fixed4 col = tex2D(_MainTex, i.uv);</span><br><span class="line">                <span class="keyword">return</span> col;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            ENDCG</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Postprocessing-C-Script"><a href="#Postprocessing-C-Script" class="headerlink" title="Postprocessing C# Script"></a>Postprocessing C# Script</h2><p>上面我们已经准备好了用于后处理的着色器，接下来我们要实现C#脚本，来控制后处理过程。摄像机在执行后处理的时候会用到这个脚本。</p>
+<p>新建的脚本是一个脚本组件，只有一个函数<code>OnRenderImage</code>。这个函数有Unity在特定时间调用的。其中传递两个参数，一是后处理原图，一是后处理结果图。将一张图中的数据复制到另一张图，可以使用<code>Blit</code>函数。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"></span><br><span class="line"><span class="comment">//该脚本需要和摄像机绑定在同一物体</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Postprocessing</span> : <span class="title">MonoBehaviour</span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//当当前绑定的摄像机渲染完一帧画面后，会调用该函数</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">OnRenderImage</span>(<span class="params">RenderTexture source, RenderTexture destination</span>)</span>&#123;</span><br><span class="line">		<span class="comment">//将原图写入到结果图</span></span><br><span class="line">		Graphics.Blit(source, destination);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>到目前为止，整个后处理逻辑并不会产生什么特别的效果，因为从原图到结果图没有执行任何操作。我们可以再传第三个材质参数，那么在结果图写入前会执行该材质中的着色器脚本。所以这里我们给这个后处理脚本增加一个材质属性。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"></span><br><span class="line"><span class="comment">//该脚本需要和摄像机绑定在同一物体</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Postprocessing</span> : <span class="title">MonoBehaviour</span> &#123;</span><br><span class="line">    <span class="comment">//用于后处理的材质</span></span><br><span class="line">    [<span class="meta">SerializeField</span>]</span><br><span class="line">    <span class="keyword">private</span> Material postprocessMaterial;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//当当前绑定的摄像机渲染完一帧画面后，会调用该函数</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnRenderImage</span>(<span class="params">RenderTexture source, RenderTexture destination</span>)</span>&#123;</span><br><span class="line">		<span class="comment">//将原图按照材质着色器脚本逻辑，写入到结果图</span></span><br><span class="line">        Graphics.Blit(source, destination, postprocessMaterial);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当前面准备好后，我们创建需要的材质球，然后将该材质球和我们的后处理着色器绑定。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/016/EmptyMaterial.png"></p>
+<p>然后将我们的后处理脚本绑定到我们的摄像机物体上，并且将前面的材质球赋值给这个后处理组件。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/016/PostprocessingComponent.png"></p>
+<h2 id="Negative-Colors-Effect"><a href="#Negative-Colors-Effect" class="headerlink" title="Negative Colors Effect"></a>Negative Colors Effect</h2><p>做好这一切后，运行程序发现好像没啥特别的变化。要实现颜色取反的效果，我们还需要重新回到我们的后处理着色器中，在片段着色器函数中执行颜色取反的操作。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//片段着色器</span></span><br><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    <span class="comment">//原图采样</span></span><br><span class="line">    fixed4 col = tex2D(_MainTex, i.uv);</span><br><span class="line">    <span class="comment">//颜色取反</span></span><br><span class="line">    col = <span class="number">1</span> - col;</span><br><span class="line">    <span class="keyword">return</span> col;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/016/Result.jpg"></p>
+<p>虽然颜色取反并不是我们常用的效果，但是它揭示了后处理的一般流程，为我们打开一个全新的后处理世界。在后面我会陆陆续续介绍其他常用的后处理效果。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/016_Postprocessing&quot;</span>&#123;</span><br><span class="line">    <span class="comment">//材质面板，这里所有属性都将隐藏</span></span><br><span class="line">    Properties&#123;</span><br><span class="line">        [HideInInspector]_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    SubShader&#123;</span><br><span class="line">        <span class="comment">// 不需要背面剔除</span></span><br><span class="line">        <span class="comment">// 禁用深度缓存</span></span><br><span class="line">        Cull Off</span><br><span class="line">        ZWrite Off</span><br><span class="line">        ZTest Always</span><br><span class="line"></span><br><span class="line">        Pass&#123;</span><br><span class="line">            CGPROGRAM</span><br><span class="line">            <span class="comment">//引入内置函数和变量</span></span><br><span class="line">            <span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UnityCG.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">            <span class="comment">//声明顶点、片段着色器</span></span><br><span class="line">            <span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">            <span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line">            <span class="comment">//将要进行后处理的图片</span></span><br><span class="line">            sampler2D _MainTex;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//模型纹理数据，后处理会自动生成一个矩阵网格</span></span><br><span class="line">            <span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">                float4 vertex : POSITION;</span><br><span class="line">                float2 uv : TEXCOORD0;</span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//中间插值数据</span></span><br><span class="line">            <span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">                float4 position : SV_POSITION;</span><br><span class="line">                float2 uv : TEXCOORD0;</span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//顶点着色器</span></span><br><span class="line">            <span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">                v2f o;</span><br><span class="line">                <span class="comment">//变换到裁剪空间，后处理的渲染过程和普通着色器类似</span></span><br><span class="line">                o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">                o.uv = v.uv;</span><br><span class="line">                <span class="keyword">return</span> o;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//片段着色器，后处理主要是在这里执行</span></span><br><span class="line">            <span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">                <span class="comment">//原图片采样</span></span><br><span class="line">                fixed4 col = tex2D(_MainTex, i.uv);</span><br><span class="line">                <span class="comment">//颜色取反</span></span><br><span class="line">                col = <span class="number">1</span> - col;</span><br><span class="line">                <span class="keyword">return</span> col;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            ENDCG</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"></span><br><span class="line"><span class="comment">//该脚本需要和摄像机绑定在同一物体</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Postprocessing</span> : <span class="title">MonoBehaviour</span> &#123;</span><br><span class="line">    <span class="comment">//用于后处理的材质</span></span><br><span class="line">    [<span class="meta">SerializeField</span>]</span><br><span class="line">    <span class="keyword">private</span> Material postprocessMaterial;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//当当前绑定的摄像机渲染完一帧画面后，会调用该函数</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnRenderImage</span>(<span class="params">RenderTexture source, RenderTexture destination</span>)</span>&#123;</span><br><span class="line">		<span class="comment">//将原图按照材质着色器脚本逻辑，写入到结果图</span></span><br><span class="line">        Graphics.Blit(source, destination, postprocessMaterial);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>希望本篇教程能够让你了解如何使用简单的后处理效果、能够独立实现一些后处理效果。</p>
+<p>你可以在以下链接找到源码：<br><a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/016_Postprocessing/Postprocessing.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/016_Postprocessing/Postprocessing.shader</a><br><a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/016_Postprocessing/Postprocessing.cs">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/016_Postprocessing/Postprocessing.cs</a></p>
+<p>希望你能喜欢这个教程哦！如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/06/Ronja_Vertex_Displacement/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -194,7 +430,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-08 19:28:00" itemprop="dateModified" datetime="2021-07-08T19:28:00+08:00">2021-07-08</time>
+                <time title="修改时间：2021-07-12 08:46:10" itemprop="dateModified" datetime="2021-07-12T08:46:10+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -314,7 +550,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-08 19:28:00" itemprop="dateModified" datetime="2021-07-08T19:28:00+08:00">2021-07-08</time>
+                <time title="修改时间：2021-07-12 08:46:10" itemprop="dateModified" datetime="2021-07-12T08:46:10+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -451,7 +687,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-08 19:28:00" itemprop="dateModified" datetime="2021-07-08T19:28:00+08:00">2021-07-08</time>
+                <time title="修改时间：2021-07-12 08:46:10" itemprop="dateModified" datetime="2021-07-12T08:46:10+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -569,7 +805,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-08 19:28:00" itemprop="dateModified" datetime="2021-07-08T19:28:00+08:00">2021-07-08</time>
+                <time title="修改时间：2021-07-12 08:46:10" itemprop="dateModified" datetime="2021-07-12T08:46:10+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -680,7 +916,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-08 19:28:00" itemprop="dateModified" datetime="2021-07-08T19:28:00+08:00">2021-07-08</time>
+                <time title="修改时间：2021-07-12 08:46:10" itemprop="dateModified" datetime="2021-07-12T08:46:10+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -786,7 +1022,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-08 19:28:00" itemprop="dateModified" datetime="2021-07-08T19:28:00+08:00">2021-07-08</time>
+                <time title="修改时间：2021-07-12 08:46:10" itemprop="dateModified" datetime="2021-07-12T08:46:10+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -905,7 +1141,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-08 19:28:00" itemprop="dateModified" datetime="2021-07-08T19:28:00+08:00">2021-07-08</time>
+                <time title="修改时间：2021-07-12 08:46:10" itemprop="dateModified" datetime="2021-07-12T08:46:10+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1024,7 +1260,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-08 19:28:00" itemprop="dateModified" datetime="2021-07-08T19:28:00+08:00">2021-07-08</time>
+                <time title="修改时间：2021-07-12 08:46:10" itemprop="dateModified" datetime="2021-07-12T08:46:10+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1071,206 +1307,6 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/008_Planar_Mapping&quot;</span>&#123;</span><br><span class="line">	<span class="comment">//材质面板上显示的属性</span></span><br><span class="line">	Properties&#123;</span><br><span class="line">		_Color (<span class="string">&quot;Tint&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">		_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	SubShader&#123;</span><br><span class="line">		<span class="comment">//渲染不透明物体</span></span><br><span class="line">		Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Geometry&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line">		Pass&#123;</span><br><span class="line">			CGPROGRAM</span><br><span class="line"></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UnityCG.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//定义公共变量</span></span><br><span class="line">			sampler2D _MainTex;</span><br><span class="line">			float4 _MainTex_ST;</span><br><span class="line"></span><br><span class="line">			fixed4 _Color;</span><br><span class="line"></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">				float4 vertex : POSITION;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">				float4 position : SV_POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">				v2f o;</span><br><span class="line">				<span class="comment">//计算裁剪空间下的坐标</span></span><br><span class="line">				o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">				<span class="comment">//计算世界空间下的坐标</span></span><br><span class="line">				float4 worldPos = mul(unity_ObjectToWorld, v.vertex);</span><br><span class="line">				<span class="comment">//执行UV变换</span></span><br><span class="line">				o.uv = TRANSFORM_TEX(worldPos.xz, _MainTex);</span><br><span class="line">				<span class="keyword">return</span> o;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">				<span class="comment">//纹理采样</span></span><br><span class="line">				fixed4 col = tex2D(_MainTex, i.uv);</span><br><span class="line">				<span class="comment">//多个颜色叠加</span></span><br><span class="line">				col *= _Color;</span><br><span class="line">				<span class="keyword">return</span> col;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	FallBack <span class="string">&quot;Standard&quot;</span> <span class="comment">//当当前着色器不支持时，选择后补着色器中的功能</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>你可以在以下链接找到源码：<a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/008_Planar_Mapping/planar_mapping.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/008_Planar_Mapping/planar_mapping.shader</a></p>
-<p>希望你能喜欢这个教程哦！如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Sprite_Shaders/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2021/07/01/Ronja_Sprite_Shaders/" class="post-title-link" itemprop="url">Sprite Shaders</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-07-01 15:01:00" itemprop="dateCreated datePublished" datetime="2021-07-01T15:01:00+08:00">2021-07-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-08 19:28:00" itemprop="dateModified" datetime="2021-07-08T19:28:00+08:00">2021-07-08</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/007-sprite-shaders/">Sprite Shaders</a></p>
-<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>在Unity中，图片的渲染和三维模型渲染非常相似。并且提供了<code>SpriteRender</code>的组件来实现图片渲染的功能。接下来我也会介绍这个组件、及其实现原理，然后通过我们的着色器来模拟这个组件的功能。</p>
-<p>这个教程依赖于上一个<a href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Basic_Transparency/">透明着色器</a>的教程。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/007/Result.png"></p>
-<h2 id="Scene-Setup"><a href="#Scene-Setup" class="headerlink" title="Scene Setup"></a>Scene Setup</h2><p>这里采用一个非常简单的场景来实验我们的图片着色器。首先，我将摄像机改为正交模式，并且将原先的小方块改成<code>sprite renderer</code>，同时将后面用到的图片格式改为<code>sprite</code>。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/007/Hierarchy.png"><br><img src="https://www.ronja-tutorials.com/assets/images/posts/007/CameraInspector.png"><br><img src="https://www.ronja-tutorials.com/assets/images/posts/007/SpriteInspector.png"><br><img src="https://www.ronja-tutorials.com/assets/images/posts/007/SpriteImporter.png"></p>
-<h2 id="Changing-the-Shader"><a href="#Changing-the-Shader" class="headerlink" title="Changing the Shader"></a>Changing the Shader</h2><p>在完成以上修改后，将上一章的透明材质放到<code>SpriteRenderer</code>组件的材质属性上，一切准备就绪！</p>
-<p><code>SpriteRenderer</code>组件会自动根据附加的图片自动生成一个网格数据，包括顶点、UV等。然后和普通的三维模型一样渲染到场景中。同时在<code>SpriteRenderer</code>上定义的颜色也会以顶点颜色的形式包含在网格数据中。另外还可以设置图片是否翻转。而且图片渲染和半透明渲染一样，是排在不透明渲染之后，甚至大多数渲染之后，而这个渲染队列是由<code>SpriteRenderer</code>自动帮我们设置的。</p>
-<p>因为目前我们的半透明着色器还不支持翻转、和顶点颜色。所以接下来我们把这个添加上。</p>
-<p>但是当我们翻转后，会发现图片不见了，然后再翻转，图片又出现了。这时因为从性能优化角度考虑，渲染单面比渲染双面更节约性能，这里叫做<code>backface culling</code>背面剔除。普通的不透明模型渲染使用背面剔除非常有效，因为其内部不可能被渲染。另外如果不使用背面剔除，在光照计算的时候会出现怪异的效果，因为参与计算的法向量只会指向正面方向，因此背面计算的结果无效。</p>
-<p>在这里我们并不用考虑这个优化项，因为图片、半透明物体之类的并不存在哪个面朝内、哪个面朝外的问题，也不需要参与光照计算。因此我们这里直接关闭背面剔除公共，关闭的设置和之前混合模式、深度写入设置类似。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Cull Off</span><br></pre></td></tr></table></figure>
-
-<p>为了在最终的渲染中使用到前面说的顶点颜色数据。我们需要在半透明着色其中做一些修改。首先在输入数据结构和插值数据结构中加入一个四维向量，并标记为颜色类型。然后在顶点着色器中将输入数据结构中的顶点颜色传递给插值数据结构中的颜色值。最终在片段着色器中叠加到输出颜色上。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">    float4 vertex : POSITION;</span><br><span class="line">    float2 uv : TEXCOORD0;</span><br><span class="line">    fixed4 color : COLOR;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">    float4 position : SV_POSITION;</span><br><span class="line">    float2 uv : TEXCOORD0;</span><br><span class="line">    fixed4 color : COLOR;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">    v2f o;</span><br><span class="line">    o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">    o.uv = TRANSFORM_TEX(v.uv, _MainTex);</span><br><span class="line">    o.color = v.color;</span><br><span class="line">    <span class="keyword">return</span> o;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    fixed4 col = tex2D(_MainTex, i.uv);</span><br><span class="line">    col *= _Color;</span><br><span class="line">    col *= i.color;</span><br><span class="line">    <span class="keyword">return</span> col;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>修改后的半透明材质就可以应用到<code>SpriteRenderer</code>组件上了，并且可以响应<code>SpriteRenderer</code>上的一些设置操作。在后面的教程中我们还可以在此基础上扩展出更加绚丽的效果。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/007/AdjustVariables.gif"></p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/007_Sprite&quot;</span>&#123;</span><br><span class="line">	Properties&#123;</span><br><span class="line">		_Color (<span class="string">&quot;Tint&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">		_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	SubShader&#123;</span><br><span class="line">		Tags&#123; </span><br><span class="line">			<span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Transparent&quot;</span> </span><br><span class="line">			<span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Transparent&quot;</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		Blend SrcAlpha OneMinusSrcAlpha</span><br><span class="line"></span><br><span class="line">		ZWrite off</span><br><span class="line">		Cull off</span><br><span class="line"></span><br><span class="line">		Pass&#123;</span><br><span class="line"></span><br><span class="line">			CGPROGRAM</span><br><span class="line"></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UnityCG.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line">			sampler2D _MainTex;</span><br><span class="line">			float4 _MainTex_ST;</span><br><span class="line"></span><br><span class="line">			fixed4 _Color;</span><br><span class="line"></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">				float4 vertex : POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">				fixed4 color : COLOR;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">				float4 position : SV_POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">				fixed4 color : COLOR;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">				v2f o;</span><br><span class="line">				o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">				o.uv = TRANSFORM_TEX(v.uv, _MainTex);</span><br><span class="line">				o.color = v.color;</span><br><span class="line">				<span class="keyword">return</span> o;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">				fixed4 col = tex2D(_MainTex, i.uv);</span><br><span class="line">				col *= _Color;</span><br><span class="line">				col *= i.color;</span><br><span class="line">				<span class="keyword">return</span> col;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><code>SpriteRenderer</code>组件还会提供各种网格数据来实现图标、多边形图形、动画效果。</p>
-<p>相比于Unity内置的<code>Sprite Shader</code>，我们目前还没有实现的功能有<code>instancing</code>、像素捕捉、<code>alpha</code>通道扩展，因为这些功能比较复杂，而且很少使用，因此我现在不做介绍。</p>
-<p>你可以在以下链接找到源码：<a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/007_Sprites/sprite.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/007_Sprites/sprite.shader</a></p>
-<p>希望你能喜欢这个教程哦！如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Basic_Transparency/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2021/07/01/Ronja_Basic_Transparency/" class="post-title-link" itemprop="url">Basic Transparency</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-07-01 14:01:00" itemprop="dateCreated datePublished" datetime="2021-07-01T14:01:00+08:00">2021-07-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-08 19:28:00" itemprop="dateModified" datetime="2021-07-08T19:28:00+08:00">2021-07-08</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/006-simple-transparency/">Basic Transparency</a></p>
-<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>对于不透明物体的渲染，是直接将计算所得到的像素颜色覆盖掉原有的颜色值。而透明物体的渲染方法恰恰相反，是保留原有颜色值，然后两者通过混合后，达到一种看是半透明的效果。为了阐明关键思想，这里以最简单的不受光材质为例。</p>
-<p>如果你还不知道如果编写着色器，这里建议你先阅读我之前的<a href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Basic_Shader/">教程</a><br><img src="https://www.ronja-tutorials.com/assets/images/posts/006/SemitransparentCube.png"></p>
-<p>为了达到正确的渲染效果，首先我们需要告诉Unity：我们打算渲染一个透明物体。因此，我们可以将<code>SubShader</code>块中的<code>Tags</code>块的渲染类型改为<code>Transparent</code>，以及将其中的渲染队列改为<code>Transparent</code>。渲染队列的设置是为了保证我们的半透明物体一定是在不透明物体之后渲染。如果不这么设置，根据上面说到的不透明渲染的方法，很可能有不透明物体直接覆盖在半透明物体区域，即便我们的半透明物体在不透明物体的前方。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Transparent&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Transparent&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
-
-<p>接下来我们要定义混合模式，前面提到需要将半透明的像素颜色和已经渲染的像素颜色相混合，就是通过这个混合模式来决定的。混合模式的定义由两个关键字构成，第一个和半透明颜色相乘，第二个和已有的颜色相乘，然后两者相加。</p>
-<p>当我们渲染不透明物体时，我们将第一个参数设为1，第二个参数设为0，这样新的颜色值便会完全替换掉原先的颜色值。而在透明材质中，我们通常使用新颜色的透明通道作为第一个参数，而第二个参数为1减该透明通道值，这样我们就可以调整其透明通道来实现不同程度的透明效果。</p>
-<p>混合模式可以定义在<code>SubShader</code>块中，也可以定义在<code>Pass</code>块中，位置的不同决定其作用域的大小。但是必须定义在<code>hlsl</code>代码以外，因为这属于<code>Shaderlab</code>拓展的特性。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Blend SrcAlpha OneMinusSrcAlpha</span><br></pre></td></tr></table></figure>
-
-<p>你可以从下面网址找到更全面的混合模式设置介绍：<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-Blend.html">https://docs.unity3d.com/Manual/SL-Blend.html</a></p>
-<p>为了突出重点，精简逻辑，这里举两个小例子：</p>
-<ul>
-<li>当我们的片段着色器返回的透明通道值为<code>0.5</code>，那么根据前面设置的混合模式，将会将新的颜色值得一半和旧的颜色值得一一半进行混合。如果新颜色是白色，旧颜色是黑色，那么混合后的将是灰色；</li>
-<li>当我们的片段着色器返回的透明通道值为<code>0.9</code>，那么混合后，新颜色将占有90%的比例，而旧颜色只占有%10；</li>
-</ul>
-<p>因此，在前面不透明着色器脚本的基础上，做以上调整，该着色器就成功变成一个半透明着色器。因为公共变量<code>_Color</code>参与了片段着色器中的颜色计算，所以我们在材质面板修改其透明度，将会影响最终的混合效果。如下：<br><img src="https://www.ronja-tutorials.com/assets/images/posts/006/AdjustTint.gif"></p>
-<p>另一个需要修改的地方是关闭透明着色器的深度写入功能。一般来说，当模型被渲染到画面上是，其距离摄像机的深度信息会被记录到一张深度纹理是上。然后后面渲染的模型只需要与这张深度图相比较，就可以正确判断其相互之间的遮挡关系，其中被遮挡的部分将不会渲染到画面上。但是这并不适用于半透明物体，因为即便被遮挡也会被渲染。所以我们只能从其渲染队列方面考虑，将半透明物体限定在不透明物体之后渲染，并且半透明物体之间的渲染排序是由远及近。深度值写入的设置如下，和混合模式设置一样，都可以定义在<code>SubShader</code>或<code>Pass</code>块中。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Blend SrcAlpha OneMinusSrcAlpha</span><br><span class="line">ZWrite Off</span><br></pre></td></tr></table></figure>
-
-<p>如果我们的纹理贴图也存在半透明通道，那么最终渲染出来的效果将是各个部位的透明程度有差异。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/006/TextureTransparentCube.png"></p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/006_Basic_Transparency&quot;</span>&#123;</span><br><span class="line">	Properties&#123;</span><br><span class="line">		_Color (<span class="string">&quot;Tint&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">		_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	SubShader&#123;</span><br><span class="line">		Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Transparent&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Transparent&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line">		Blend SrcAlpha OneMinusSrcAlpha</span><br><span class="line">		ZWrite off</span><br><span class="line"></span><br><span class="line">		Pass&#123;</span><br><span class="line">			CGPROGRAM</span><br><span class="line"></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UnityCG.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line">			sampler2D _MainTex;</span><br><span class="line">			float4 _MainTex_ST;</span><br><span class="line"></span><br><span class="line">			fixed4 _Color;</span><br><span class="line"></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">				float4 vertex : POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">				float4 position : SV_POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">				v2f o;</span><br><span class="line">				o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">				o.uv = TRANSFORM_TEX(v.uv, _MainTex);</span><br><span class="line">				<span class="keyword">return</span> o;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">				fixed4 col = tex2D(_MainTex, i.uv);</span><br><span class="line">				col *= _Color;</span><br><span class="line">				<span class="keyword">return</span> col;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>你可以在以下链接找到源码：<a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/006_Transparency/transparent.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/006_Transparency/transparent.shader</a></p>
 <p>希望你能喜欢这个教程哦！如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
 
       
@@ -1358,7 +1394,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">48</span>
+          <span class="site-state-item-count">50</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

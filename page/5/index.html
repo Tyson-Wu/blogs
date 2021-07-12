@@ -163,6 +163,209 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/12/19/OpenGL-Overview/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2020/12/19/OpenGL-Overview/" class="post-title-link" itemprop="url">OpenGL Overview</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-19 15:01:00" itemprop="dateCreated datePublished" datetime="2020-12-19T15:01:00+08:00">2020-12-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-12 08:46:10" itemprop="dateModified" datetime="2021-07-12T08:46:10+08:00">2021-07-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/OpenGL/" itemprop="url" rel="index"><span itemprop="name">OpenGL</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/OpenGL/Overview/" itemprop="url" rel="index"><span itemprop="name">Overview</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="OpenGL-Introduction"><a href="#OpenGL-Introduction" class="headerlink" title="OpenGL Introduction"></a>OpenGL Introduction</h2><p>OpenGL 是图形硬件的软件接口，接口功能与硬件无关，可以在不同的硬件平台上使用。OpenGL程序也可以通过网络的方式执行，例如客户端-服务器这种分布方式。OpenGL的客户端是指执行OpenGL程序的计算机，而服务端是指执行绘图操作的计算机。</p>
+<p>OpenGL使用gl前置符来标记OpenGL内核命令，使用glu来标记OpenGL Utility库命令。另外，OpenGL所有以GL_开头的命令全部是大写。OpenGL也会用后置标志符来指明命令参数的个数以及类型。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">glColor3f(<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>);		<span class="comment">//使用三个浮点数设置颜色</span></span><br><span class="line">glColor4d(<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0.2</span>);	<span class="comment">//使用双精度浮点数设置颜色，并具有Alpha通道</span></span><br><span class="line">glVertex3fv(vertex);	<span class="comment">//使用三维向量设置顶点坐标</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="State-Machine"><a href="#State-Machine" class="headerlink" title="State Machine"></a>State Machine</h2><p>OpenGL是一个状态机。其中设置的各种状态参数，包括模式、属性等，会一直有效，直到我们对其手动修改。绝大多数的状态值可以直接使用glEnable() 或 glDisable()来开启和禁用。我们也可以使用gllsEnabled()来获取某个状态值当前的开启状态。我们也可以使用glPushAttrib()和glPopAttrib()来保存或提取一组状态值。GL_ALL_ATTRIB_BITS参数表示保存或提取所有的状态值。在标准的OpenGL中，栈的个数不少于16个。我们可以使用<a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/files/glinfo.zip">glinfo</a>来获取栈的大小信息。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">glPushAttrib(GL_LIGHTING_BIT);			<span class="comment">//</span></span><br><span class="line">	glDisable(GL_LIGHTING);</span><br><span class="line">	glEnable(GL_COLOR_MATERIAL);</span><br><span class="line">glPushAttrib(GL_COLOR_BUFFER_BIT);</span><br><span class="line">	glDisable(GL_DITHER);</span><br><span class="line">	glEnable(GL_BLEND);</span><br><span class="line">	</span><br><span class="line">...<span class="comment">//其他代码</span></span><br><span class="line"></span><br><span class="line">glPopAttrib();		<span class="comment">//提取GL_COLOR_BUFFER_BIT</span></span><br><span class="line">glPopAttrib();		<span class="comment">//提取GL_LIGHTING_BIT</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="glBegin-和glEnd"><a href="#glBegin-和glEnd" class="headerlink" title="glBegin()和glEnd()"></a>glBegin()和glEnd()</h2><p>我们可以直接在glBegin()和glEnd()方法之间，指定一组顶点数据来绘制几何图元，例如点、线、三角形等等。这种绘制方式称为及时模式。我们也可以使用其他的方式进行绘制，例如<a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_vertexarray.html">vertex array</a>。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">glBegin(GL_TRIANGLES);</span><br><span class="line">	glColor3f(<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>);		<span class="comment">//设置颜色为红色</span></span><br><span class="line">	glVertex3fv(v1);		<span class="comment">//设置三角形的三个顶点坐标</span></span><br><span class="line">	glVertex3fv(v2);</span><br><span class="line">	glVertex3fv(v3);</span><br><span class="line">glEnd();</span><br></pre></td></tr></table></figure>
+
+<p>OpenGL中包含十种图元类型：GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP, GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS, GL_QUAD_STRIP, GL_POLYGON。</p>
+<p>这里需要注意的是，不是所有的命令都可以放在glBegin()和glEnd()之间，只有一小部分命令可以，例如glVertex*(), glColor*(), glNormal*(), glTexCoord*(), glMaterial*(), glCallList()等等。</p>
+<h2 id="glFlush-和glFinish"><a href="#glFlush-和glFinish" class="headerlink" title="glFlush()和glFinish()"></a>glFlush()和glFinish()</h2><p>类似于计算机的IO缓存，OpenGL命令也不是立刻执行的。所有的命令首先是存储在缓存中，包括网络缓存以及图形加速器，都是在缓存满了之后，再一并执行缓存中的命令。举个例子，我们的应用程序是通过网络连接的，那么最有效的数据传输方式是将所有数据打包到一起，然后一并发送。相比于每一个命令发送一次，这种批处理的方式效率更高。</p>
+<p>glFlush()是用来清空命令缓存，同时强制立即执行缓存中的所有命令。也就是说，使用glFlush()是一种手动执行的操作，它不需要等到命令缓存满了才执行。虽然glFlush()会立即执行缓存中的命令，但是其实际操作应该是将缓存中的命令插入到GPU已有命令的队列里面，当然这种插入是优先插入到最前面，等当前执行的操作完成之后，就会立即开始执行这些命令，然后这些命令执行完后，glFlush()会立即返回到CPU程序，而原先被强制插队的操作会依次执行。所以对glFlush()更为准确的描述应该是，在调用glFlush()后，缓存中的命令会在短暂的等待后立即执行，然后在这些命令执行完成后，glFlush()会立即返回到CPU程序，而原先在GPU中排队的操作会继续执行。</p>
+<p>glFinish()和glFlush()方法类似，都是清空命令缓存并强制立即执行缓存中的命令。但是glFinsh()会打断已经开始执行的操作，然后等命令缓存中的所有操作都执行完，再恢复原先被打断的操作。这里面打断，是指GPU中正在执行的操作被暂停。因此，glFinsh()方法，在命令缓存中的命令全部执行完后，不会立即返回到CPU程序，而是等之前未完成的操作全部执行完后，再返回到CPU程序。所以，我们可以是在一些同步任务(也就是GPU的执行操作和CPU的执行操作是串在一起的)中使用glFinsh(),也可以用于测量原先操作的执行时间，因为glFinsh()会等原先的操作执行完再返回。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/12/19/OpenGL-Transformation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2020/12/19/OpenGL-Transformation/" class="post-title-link" itemprop="url">OepnGL Transformation</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-19 15:01:00" itemprop="dateCreated datePublished" datetime="2020-12-19T15:01:00+08:00">2020-12-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-12 08:46:10" itemprop="dateModified" datetime="2021-07-12T08:46:10+08:00">2021-07-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/OpenGL/" itemprop="url" rel="index"><span itemprop="name">OpenGL</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/OpenGL/Transformation/" itemprop="url" rel="index"><span itemprop="name">Transformation</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p>顶点、法向这些几何数据的坐标变换是发生在Vertex Operation，而<a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_pipeline.html">OpenGL Pipeline</a>图元拼装是发生在栅格化操作之前。<br><img src="http://www.songho.ca/opengl/files/gl_transform02.png"><br>OpenGL vertex transformation</p>
+<h3 id="Object-Coordinates"><a href="#Object-Coordinates" class="headerlink" title="Object Coordinates"></a>Object Coordinates</h3><p>模型坐标系表示的是模型的初始位置和朝向，也是模型在所有坐标变换之前的初始状态。我们可以使用glRotatef(), glTranslatef(), glScalef()来对模型进行坐标变换。</p>
+<h3 id="Eye-Coordinates"><a href="#Eye-Coordinates" class="headerlink" title="Eye Coordinates"></a>Eye Coordinates</h3><p>模型坐标经过GL_MODELVIEW矩阵变换后，进入摄像机坐标系。GL_MODELVIEW矩阵结合了模型矩阵和观测矩阵(Mview * Mmodel)。模型矩阵变换是从模型坐标系到世界坐标系，而观察矩阵变换是从世界坐标系到观察坐标系。<br><img src="http://www.songho.ca/opengl/files/gl_transform07.png"></p>
+<p>在OpenGL中，没有单独的观察矩阵(Mview)。因此，要模拟摄像机变换，也就是移动摄像机，我们通常是对场景中的物体做一个反向变换，例如，我们控制摄像机右移，实际上是将整个场景左移。更具体一点就是，在OpenGL中，摄像机的位置永远都是在原点，面向观察坐标系下的-z方向。关于GL_MODELVIEW更详细的介绍请参考<a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_transform.html#modelview">ModelView Matrix</a>。</p>
+<p>模型的法向主要是用来进行光照计算的，在OpenGL中，用于光照计算的法向是在观察坐标系下的法向。也就是我们先使用GL_MODELVIEW对法向进行变换，然后再进行光照计算。需要注意的是，法向的变换和坐标点的变换操作有所区别。我们这里坐标变换是直接将坐标左乘GL_MODELVIEW变换矩阵。但是法向变换是左乘GL_MODELVIEW变换矩阵逆矩阵的转置矩阵。关于法向变换请参考<a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_normaltransform.html">Normal Vector Transformation</a>。<br><img src="http://www.songho.ca/opengl/files/gl_normaltransform01.png"></p>
+<h3 id="Clip-Coordinates"><a href="#Clip-Coordinates" class="headerlink" title="Clip Coordinates"></a>Clip Coordinates</h3><p>使用GL_PROJECTION投影矩阵，从观察坐标系变换到裁剪坐标系。其中GL_PROJECTION定义了裁剪区域，以及投影方式，是透视投影还是正交投影呢。之所以称作裁剪坐标系，是因为我们可以通过变换后的坐标来实现裁剪操作。更具体一点就是，变换后的坐标(x,y,z,w)。其中w表示的裁剪边界，当(x,y,z)都在[-w,w]这个范围内时，说明这个点在裁剪区域内；而不在这个范围的点将会被剔除。如果某个图元的所有点都不在裁剪区域内，那么整个图元都会被剔除，如果部分顶点在裁剪区域内，那么不在区域内的点将会被剔除，但是会基于裁剪边界对图元进行一个缝合操作。关于GL_PROJECTION的更多介绍请参考<a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_transform.html#projection">Projection Matix</a>。<br><img src="http://www.songho.ca/opengl/files/gl_transform08.png"></p>
+<h3 id="Normalized-Device-Coordinates-NDC"><a href="#Normalized-Device-Coordinates-NDC" class="headerlink" title="Normalized Device Coordinates (NDC)"></a>Normalized Device Coordinates (NDC)</h3><p>经过裁剪变换后，在裁剪区域内的坐标点的x,y,z的范围在[-w,w]之间，将x,y,z除以w后，得到齐次设备空间坐标。这个操作叫做投影除法。齐次设备空间坐标的x,y,z的范围现在是[-1,1]。<br><img src="http://www.songho.ca/opengl/files/gl_transform12.png"></p>
+<h3 id="Window-Coordinates-Screen-Coordinates"><a href="#Window-Coordinates-Screen-Coordinates" class="headerlink" title="Window Coordinates (Screen Coordinates"></a>Window Coordinates (Screen Coordinates</h3><p>使用视窗变换(ViewPort)，从齐次设备空间变换到屏幕空间。通过对齐次设备空间进行缩放、平移，来对齐屏幕渲染窗口区域。这个时候，虽然属于屏幕坐标系，但是整个空间还是属于几何意义上的、连续的空间，和像素表示的离散的空间有本质的区别。因为我们的图形还是通过点、线、多边形图元表示，而离散的像素空间是使用单个像素表示。<br>屏幕空间下的坐标、法向等几何信息，最终通过栅格化处理，得到离散化的片段数据，坐标变换和栅格化操作之间的关系请参考<a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_pipeline.html">OpenGL pipeline</a>中的管线图。glViewport()方法是用来定义屏幕空间哪个矩形区域用来显示最终的渲染画面。glDepthRange()方法是用来确定屏幕坐标系的z值。最终得到的屏幕坐标是基于这两个方法所设置的参数决定的：</p>
+<ul>
+<li>glViewport(x,y,w,h);</li>
+<li>glDepthRange(n,f);</li>
+</ul>
+<p><img src="http://www.songho.ca/opengl/files/gl_transform13.png"><br><img src="/blogs/images/src/d626436913e4116bd6112677aa7b026.jpg" alt="wwwwwww"></p>
+<p>视窗变换只是简单的线性映射：</p>
+<p><img src="http://www.songho.ca/opengl/files/gl_transform14.png"></p>
+<h2 id="OpenGL-Transformation-Matrix"><a href="#OpenGL-Transformation-Matrix" class="headerlink" title="OpenGL Transformation Matrix"></a>OpenGL Transformation Matrix</h2><p><img src="http://www.songho.ca/opengl/files/gl_transform04.png"><br>OpenGL Transformation Matrix</p>
+<p>OpenGL使用<a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_matrix.html">4X4的矩阵</a>作为变换矩阵。值得注意的是，这16个元素是按列主序存储在一维数组里面。我们可以通过转置操作将其变为行主序。行主序是标准公约。</p>
+<p>OpenGL有4中不同类型的矩阵：GL_MODELVIEW, GL_PROJECTION, GL_TEXTURE, GL_COLOR。我们可以通过glMatrixMode()方法来切换当前矩阵类型。例如，我们想选择GL_MODELVIEW矩阵，那么可以使用<code>glMatrixMode(GL_MODELVIEW)</code>。</p>
+<h3 id="Model-View-Matrix-GL-MODELVIEW"><a href="#Model-View-Matrix-GL-MODELVIEW" class="headerlink" title="Model-View Matrix (GL_MODELVIEW)"></a>Model-View Matrix (GL_MODELVIEW)</h3><p>GL_MODELVIEW将观察矩阵和模型矩阵结合到一起。如果我们想从模型坐标系变换到观察坐标系，那么我们需要GL_MODELVIEW的逆矩阵进行变换。gluLookAt()主要用来设置观察矩阵。</p>
+<p><img src="http://www.songho.ca/opengl/files/gl_anglestoaxes01.png"><br>GL_MODELVIEW矩阵</p>
+<p>上图中，最右边的三个元素(m12,m13,14)，表示的是平移变换–glTranslatef()。元素m15表示的是<a target="_blank" rel="noopener" href="http://www.songho.ca/math/homogeneous/homogeneous.html">齐次坐标</a>，主要用来做透视变换用的。</p>
+<p>另外9个元素(m0,m1,m2),(m4,m5,m6),(m8,m9,10)是用来进行欧式变换以及仿射变换，相关的函数是glRotatef()和glScalef()。另外值得指出的是，这三组向量表示的是相互正交的轴。</p>
+<ul>
+<li>(m0,m1,m2) : +X轴,   left 向量，默认是(1,0,0)</li>
+<li>(m4,m5,m6) : +Y轴,    up  向量，默认是(0,1,0)</li>
+<li>(m8,m9,m10): +Z轴, forward向量，默认是(0,0,1)</li>
+</ul>
+<p>除了使用变换函数，如glRotatef()，来修改GL_MODELVIEW矩阵，我们也可以根据摄像机偏转角或者朝向来手动计算GL_MODELVIEW矩阵，例如以下几种方法：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_anglestoaxes.html">Angles to Axes</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_lookattoaxes.html">Lookat to Axes</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_rotate.html">Rotation About Arbitrary Axis</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.songho.ca/opengl/gl_matrix.html">Matrix4 class</a></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/11/22/Rendering-with-Replaced-Shaders/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -194,7 +397,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-08 19:28:00" itemprop="dateModified" datetime="2021-07-08T19:28:00+08:00">2021-07-08</time>
+                <time title="修改时间：2021-07-12 08:46:10" itemprop="dateModified" datetime="2021-07-12T08:46:10+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -283,7 +486,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-08 19:28:00" itemprop="dateModified" datetime="2021-07-08T19:28:00+08:00">2021-07-08</time>
+                <time title="修改时间：2021-07-12 08:46:10" itemprop="dateModified" datetime="2021-07-12T08:46:10+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -404,7 +607,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-08 19:28:00" itemprop="dateModified" datetime="2021-07-08T19:28:00+08:00">2021-07-08</time>
+                <time title="修改时间：2021-07-12 08:46:10" itemprop="dateModified" datetime="2021-07-12T08:46:10+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -565,7 +768,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-08 19:28:00" itemprop="dateModified" datetime="2021-07-08T19:28:00+08:00">2021-07-08</time>
+                <time title="修改时间：2021-07-12 08:46:10" itemprop="dateModified" datetime="2021-07-12T08:46:10+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -642,7 +845,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-08 19:28:00" itemprop="dateModified" datetime="2021-07-08T19:28:00+08:00">2021-07-08</time>
+                <time title="修改时间：2021-07-12 08:46:10" itemprop="dateModified" datetime="2021-07-12T08:46:10+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -727,7 +930,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-08 19:28:00" itemprop="dateModified" datetime="2021-07-08T19:28:00+08:00">2021-07-08</time>
+                <time title="修改时间：2021-07-12 08:46:10" itemprop="dateModified" datetime="2021-07-12T08:46:10+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -832,7 +1035,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-08 19:28:00" itemprop="dateModified" datetime="2021-07-08T19:28:00+08:00">2021-07-08</time>
+                <time title="修改时间：2021-07-12 08:46:10" itemprop="dateModified" datetime="2021-07-12T08:46:10+08:00">2021-07-12</time>
               </span>
 
           
@@ -906,7 +1109,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-08 19:28:00" itemprop="dateModified" datetime="2021-07-08T19:28:00+08:00">2021-07-08</time>
+                <time title="修改时间：2021-07-12 08:46:10" itemprop="dateModified" datetime="2021-07-12T08:46:10+08:00">2021-07-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1047,7 +1250,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">48</span>
+          <span class="site-state-item-count">50</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
