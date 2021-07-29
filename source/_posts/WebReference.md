@@ -189,6 +189,7 @@ date: 2021-05-27 17:01:34
 [Code Generation in Unity](https://www.gamasutra.com/blogs/ByronMayne/20160121/258356/Code_Generation_in_Unity.php)
 [Compile C# at runtime in Unity3D](https://www.arcturuscollective.com/archives/22)
 [Creating a Node Based Editor in Unity](https://gram.gs/gramlog/creating-node-based-editor-unity/)
+[package-reference](https://needle.tools/package-reference/list/):[Unity Package](https://github.com/needle-mirror?q=&type=&language=&sort=)
 
 ### Duality
 [Getting Started](https://docs.duality2d.net/pages/v3/getting-started.html):It’s an extensible 2D game engine;
