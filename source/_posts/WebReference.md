@@ -94,6 +94,7 @@ date: 2021-05-27 17:01:34
 
 ### Color
 [Studying Gamut Clipping](https://simonstechblog.blogspot.com/):色域裁剪研究，用于将颜色限定在有效范围内；
+[LUTs](https://blog.frame.io/2019/08/12/luts-101/)
 
 ### Lighting
 [Spherical Harmonics](https://theory.cpe.ku.ac.th/~pramook/files/prosem_paper.pdf):球谐函数原理；
@@ -117,6 +118,7 @@ date: 2021-05-27 17:01:34
 [Particle Metaballs in Unity using URP and Shader Graph Part 1](https://bronsonzgeb.com/index.php/2021/02/27/particle-metaballs-in-unity-using-urp-and-shader-graph-part-1/):This series will explain how to draw Metaballs in Unity using the Universal Render Pipeline (URP) and Shader Graph;
 [Rendering Implicit Surfaces and Distance Fields: Sphere Tracing](https://www.scratchapixel.com/lessons/advanced-rendering/rendering-distance-fields/introduction):Rendering Implicit Surfaces and Distance Fields: Sphere Tracing;
 [Shader Tutorials by Ronja](https://www.ronja-tutorials.com/):The focus of this tutorials is on unity shaders with hlsl;
+[depth](https://www.cyanilux.com/tutorials/depth/):This post goes over everything about depth that I’ve come across (so you could say it’s an in-depth post about depth!), mainly focusing on Unity and the Universal RP (but also includes some High Definition RP stuff). Includes info for both Shader Graph and URP Shader Code (HLSL).
 
 ## AI
 
@@ -165,6 +167,7 @@ date: 2021-05-27 17:01:34
 ## Engine
 
 ### Unity
+[BECOME A GAME PERFORMANCE EXPERT](https://thegamedev.guru/)
 [Unity合集](https://mailchi.mp/3f4a331f4255/issue-3803533?e=697c40775c)：非常丰富；
 [Awesome Unity Open Source on GitHub (800+)](https://github.com/baba-s/awesome-unity-open-source-on-github):一大包Unity技术合集，力荐；
 [Animation Texture Baker for Unity](https://github.com/sugi-cho/Animation-Texture-Baker):动画烘焙成贴图;
