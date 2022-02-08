@@ -13,6 +13,7 @@ date: 2021-05-27 17:01:34
 [判断线段是否相交并求交点](https://blog.csdn.net/leonardohaig/article/details/110881364):判断线段是否相交并求交点;
 [The ryg blog](https://fgiesen.wordpress.com/)
 [Circular Harmonics](https://bit-hack.net/2014/03/30/circular-harmonics/)
+[Algorithms for Competitive Programming](https://cp-algorithms.com/index.html#geometry)
 
 
 ### Noise
@@ -52,6 +53,19 @@ date: 2021-05-27 17:01:34
 
 
 ### Path
+[Study: Navigation Mesh Generation](http://www.critterai.org/projects/nmgen_study/)
+[Study-Navigation-Mesh-Generation](https://github.com/Seed-XL/Study-Navigation-Mesh-Generation)
+[NavMesh](https://github.com/Hifumi123/NavMesh)
+[navMesh](https://github.com/BIG-b8/navMesh)
+[unity-nav-mesh](https://github.com/phillip-ables/unity-nav-mesh)
+[Unity-NavMeshAgent-SelfDriving](https://github.com/kimsama/Unity-NavMeshAgent-SelfDriving)
+[NavMeshWith2D](https://github.com/Reddeyfish/NavMeshWith2D)
+[Components for Runtime NavMesh Building](https://github.com/Haxixi/NavMeshComponents)
+[NavigationMesh](https://github.com/pikol93/NavigationMesh)
+[Digesting Duck](https://digestingduck.blogspot.com/search?q=Navigation+)
+[recastnavigation](https://github.com/recastnavigation/recastnavigation)
+[Nav Mesh Avoidance](https://github.com/OlegDzhuraev/NavMeshAvoidance)
+[Custom Nav Mesh](https://github.com/jadvrodrigues/CustomNavMesh)
 [Euclidean Shortest Paths](https://fribbels.github.io/shortestpath/writeup.html):避障寻路；
 [Motion Planning, Part IV Graph Search Part II](https://www.cs.cmu.edu/~16311/current/schedule/ppp/Lec12-MotionPlanning4.pdf):路径规划；
 [A Comparison of High-Level Approaches for Speeding Up Pathfinding](https://aaai.org/ocs/index.php/AIIDE/AIIDE10/paper/view/2139/2547):寻路优化；
@@ -74,6 +88,11 @@ date: 2021-05-27 17:01:34
 [Visibility graphs](http://www.cs.kent.edu/~dragan/ST-Spring2016/visibility%20graphs.pdf):视线图;
 [spherical_voronoi_core](https://github.com/xw0/spherical_voronoi_core):Voronoi Tessellation of the Sphere;
 ## Game
+[Game Dev](https://unitylist.com/p/1291/Game-Dev)
+[Fighting Game 3d Multiplayer Unity3D](https://unitylist.com/p/13vf/Fighting-Game-3d-Multiplayer-Unity3D)
+[SimpleMultiplayerProject](https://github.com/AnshuNair/SimpleMultiplayerProject)
+[Heroes of the Skills](https://github.com/Aleqsd/Heroes-of-the-Skills)
+[Neuroevolution of 2-legged creatures learning to walk further-faster](https://github.com/Kisamegr/NeuroThingy)
 
 ### SLG
 [pvigier's blog](https://pvigier.github.io/2020/02/09/vagabond-building-generation.html):地图自动生成、寻路等一套完整的解决方案；
@@ -114,6 +133,8 @@ date: 2021-05-27 17:01:34
 
 
 ### Shader
+[Interior Mapping](https://forum.unity.com/threads/interior-mapping.424676/#post-2751518)
+[Interior Mapping](http://www.humus.name/index.php?page=3D&ID=80)
 [DepthInverseProjection](https://github.com/keijiro/DepthInverseProjection):深度重构
 [The Book of Shaders](https://thebookofshaders.com/)
 [Harry Alisavakis的博客](https://halisavakis.com/category/blog-posts/my-take-on-shaders/page/5/):一些着色器学习例子
@@ -170,6 +191,16 @@ date: 2021-05-27 17:01:34
 ## Engine
 
 ### Unity
+[TextEmoji](https://github.com/BanMing/TextEmoji)
+[Unity3D Book Page Curl](https://github.com/Dandarawy/UnityBookPageCurl)
+[Dynamic Panels for Unity 3D](https://github.com/yasirkula/UnityDynamicPanels)
+[GText](https://github.com/garsonlab/GText)
+[CruddyEditor](https://github.com/AKJ1/CruddyEditor)
+[UnityBugTracker](https://github.com/djfariel/UnityBugTracker)
+[ZZUnityEditor](https://github.com/YMD-ZhangZhang/ZZUnityEditor)
+[Unity Editor Tools](https://github.com/ZoserLock/unity-editor-tools)
+[ToDo](https://github.com/Cyanilux/ToDo)
+[UnityEditorMemo](https://github.com/charcolle/UnityEditorMemo)
 [BECOME A GAME PERFORMANCE EXPERT](https://thegamedev.guru/)
 [Unity合集](https://mailchi.mp/3f4a331f4255/issue-3803533?e=697c40775c)：非常丰富；
 [Awesome Unity Open Source on GitHub (800+)](https://github.com/baba-s/awesome-unity-open-source-on-github):一大包Unity技术合集，力荐；
@@ -196,6 +227,10 @@ date: 2021-05-27 17:01:34
 [Compile C# at runtime in Unity3D](https://www.arcturuscollective.com/archives/22)
 [Creating a Node Based Editor in Unity](https://gram.gs/gramlog/creating-node-based-editor-unity/)
 [package-reference](https://needle.tools/package-reference/list/):[Unity Package](https://github.com/needle-mirror?q=&type=&language=&sort=)
+[Unity download archive](https://unity3d.com/get-unity/download/archive):Unity内置shader源码下载
+[OpenWorldFramework](https://github.com/tiredamage42/OpenWorldFramework#readme)
+[Long-Term-Open-World](https://github.com/ShadowLancer42/Long-Term-Open-World)
+[Procedural-Content-Generation](https://github.com/Mrchrissross/Procedural-Content-Generation)
 
 ### Duality
 [Getting Started](https://docs.duality2d.net/pages/v3/getting-started.html):It’s an extensible 2D game engine;
