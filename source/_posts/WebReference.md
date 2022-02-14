@@ -133,6 +133,7 @@ date: 2021-05-27 17:01:34
 
 
 ### Shader
+[Using post-processing effects in Unity](https://www.red-gate.com/simple-talk/development/dotnet-development/post-processing-effects-unity/)
 [Interior Mapping](https://forum.unity.com/threads/interior-mapping.424676/#post-2751518)
 [Interior Mapping](http://www.humus.name/index.php?page=3D&ID=80)
 [DepthInverseProjection](https://github.com/keijiro/DepthInverseProjection):深度重构
@@ -191,6 +192,17 @@ date: 2021-05-27 17:01:34
 ## Engine
 
 ### Unity
+[create a preview window using previewrendertutility](https://programming.vip/docs/unityprevieweditor-create-a-preview-window-using-previewrendertutility.html)
+[Is it possible to create a custom model preview in an Editor window akin to the one displayed when an FBX is selected?](https://answers.unity.com/questions/448086/is-it-possible-to-create-a-custom-model-preview-in.html)
+[EditorWindow - Preview of prefab](https://forum.unity.com/threads/editorwindow-preview-of-prefab.1057988/)
+[How to correctly draw preview in EditorWindow ](http://zh.esotericsoftware.com/forum/How-to-correctly-draw-preview-in-EditorWindow-13046)
+[Unity 粒子特效预览工具](https://github.com/akof1314/UnityParticleSystemPreview)
+[这个家伙有点牛逼](https://github.com/Yene2017)
+[Introduction to Scriptable Objects](https://learn.unity.com/tutorial/introduction-to-scriptable-objects?language=en#)
+[Creating Basic Editor Tools](https://learn.unity.com/tutorial/creating-basic-editor-tools?language=en#)
+[Property Drawers and Custom Inspectors](https://learn.unity.com/tutorial/property-drawers-and-custom-inspectors?language=en)
+[Creating Custom Gizmos for Development](https://learn.unity.com/tutorial/creating-custom-gizmos-for-development-2019-3?language=en#)
+[Editor Scripting](https://learn.unity.com/tutorial/editor-scripting?language=en#5c7f8528edbc2a002053b5fa)
 [TextEmoji](https://github.com/BanMing/TextEmoji)
 [Unity3D Book Page Curl](https://github.com/Dandarawy/UnityBookPageCurl)
 [Dynamic Panels for Unity 3D](https://github.com/yasirkula/UnityDynamicPanels)
