@@ -163,6 +163,112 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/05/Ronja_Checkerboard_Pattern/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/07/05/Ronja_Checkerboard_Pattern/" class="post-title-link" itemprop="url">Checkerboard Pattern</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-07-05 13:01:00" itemprop="dateCreated datePublished" datetime="2021-07-05T13:01:00+08:00">2021-07-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-10 18:50:13" itemprop="dateModified" datetime="2022-03-10T18:50:13+08:00">2022-03-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/011-chessboard/">Checkerboard Pattern</a></p>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>我觉得使用着色器来生成图片比较有意思。下面我以棋盘格为例，像你们展示如何通过程序生成模型纹理的。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/011/Result.png"></p>
+<h2 id="Stripes"><a href="#Stripes" class="headerlink" title="Stripes"></a>Stripes</h2><p>参考前面关于<a href="https://tyson-wu.github.io/blogs/2021/07/02/Ronja_Planar_Mapping/">二维平面映射</a>的教程，这里我们也是基于模型顶点的世界坐标来生成UV，这样的话，移动模型的过程中，其表面纹理在前后帧的渲染图可以无缝衔接。如果你希望生成的纹理跟随模型一起运动，那么可以选择基于模型坐标系进行计算。</p>
+<p>首先，我们在顶点着色器中通过坐标变换，计算得到顶点的世界坐标，然后通过中间插值数据结构将计算结果传递到片段着色器。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">    float4 position : SV_POSITION;</span><br><span class="line">    float3 worldPos : TEXCOORD0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">    v2f o;</span><br><span class="line">    <span class="comment">//计算裁剪坐标</span></span><br><span class="line">    o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">    <span class="comment">//计算世界坐标</span></span><br><span class="line">    o.worldPos = mul(unity_ObjectToWorld, v.vertex);</span><br><span class="line">    <span class="keyword">return</span> o;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后在片段着色器中，我们首先考虑一个维度上的棋盘格效果，也就是黑白相间的条纹效果。方法很简单，就是选取世界坐标中的一个轴向的值，然后取整，两个整数之间的数取整后的结果是一样的，也就是说取整后的值代表了两个整数之间的区域，正是我们这个里的条纹效果。</p>
+<p>然后我们要区分条纹的奇偶顺序，因为两个相邻的条纹刚好可以用两个相邻的整数来表示，所以只需要求其整数的奇偶性。求一个整数的奇偶性，可以通过对2的求余操作来实现。然后通过奇偶性来判断其颜色。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    <span class="comment">//选择x轴的值取整</span></span><br><span class="line">    <span class="keyword">float</span> chessboard = <span class="built_in">floor</span>(i.worldPos.x);</span><br><span class="line">    <span class="comment">//计算余数的一半</span></span><br><span class="line">    chessboard = frac(chessboard * <span class="number">0.5</span>);</span><br><span class="line">    <span class="comment">//计算余数</span></span><br><span class="line">    chessboard *= <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">return</span> chessboard;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/011/1d.png"></p>
+<h2 id="Checkerboard-in-2d-and-3d"><a href="#Checkerboard-in-2d-and-3d" class="headerlink" title="Checkerboard in 2d and 3d"></a>Checkerboard in 2d and 3d</h2><p>接下来，我们处理两个轴向的棋盘格。按照前面的操作，另外在选一个轴向进行计算，这时候分别知道两个轴的奇偶性，然后两个奇偶值相加，再求一遍奇偶性，得到最终格子的颜色。实际上可以进一步优化，可以直接在取整之后就求和，然后后面的奇偶求解可以合并。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    <span class="comment">//合并两个轴向</span></span><br><span class="line">    <span class="keyword">float</span> chessboard = <span class="built_in">floor</span>(i.worldPos.x) + <span class="built_in">floor</span>(i.worldPos.y);</span><br><span class="line">    <span class="comment">//计算余数的一半</span></span><br><span class="line">    chessboard = frac(chessboard * <span class="number">0.5</span>);</span><br><span class="line">    <span class="comment">//计算余数</span></span><br><span class="line">    chessboard *= <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">return</span> chessboard;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/011/OddEvenPattern.png"><br><img src="https://www.ronja-tutorials.com/assets/images/posts/011/2d.png"></p>
+<p>我们还可以进一步扩展到三个轴。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    <span class="comment">//合并三个轴向</span></span><br><span class="line">    <span class="keyword">float</span> chessboard = <span class="built_in">floor</span>(i.worldPos.x) + <span class="built_in">floor</span>(i.worldPos.y) + <span class="built_in">floor</span>(i.worldPos.z);</span><br><span class="line">    <span class="comment">//计算余数的一半</span></span><br><span class="line">    chessboard = frac(chessboard * <span class="number">0.5</span>);</span><br><span class="line">    <span class="comment">//计算余数</span></span><br><span class="line">    chessboard *= <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">return</span> chessboard;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/011/3d.png"></p>
+<h2 id="Scaling"><a href="#Scaling" class="headerlink" title="Scaling"></a>Scaling</h2><p>下面我们再给棋盘格增加一个缩放功能。我们需要在材质面板上引入缩放变量，方便后续调参。然后在片段着色器中，先将世界坐标处以这个缩放参数，然后在执行上面的操作。这样我们在材质面板上减小缩放变量时，棋盘格的大小也会变小。</p>
+<p>除此之外，这里还有一个细微的改变，就是我们不再是对各个轴向分开取整，而是直接采样向量的方法，同时对所有轴向进行求整。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//材质面板属性</span></span><br><span class="line">Properties&#123;</span><br><span class="line">    _Scale (<span class="string">&quot;Pattern Size&quot;</span>, Range(<span class="number">0</span>,<span class="number">10</span>)) = <span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">float</span> _Scale;</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    <span class="comment">//使用向量方法对各个轴向同时取整</span></span><br><span class="line">    float3 adjustedWorldPos = <span class="built_in">floor</span>(i.worldPos / _Scale);</span><br><span class="line">    <span class="comment">//各个轴向求和</span></span><br><span class="line">    <span class="keyword">float</span> chessboard = adjustedWorldPos.x + adjustedWorldPos.y + adjustedWorldPos.z;</span><br><span class="line">    <span class="comment">//计算余数的一半</span></span><br><span class="line">    chessboard = frac(chessboard * <span class="number">0.5</span>);</span><br><span class="line">    <span class="comment">//计算余数</span></span><br><span class="line">    chessboard *= <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">return</span> chessboard;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/011/Scaling.gif"></p>
+<h2 id="Customizable-Colors"><a href="#Customizable-Colors" class="headerlink" title="Customizable Colors"></a>Customizable Colors</h2><p>最后，我们还可以增加两个变量来控制棋盘格的颜色。在片段着色器的最后我使用线性插值函数来实现两种颜色的二选一操作。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//材质面板</span></span><br><span class="line">Properties&#123;</span><br><span class="line">    _Scale (<span class="string">&quot;Pattern Size&quot;</span>, Range(<span class="number">0</span>,<span class="number">10</span>)) = <span class="number">1</span></span><br><span class="line">    _EvenColor(<span class="string">&quot;Color 1&quot;</span>, Color) = (<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>)</span><br><span class="line">    _OddColor(<span class="string">&quot;Color 2&quot;</span>, Color) = (<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">float4 _EvenColor;</span><br><span class="line">float4 _OddColor;</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    <span class="comment">//同时取整</span></span><br><span class="line">    float3 adjustedWorldPos = <span class="built_in">floor</span>(i.worldPos / _Scale);</span><br><span class="line">    <span class="comment">//三个维度求和</span></span><br><span class="line">    <span class="keyword">float</span> chessboard = adjustedWorldPos.x + adjustedWorldPos.y + adjustedWorldPos.z;</span><br><span class="line">    <span class="comment">//计算余数的一半</span></span><br><span class="line">    chessboard = frac(chessboard * <span class="number">0.5</span>);</span><br><span class="line">    <span class="comment">//计算余数</span></span><br><span class="line">    chessboard *= <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//二选一操作</span></span><br><span class="line">    float4 color = lerp(_EvenColor, _OddColor, chessboard);</span><br><span class="line">    <span class="keyword">return</span> color;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/011/colors.png"></p>
+<p>下面是最终的棋盘格生成着色器。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/011_Chessboard&quot;</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//材质面板</span></span><br><span class="line">    Properties&#123;</span><br><span class="line">        _Scale (<span class="string">&quot;Pattern Size&quot;</span>, Range(<span class="number">0</span>,<span class="number">10</span>)) = <span class="number">1</span></span><br><span class="line">        _EvenColor(<span class="string">&quot;Color 1&quot;</span>, Color) = (<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>)</span><br><span class="line">        _OddColor(<span class="string">&quot;Color 2&quot;</span>, Color) = (<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    SubShader&#123;</span><br><span class="line">        <span class="comment">//不透明物体</span></span><br><span class="line">        Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Geometry&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        Pass&#123;</span><br><span class="line">            CGPROGRAM</span><br><span class="line">            <span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UnityCG.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">            <span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">            <span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">float</span> _Scale;</span><br><span class="line"></span><br><span class="line">            float4 _EvenColor;</span><br><span class="line">            float4 _OddColor;</span><br><span class="line"></span><br><span class="line">            <span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">                float4 vertex : POSITION;</span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">            <span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">                float4 position : SV_POSITION;</span><br><span class="line">                float3 worldPos : TEXCOORD0;</span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">            <span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">                v2f o;</span><br><span class="line">                <span class="comment">//计算裁剪坐标</span></span><br><span class="line">                o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">                <span class="comment">//计算世界坐标</span></span><br><span class="line">                o.worldPos = mul(unity_ObjectToWorld, v.vertex);</span><br><span class="line">                <span class="keyword">return</span> o;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">                <span class="comment">//同时取整</span></span><br><span class="line">                float3 adjustedWorldPos = <span class="built_in">floor</span>(i.worldPos / _Scale);</span><br><span class="line">                <span class="comment">//求和</span></span><br><span class="line">                <span class="keyword">float</span> chessboard = adjustedWorldPos.x + adjustedWorldPos.y + adjustedWorldPos.z;</span><br><span class="line">                <span class="comment">//计算余数的一半</span></span><br><span class="line">                chessboard = frac(chessboard * <span class="number">0.5</span>);</span><br><span class="line">                <span class="comment">//计算余数</span></span><br><span class="line">                chessboard *= <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">                <span class="comment">//二选一插值</span></span><br><span class="line">                float4 color = lerp(_EvenColor, _OddColor, chessboard);</span><br><span class="line">                <span class="keyword">return</span> color;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            ENDCG</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    FallBack <span class="string">&quot;Standard&quot;</span> <span class="comment">//后补着色器</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>希望本篇对你有所帮助，能够让你知道如何通过程序实现模型纹理图。</p>
+<p>你可以在以下链接找到源码：<a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/011_ChessBoard/Chessboard.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/011_ChessBoard/Chessboard.shader</a></p>
+<p>希望你能喜欢这个教程哦！如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/02/Ronja_Triplanar_Mapping/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -194,7 +300,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-02-14 11:32:00" itemprop="dateModified" datetime="2022-02-14T11:32:00+08:00">2022-02-14</time>
+                <time title="修改时间：2022-03-10 18:50:13" itemprop="dateModified" datetime="2022-03-10T18:50:13+08:00">2022-03-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -313,7 +419,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-02-14 11:32:00" itemprop="dateModified" datetime="2022-02-14T11:32:00+08:00">2022-02-14</time>
+                <time title="修改时间：2022-03-10 18:50:13" itemprop="dateModified" datetime="2022-03-10T18:50:13+08:00">2022-03-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -432,7 +538,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-02-14 11:32:00" itemprop="dateModified" datetime="2022-02-14T11:32:00+08:00">2022-02-14</time>
+                <time title="修改时间：2022-03-10 18:50:13" itemprop="dateModified" datetime="2022-03-10T18:50:13+08:00">2022-03-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -530,7 +636,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-02-14 11:32:00" itemprop="dateModified" datetime="2022-02-14T11:32:00+08:00">2022-02-14</time>
+                <time title="修改时间：2022-03-10 18:50:13" itemprop="dateModified" datetime="2022-03-10T18:50:13+08:00">2022-03-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -628,7 +734,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-02-14 11:32:00" itemprop="dateModified" datetime="2022-02-14T11:32:00+08:00">2022-02-14</time>
+                <time title="修改时间：2022-03-10 18:50:13" itemprop="dateModified" datetime="2022-03-10T18:50:13+08:00">2022-03-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -730,7 +836,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-02-14 11:32:00" itemprop="dateModified" datetime="2022-02-14T11:32:00+08:00">2022-02-14</time>
+                <time title="修改时间：2022-03-10 18:50:13" itemprop="dateModified" datetime="2022-03-10T18:50:13+08:00">2022-03-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -862,7 +968,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-02-14 11:32:00" itemprop="dateModified" datetime="2022-02-14T11:32:00+08:00">2022-02-14</time>
+                <time title="修改时间：2022-03-10 18:50:13" itemprop="dateModified" datetime="2022-03-10T18:50:13+08:00">2022-03-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -964,7 +1070,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-02-14 11:32:00" itemprop="dateModified" datetime="2022-02-14T11:32:00+08:00">2022-02-14</time>
+                <time title="修改时间：2022-03-10 18:50:13" itemprop="dateModified" datetime="2022-03-10T18:50:13+08:00">2022-03-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1072,7 +1178,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-02-14 11:32:00" itemprop="dateModified" datetime="2022-02-14T11:32:00+08:00">2022-02-14</time>
+                <time title="修改时间：2022-03-10 18:50:13" itemprop="dateModified" datetime="2022-03-10T18:50:13+08:00">2022-03-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1170,109 +1276,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/06/25/Ronja_Structure/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2021/06/25/Ronja_Structure/" class="post-title-link" itemprop="url">Structure of Shader</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-06-25 11:01:00" itemprop="dateCreated datePublished" datetime="2021-06-25T11:01:00+08:00">2021-06-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-02-14 11:32:00" itemprop="dateModified" datetime="2022-02-14T11:32:00+08:00">2022-02-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/001-structure/">Structure</a></p>
-<h2 id="Shader-Structure"><a href="#Shader-Structure" class="headerlink" title="Shader Structure"></a>Shader Structure</h2><p>着色器编程难度较大，在学习初期阶段，我们首先需要学习它的基本结构，以便于后面灵活的修改、应用它们。</p>
-<p>现代着色器采用的是可变渲染管线，其中顶点着色器、和片段着色器是其基本组成。除此之外，还有可选部分，几何着色器、曲面细分着色器，但是它们的应用场景比较少。顶点着色器的作用是将模型网格，通过矩阵变换，投影到屏幕(实际是投影到裁剪空间)。同时，顶点着色器的一个非常有用的操作是，执行顶点动画。当顶点坐标变换到屏幕空间后，其所构成的三角面片将被栅格化。为了保证三角面片能够正确显示，从顶点着色器到片段着色器的过程中，需要对顶点进行插值，从而得到三角面片中各个片段的位置、颜色值等。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/001/pipeline.png"></p>
-<p>上面简单介绍了着色器的基本流程。接下来我将阐述如何编写着色器、这些“空间坐标系”的具体含义、不同着色器之间的数据传递。但是，我相信了解其基本流程，有助于我们对着色器不同阶段之间的关系有一个直观的理解。因为，在大多数着色器语言中，基本采用了这种基本流程。即便是那些更为高级的、可以通过节点拼接的着色器语言，最终也是将其翻译为这种基本流程。</p>
-<h2 id="ShaderLab"><a href="#ShaderLab" class="headerlink" title="ShaderLab"></a>ShaderLab</h2><p>在Unity中，着色器实际上就是一个以<code>.shader</code>结尾的文本文件。我们可以在资源面板下，依次选择<code>Create &gt; Shader &gt;</code>中的着色器模板，当然模板中的内容可能并不是我们想要的，不过没关系，下面我将介绍如何自定义着色器。为了易于上手，这里我以模板着色器<code>Create &gt; Shader &gt; Unlit</code>为参考，编写我们自己的着色器。当然这里我写的和<code>Unlit</code>之间最大的区别在于，我们这个是不会处理雾效，同时又增加了一个颜色属性，这样可以从整体对模型颜色进行调整。接下来我也会一步一步的讲解其实现逻辑。本教程目标是着色器小白，所以你如果有哪里不理解的地方，可以告诉我，促使我对其进行调整，以便于后续学习者能够更加顺畅。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/001-004_Basic_Unlit&quot;</span>&#123;</span><br><span class="line">	<span class="comment">//这些值将会显示在材质面板上</span></span><br><span class="line">	Properties&#123;</span><br><span class="line">		_Color (<span class="string">&quot;Tint&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">		_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	SubShader&#123;</span><br><span class="line">		<span class="comment">//当前的标签设置表示的是：不透明渲染，和其他不透明物体处以同一渲染队列</span></span><br><span class="line">		Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Geometry&quot;</span> &#125;</span><br><span class="line"></span><br><span class="line">		Pass&#123;</span><br><span class="line">			CGPROGRAM</span><br><span class="line"></span><br><span class="line">			<span class="comment">//这里包括一些工具函数、以及内置变量</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UnityCG.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//定义顶点、片段着色函数</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//材质所用的纹理、以及缩放偏移量</span></span><br><span class="line">			sampler2D _MainTex;</span><br><span class="line">			float4 _MainTex_ST;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//材质的颜色，具体一点是：当纹理为白色图片时，材质的颜色</span></span><br><span class="line">			fixed4 _Color;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//模型网格、UI等输入数据，基本代表了模型内在属性</span></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">				float4 vertex : POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//当经过顶点着色器处理后，处理的数据经过栅格化插值，然后传入片段着色器</span></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">				float4 position : SV_POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//顶点着色器函数，主要执行坐标的空间变换</span></span><br><span class="line">			<span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">				v2f o;</span><br><span class="line">				<span class="comment">//将模型各顶点坐标，转换到裁剪空间</span></span><br><span class="line">				o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">				<span class="comment">//基于图片的缩放偏移参数，对UV进行变换</span></span><br><span class="line">				o.uv = TRANSFORM_TEX(v.uv, _MainTex);</span><br><span class="line">				<span class="keyword">return</span> o;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//片段作色器，主要是计算像素点的颜色</span></span><br><span class="line">			<span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">			    <span class="comment">//基于UV坐标，进行纹理采样</span></span><br><span class="line">				fixed4 col = tex2D(_MainTex, i.uv);</span><br><span class="line">				<span class="comment">//将纹理颜色和材质颜色相乘</span></span><br><span class="line">				col *= _Color;</span><br><span class="line">				<span class="comment">//返回最终的像素点颜色</span></span><br><span class="line">				<span class="keyword">return</span> col;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	Fallback <span class="string">&quot;VertexLit&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Whats-ShaderLab"><a href="#Whats-ShaderLab" class="headerlink" title="Whats ShaderLab?"></a>Whats ShaderLab?</h2><p><code>Shaderlab</code>是Unity内置的着色器语言，其中定义了绝大多数渲染模型所需的数据。但是着色器执行渲染逻辑的部分，实际上是采用<code>hlsl</code>、<code>glsl</code>、<code>CG</code>这三种着色语言中的一种。这里<code>hlsl</code>是微软开发的底层着色器语言，<code>glsl</code>是英伟达开发的底层着色器语言，<code>CG</code>是更为高级的作色器语言。而这些执行部分在<code>Shaderlab</code>中占有一个独立的区域。具体一点，<code>Shaderlab</code>是在执行<code>hlsl</code>、<code>glsl</code>、<code>CG</code>的基础上，扩展了一些属于自身的语法，其中包括<code>Properties</code>属性块，用来关联外部输入参数。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/002/LanguageAreas.png"></p>
-<p>从上图可以看到，实际<code>ShaderLab</code>扩展的仅占着色器很小区域。其中一部分原因是：<code>Shaderlab</code>不是可执行语言，而是一种抽象的描述性语言，定义了着色器有哪些输入参数、需要执行哪些渲染操作。而Unity便会识别这些描述性语言，然后将其翻译为GPU可执行的作色器语言，同时关联渲染所需的数据。对于一些简单的渲染需求，参考上图的例子，然后对<code>CG</code>部分进行简单的调整就行了。</p>
-<h2 id="Shader-SubShader-Pass"><a href="#Shader-SubShader-Pass" class="headerlink" title="Shader/SubShader/Pass"></a>Shader/SubShader/Pass</h2><p>在上图中，你可能也发现了，其中有很多个<code>&#123;&#125;</code>花括号，将程序分为很多个块。下面我们来看看，这些块到底是干嘛的。</p>
-<p>首先，最外层的<code>Shader</code>块，代表了整个作色器。在我们创建材质球后，需要在材质球面板上选择所需的着色器，从而得到我们所需的材质球。那些在材质面板上的着色器名称，实际上就是紧跟在<code>Shader</code>块后面的字符串。在这个字符串中，我们可以使用<code>/</code>反斜杠来对着色器进行有效的组织分类，这很像我们文件目录的组织形式。在本教程中，我将所有的着色器划分到<code>Tutorial</code>这个大类中，其中还会细分出一些小类。当然，这些分类可以根据需要随意改动，只要达到有效组织的目的就行。<br>可以看到，所谓的着色器，实际上也就是一连串描述的文本文件。需要注意的是，一个文本文件，只能定义一个着色器。但是，一个着色器却可以复用另一个着色器的功能。例如，在<code>Shader</code>块中，也就是最外层花括号中，我们可以定义<code>fallback shader</code>，当Unity将其翻译为更底层的着色器代码时，会将<code>fallback shader</code>中的<code>SubShader</code>块复制过来。</p>
-<p>在<code>Shader</code>块中，可以定义多个<code>SubShader</code>块。在模型渲染时，只会从中选择一个<code>SubShader</code>来执行，而具体选择哪个，依赖于实际运行的平台。可惜的是，关于如何定义<code>SubShader</code>的说明文档极其匮乏，根据我多年的经验，在很多情况下，一个<code>Shader</code>块中只定义一个<code>SubShader</code>能满足基本需求，减少很多不必要的麻烦。凡事皆有特例，当我们想实现阴影效果时，需要在当前<code>SubShader</code>块中实现相应的<code>ShadowPass</code>，每次都实现一遍很麻烦。因为阴影着色流程基本固定，所以Unity提供的现成的便可以使用，这时候，我们可以使用包含阴影着色逻辑的<code>fallback shader</code>，当渲染时，从该<code>SubShader</code>中未找到可以使用的<code>ShadowPadd</code>时，便会从<code>fallback shader</code>中去查找。大多数情况下，我们使用<code>VertexLit</code>着色器，来作为我们的<code>fallback shader</code>，因为<code>VertexLit</code>中的逻辑简单、性能消耗低、基本上能够兼容所有的显卡，也可能是大家相互Copy，从而形成<code>VertexLit</code>流行的假象:-)。另外，在<code>SubShader</code>块中，我们可以定义<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-SubShaderTags.html">Subshader tags</a>；还可以定义多个<code>Pass</code>，例如前面说的<code>Shadow pass</code>；以及属性，在<code>SubShader</code>块中定义的属性是由所有<code>Pass</code>共享的。</p>
-<p>一个<code>Pass</code>包含一套完整的渲染流程，从底层着色语言的角度来看，一个<code>Pass</code>才是实际上的着色器，它将模型数据转换为五彩斑斓的画面。在内置渲染管线中，如果我们在<code>SubShader</code>块中定义了多个<code>Pass</code>，当该<code>SubShader</code>被平台选定时，其中的<code>Pass</code>将会被一个接着一个的执行(而最新的URP渲染管线，目前仅支持单个光照<code>Pass</code>)。对于具有多个<code>Pass</code>的<code>SubShader</code>，我们可以将其公共属性等数据定义在<code>SubShader</code>中，而<code>Pass</code>中定义一些独有的数据或逻辑。</p>
-<h2 id="Properties-and-Tags"><a href="#Properties-and-Tags" class="headerlink" title="Properties and Tags"></a>Properties and Tags</h2><p>你们可能注意到，在上图中还有两个块<code>Properties</code>、<code>Tags</code>未被提及，那我们继续吧。</p>
-<p>在很多编程语言中有字典的概念，顾名思义，就是类似汉语字典一样，可以通过拼音、笔画等关键信息进行快速检索。这里的<code>Tags</code>就可以类比到字典，在<code>Tags</code>中可以定义多个关键字，以及关键字所对应的值，它们公共构成了着色器的配置参数。其中关键字表示了参数的类型，值表示了参数的实际设置。在<code>SubShader</code>中，可以通过<code>Tags</code>定义着色器的材质表现、渲染顺序、以及其他操作；而<code>Pass</code>中的<code>Tags</code>主要定义了光照模式。详细的说明可以参考<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-SubShaderTags.html">SubShader Tags</a>和<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-PassTags.html">Pass Tags</a>。</p>
-<p><code>Properties</code>属性块，主要用来定义材质面板中的属性显示。通过材质面板来调整材质参数具有一定的局限性，因为整个调整是以材质球为单位，也就是说，如果多个模型使用同一个材质球，那么就无法做到材质差异化。这时候需要创建多个材质球，分别对应于不同的模型。在接下来得教程中我也会详细讨论<code>Properties</code>的使用。</p>
-<p>下面我们对<code>Shaderlab</code>的基本结构进行一个总结：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Category/Name&quot;</span>&#123;</span><br><span class="line">	Properties&#123;</span><br><span class="line">		<span class="comment">//用于材质面板显示、与配置的属性</span></span><br><span class="line">	&#125;</span><br><span class="line">	Subshader&#123;</span><br><span class="line">		Tags&#123;</span><br><span class="line">			<span class="comment">//一些公共配置，涉及渲染类型、渲染顺序等设置</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">//公共设置、属性、方法可以写在Subshader中</span></span><br><span class="line"></span><br><span class="line">		Pass&#123;</span><br><span class="line">			Tags&#123;</span><br><span class="line">				<span class="comment">//主要是光照模式的配置</span></span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//单个Pass的设置， 例如剔除、模板等</span></span><br><span class="line"></span><br><span class="line">			CGPROGRAM</span><br><span class="line">			<span class="comment">//实际执行的渲染程序、以及所用到的属性参数</span></span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Source"><a href="#Source" class="headerlink" title="Source"></a>Source</h2><p>所有的教程都有配套源码，可以在教程结尾找到相关链接。因为目前我只是做了一些简单的分析介绍，所有源码在上面已经出现过了，这里直接简单的整理一下。</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/001-004_basic_unlit/basic_unlit.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/001-004_basic_unlit/basic_unlit.shader</a></li>
-</ul>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/001-004_Basic_Unlit&quot;</span>&#123;</span><br><span class="line">	<span class="comment">//这些值将会显示在材质面板上</span></span><br><span class="line">	Properties&#123;</span><br><span class="line"><span class="comment">//	_Color (&quot;Tint&quot;, Color) = (0, 0, 0, 1)</span></span><br><span class="line"><span class="comment">//	_MainTex (&quot;Texture&quot;, 2D) = &quot;white&quot; &#123;&#125;</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	SubShader&#123;</span><br><span class="line">		<span class="comment">//当前的标签设置表示的是：不透明渲染，和其他不透明物体处以同一渲染队列</span></span><br><span class="line">		Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Geometry&quot;</span> &#125;</span><br><span class="line"></span><br><span class="line">		Pass&#123;</span><br><span class="line">			CGPROGRAM</span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//		//这里包括一些工具函数、以及内置变量</span></span><br><span class="line"><span class="comment">//		#include &quot;UnityCG.cginc&quot;</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//		//定义顶点、片段着色函数</span></span><br><span class="line"><span class="comment">//		#pragma vertex vert</span></span><br><span class="line"><span class="comment">//		#pragma fragment frag</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//		//材质所用的纹理、以及缩放偏移量</span></span><br><span class="line"><span class="comment">//		sampler2D _MainTex;</span></span><br><span class="line"><span class="comment">//		float4 _MainTex_ST;</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//		//材质的颜色，具体一点是：当纹理为白色图片时，材质的颜色</span></span><br><span class="line"><span class="comment">//		fixed4 _Color;</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//		//模型网格、UI等输入数据，基本代表了模型内在属性</span></span><br><span class="line"><span class="comment">//		struct appdata&#123;</span></span><br><span class="line"><span class="comment">//			float4 vertex : POSITION;</span></span><br><span class="line"><span class="comment">//			float2 uv : TEXCOORD0;</span></span><br><span class="line"><span class="comment">//		&#125;;</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//		//当经过顶点着色器处理后，处理的数据经过栅格化插值，然后传入片段着色器</span></span><br><span class="line"><span class="comment">//		struct v2f&#123;</span></span><br><span class="line"><span class="comment">//			float4 position : SV_POSITION;</span></span><br><span class="line"><span class="comment">//			float2 uv : TEXCOORD0;</span></span><br><span class="line"><span class="comment">//		&#125;;</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//		//顶点着色器函数，主要执行坐标的空间变换</span></span><br><span class="line"><span class="comment">//		v2f vert(appdata v)&#123;</span></span><br><span class="line"><span class="comment">//			v2f o;</span></span><br><span class="line"><span class="comment">//			//将模型各顶点坐标，转换到裁剪空间</span></span><br><span class="line"><span class="comment">//			o.position = UnityObjectToClipPos(v.vertex);</span></span><br><span class="line"><span class="comment">//			//基于图片的缩放偏移参数，对UV进行变换</span></span><br><span class="line"><span class="comment">//			o.uv = TRANSFORM_TEX(v.uv, _MainTex);</span></span><br><span class="line"><span class="comment">//			return o;</span></span><br><span class="line"><span class="comment">//		&#125;</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//		//片段作色器，主要是计算像素点的颜色</span></span><br><span class="line"><span class="comment">//		fixed4 frag(v2f i) : SV_TARGET&#123;</span></span><br><span class="line"><span class="comment">//			//基于UV坐标，进行纹理采样</span></span><br><span class="line"><span class="comment">//			fixed4 col = tex2D(_MainTex, i.uv);</span></span><br><span class="line"><span class="comment">//			//将纹理颜色和材质颜色相乘</span></span><br><span class="line"><span class="comment">//			col *= _Color;</span></span><br><span class="line"><span class="comment">//			//返回最终的像素点颜色</span></span><br><span class="line"><span class="comment">//			return col;</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//		&#125;</span></span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	Fallback <span class="string">&quot;VertexLit&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>希望你能喜欢这个教程哦！如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1344,7 +1347,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-count">55</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1357,7 +1360,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/blogs/tags/">
           
-        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
