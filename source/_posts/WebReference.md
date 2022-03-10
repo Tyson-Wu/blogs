@@ -53,6 +53,7 @@ date: 2021-05-27 17:01:34
 
 
 ### Path
+[A* Pathfinding Project](https://arongranberg.com/astar/)
 [Study: Navigation Mesh Generation](http://www.critterai.org/projects/nmgen_study/)
 [Study-Navigation-Mesh-Generation](https://github.com/Seed-XL/Study-Navigation-Mesh-Generation)
 [NavMesh](https://github.com/Hifumi123/NavMesh)
@@ -88,6 +89,9 @@ date: 2021-05-27 17:01:34
 [Visibility graphs](http://www.cs.kent.edu/~dragan/ST-Spring2016/visibility%20graphs.pdf):视线图;
 [spherical_voronoi_core](https://github.com/xw0/spherical_voronoi_core):Voronoi Tessellation of the Sphere;
 ## Game
+[Unity Open Project](https://github.com/UnityTechnologies/open-project-1)
+[Unity Open Projects](https://open.codecks.io/unity-open-project-1/decks/15-code/card/19j-combat-system)
+[GameDev Academy](https://gamedevacademy.org/category/tutorials/unity-tutorials/unity-3d-tutorials/page/2/)
 [Game Dev](https://unitylist.com/p/1291/Game-Dev)
 [Fighting Game 3d Multiplayer Unity3D](https://unitylist.com/p/13vf/Fighting-Game-3d-Multiplayer-Unity3D)
 [SimpleMultiplayerProject](https://github.com/AnshuNair/SimpleMultiplayerProject)
@@ -133,6 +137,7 @@ date: 2021-05-27 17:01:34
 
 
 ### Shader
+[Test_ShaderGraphBlog](https://github.com/UnityTechnologies/Test_ShaderGraphBlog)
 [Using post-processing effects in Unity](https://www.red-gate.com/simple-talk/development/dotnet-development/post-processing-effects-unity/)
 [Interior Mapping](https://forum.unity.com/threads/interior-mapping.424676/#post-2751518)
 [Interior Mapping](http://www.humus.name/index.php?page=3D&ID=80)
@@ -192,6 +197,14 @@ date: 2021-05-27 17:01:34
 ## Engine
 
 ### Unity
+[Pathfinding in Games](https://www.raywenderlich.com/16977649-pathfinding-with-navmesh-getting-started)
+[NavMeshComponents](https://github.com/Unity-Technologies/NavMeshComponents)
+[TreeViewExamples](https://github.com/GOLDhjy/TreeViewExamples)
+[unity editor](https://programmerall.com/search)
+[UnityDecompiled](https://github.com/MattRix/UnityDecompiled)
+[PreviewRenderUtility](https://github.com/CyberFoxHax/Unity3D_PreviewRenderUtility_Documentation/wiki/PreviewRenderUtility)
+[Working with custom ObjectPreviews and SkinnedMeshRenderers in Unity](https://www.blog.radiator.debacle.us/2016/06/working-with-custom-objectpreviews-and.html)
+[Spruce up your custom Unity inspectors with a preview area!](https://timaksu.com/post/126337219047/spruce-up-your-custom-unity-inspectors-with-a)
 [create a preview window using previewrendertutility](https://programming.vip/docs/unityprevieweditor-create-a-preview-window-using-previewrendertutility.html)
 [Is it possible to create a custom model preview in an Editor window akin to the one displayed when an FBX is selected?](https://answers.unity.com/questions/448086/is-it-possible-to-create-a-custom-model-preview-in.html)
 [EditorWindow - Preview of prefab](https://forum.unity.com/threads/editorwindow-preview-of-prefab.1057988/)
@@ -243,6 +256,7 @@ date: 2021-05-27 17:01:34
 [OpenWorldFramework](https://github.com/tiredamage42/OpenWorldFramework#readme)
 [Long-Term-Open-World](https://github.com/ShadowLancer42/Long-Term-Open-World)
 [Procedural-Content-Generation](https://github.com/Mrchrissross/Procedural-Content-Generation)
+[Filter which objects I can select in the scene object via editor tool](https://forum.unity.com/threads/filter-which-objects-i-can-select-in-the-scene-object-via-editor-tool-how-to-do-custom-selection.516897/)
 
 ### Duality
 [Getting Started](https://docs.duality2d.net/pages/v3/getting-started.html):It’s an extensible 2D game engine;
@@ -251,6 +265,7 @@ date: 2021-05-27 17:01:34
 ## Other
 
 ### Tutorial
+[GameDev Academy](https://gamedevacademy.org/category/tutorials/unity-tutorials/unity-3d-tutorials/)
 [C++, OpenGL and more...](https://www.mbsoftworks.sk/index.php?page=tutorials&series=1&tutorial=24):...;
 [GAME DEVELOPMENT TUTORIALS](https://www.construct.net/en/tutorials?flang=45):Read our free tutorials on game development submitted by our staff and expert users in our community;
 [Performance optimization tips: Physics in Unity | Tutorial](https://gamasutra.com/blogs/MikeMarrone/20210312/378423/Game_Dev_Digest_Issue_85__Platforms_Performance_and_Tutorials.php):...;
