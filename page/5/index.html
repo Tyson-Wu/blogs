@@ -163,6 +163,90 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/04/06/URP_Render_Water/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/04/06/URP_Render_Water/" class="post-title-link" itemprop="url">URP Water</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-06 10:01:00" itemprop="dateCreated datePublished" datetime="2021-04-06T10:01:00+08:00">2021-04-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-16 13:13:09" itemprop="dateModified" datetime="2022-03-16T13:13:09+08:00">2022-03-16</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/URP/" itemprop="url" rel="index"><span itemprop="name">URP</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> WaterFeature :ScriptableRendererFeature</span><br><span class="line">&#123;</span><br><span class="line">    [<span class="meta">Serializable</span>]</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Settings</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="built_in">string</span> TextureName = <span class="string">&quot;_NormalGrabTexture&quot;</span>;</span><br><span class="line">        <span class="keyword">public</span> LayerMask LayerMask;</span><br><span class="line">        <span class="keyword">public</span> Material normalGrabMaterial;</span><br><span class="line">        <span class="keyword">public</span> <span class="built_in">int</span> normalGrabMaterialPassIndex = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">public</span> LayerMask WaterLayerMask;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">class</span> <span class="title">NormalGrabPass</span> : <span class="title">ScriptableRenderPass</span></span><br><span class="line">    &#123;</span><br><span class="line">        Settings settings;</span><br><span class="line">        Material normalGrabMaterial;</span><br><span class="line">        <span class="built_in">int</span> normalGrabMaterialPassIndex = <span class="number">0</span>;</span><br><span class="line">        RenderTargetHandle tempNormalTarget;</span><br><span class="line">        List&lt;ShaderTagId&gt; m_ShaderTagIdList = <span class="keyword">new</span> List&lt;ShaderTagId&gt;();</span><br><span class="line">        FilteringSettings m_FilteringSettings;</span><br><span class="line">        RenderStateBlock m_RenderStateBlock;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">NormalGrabPass</span>(<span class="params">Settings settings</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="keyword">this</span>.settings = settings;</span><br><span class="line">            normalGrabMaterial = <span class="keyword">new</span> Material(Shader.Find(<span class="string">&quot;Unlit/NormalTexture&quot;</span>));</span><br><span class="line">            normalGrabMaterialPassIndex = <span class="number">0</span>;</span><br><span class="line">            renderPassEvent = RenderPassEvent.AfterRenderingOpaques;</span><br><span class="line">            tempNormalTarget.Init(settings.TextureName);</span><br><span class="line">            m_ShaderTagIdList.Add(<span class="keyword">new</span> ShaderTagId(<span class="string">&quot;UniversalForward&quot;</span>));</span><br><span class="line">            m_ShaderTagIdList.Add(<span class="keyword">new</span> ShaderTagId(<span class="string">&quot;LightweightForward&quot;</span>));</span><br><span class="line">            m_ShaderTagIdList.Add(<span class="keyword">new</span> ShaderTagId(<span class="string">&quot;SPRDefaultUnlit&quot;</span>));</span><br><span class="line">            m_FilteringSettings = <span class="keyword">new</span> FilteringSettings(RenderQueueRange.all, settings.LayerMask);</span><br><span class="line">            m_RenderStateBlock = <span class="keyword">new</span> RenderStateBlock(RenderStateMask.Nothing);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> overide <span class="keyword">void</span> <span class="title">Configure</span>(<span class="params">CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            cmd.GetTemporaryRT(tempNormalTarget.id, cameraTextureDescriptor);</span><br><span class="line">            cmd.SetGlobalTexture(settings.TextureName, tempNormalTarget.Identifier());</span><br><span class="line">            ConfigureTarget(tempNormalTarget.Identifier()); <span class="comment">//sceen view</span></span><br><span class="line">            cmd.SetRenderTarget(tempNormalTarget.Identifier()); <span class="comment">// game view</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> overrider <span class="keyword">void</span> <span class="title">Execute</span>(<span class="params">ScriptableRenderContext context, <span class="keyword">ref</span> RenderingData renderingData</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            CommandBuffer cmd = CommandBufferPool.Get();</span><br><span class="line">            context.ExecuteCommandBuffer(cmd);</span><br><span class="line">            cmd.Clear();</span><br><span class="line">            Matrix4x4 viewMatrix = renderingData.cameraData.camera.worldToCameraMatrix;</span><br><span class="line">            Vector3 normal = viewMatrix.MultiplyVector(<span class="keyword">new</span> Vector3(<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>));</span><br><span class="line">            cmd.ClearRenderTarget(<span class="literal">false</span>, <span class="literal">true</span>, <span class="keyword">new</span> Color(normal.x, normal.y, normal.z));</span><br><span class="line">            context.ExecuteCommandBuffer(cmd);</span><br><span class="line">            cmd.Clear();</span><br><span class="line"></span><br><span class="line">            DrawingSettings drawingSettings = CreateDrawingSettings(m_ShaderTagIdList, <span class="keyword">ref</span> renderingData, SortingCriteria.CommonOpaque);</span><br><span class="line">            drawingSettings.overrideMaterial = normalGrabMaterial;</span><br><span class="line">            drawingSettings.overrideMaterialPassIndex = normalGrabMaterialPassIndex;</span><br><span class="line">            contex.DrawRenderers(renderingData.cullResults, <span class="keyword">ref</span> drawingSettings, <span class="keyword">ref</span> m_FilteringSettings, <span class="keyword">ref</span> m_RenderStateBlock);</span><br><span class="line"></span><br><span class="line">            context.ExecuteCommandBuffer(cmd);</span><br><span class="line">            CommandBufferPool.Release(cmd);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">FrameCleanup</span>(<span class="params">CommandBuffer cmd</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            cmd.ReleaseTemporaryRT(tempNormalTarget.id);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">class</span> <span class="title">WaterPass</span> : <span class="title">ScriptableRenderPass</span></span><br><span class="line">    &#123;</span><br><span class="line">        List&lt;ShaderTagId&gt; m_ShaderTagIdList = <span class="keyword">new</span> List&lt;ShaderTagId&gt;();</span><br><span class="line">        RenderStateBlock m_RenderStateBlock;</span><br><span class="line">        FilteringSettings m_FilteringSettings;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">WaterPass</span>(<span class="params">Settings settings</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            renderPassEvent = RenderPassEvent.BeforeRenderingTransparents;</span><br><span class="line">            m_ShaderTagIdList.Add(<span class="keyword">new</span> ShaderTagId(<span class="string">&quot;Water&quot;</span>));</span><br><span class="line">            m_RenderStateBlock = <span class="keyword">new</span> RenderStateBlock(RenderStateMask.Nothing);</span><br><span class="line">            m_FilteringSettings = <span class="keyword">new</span> FilteringSettings(RenderQueueRange.transparent, settings.WaterLayerMask);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Execute</span>(<span class="params">ScriptableRenderContext context, <span class="keyword">ref</span> RenderingData renderingData</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            CommandBuffer cmd = CommandBufferPool.Get();</span><br><span class="line">            context.ExecuteCommandBuffer(cmd);</span><br><span class="line">            cmd.Clear();</span><br><span class="line"></span><br><span class="line">            DrawingSettings drawingSettings = CreateDrawingSettings(m_ShaderTagIdList, <span class="keyword">ref</span> renderingData, SortingCriteria.CommonOpaque);</span><br><span class="line">            contex.DrawRenderers(renderingData.cullResults, <span class="keyword">ref</span> drawingSettings, <span class="keyword">ref</span> m_FilteringSettings, <span class="keyword">ref</span> m_RenderStateBlock);</span><br><span class="line"></span><br><span class="line">            context.ExecuteCommandBuffer(cmd);</span><br><span class="line">            CommandBufferPool.Release(cmd);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    [<span class="meta">SerializeField</span>] Settings settings = <span class="keyword">new</span> Settings();</span><br><span class="line">    NormalGrabPass normalGrabPass;</span><br><span class="line">    WaterPass waterPass;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">AddRenderPasses</span>(<span class="params">ScriptableRenderer renderer, <span class="keyword">ref</span> RenderingData renderingData</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        renderer.EnqueuePass(normalGrabPass);</span><br><span class="line">        renderer.EnqueuePass(waterPass);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Create</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        normalGrabPass = <span class="keyword">new</span> NormalGrabPass(settings);</span><br><span class="line">        waterPass = <span class="keyword">new</span> WaterPass(settings);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Unlit/NormalTexture&quot;</span></span><br><span class="line">&#123;</span><br><span class="line">    Properties&#123;&#125;</span><br><span class="line">    SubShader</span><br><span class="line">    &#123;</span><br><span class="line">        Tags &#123;<span class="string">&quot;RenderType&quot;</span> = <span class="string">&quot;Opaque&quot;</span> <span class="string">&quot;RenderPipeline&quot;</span> = <span class="string">&quot;UniversalPipeline&quot;</span>&#125;</span><br><span class="line">        ZWrite Off</span><br><span class="line">        ZTest Always</span><br><span class="line">        Pass</span><br><span class="line">        &#123;</span><br><span class="line">            Name <span class="string">&quot;NormalTexture&quot;</span></span><br><span class="line">            HLSLPROGRAM</span><br><span class="line">            <span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">            <span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line">            <span class="meta">#include &quot;Packages/com.unity.render-pipelines.universal/ShaderLibrary/Corel.hlsl&quot;</span></span><br><span class="line">            <span class="keyword">struct</span> VertexInput</span><br><span class="line">            &#123;</span><br><span class="line">                float4 posotionCS : POSITION;</span><br><span class="line">                float3 normal : NORMAL;</span><br><span class="line">            &#125;;</span><br><span class="line">            <span class="keyword">struct</span> FragInput</span><br><span class="line">            &#123;</span><br><span class="line">                float4 positionCS : SV_POSITION;</span><br><span class="line">                float3 normal : TEXCOORD0;</span><br><span class="line">            &#125;;</span><br><span class="line">            <span class="function">FragInput <span class="title">vert</span>(<span class="params">VertexInput i</span>)</span></span><br><span class="line"><span class="function"></span>            &#123;</span><br><span class="line">                FragInput o;</span><br><span class="line">                float3 worldPos = TransformObjectToWorld(i.positionOS.xyz);</span><br><span class="line">                float4 clipPos = TransformWorldToHClip(worldPos);</span><br><span class="line">                o.positionCS = clipPos;</span><br><span class="line">                float3 worldNormal = TransformObjectToWorldNormal(i.normal);</span><br><span class="line">                o.normal = TransformWorldToViewDir(worldNormal);</span><br><span class="line">                <span class="keyword">return</span> o;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="function">half4 <span class="title">frag</span>(<span class="params">FragInput i</span>) : SV_TARGET</span></span><br><span class="line"><span class="function"></span>            &#123;</span><br><span class="line">                <span class="keyword">return</span> half4(i.normal, <span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            ENDHLSL</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Unlit/ToonWater&quot;</span></span><br><span class="line">&#123;</span><br><span class="line">    Properties</span><br><span class="line">    &#123;</span><br><span class="line">        _DepthGradientShallow(<span class="string">&quot;Depth Gradient Shallow&quot;</span>, Color) = (<span class="number">0</span>,<span class="number">3</span>,<span class="number">0.8</span>,<span class="number">0.9</span>,<span class="number">0.4</span>)</span><br><span class="line">        _DepthGradientDeep(<span class="string">&quot;Depth Gradient Deep&quot;</span>, Color) = (<span class="number">0.08</span>, <span class="number">0.4</span>, <span class="number">0.1</span>, <span class="number">0.7</span>)</span><br><span class="line">        _DepthMaxDistance(<span class="string">&quot;Depth Maximum Distance&quot;</span>, Float) = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        _SurfaceNoise(<span class="string">&quot;Surface Noise&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span>&#123;&#125;</span><br><span class="line">        _SurfaceNoiseCutoff(<span class="string">&quot;Surface Noise Cutoff&quot;</span>, Range(<span class="number">0</span>,<span class="number">1</span>)) = <span class="number">0.77</span></span><br><span class="line">        _FoamColor(<span class="string">&quot;Foam Color&quot;</span>, Color) = (<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>)</span><br><span class="line">        _FoamMaxDistance(<span class="string">&quot;Foam Max Distance&quot;</span>, Float) = <span class="number">1</span></span><br><span class="line">        _FoamMinDistance(<span class="string">&quot;Foam Min Distance&quot;</span>, Float) = <span class="number">0.4</span></span><br><span class="line">        _SurfaceNoiseScroll(<span class="string">&quot;Surface Noise Scroll Amount&quot;</span>, Vector) = (<span class="number">0.03</span>, <span class="number">0.03</span>, <span class="number">0</span>, <span class="number">0</span>)</span><br><span class="line">        _SurfaceDistortion(<span class="string">&quot;Surface Distortion&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span>&#123;&#125;</span><br><span class="line">        _SurfaceDistortionAmount(<span class="string">&quot;Surface Distortion Amount&quot;</span>, Range(<span class="number">0</span>,<span class="number">1</span>)) = <span class="number">0.27</span></span><br><span class="line">    &#125;</span><br><span class="line">    SubShader</span><br><span class="line">    &#123;</span><br><span class="line">        Tags &#123; <span class="string">&quot;RenderType&quot;</span> = <span class="string">&quot;Transparent&quot;</span> <span class="string">&quot;Queue&quot;</span> = <span class="string">&quot;Transparent&quot;</span> <span class="string">&quot;RenderPipeline&quot;</span> = <span class="string">&quot;UniversalPipeline&quot;</span> &#125;</span><br><span class="line">        Blend SrcAlpha OneMinusSrcAlpha</span><br><span class="line">        ZWrite Off</span><br><span class="line">        Pass</span><br><span class="line">        &#123;</span><br><span class="line">            Tags &#123;<span class="string">&quot;LightMode&quot;</span> = <span class="string">&quot;Water&quot;</span> &#125;</span><br><span class="line">            HLSLPROGRAM</span><br><span class="line">            <span class="meta">#<span class="meta-keyword">define</span> SMOOTHSTEP_AA 0.01</span></span><br><span class="line">            <span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">            <span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line">            <span class="meta">#include &quot;Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl&quot;</span></span><br><span class="line">            <span class="meta">#include &quot;Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl&quot;</span></span><br><span class="line">            float4 _DepthGradientShallow;</span><br><span class="line">            float4 _DepthGradientDeep;</span><br><span class="line">            <span class="built_in">float</span> _DepthMaxDistance;</span><br><span class="line">            TEXTURE2D(_SurfaceNoise);   SAMPLER(sampler_SurfaceNoise);</span><br><span class="line">            float4 _SurfaceNoise_ST;</span><br><span class="line">            <span class="built_in">float</span> _SurfaceNoiseCutoff;</span><br><span class="line">            <span class="built_in">float</span> _FoamMaxDistance;</span><br><span class="line">            <span class="built_in">float</span> _FoamMinDistance;</span><br><span class="line">            float2 _SurfaceNoiseScroll;</span><br><span class="line">            TEXTURE2D(_SurfaceDistortion);  SAMPLER(sampler_SurfaceDistortion);</span><br><span class="line">            float4 _SurfaceDistortion_ST;</span><br><span class="line">            <span class="built_in">float</span> _SurfaceDistortionAmount;</span><br><span class="line">            TEXTURE2D(_NormalGrabTexture); SAMPLER(sampler_NormalGrabTexture);</span><br><span class="line">            float4 _FoamColor;</span><br><span class="line">            <span class="keyword">struct</span> VertexInput</span><br><span class="line">            &#123;</span><br><span class="line">                float4 positionOS : POSITION;</span><br><span class="line">                float2 uv : TEXCOORD0;</span><br><span class="line">                float3 normal : NORMAL;</span><br><span class="line">            &#125;;</span><br><span class="line">            <span class="keyword">struct</span> FragInput</span><br><span class="line">            &#123;</span><br><span class="line">                float4 positionCS : SV_POSITION;</span><br><span class="line">                float4 screenPos : TEXCOORD0;</span><br><span class="line">                float3 viewPos : TEXCOORD1;</span><br><span class="line">                float2 noiseUV : TEXCOORD2;</span><br><span class="line">                float2 distortUV : TEXCOORD3;</span><br><span class="line">                float3 viewNormal : NORMAL;</span><br><span class="line">            &#125;;</span><br><span class="line">            <span class="function">FragInput <span class="title">vert</span>(<span class="params">VertexInput i</span>)</span></span><br><span class="line"><span class="function"></span>            &#123;</span><br><span class="line">                FragInput o;</span><br><span class="line">                float3 worldPos = TransformObjectToWorld(i.positionOS.xyz);</span><br><span class="line">                float4 clipPos= TransformWorldToHClip(worldPos);</span><br><span class="line">                float4 screenPos = ConputeScreenPos(clipPos);</span><br><span class="line">                float3 viewPos = TransformWorldToView(worldPos);</span><br><span class="line">                o.positionCS = clipPos;</span><br><span class="line">                o.screenPos = screenPos;</span><br><span class="line">                o.viewPos = viewPos;</span><br><span class="line">                o.noiseUV = TRANSFORM_TEX(i.uv, _SurfaceNoise);</span><br><span class="line">                o.distortUV = TRANSORM_TEX(i.uv, _SurfaceDistortion);</span><br><span class="line">                float3 worldNormal = TransformObjectToWorldNormal(i.normal);</span><br><span class="line">                o.viewNormal = TransformWorldToViewDir(worldNormal);</span><br><span class="line">                <span class="keyword">return</span> o;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="function">float4 <span class="title">AlpahBelnd</span>(<span class="params">float4 top, float4 bottom</span>)</span></span><br><span class="line"><span class="function"></span>            &#123;</span><br><span class="line">                float3 color = top.rgb * top.a + (<span class="number">1</span> - top.a) * bottom.rgb;</span><br><span class="line">                <span class="built_in">float</span> alpha = top.a + bottom.a * (<span class="number">1</span> - top.a);</span><br><span class="line">                <span class="keyword">return</span> float4(color, alpha);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="function">half4 <span class="title">frag</span>(<span class="params">FragInput i</span>) : SV_TARGET</span></span><br><span class="line"><span class="function"></span>            &#123;</span><br><span class="line">                half4 color = float4(<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>);</span><br><span class="line">                float2 screenUV = i.screenPos.xy / i.screenPos.w;</span><br><span class="line">                <span class="built_in">float</span> sceeneRawDepth = SampleSceneDepth(sceenUV);</span><br><span class="line">                <span class="built_in">float</span> sceenEyeDepth = LinearEyeDepth(sceneRawDepth, _ZBufferParams);</span><br><span class="line">                <span class="built_in">float</span> depthDifference = sceneEyeDepth - i.scenePos.w;</span><br><span class="line"></span><br><span class="line">                <span class="built_in">float</span> waterDephtDifference01 = saturate(depthDifference / _DepthMaxDistance);</span><br><span class="line">                float4 waterColor = lerp(_DepthGradientShallow, _DepthGradientDeep, waterDepthDifference01);</span><br><span class="line"></span><br><span class="line">                float2 distortSample = SAMPLE_TEXTURE2D(_SurfaceDistortion, sampler_SurfaceDistortion, i.distorUV).xy;</span><br><span class="line">                distortSample = (distortSample * <span class="number">2</span> - <span class="number">1</span>) * _SurfaceDIstortionAmount;</span><br><span class="line"></span><br><span class="line">                <span class="built_in">float</span> noiseUV = float2(i.noiseUV.x + _Time.y * _SurfaceNoiseScroll.x,</span><br><span class="line">                                        i.noiseUV.y + _Time.y * _SurfaceNoiseScroll.y);</span><br><span class="line">                <span class="built_in">float</span> surfaceNoiseSample = SAMPLE_TEXTURE2D(_SurfaceNoise, sampler_SurfaceNoise, noiseUV);</span><br><span class="line"></span><br><span class="line">                float3 existingNormal = SAMPLE_TEXTURE2D(_NormalGrabTexture, sampler_NormalGrabTexture, screenUV).rgb;</span><br><span class="line">                <span class="built_in">float</span> normalDot = saturate(<span class="keyword">do</span>(existingNormal, i.viewNormal));</span><br><span class="line">                <span class="built_in">float</span> foamDistance = lerp(_FoamMaxDistance, _FoamMinDistance, normalDot);</span><br><span class="line">                <span class="built_in">float</span> foamDipthDifference01 = saturate(depthDifference / foamDistance);</span><br><span class="line"></span><br><span class="line">                <span class="built_in">float</span> surfaceNoiseCutoff = foamDepthDifference01 * _surfaceNoiseCutoff;</span><br><span class="line">                <span class="built_in">float</span> surfaceNoise = smoothstep(surfaceNoiseCutoff - SMOOTHSTEP_AA, surfaceNoiseCutoff + SMOOTHSTEP_AA, surfaceNoiseSample);</span><br><span class="line"></span><br><span class="line">                float4 surfaceNoiseColor = _FoamColor * surfaceNoise;</span><br><span class="line">                color = ALphaBlend(surfaceNoiseColor, waterColor);</span><br><span class="line">                <span class="keyword">return</span> color;</span><br><span class="line">            &#125;</span><br><span class="line">            ENDHLSL</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/04/06/Unity-Editor/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -194,7 +278,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-10 18:50:13" itemprop="dateModified" datetime="2022-03-10T18:50:13+08:00">2022-03-10</time>
+                <time title="修改时间：2022-03-16 13:13:09" itemprop="dateModified" datetime="2022-03-16T13:13:09+08:00">2022-03-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -221,44 +305,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="获取当前选择的目录"><a href="#获取当前选择的目录" class="headerlink" title="获取当前选择的目录"></a>获取当前选择的目录</h2><pre><code class="C#">public static string GetCurrentAssetDirectory()
-&#123;
-    foreach(var obj in Selection.GetFiltered&lt;Object&gt;(SelectionMode.Assets))
-    &#123;
-        var path = AssetDataBase.GetAssetPath(obj);
-        if(string.IsNullOrEmpty(path))
-        &#123;
-            return path;
-        &#125;
-        else if(System.IO.File.Exists(path))
-        &#123;
-            return System.IO.Path.GetDirectory(path);
-        &#125;
-    &#125;
-    return &quot;Assets&quot;;
-&#125;
-```C#
+          <h2 id="获取当前选择的目录"><a href="#获取当前选择的目录" class="headerlink" title="获取当前选择的目录"></a>获取当前选择的目录</h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">string</span> <span class="title">GetCurrentAssetDirectory</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">foreach</span>(<span class="keyword">var</span> obj <span class="keyword">in</span> Selection.GetFiltered&lt;Object&gt;(SelectionMode.Assets))</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">var</span> path = AssetDataBase.GetAssetPath(obj);</span><br><span class="line">		<span class="keyword">if</span>(<span class="built_in">string</span>.IsNullOrEmpty(path))</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">return</span> path;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(System.IO.File.Exists(path))</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">return</span> System.IO.Path.GetDirectory(path);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="string">&quot;Assets&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-## 创建hlsl脚本
-```C#
-public static class AssetsMenu
-&#123;
-    [MenuItem(&quot;Assets/Create HLSL&quot;)]
-    public static void CreateHLSL()
-    &#123;
-        //string projectPath = Path.GetDirectoryName(Application.dataPath);
-
-        string assetPath = Path.Combine(GetCurrentAssetDirectory(), &quot;temp.hlsl&quot;);
-        assetPath = AssetDataBase.generateuniqueAssetPath(assetPath);
-
-        AssetDataBase.CreateAsset(new TextAsset(&quot;--&quot;, assetPath);
-        File.WriteAllText(assetPath, &quot;&quot;); // clean
-
-        AssetDataBase.SaveAssets();
-        AssetDataBase.Refresh();
-    &#125;
-&#125;
-```C#</code></pre>
+<h2 id="创建hlsl脚本"><a href="#创建hlsl脚本" class="headerlink" title="创建hlsl脚本"></a>创建hlsl脚本</h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title">AssetsMenu</span></span><br><span class="line">&#123;</span><br><span class="line">	[<span class="meta">MenuItem(<span class="meta-string">&quot;Assets/Create HLSL&quot;</span>)</span>]</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">CreateHLSL</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>	&#123;</span><br><span class="line">		<span class="comment">//string projectPath = Path.GetDirectoryName(Application.dataPath);</span></span><br><span class="line">		</span><br><span class="line">		<span class="built_in">string</span> assetPath = Path.Combine(GetCurrentAssetDirectory(), <span class="string">&quot;temp.hlsl&quot;</span>);</span><br><span class="line">		assetPath = AssetDataBase.generateuniqueAssetPath(assetPath);</span><br><span class="line">		</span><br><span class="line">		AssetDataBase.CreateAsset(<span class="keyword">new</span> TextAsset(<span class="string">&quot;--&quot;</span>, assetPath);</span><br><span class="line">		File.WriteAllText(assetPath, <span class="string">&quot;&quot;</span>); <span class="comment">// clean</span></span><br><span class="line">		</span><br><span class="line">		AssetDataBase.SaveAssets();</span><br><span class="line">		AssetDataBase.Refresh();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -309,7 +358,7 @@ public static class AssetsMenu
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-10 18:50:13" itemprop="dateModified" datetime="2022-03-10T18:50:13+08:00">2022-03-10</time>
+                <time title="修改时间：2022-03-16 13:13:09" itemprop="dateModified" datetime="2022-03-16T13:13:09+08:00">2022-03-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -458,7 +507,7 @@ public static class AssetsMenu
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-10 18:50:13" itemprop="dateModified" datetime="2022-03-10T18:50:13+08:00">2022-03-10</time>
+                <time title="修改时间：2022-03-16 13:13:09" itemprop="dateModified" datetime="2022-03-16T13:13:09+08:00">2022-03-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -547,7 +596,7 @@ public static class AssetsMenu
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-10 18:50:13" itemprop="dateModified" datetime="2022-03-10T18:50:13+08:00">2022-03-10</time>
+                <time title="修改时间：2022-03-16 13:13:09" itemprop="dateModified" datetime="2022-03-16T13:13:09+08:00">2022-03-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -628,7 +677,7 @@ public static class AssetsMenu
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-10 18:50:13" itemprop="dateModified" datetime="2022-03-10T18:50:13+08:00">2022-03-10</time>
+                <time title="修改时间：2022-03-16 13:13:09" itemprop="dateModified" datetime="2022-03-16T13:13:09+08:00">2022-03-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -714,7 +763,7 @@ public static class AssetsMenu
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-10 18:50:13" itemprop="dateModified" datetime="2022-03-10T18:50:13+08:00">2022-03-10</time>
+                <time title="修改时间：2022-03-16 13:13:09" itemprop="dateModified" datetime="2022-03-16T13:13:09+08:00">2022-03-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -806,7 +855,7 @@ public static class AssetsMenu
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-10 18:50:13" itemprop="dateModified" datetime="2022-03-10T18:50:13+08:00">2022-03-10</time>
+                <time title="修改时间：2022-03-16 13:13:09" itemprop="dateModified" datetime="2022-03-16T13:13:09+08:00">2022-03-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -917,7 +966,7 @@ public static class AssetsMenu
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-10 18:50:13" itemprop="dateModified" datetime="2022-03-10T18:50:13+08:00">2022-03-10</time>
+                <time title="修改时间：2022-03-16 13:13:09" itemprop="dateModified" datetime="2022-03-16T13:13:09+08:00">2022-03-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1006,7 +1055,7 @@ public static class AssetsMenu
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-10 18:50:13" itemprop="dateModified" datetime="2022-03-10T18:50:13+08:00">2022-03-10</time>
+                <time title="修改时间：2022-03-16 13:13:09" itemprop="dateModified" datetime="2022-03-16T13:13:09+08:00">2022-03-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1077,167 +1126,6 @@ public static class AssetsMenu
 <h3 id="The-Git-Protocol"><a href="#The-Git-Protocol" class="headerlink" title="The Git Protocol"></a>The Git Protocol</h3><p>最后是Git协议。它是一种特殊的、附加在Git中的进程守护协议。她监听一个具体的端口(9418)，这个端口提供一个类似于SSH协议的服务，但是没有签名验证。为了使用Git协议访问仓库，我们必须创建一个git-daemon-export-ok文件，如果没有这个文件，守护进程是不会管理这个仓库的，仓库的安全性得不到保证。无论Git仓库可供所有人克隆，也可以不供所有人克隆。这意味着，通常不会使用这个协议进行推送上传操作。我么可以开启推送权限，但是由于缺少签名验证，任何人只要知道我们项目的URL，都可能向我们项目仓库执行推送上传操作。因此很少会是哦也能够这个协议进行推送。</p>
 <h4 id="The-Pros-3"><a href="#The-Pros-3" class="headerlink" title="The Pros"></a>The Pros</h4><p>Git协议通常是最快的网络传输协议。如果我们刚好需要处理一个开源项目、或者一个不需要签名验证的只读权限的大项目，这时候可能会用到Git守护进程来维护我们的项目。Git协议的数据传输方式和SSH协议一样，只是没有了加密和签名验证。</p>
 <h4 id="The-Cons-3"><a href="#The-Cons-3" class="headerlink" title="The Cons"></a>The Cons</h4><p>缺点就是没有签名验证。我们不应该将Git协议作为我们项目唯一的访问方式。通常我们是将Git协议和SSH或HTTPS协议一起使用的，少数开发者使用SSH或HTTPS协议对项目进行推送操作。而其他人则使用git://对项目进行只读操作。从设置的角度来说，Git协议也可能是最复杂的协议。她必须执行Git的守护进程，这个进程需要xinetd、systemd配置，或者类似的配置。还需要防火访问端口9418，这不是所有公司防火墙允许的标准端口。在一些大公司中，这个端口通常被锁。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/11/21/Markdown-Basics/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2020/11/21/Markdown-Basics/" class="post-title-link" itemprop="url">Markdown Basics</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-11-21 13:01:34" itemprop="dateCreated datePublished" datetime="2020-11-21T13:01:34+08:00">2020-11-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-10 18:50:13" itemprop="dateModified" datetime="2022-03-10T18:50:13+08:00">2022-03-10</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Markdown/" itemprop="url" rel="index"><span itemprop="name">Markdown</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Markdown/Basics/" itemprop="url" rel="index"><span itemprop="name">Basics</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="属性Markdown语法要点"><a href="#属性Markdown语法要点" class="headerlink" title="属性Markdown语法要点"></a>属性Markdown语法要点</h2><p>本节展示基本的Markdown用法。在<a target="_blank" rel="noopener" href="https://daringfireball.net/projects/markdown/syntax">Syntax</a>中提供了更为详细的语法介绍。下面通过同时显示了转换前和转换后的例子，展示Markdown语法与HTML格式的对照关系。<br>同时我们可以使用<a target="_blank" rel="noopener" href="https://daringfireball.net/projects/markdown/dingus">Dingus</a>在线语法验证工具来更好的理解Markdown语法。</p>
-<h2 id="段落、标题、引用"><a href="#段落、标题、引用" class="headerlink" title="段落、标题、引用"></a>段落、标题、引用</h2><p>段落由一行或多行连续的文本构成，段落之间通过一行或多行空格分隔。正常的段落不应该使用space或tabs进行缩进。</p>
-<p>Markdown提供两种风格的标题格式：Setext和atx：</p>
-<ul>
-<li>Setext风格是采用下滑线的形式来对标题进行标记。例如一级标题和二级标题，分别使用 = 和 - 来代表；</li>
-<li>atx风格的标题，采用1-6个置于行首的#号来表示。#号的个数代表标题的等级；</li>
-</ul>
-<blockquote>
-<p>块引用使用的是邮件风格的&gt;号表示。</p>
-</blockquote>
-<p>Markdown:</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">一级标题</span><br><span class="line">========</span><br><span class="line">二级标题</span><br><span class="line">--------</span><br><span class="line">然后这里是贝拉巴啦啦吧一堆描述的、正儿八经的段落。</span><br><span class="line">再来一段。</span><br><span class="line"></span><br><span class="line"><span class="section">### 三级标题</span></span><br><span class="line"><span class="quote">&gt; 这是块引用</span></span><br><span class="line"><span class="quote">&gt; </span></span><br><span class="line"><span class="quote">&gt; 这是块引用的第二段</span></span><br><span class="line"><span class="quote">&gt; 这是块引用的第三段</span></span><br><span class="line">&gt;</span><br><span class="line"><span class="quote">&gt; ## 这是块引用中的二级标题</span></span><br></pre></td></tr></table></figure>
-<p>HTML:</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>一级标题<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h2</span>&gt;</span>二级标题<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>然后这里是贝拉巴啦啦吧一堆描述的、正儿八经的段落。<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>再来一段<span class="tag">&lt;<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h3</span>&gt;</span>三级标题<span class="tag">&lt;/<span class="name">h3</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">blockquote</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">p</span>&gt;</span>这是块引用<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">p</span>&gt;</span>这是块引用的第二段<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">p</span>&gt;</span>这是块引用的第三段<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">h2</span>&gt;</span>这是块引用中的二级标题<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">blockquote</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="短语强调"><a href="#短语强调" class="headerlink" title="短语强调"></a>短语强调</h2><p>Markdown使用 * 或 _ 来表示强调范围<br>Markdown：</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">有些<span class="emphasis">*人*</span>就是特殊</span><br><span class="line">有些<span class="emphasis">_事_</span>就是漂亮</span><br><span class="line"></span><br><span class="line">还有些<span class="strong">**人**</span>特殊到无以复加</span><br><span class="line">还有些<span class="strong">__事__</span>漂亮到难以形容</span><br></pre></td></tr></table></figure>
-<p>HTML：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>有些<span class="tag">&lt;<span class="name">em</span>&gt;</span>人<span class="tag">&lt;/<span class="name">em</span>&gt;</span>就是特殊<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>有些<span class="tag">&lt;<span class="name">em</span>&gt;</span>事<span class="tag">&lt;/<span class="name">em</span>&gt;</span>就是漂亮<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>还有些<span class="tag">&lt;<span class="name">strong</span>&gt;</span>人<span class="tag">&lt;/<span class="name">strong</span>&gt;</span>特殊到无以复加<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>还有些<span class="tag">&lt;<span class="name">strong</span>&gt;</span>事<span class="tag">&lt;/<span class="name">strong</span>&gt;</span>漂亮到难以形容<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h2><p>无序号的列表使用 * 和 + 以及 - 号来表示。这三个符号表达的是一个意思;<br>例如这个：</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">*</span> Candy</span><br><span class="line"><span class="bullet">*</span> Gum</span><br><span class="line"><span class="bullet">*</span> Booze</span><br></pre></td></tr></table></figure>
-<p>这个：</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">+</span> Candy</span><br><span class="line"><span class="bullet">+</span> Gum</span><br><span class="line"><span class="bullet">+</span> Booze</span><br></pre></td></tr></table></figure>
-<p>还有这个：</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> Candy</span><br><span class="line"><span class="bullet">-</span> Gum</span><br><span class="line"><span class="bullet">-</span> Booze</span><br></pre></td></tr></table></figure>
-<p>这三个输出的结果都是同样的HTML格式：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ul</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Candy<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Gum<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Booze<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>有需要的列表使用的是数字加 . 的方式：</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">1.</span> Red</span><br><span class="line"><span class="bullet">2.</span> Green</span><br><span class="line"><span class="bullet">3.</span> Blue</span><br></pre></td></tr></table></figure>
-<p>HTML：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ol</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Red<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Green<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Blue<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ol</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>如果列表之间有空行，那么这些列表元素就会被认为是段落。如果单个元素由多个段落构成，那么需要将后续的段落进行缩进处理：</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">1.</span> Red</span><br><span class="line"></span><br><span class="line"><span class="bullet">2.</span> Green</span><br><span class="line">green</span><br><span class="line"><span class="bullet">3.</span> Blue</span><br><span class="line">   blue</span><br><span class="line"></span><br><span class="line"><span class="bullet">4.</span> yellow</span><br><span class="line"></span><br><span class="line"><span class="bullet">5.</span> Orange</span><br></pre></td></tr></table></figure>
-<p>HTML:</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ol</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>Red<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>Green</span><br><span class="line">green<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>Blue</span><br><span class="line">blue<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>yellow<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>Orange<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ol</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h2><p>Markdown提供两种链接方式：</p>
-<ul>
-<li>inline，内联方式；</li>
-<li>reference，引用方式；</li>
-</ul>
-<p>这两种方式都需要使用方括号来分隔需要显示的文本。<br>内联方式直接在方括号后面使用圆括号来表示链接，例如：</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这是[<span class="string">链接名称</span>](<span class="link">http://example.com/</span>)。</span><br></pre></td></tr></table></figure>
-<p>HTML：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>这是<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://example.com/&quot;</span>&gt;</span>链接名称<span class="tag">&lt;/<span class="name">a</span>&gt;</span>。<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>另外，我们也可以给网址命个名：</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这是[<span class="string">链接名称</span>](<span class="link">http://example.com/ &quot;黑网&quot;</span>)。</span><br></pre></td></tr></table></figure>
-<p>HTML：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>这是<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://example.com/&quot;</span> <span class="attr">title</span>=<span class="string">&quot;黑网&quot;</span>&gt;</span>链接名称<span class="tag">&lt;/<span class="name">a</span>&gt;</span>。<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>引用方式通过给链接命名的方式进行链接：</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">我从[<span class="string">黑网</span>][<span class="symbol">1</span>]跳到[<span class="string">白网</span>][<span class="symbol">2</span>]再跳到[<span class="string">红网</span>][<span class="symbol">3</span>]</span><br><span class="line"></span><br><span class="line">[<span class="symbol">1</span>]: <span class="link">http://black-net.com/ &quot;黑网&quot;</span></span><br><span class="line">[<span class="symbol">2</span>]: <span class="link">http://white-net.com/ &quot;白网 1&quot;</span></span><br><span class="line">[<span class="symbol">3</span>]: <span class="link">http://red-net.com/ &quot;红网 2&quot;</span></span><br></pre></td></tr></table></figure>
-<p>HTML：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>我从<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://black-net.com/&quot;</span> <span class="attr">title</span>=<span class="string">&quot;黑网&quot;</span>&gt;</span>黑网<span class="tag">&lt;/<span class="name">a</span>&gt;</span>跳到<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://white-net.com/&quot;</span> <span class="attr">title</span>=<span class="string">&quot;白网 1&quot;</span>&gt;</span>白网<span class="tag">&lt;/<span class="name">a</span>&gt;</span>再跳到<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://red-net.com/&quot;</span> <span class="attr">title</span>=<span class="string">&quot;红网 2&quot;</span>&gt;</span>红网<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>上面的title属性可有可无。链接名由字母、数字、空格构成，不区分大小写：</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">我在[<span class="string">红网a</span>][<span class="symbol">red 1</span>]看到你的照片</span><br><span class="line">[<span class="symbol">REd 1</span>]: <span class="link">http://red-a-net.com/</span></span><br></pre></td></tr></table></figure>
-<p>HTML:</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>我在<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://red-a-net.com/&quot;</span>&gt;</span>红网a<span class="tag">&lt;/<span class="name">a</span>&gt;</span>看到你的照片<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="图片"><a href="#图片" class="headerlink" title="图片"></a>图片</h2><p>图片的语法和链接非常相似，也是有Inline和Reference两种方式，如下所示，其中Title属性是可有可无的：</p>
-<ul>
-<li>Inline，内联方式：<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">![<span class="string">alt text</span>](<span class="link">/path/to/img.jpg &quot;Title&quot;</span>)</span><br></pre></td></tr></table></figure></li>
-<li>Reference,引用方式：<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">![<span class="string">alt tex</span>][<span class="symbol">id</span>]</span><br><span class="line">[<span class="symbol">id</span>]: <span class="link">/path/to/img.jpg &quot;Title&quot;</span></span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<p>无论哪种方式得到的结果都一样：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;/path/to/img.jpg&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;alt tex&quot;</span> <span class="attr">title</span>=<span class="string">&quot;Title&quot;</span> /&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="代码块"><a href="#代码块" class="headerlink" title="代码块"></a>代码块</h2><p>在普通的段落中，我们可以给使用反引号 ` ，也就是ECS键下面的那个 ` 键， 从而将代码插入到普通段落中。这样可以使得普通段落和代码块的之间界限分明。还有一点就是 &amp; 和 &lt; 、 &gt; 这几个符合是HTML的命令实体，需要转义后才能以普通字符的形式显示。但是在反引号 ` 包裹下的所有字符都只被当作普通字符，而不需要而外的转义操作。这就很方便在Markdown文档中编写HTML的示例代码：</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">I strongly recommend against using any <span class="code">`&lt;blink&gt;`</span> tags.</span><br><span class="line"></span><br><span class="line">I wish SmartyPants used named entities like <span class="code">`&amp;mdash;`</span></span><br><span class="line">instead of decimal-encoded entites like <span class="code">`&amp;#8212;`</span>.</span><br></pre></td></tr></table></figure>
-<p>HTML：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>I strongly recommend against using any</span><br><span class="line"><span class="tag">&lt;<span class="name">code</span>&gt;</span><span class="symbol">&amp;lt;</span>blink<span class="symbol">&amp;gt;</span><span class="tag">&lt;/<span class="name">code</span>&gt;</span> tags.<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>I wish SmartyPants used named entities like</span><br><span class="line"><span class="tag">&lt;<span class="name">code</span>&gt;</span><span class="symbol">&amp;amp;</span>mdash;<span class="tag">&lt;/<span class="name">code</span>&gt;</span> instead of decimal-encoded</span><br><span class="line">entites like <span class="tag">&lt;<span class="name">code</span>&gt;</span><span class="symbol">&amp;amp;</span>#8212;<span class="tag">&lt;/<span class="name">code</span>&gt;</span>.<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>最终在网页上显示的效果：<br>I strongly recommend against using any <code>&lt;blink&gt;</code> tags.</p>
-<p>I wish SmartyPants used named entities like <code>&amp;mdash;</code><br>instead of decimal-encoded entites like <code>&amp;#8212;</code>.<br>如果希望将整个代码块进行格式化，那么将代码块中的每一行缩进4个spaces或1个tab。其所产生的效果和使用反引号 ` 标记的代码块一样，其中的 &amp; 、&lt; 、&gt; 这些符号都被自动转义了：<br>Markdown:</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">If you want your page to validate under XHTML 1.0 Strict,</span><br><span class="line">you&#x27;ve got to put paragraph tags in your blockquotes:</span><br><span class="line"></span><br><span class="line"><span class="code">    &lt;blockquote&gt;</span></span><br><span class="line"><span class="code">        &lt;p&gt;For example.&lt;/p&gt;</span></span><br><span class="line"><span class="code">    &lt;/blockquote&gt;</span></span><br></pre></td></tr></table></figure>
-<p>HTML:</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>If you want your page to validate under XHTML 1.0 Strict,</span><br><span class="line">you&#x27;ve got to put paragraph tags in your blockquotes:<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">pre</span>&gt;</span><span class="tag">&lt;<span class="name">code</span>&gt;</span><span class="symbol">&amp;lt;</span>blockquote<span class="symbol">&amp;gt;</span></span><br><span class="line">    <span class="symbol">&amp;lt;</span>p<span class="symbol">&amp;gt;</span>For example.<span class="symbol">&amp;lt;</span>/p<span class="symbol">&amp;gt;</span></span><br><span class="line"><span class="symbol">&amp;lt;</span>/blockquote<span class="symbol">&amp;gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">code</span>&gt;</span><span class="tag">&lt;/<span class="name">pre</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>最终在网页上显示的效果：<br>If you want your page to validate under XHTML 1.0 Strict,<br>you’ve got to put paragraph tags in your blockquotes:</p>
-<pre><code>&lt;blockquote&gt;
-    &lt;p&gt;For example.&lt;/p&gt;
-&lt;/blockquote&gt;</code></pre>
 
       
     </div>
@@ -1324,7 +1212,7 @@ public static class AssetsMenu
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-count">56</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1337,7 +1225,7 @@ public static class AssetsMenu
       <div class="site-state-item site-state-tags">
             <a href="/blogs/tags/">
           
-        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-count">28</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
