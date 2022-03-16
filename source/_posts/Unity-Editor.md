@@ -26,7 +26,7 @@ public static string GetCurrentAssetDirectory()
 	}
 	return "Assets";
 }
-```C#
+```
 
 ## 创建hlsl脚本
 ```C#
@@ -47,4 +47,4 @@ public static class AssetsMenu
 		AssetDataBase.Refresh();
 	}
 }
-```C#
+```

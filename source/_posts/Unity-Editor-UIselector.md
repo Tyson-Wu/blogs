@@ -92,4 +92,4 @@ public class SceneUISelectionFilter : EditorWindow
 		return gameObjects.ToArray();
 	}
 }
-```C#
+```

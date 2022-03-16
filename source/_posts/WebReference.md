@@ -257,6 +257,7 @@ date: 2021-05-27 17:01:34
 [Long-Term-Open-World](https://github.com/ShadowLancer42/Long-Term-Open-World)
 [Procedural-Content-Generation](https://github.com/Mrchrissross/Procedural-Content-Generation)
 [Filter which objects I can select in the scene object via editor tool](https://forum.unity.com/threads/filter-which-objects-i-can-select-in-the-scene-object-via-editor-tool-how-to-do-custom-selection.516897/)
+[Game Architecture with Scriptable Objects](http://www.roboryantron.com/2017/10/unite-2017-game-architecture-with.html)
 
 ### Duality
 [Getting Started](https://docs.duality2d.net/pages/v3/getting-started.html):It’s an extensible 2D game engine;
