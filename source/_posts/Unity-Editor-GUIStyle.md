@@ -11,6 +11,8 @@ tags:
 
 ## 功能
 Unity自定义编辑器时，需要使用GUIStyle自定义UI组件的显示（包括区域大小、位置、以及字体等），这里自定义一个GUIStyle参数调节预览窗口，辅助自定义编辑器。
+当然，Unity的EditorStyles类里面提供了一些内置的GUIStyle，我们也可以复制其中的一个GUIStyle，然后微调一些参数，如`EditorStyles.toolbar`。
+`EditorGUIUtility.currentViewWidth`可以获取当前窗口的宽度。
 
 ## 源码
 ```C#
