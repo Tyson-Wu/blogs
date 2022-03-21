@@ -28,7 +28,7 @@
 <meta property="og:description" content="功能Unity自定义编辑器时，需要使用GUIStyle自定义UI组件的显示（包括区域大小、位置、以及字体等），这里自定义一个GUIStyle参数调节预览窗口，辅助自定义编辑器。当然，Unity的EditorStyles类里面提供了一些内置的GUIStyle，我们也可以复制其中的一个GUIStyle，然后微调一些参数，如EditorStyles.toolbar。EditorGUIUtility.cu">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-03-16T12:01:00.000Z">
-<meta property="article:modified_time" content="2022-03-18T09:01:00.496Z">
+<meta property="article:modified_time" content="2022-03-21T13:01:58.827Z">
 <meta property="article:author" content="Tyson Wu">
 <meta property="article:tag" content="Unity">
 <meta property="article:tag" content="Editor">
@@ -199,7 +199,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-18 17:01:00" itemprop="dateModified" datetime="2022-03-18T17:01:00+08:00">2022-03-18</time>
+                <time title="修改时间：2022-03-21 21:01:58" itemprop="dateModified" datetime="2022-03-21T21:01:58+08:00">2022-03-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -227,99 +227,7 @@
 
       
         <h2 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h2><p>Unity自定义编辑器时，需要使用GUIStyle自定义UI组件的显示（包括区域大小、位置、以及字体等），这里自定义一个GUIStyle参数调节预览窗口，辅助自定义编辑器。<br>当然，Unity的EditorStyles类里面提供了一些内置的GUIStyle，我们也可以复制其中的一个GUIStyle，然后微调一些参数，如<code>EditorStyles.toolbar</code>。<br><code>EditorGUIUtility.currentViewWidth</code>可以获取当前窗口的宽度。</p>
-<h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><pre><code class="C#">using UnityEngine;
-using UnityEditor;
-
-public class GUIStyleEditor : EditorWindow
-&#123;
-    [MenuItem(&quot;Window/GUIStyleEditor&quot;)]
-    static void Open()
-    &#123;
-        var win = GUIStyleEditor.GetWindow&lt;GUIStyleEditor&gt;();
-        win.titleContent = new GUIContent(&quot;GUIStyleEditor&quot;);
-        win.Show();
-    &#125;
-    GUIStyle _GUIStyle = new GUIStyle();
-    GUIStyle _GUIContent = new GUIStyle();
-
-    GUIContent[] _GUIContents = null;
-    GUIStyle _GUIStyleBg = new GUIStyle();
-    Vector2 _scrollPos = Vector2.zero;
-
-    private void OnEnable()
-    &#123;
-        _GUIStyleBg.margin = new RectOffset(-10, -10, 10, 10);
-        _GUIStyleBg.padding = new RectOffset(10, 10, 5, 5);
-        _GUIStyleBg.border = new RectOffset(10, 10, 10, 10);
-        _GUIStyleBg.normal.background = EditorGUIUtility.IconContent(&quot;0L box@2x&quot;).image as Texture2D;
-        _GUIContents = new GUIContent[]&#123;_GUIContent, _GUIContent, _GUIContent&#125;;
-
-        _GUIStyle.border = new RectOffset(10, 10, 10, 10);
-        _GUIStyle.margin = new RectOffset(10, 10, 10, 10);
-        _GUIStyle.padding = new RectOffset(10, 10, 10, 10);
-        _GUIStyle.overflow = new RectOffset(5, 5, 0, 0);
-        _GUIStyle.normal.background = EditorGUIUtility.IconContent(&quot;0L box@2x&quot;).image as Texture2D;
-        _GUIContent.image = EditorGUIUtility.IconContent(&quot;BuildSettings.Editor&quot;).image;
-    &#125;
-
-    private void OnGUI()
-    &#123;
-        GUILayout.BeginVertical(_GUIStyleBg);
-        GUILayout.Label(&quot;GUIContent&quot;);
-        EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.PrefixLabel(&quot;GUIContent.text&quot;);
-        _GUIContent.text = EditorGUILayout.TextField(_GUIContent.text);
-        EditorGUILayout.EndHorizontal();
-        _GUIContent.image = EditorGUILayout.ObjectField(&quot;GUIContent.image&quot;, _GUIContent.image, typeof(Texture), false, GUILayout.Height(40)) as Texture;
-        GUILayout.Space(10);
-
-        GUILayout.Label(&quot;GUIStyle&quot;);
-        _GUIStyle.fontStyle = (FontStyle)EditorGUILayout.EnumPopup(&quot;GUIStyle.fontStyle&quot;, _GUIStyle.fontStyle);
-        _GUIStyle.alignment = (TextAnchor)EditorGUILayout.EnumPopup(&quot;GUIStyle.alignment&quot;, _GUIStyle.alignment);
-        _GUIStyle.imagePosition = (ImagePosition)EditorGUILayout.EnumPopup(&quot;GUIStyle.imagePosition&quot;, _GUIStyle.imagePosition);
-        _GUIStyle.contentOffset = EditorGUILayout.Vector2Field(&quot;GUIStyle.contentOffset&quot;, _GUIStyle.contentOffset);
-        _GUIStyle.border = DrawRectOffset(&quot;GUIStyle.border&quot;, _GUIStyle.border);
-        _GUIStyle.margin = DrawRectOffset(&quot;GUIStyle.margin&quot;, _GUIStyle.margin);
-        _GUIStyle.padding = DrawRectOffset(&quot;GUIStyle.padding&quot;, _GUIStyle.padding);
-        _GUIStyle.overflow = DrawRectOffset(&quot;GUIStyle.overflow&quot;, _GUIStyle.overflow);
-        _GUIStyle.normal.textColor = EditorGUILayout.ColorField(&quot;textColor&quot;, _GUIStyle.normal.textColor);
-        _GUIStyle.normal.backgrount = EditorGUILayout.ObjectField(&quot;GUIContent.image&quot;, _GUIStyle.normal.background, typeof(Texture2D), false, GUILayout.Height(40)) as Texture2D;
-        GUILayout.EndVertical();
-
-
-        GUILayout.Space(2);
-        _scrollPos = GUILayout.BeginScrollView(_scrollPos, _GUIStyleBg);
-        GUILayout.Button(_GUIContent, _GUIStyle);
-        GUILayout.Label(_GUIContent, _GUIStyle);
-        GUILayout.Box(_GUIContent, _GUIStyle);
-        GUILayout.TextField(_GUIContent.text, _GUIStyle);
-        GUILayout.TextArea(_GUIContent.text, _GUIStyle);
-        GUILayout.Toggle(ture, _GUIContent, _GUIStyle);
-        GUILayout.Toolbar(1, _GUIContents, _GUIStyle);
-        GUILayout.SelectionGrid(1, _GUIContents, 2, _GUIStyle);
-        GUILayout.RepeatButton(_GUIContent, _GUIStyle);
-        GUILayout.PaswordField(_GUIContent.text, &#39;*&#39;, _GUIStyle);
-        GUILayout.BeginVertical(_GUIStyle);
-        GUILayout.Space(100);
-        GUILayout.EndScrollView();
-        GUILayout.EndVertical();
-    &#125;
-    Vector4 RectOffsetToVector4(RectOffset rectOffset)
-    &#123;
-        return new Vector4(rectOffset.left, rectOffset.right, rectOffset.top, rectOffset.bottom);
-    &#125;
-    RectOffset Vector4ToRectOffset(Vector4 vector)
-    &#123;
-        return new RectOffset((int)vector.x, (int)vector.y, (int)vector.z, (int)vector.w);
-    &#125;
-    RectOffset DrawRectOffset(string text, RectOffset rectOffset)
-    &#123;
-        Vector4 vec = RectOffsetToVector4(rectOffset);
-        vec = EditorGUILayout.Vector4Field(text, vec);
-        return Vector4ToRectOffset(vec);
-    &#125;
-&#125;
-```C#</code></pre>
+<h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> UnityEditor;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">GUIStyleEditor</span> : <span class="title">EditorWindow</span></span><br><span class="line">&#123;</span><br><span class="line">	[<span class="meta">MenuItem(<span class="meta-string">&quot;Window/GUIStyleEditor&quot;</span>)</span>]</span><br><span class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Open</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>	&#123;</span><br><span class="line">		<span class="keyword">var</span> win = GUIStyleEditor.GetWindow&lt;GUIStyleEditor&gt;();</span><br><span class="line">		win.titleContent = <span class="keyword">new</span> GUIContent(<span class="string">&quot;GUIStyleEditor&quot;</span>);</span><br><span class="line">		win.Show();</span><br><span class="line">	&#125;</span><br><span class="line">    GUIStyle _GUIStyle = <span class="keyword">new</span> GUIStyle();</span><br><span class="line">	GUIStyle _GUIContent = <span class="keyword">new</span> GUIStyle();</span><br><span class="line"></span><br><span class="line">	GUIContent[] _GUIContents = <span class="literal">null</span>;</span><br><span class="line">	GUIStyle _GUIStyleBg = <span class="keyword">new</span> GUIStyle();</span><br><span class="line">	Vector2 _scrollPos = Vector2.zero;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">OnEnable</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _GUIStyleBg.margin = <span class="keyword">new</span> RectOffset(<span class="number">-10</span>, <span class="number">-10</span>, <span class="number">10</span>, <span class="number">10</span>);</span><br><span class="line">		_GUIStyleBg.padding = <span class="keyword">new</span> RectOffset(<span class="number">10</span>, <span class="number">10</span>, <span class="number">5</span>, <span class="number">5</span>);</span><br><span class="line">		_GUIStyleBg.border = <span class="keyword">new</span> RectOffset(<span class="number">10</span>, <span class="number">10</span>, <span class="number">10</span>, <span class="number">10</span>);</span><br><span class="line">		_GUIStyleBg.normal.background = EditorGUIUtility.IconContent(<span class="string">&quot;0L box@2x&quot;</span>).image <span class="keyword">as</span> Texture2D;</span><br><span class="line">		_GUIContents = <span class="keyword">new</span> GUIContent[]&#123;_GUIContent, _GUIContent, _GUIContent&#125;;</span><br><span class="line"></span><br><span class="line">		_GUIStyle.border = <span class="keyword">new</span> RectOffset(<span class="number">10</span>, <span class="number">10</span>, <span class="number">10</span>, <span class="number">10</span>);</span><br><span class="line">		_GUIStyle.margin = <span class="keyword">new</span> RectOffset(<span class="number">10</span>, <span class="number">10</span>, <span class="number">10</span>, <span class="number">10</span>);</span><br><span class="line">		_GUIStyle.padding = <span class="keyword">new</span> RectOffset(<span class="number">10</span>, <span class="number">10</span>, <span class="number">10</span>, <span class="number">10</span>);</span><br><span class="line">		_GUIStyle.overflow = <span class="keyword">new</span> RectOffset(<span class="number">5</span>, <span class="number">5</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">		_GUIStyle.normal.background = EditorGUIUtility.IconContent(<span class="string">&quot;0L box@2x&quot;</span>).image <span class="keyword">as</span> Texture2D;</span><br><span class="line">		_GUIContent.image = EditorGUIUtility.IconContent(<span class="string">&quot;BuildSettings.Editor&quot;</span>).image;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">OnGUI</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>	&#123;</span><br><span class="line">		GUILayout.BeginVertical(_GUIStyleBg);</span><br><span class="line">		GUILayout.Label(<span class="string">&quot;GUIContent&quot;</span>);</span><br><span class="line">		EditorGUILayout.BeginHorizontal();</span><br><span class="line">		EditorGUILayout.PrefixLabel(<span class="string">&quot;GUIContent.text&quot;</span>);</span><br><span class="line">		_GUIContent.text = EditorGUILayout.TextField(_GUIContent.text);</span><br><span class="line">		EditorGUILayout.EndHorizontal();</span><br><span class="line">		_GUIContent.image = EditorGUILayout.ObjectField(<span class="string">&quot;GUIContent.image&quot;</span>, _GUIContent.image, <span class="keyword">typeof</span>(Texture), <span class="literal">false</span>, GUILayout.Height(<span class="number">40</span>)) <span class="keyword">as</span> Texture;</span><br><span class="line">		GUILayout.Space(<span class="number">10</span>);</span><br><span class="line"></span><br><span class="line">		GUILayout.Label(<span class="string">&quot;GUIStyle&quot;</span>);</span><br><span class="line">		_GUIStyle.fontStyle = (FontStyle)EditorGUILayout.EnumPopup(<span class="string">&quot;GUIStyle.fontStyle&quot;</span>, _GUIStyle.fontStyle);</span><br><span class="line">		_GUIStyle.alignment = (TextAnchor)EditorGUILayout.EnumPopup(<span class="string">&quot;GUIStyle.alignment&quot;</span>, _GUIStyle.alignment);</span><br><span class="line">		_GUIStyle.imagePosition = (ImagePosition)EditorGUILayout.EnumPopup(<span class="string">&quot;GUIStyle.imagePosition&quot;</span>, _GUIStyle.imagePosition);</span><br><span class="line">		_GUIStyle.contentOffset = EditorGUILayout.Vector2Field(<span class="string">&quot;GUIStyle.contentOffset&quot;</span>, _GUIStyle.contentOffset);</span><br><span class="line">		_GUIStyle.border = DrawRectOffset(<span class="string">&quot;GUIStyle.border&quot;</span>, _GUIStyle.border);</span><br><span class="line">		_GUIStyle.margin = DrawRectOffset(<span class="string">&quot;GUIStyle.margin&quot;</span>, _GUIStyle.margin);</span><br><span class="line">		_GUIStyle.padding = DrawRectOffset(<span class="string">&quot;GUIStyle.padding&quot;</span>, _GUIStyle.padding);</span><br><span class="line">		_GUIStyle.overflow = DrawRectOffset(<span class="string">&quot;GUIStyle.overflow&quot;</span>, _GUIStyle.overflow);</span><br><span class="line">		_GUIStyle.normal.textColor = EditorGUILayout.ColorField(<span class="string">&quot;textColor&quot;</span>, _GUIStyle.normal.textColor);</span><br><span class="line">		_GUIStyle.normal.backgrount = EditorGUILayout.ObjectField(<span class="string">&quot;GUIContent.image&quot;</span>, _GUIStyle.normal.background, <span class="keyword">typeof</span>(Texture2D), <span class="literal">false</span>, GUILayout.Height(<span class="number">40</span>)) <span class="keyword">as</span> Texture2D;</span><br><span class="line">		GUILayout.EndVertical();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">		GUILayout.Space(<span class="number">2</span>);</span><br><span class="line">		_scrollPos = GUILayout.BeginScrollView(_scrollPos, _GUIStyleBg);</span><br><span class="line">		GUILayout.Button(_GUIContent, _GUIStyle);</span><br><span class="line">		GUILayout.Label(_GUIContent, _GUIStyle);</span><br><span class="line">		GUILayout.Box(_GUIContent, _GUIStyle);</span><br><span class="line">		GUILayout.TextField(_GUIContent.text, _GUIStyle);</span><br><span class="line">		GUILayout.TextArea(_GUIContent.text, _GUIStyle);</span><br><span class="line">		GUILayout.Toggle(ture, _GUIContent, _GUIStyle);</span><br><span class="line">		GUILayout.Toolbar(<span class="number">1</span>, _GUIContents, _GUIStyle);</span><br><span class="line">		GUILayout.SelectionGrid(<span class="number">1</span>, _GUIContents, <span class="number">2</span>, _GUIStyle);</span><br><span class="line">		GUILayout.RepeatButton(_GUIContent, _GUIStyle);</span><br><span class="line">		GUILayout.PaswordField(_GUIContent.text, <span class="string">&#x27;*&#x27;</span>, _GUIStyle);</span><br><span class="line">		GUILayout.BeginVertical(_GUIStyle);</span><br><span class="line">		GUILayout.Space(<span class="number">100</span>);</span><br><span class="line">		GUILayout.EndScrollView();</span><br><span class="line">		GUILayout.EndVertical();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function">Vector4 <span class="title">RectOffsetToVector4</span>(<span class="params">RectOffset rectOffset</span>)</span></span><br><span class="line"><span class="function"></span>	&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> Vector4(rectOffset.left, rectOffset.right, rectOffset.top, rectOffset.bottom);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function">RectOffset <span class="title">Vector4ToRectOffset</span>(<span class="params">Vector4 vector</span>)</span></span><br><span class="line"><span class="function"></span>	&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> RectOffset((<span class="built_in">int</span>)vector.x, (<span class="built_in">int</span>)vector.y, (<span class="built_in">int</span>)vector.z, (<span class="built_in">int</span>)vector.w);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function">RectOffset <span class="title">DrawRectOffset</span>(<span class="params"><span class="built_in">string</span> text, RectOffset rectOffset</span>)</span></span><br><span class="line"><span class="function"></span>	&#123;</span><br><span class="line">		Vector4 vec = RectOffsetToVector4(rectOffset);</span><br><span class="line">		vec = EditorGUILayout.Vector4Field(text, vec);</span><br><span class="line">		<span class="keyword">return</span> Vector4ToRectOffset(vec);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
     </div>
 
@@ -343,7 +251,10 @@ public class GUIStyleEditor : EditorWindow
     <a href="/blogs/2022/03/10/Unity-Editor-UIselector/" rel="prev" title="Scene UI Selection Filter">
       <i class="fa fa-chevron-left"></i> Scene UI Selection Filter
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/blogs/2022/03/21/Unity-Editor-Project-Linker/" rel="next" title="Project Linker">
+      Project Linker <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -418,7 +329,7 @@ public class GUIStyleEditor : EditorWindow
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">56</span>
+          <span class="site-state-item-count">57</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -431,7 +342,7 @@ public class GUIStyleEditor : EditorWindow
       <div class="site-state-item site-state-tags">
             <a href="/blogs/tags/">
           
-        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-count">29</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
