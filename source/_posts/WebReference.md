@@ -198,6 +198,7 @@ date: 2021-05-27 17:01:34
 ## Engine
 
 ### Unity
+[Running multiple instances of Unity referencing the same project](https://support.unity.com/hc/en-us/articles/115003118426-Running-multiple-instances-of-Unity-referencing-the-same-project)
 [Pathfinding in Games](https://www.raywenderlich.com/16977649-pathfinding-with-navmesh-getting-started)
 [NavMeshComponents](https://github.com/Unity-Technologies/NavMeshComponents)
 [TreeViewExamples](https://github.com/GOLDhjy/TreeViewExamples)
