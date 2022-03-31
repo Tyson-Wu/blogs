@@ -137,6 +137,7 @@ date: 2021-05-27 17:01:34
 
 
 ### Shader
+[Custom Lighting in Shader Graph: Expanding your graphs in 2019](https://blog.unity.com/technology/custom-lighting-in-shader-graph-expanding-your-graphs-in-2019)
 [How To Use Every Node in Unity Shader Graph](https://danielilett.com/2021-05-20-every-shader-graph-node/)
 [Test_ShaderGraphBlog](https://github.com/UnityTechnologies/Test_ShaderGraphBlog)
 [Using post-processing effects in Unity](https://www.red-gate.com/simple-talk/development/dotnet-development/post-processing-effects-unity/)
@@ -198,6 +199,7 @@ date: 2021-05-27 17:01:34
 ## Engine
 
 ### Unity
+[Unity Blogs](https://blog.unity.com/?p=82308)
 [Running multiple instances of Unity referencing the same project](https://support.unity.com/hc/en-us/articles/115003118426-Running-multiple-instances-of-Unity-referencing-the-same-project)
 [Pathfinding in Games](https://www.raywenderlich.com/16977649-pathfinding-with-navmesh-getting-started)
 [NavMeshComponents](https://github.com/Unity-Technologies/NavMeshComponents)

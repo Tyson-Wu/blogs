@@ -31,7 +31,7 @@ namespace ProjectLinker
 			process.WaitForExit();
 			process.Close();
 		}
-		public static void LaunchUnityProject(string projectFullPath)
+		public static void LaunchUnityProject(string projectFullPath, string buildTarget)
 		{
 			string editorPath = EditorApplication.applicationPath;
 			System.Treading.ThreadPool.QueueUserWorkItem(delegate (object state)
@@ -40,6 +40,10 @@ namespace ProjectLinker
 				try
 				{
 					string arg = $"-projectPath \"{projectFullPath}\"";
+					if(!string.IsNullOrEmpty(buildTarget))
+					{
+						arg += $" -buildTarget {buildTarget}";
+					}
 					ProcessStartInfo start = new ProcessStartInfo(editorPath, arg);
 					start.CreateNoWindow = false;
 					start.UseShellExecute = false;
@@ -78,6 +82,7 @@ namespace ProjectLinker
 	class CacheDataElem
 	{
 		public string name;
+		public string buildTarget;
 		public string projectPath;
 	}
 }
@@ -213,9 +218,14 @@ namespace ProjectLinker
 		private void DrawElemInfo()
 		{
 			EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+			EditorGUILayout.BeginHorizontal();
 			GUILayout.Label("选中项目详情", EditorStyles.label);
-			EditorGUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
+			EditorGUI.BeginDisabledGroup(true);
+			EditorGUILayout.TextField(selectedElem.buildTarget, GUILayout.Width(100));
+			EditorGUI.EndDisabledGroup();
+			EditorGUILayout.EndHorizontal();
 
+			EditorGUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
 			EditorGUILayout.BeginVertical();
 			EditorGUI.BeginChangeCheck();
 			selectedElem.name = EditorGUILayout.TextField("项目名称", selectedElem.name);
@@ -246,7 +256,7 @@ namespace ProjectLinker
 			
 			if(GUILayout.Button("打开", GUIlayout.Width(50), GUILayout.ExpandHeight(true)))
 			{
-				CmdHelper.LaunchUnityProject(selectedElem.projectPath);
+				CmdHelper.LaunchUnityProject(selectedElem.projectPath, selectedElem.buildTarget);
 				Close();
 			}
 			EditorGUILayout.EndHorizontal();
@@ -326,7 +336,7 @@ namespace ProjectLinker
 						{
 							folderInfo.Create();
 							LinkProject(folderInfo);
-							AddItem(folderInfo);
+							AddItem(folderInfo, true);
 						}
 						catch
 						{
@@ -351,13 +361,17 @@ namespace ProjectLinker
 			string copyPath = Path.Combine(folderInfo.FullName, "Packages");
 			CmdHelper.LinkFolder(orgPath, copyPath);
 		}
-		private void AddItem(DirectoryInfo folderInfo)
+		private void AddItem(DirectoryInfo folderInfo, bool copyTarget = false)
 		{
 			CacheDataElem elem = new CacheDataElem
 			{
 				name = folderInfo.name,
 				projectPath = folderInfo.FullName
 			};
+			if(copyTarget)
+			{
+				elem.buildTarget = BuildPipeline.GetBuildTargetName(EditorUserBuildSettings.activeBuildTarget);
+			}
 			_cacheDataTable.elems.Add(elems);
 			SaveCache();
 			_treeView.Reload();
