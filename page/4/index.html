@@ -163,108 +163,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Basic_Shader/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2021/07/01/Ronja_Basic_Shader/" class="post-title-link" itemprop="url">Basic Shader</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-07-01 12:01:00" itemprop="dateCreated datePublished" datetime="2021-07-01T12:01:00+08:00">2021-07-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-31 19:40:45" itemprop="dateModified" datetime="2022-03-31T19:40:45+08:00">2022-03-31</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/004-basic/">Basic Shader</a></p>
-<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>在前面三个教程中，我介绍了着色器工作的基本原理、与结构。接下来我进一步介绍如何修改其中的内容。</p>
-<p>在此之前，我并没有介绍着色器的执行代码部分。因为作为入门介绍，我们需要从结构框架入手，而不应该拘泥于细节。在大致了解着色器的实现流程后，接下来让我们来发现更有趣的细节。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/004/Result.png"></p>
-<h2 id="What-we-have-so-far"><a href="#What-we-have-so-far" class="headerlink" title="What we have so far"></a>What we have so far</h2><p>下面的着色器脚本，如果你觉得有前三章没有阐述到位的地方，都可以告诉我。我必将事事有会响！</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/001-004_Basic_Unlit&quot;</span>&#123;</span><br><span class="line">	<span class="comment">//这些值将会显示在材质面板上</span></span><br><span class="line">	Properties&#123;</span><br><span class="line">		_Color (<span class="string">&quot;Tint&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">		_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	SubShader&#123;</span><br><span class="line">		<span class="comment">//当前的标签设置表示的是：不透明渲染，和其他不透明物体处以同一渲染队列</span></span><br><span class="line">		Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Geometry&quot;</span> &#125;</span><br><span class="line"></span><br><span class="line">		Pass&#123;</span><br><span class="line">			CGPROGRAM</span><br><span class="line"></span><br><span class="line">			<span class="comment">//这里包括一些工具函数、以及内置变量</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UnityCG.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//定义顶点、片段着色函数</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//材质所用的纹理、以及缩放偏移量</span></span><br><span class="line">			sampler2D _MainTex;</span><br><span class="line">			float4 _MainTex_ST;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//材质的颜色，具体一点是：当纹理为白色图片时，材质的颜色</span></span><br><span class="line">			fixed4 _Color;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//模型网格、UI等输入数据，基本代表了模型内在属性</span></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">				float4 vertex : POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//当经过顶点着色器处理后，处理的数据经过栅格化插值，然后传入片段着色器</span></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">				float4 position : SV_POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//顶点着色器函数，主要执行坐标的空间变换</span></span><br><span class="line">			<span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">				v2f o;</span><br><span class="line">				<span class="comment">//将模型各顶点坐标，转换到裁剪空间</span></span><br><span class="line">				o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">				<span class="comment">//基于图片的缩放偏移参数，对UV进行变换</span></span><br><span class="line">				o.uv = TRANSFORM_TEX(v.uv, _MainTex);</span><br><span class="line">				<span class="keyword">return</span> o;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//片段作色器，主要是计算像素点的颜色</span></span><br><span class="line">			<span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">			    <span class="comment">//基于UV坐标，进行纹理采样</span></span><br><span class="line">				fixed4 col = tex2D(_MainTex, i.uv);</span><br><span class="line">				<span class="comment">//将纹理颜色和材质颜色相乘</span></span><br><span class="line">				col *= _Color;</span><br><span class="line">				<span class="comment">//返回最终的像素点颜色</span></span><br><span class="line">				<span class="keyword">return</span> col;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	Fallback <span class="string">&quot;VertexLit&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Setting-up-the-shader-stages"><a href="#Setting-up-the-shader-stages" class="headerlink" title="Setting up the shader stages"></a>Setting up the shader stages</h2><p>之前提到的顶点着色器、片段着色器，在着色器脚本中实际上就是<code>HLSL</code>函数。只不过，这些函数对应这渲染管线中的特定阶段。为了将这些函数关联到指定阶段，我们可以使用<code>#pragma</code>关键字来说明。前面经常谈到的顶点着色器、和片段着色器是非常重要的两个阶段。因为顶点着色器负责将模型数据转换到裁剪空间，然后经由栅格化处理，进入到片段着色器，最终有片段着色器计算出像素颜色，并写入渲染对象。可以说这两个着色器代表了渲染的基本流程。其中关联函数的操作如下：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//定义顶点、片段着色函数</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//顶点着色器函数，主要执行坐标的空间变换</span></span><br><span class="line"><span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//片段作色器，主要是计算像素点的颜色</span></span><br><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Vertex-stage"><a href="#Vertex-stage" class="headerlink" title="Vertex stage"></a>Vertex stage</h2><p>在实现顶点着色器函数之前，我满需要定义好插值数据类型，前面提到过，这类数据是在顶点着色器中计算好，然后传递给片段着色器的。</p>
-<p>顶点着色器的主要功能就是执行空间变换，将顶点数据从模型坐标系转换到裁剪坐标系。空间转换可以借助矩阵乘法来实现。但是，很多时候我们并不需要知道乘法的具体实现，因为Unity为我们提供了很多矩阵变换相关的函数。我们可以使用宏命令来引入Unity预先编写好的工具函数。例如<code>#include UnityCG.cginc</code>。其中<code>UnityObjectToClipPos</code>便是实现模型坐标系到裁剪坐标系的工具函数。而<code>UnityCG.cginc</code>文件中处了定义了很多常用的工具函数外，还定义了很多宏操作。宏操作的使用方法和函数的使用类似。例如，用于UV转换的宏<code>TRANSFORM_TEX</code>，使用顶点UV，以及纹理变量为参数，最终得到转换后的UV坐标。</p>
-<p>编写好的顶点着色器函数如下：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//顶点着色器函数，主要执行坐标的空间变换</span></span><br><span class="line"><span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">    v2f o;</span><br><span class="line">    <span class="comment">//将模型各顶点坐标，转换到裁剪空间</span></span><br><span class="line">    o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">    <span class="comment">//基于图片的缩放偏移参数，对UV进行变换</span></span><br><span class="line">    o.uv = TRANSFORM_TEX(v.uv, _MainTex);</span><br><span class="line">    <span class="keyword">return</span> o;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Fragment-stage"><a href="#Fragment-stage" class="headerlink" title="Fragment stage"></a>Fragment stage</h2><p>在片段着色器中，我们使用由顶点着色器传来的插值数据、以及公共的纹理数据等，来进一步计算每个像素点的颜色。当然，我们可以直接返回白色，如<code>return float4(1,1,1,1);</code>。但是更实际的情况是，我们结合前面提到的数据，通过一些简单、或复杂的计算，来得到比较自然的颜色值。</p>
-<p>我们把使用纹理数据的过程叫做纹理采样。因为纹理数据是一整张包含无数像素点的图片，而我们的片段着色器计算的是一个单独像素的颜色。因此我们只需要纹理中的一个像素值。采样的方法也很简单，直接使用<code>tex2D</code>函数就可以，当然还有其他一些复杂一点的采样函数。这里我们以<code>tex2D</code>为例，需要两个参数，第一个是纹理变量，第二个是UV坐标。下面我们除了使用采样后的像素颜色，同时也叠加了公共变量<code>_Color</code>的值。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//片段作色器，主要是计算像素点的颜色</span></span><br><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    <span class="comment">//基于UV坐标，进行纹理采样</span></span><br><span class="line">    fixed4 col = tex2D(_MainTex, i.uv);</span><br><span class="line">    <span class="comment">//将纹理颜色和材质颜色相乘</span></span><br><span class="line">    col *= _Color;</span><br><span class="line">    <span class="comment">//返回最终的像素点颜色</span></span><br><span class="line">    <span class="keyword">return</span> col;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>把上面的各个步骤组合起来，恭喜你，创建了属于你自己的着色器脚本。</p>
-<h2 id="Source"><a href="#Source" class="headerlink" title="Source"></a>Source</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/001-004_basic_unlit/basic_unlit.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/001-004_basic_unlit/basic_unlit.shader</a></li>
-</ul>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/001-004_Basic_Unlit&quot;</span>&#123;</span><br><span class="line">	<span class="comment">//这些值将会显示在材质面板上</span></span><br><span class="line">	Properties&#123;</span><br><span class="line">		_Color (<span class="string">&quot;Tint&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">		_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	SubShader&#123;</span><br><span class="line">		<span class="comment">//当前的标签设置表示的是：不透明渲染，和其他不透明物体处以同一渲染队列</span></span><br><span class="line">		Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Geometry&quot;</span> &#125;</span><br><span class="line"></span><br><span class="line">		Pass&#123;</span><br><span class="line">			CGPROGRAM</span><br><span class="line"></span><br><span class="line">			<span class="comment">//这里包括一些工具函数、以及内置变量</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UnityCG.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//定义顶点、片段着色函数</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//材质所用的纹理、以及缩放偏移量</span></span><br><span class="line">			sampler2D _MainTex;</span><br><span class="line">			float4 _MainTex_ST;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//材质的颜色，具体一点是：当纹理为白色图片时，材质的颜色</span></span><br><span class="line">			fixed4 _Color;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//模型网格、UI等输入数据，基本代表了模型内在属性</span></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">				float4 vertex : POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//当经过顶点着色器处理后，处理的数据经过栅格化插值，然后传入片段着色器</span></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">				float4 position : SV_POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//顶点着色器函数，主要执行坐标的空间变换</span></span><br><span class="line">			<span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">				v2f o;</span><br><span class="line">				<span class="comment">//将模型各顶点坐标，转换到裁剪空间</span></span><br><span class="line">				o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">				<span class="comment">//基于图片的缩放偏移参数，对UV进行变换</span></span><br><span class="line">				o.uv = TRANSFORM_TEX(v.uv, _MainTex);</span><br><span class="line">				<span class="keyword">return</span> o;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//片段作色器，主要是计算像素点的颜色</span></span><br><span class="line">			<span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">			    <span class="comment">//基于UV坐标，进行纹理采样</span></span><br><span class="line">				fixed4 col = tex2D(_MainTex, i.uv);</span><br><span class="line">				<span class="comment">//将纹理颜色和材质颜色相乘</span></span><br><span class="line">				col *= _Color;</span><br><span class="line">				<span class="comment">//返回最终的像素点颜色</span></span><br><span class="line">				<span class="keyword">return</span> col;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	Fallback <span class="string">&quot;VertexLit&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>希望你能喜欢这个教程哦！如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Variables/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -296,7 +194,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-31 19:40:45" itemprop="dateModified" datetime="2022-03-31T19:40:45+08:00">2022-03-31</time>
+                <time title="修改时间：2022-04-04 21:27:15" itemprop="dateModified" datetime="2022-04-04T21:27:15+08:00">2022-04-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -404,7 +302,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-31 19:40:45" itemprop="dateModified" datetime="2022-03-31T19:40:45+08:00">2022-03-31</time>
+                <time title="修改时间：2022-04-04 21:27:15" itemprop="dateModified" datetime="2022-04-04T21:27:15+08:00">2022-04-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -537,7 +435,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-31 19:40:45" itemprop="dateModified" datetime="2022-03-31T19:40:45+08:00">2022-03-31</time>
+                <time title="修改时间：2022-04-04 21:27:15" itemprop="dateModified" datetime="2022-04-04T21:27:15+08:00">2022-04-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -609,93 +507,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/06/23/GOAP/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2021/06/23/GOAP/" class="post-title-link" itemprop="url">GOAP</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-06-23 15:01:00" itemprop="dateCreated datePublished" datetime="2021-06-23T15:01:00+08:00">2021-06-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-31 19:40:45" itemprop="dateModified" datetime="2022-03-31T19:40:45+08:00">2022-03-31</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/AI/GOAP/" itemprop="url" rel="index"><span itemprop="name">GOAP</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>GOAP是以目标为导向的行为规划。其思路是对行为进行拆分，同时描述每个行为发生的前置条件，以及相应会产生的结果。然后将条件、结果、目标统一视为状态集合，那么只需要关心这三类状态集之间的关系，然后进行有效的拼接组合，其相应的行为之间的关系也就明了了。</p>
-<h2 id="提出问题"><a href="#提出问题" class="headerlink" title="提出问题"></a>提出问题</h2><p>首先，整个世界就是一个状态集，每个行为可以对部分状态产生影响，正向或反向。而有些行为可能需满足特定状态下才坑能发生。<br>那么，以什么样的顺序执行哪些行为，才能达到相应的状态，实现特定的目标呢？</p>
-<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>上面的问题表明，我们需要求出一组有序的行为组合。而行为之所以有序，是因为行为之间有一定的相互依赖关系，例如只有伐木、做家具、卖家具，这三者是前后依赖关系。伐木可以得到木材，得到木材就是伐木的结果；做家具需要木材，得到木材就是做家具的条件；做家具得到家具，家具就是做家具的结果；买家具需要有家具，所以有家具是卖家具的条件。<br>假设我想卖家具，此时卖家具是我的目标，然后我从这三个行为里面查找，发现第三个行为刚好满足我的目标，但是从卖家具这个行为来看，我们首先得有家具，如果刚好有，那么完美。如果没有，那么有家具就是我们的新目标，然后根据这个新目标，我们查找到第二个行为刚好可以满足。至此我们得到做家具、卖家具这条行为组合，但是还没完，我们还需要判断做家具的条件是否满足，如果不满足，则需要继续查找它的上一个行为。<br>上面这个卖家具的问题简单的阐述了GOAP的一个从目标出发的、不断迭代的一个逆向查找解决方案的思路。但是，在实际应用中，遇到的问题可能会更复杂，状态会更多，同时状态之间的关联也不是一对一的。这时候我们就需要把握GOAP的一些关键信息，将其抽取出来。</p>
-<h2 id="泛化"><a href="#泛化" class="headerlink" title="泛化"></a>泛化</h2><p>为了将问题泛化，我们假设目标可以划分为多个状态的组合，而每个行为会对部分状态产生影响。这时候如何应用目标导向的思路呢？<br>首先我们也是找到最接近目标的行为。然后判断这个行为的条件是否满足，如果不满足，则将其条件也纳入目标中，形成一个新的目标。同时，对于该行为已经达成的状态，则从新目标中剔除。然后继续查找最接近新目标的行为，依此类推，不断迭代，直到新目标中的状态为空时。<br>这里提到最接近目标的行为。什么事最接近目标的行为呢？<br>以我想打扫卫生为例，环境状态为：我是否饥饿、地是否干净、桌子是否干净、是否有水、是否有生活垃圾；而我可以执行的行为有：吃饭、扫地、抹桌子、把水倒掉、把生活垃圾倒在地上。那么我的目标就是：地干净、桌子干净。<br>1、该行为的结果一定会对目标的状态集产生影响，即便不能立即达成目标，也能完成部分状态。如果没有这种正向的影响，说明这个行为和目标无关。如这里的吃饭；<br>2、该行为的结果不能对目标的状态集产生消极的影响。如把垃圾倒在地上，很明显倒完之后还得清理，所以对于打扫卫生来说并不是最接近目标的一步。<br>3、在执行该行为后，不能立即达到当前目标，也就是该行为的结果不能覆盖目标状态，这时候该行为的条件不能和目标状态相冲突。例如扫地和抹桌子都只能完成部分清理，假设我们选抹桌子为最后的行为，其条件为空，和目标状态冲突。如果说抹桌子的条件是地必须是脏的，这时候和目标状态地是干净的相冲突，在抹完桌子后肯定还得扫地，所以抹桌子不可以作为左后行为。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>假设世界有一系列状态组成，同时有一系列可选行为，这些行为分别有各自的状态前置条件、以及执行后能产生的状态影响。<br>那么我们需要达成某一目标时，首先分离出目标中的状态集。然后基于这个状态集，查找最近行为，在查找到最近行为后，将最近行为所达成的状态从目标状态集中剔除，然后将最近行为中未达成的前置条件纳入到新的目标状态集中。然后基于新的目标状态集进行新一轮的最近行为筛选，依此类推，直到新的目标状态为空时，说明我们筛选出的行为组合和目标状态已经形成了一个闭环。而我们的行为组合是从最后一个开始，倒序筛查的，所以需要进行颠倒才能得到正常的行为执行顺序。<br>而最近行为的标准，需要满足：</p>
-<ul>
-<li>能都达成部分目标</li>
-<li>其行为结果和目标没有冲突，不会对已经达成的目标产生破坏</li>
-<li>其前置条件和目标没有冲突，如果有冲突，其行为结果能够修复这种冲突</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/06/21/Compute_Shader/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -727,7 +538,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-31 19:40:45" itemprop="dateModified" datetime="2022-03-31T19:40:45+08:00">2022-03-31</time>
+                <time title="修改时间：2022-04-04 21:27:15" itemprop="dateModified" datetime="2022-04-04T21:27:15+08:00">2022-04-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -809,210 +620,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/06/19/Func2Solve/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2021/06/19/Func2Solve/" class="post-title-link" itemprop="url">二次函数解析</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-06-19 15:01:00" itemprop="dateCreated datePublished" datetime="2021-06-19T15:01:00+08:00">2021-06-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-31 19:40:45" itemprop="dateModified" datetime="2022-03-31T19:40:45+08:00">2022-03-31</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Math/" itemprop="url" rel="index"><span itemprop="name">Math</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Math/Function/" itemprop="url" rel="index"><span itemprop="name">Function</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>如下如所示，已知A、B两点坐标，以及二次函数顶点的y坐标，求解二次函数的方程式：<br><img src="/blogs/images/src/func.jpg"></p>
-<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>首先，假设二次函数方程为：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a * x * x + b * x + c &#x3D; y   ------------- 1 </span><br></pre></td></tr></table></figure>
-<p>同时假设，A、B、P三个点的坐标分别为<code>(x1, y1)</code>、<code>(x2, y2)</code>、<code>(x3, y3)</code>，其中<code>x3</code>未知。<br>因为A、B、P三个点都在函数曲线上，所以三个点都满足方程：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a * x1 * x1 + b * x1 + c &#x3D; y1   ------------- 2</span><br><span class="line">a * x2 * x2 + b * x2 + c &#x3D; y2   ------------- 3</span><br><span class="line">a * x3 * x3 + b * x3 + c &#x3D; y3   ------------- 4</span><br></pre></td></tr></table></figure>
-<p>将上面的式子2减去式3得到<code>式子5</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a * (x1 * x1 - x2 * x2)+ b * (x1 – x2) &#x3D; y1 – y2   ------------- 5</span><br></pre></td></tr></table></figure>
-<p><code>式子5</code>中消去参数c，只有a、b两个参数。将b用a表示，得：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">b &#x3D; ((y1 – y2) – a * (x1 * x1 – x2 * x2))&#x2F;(x1 – x2) </span><br><span class="line"> &#x3D; (y1 – y2)&#x2F;(x1 – x2) – a * (x1 * x1 – x2 * x2)&#x2F;(x1 – x2) ------------- 6</span><br></pre></td></tr></table></figure>
-<p>又因为:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">x1 * x1 – x2 * x2 &#x3D; (x1 + x2) * (x1 – x2) ------------- 7</span><br></pre></td></tr></table></figure>
-<p>所以：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">b &#x3D; (y1 – y2)&#x2F;(x1 – x2) – a * (x1 + x2) ------------- 8</span><br></pre></td></tr></table></figure>
-<p>令：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">m &#x3D; (y1 – y2) &#x2F; (x1 – x2)</span><br><span class="line">n &#x3D; x1 + x2</span><br></pre></td></tr></table></figure>
-<p>所以：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">b &#x3D; m – a * n------------- 9</span><br></pre></td></tr></table></figure>
-<p>因为二次函数的顶点坐标为(-b/(2a), (4ac-b*b)/(4a))，这一点可以查百度。因此：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x3 &#x3D; -b&#x2F;(2a) ------------- 10</span><br><span class="line">y3 &#x3D; (4ac – b*b)&#x2F;(4a)</span><br></pre></td></tr></table></figure>
-<p>所以：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c &#x3D; y3 + b * b &#x2F;(4 a)------------- 11</span><br></pre></td></tr></table></figure>
-
-<p>=================================分段线=======================<br>将<code>式9、10</code>代入<code>式2</code>：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">y1 – y3 &#x3D; a * x1 * x1 + (m – a * n) + (m –a * n) *(m –a * n)&#x2F;(4a)</span><br></pre></td></tr></table></figure>
-<p>化简得：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(4 * x1 * x1 – 4 * n * x1 + n * n) * a * a </span><br><span class="line">   + (4 * m * x1 – 2 * m * n – 4 * (y1 – y3)) * a</span><br><span class="line">     + m * m &#x3D; 0--------------12</span><br></pre></td></tr></table></figure>
-<p><code>式子12</code>是关于a的二次方程<br>假设：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">A1 &#x3D; 4 * x1 * x1 – 4 * n * x1 + n * n</span><br><span class="line">B1 &#x3D; 4 * m * x1 – 2 * m * n – 4 * (y1 – y3)</span><br><span class="line">C1 &#x3D; m * m</span><br></pre></td></tr></table></figure>
-<p>那么<code>式12</code>可以写成：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">A1 * a * a + B1 * b + C1 &#x3D; 0--------------13</span><br></pre></td></tr></table></figure>
-<p>二次方程的有两个根：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a1 &#x3D; -(B1 + sqrt(4A1C1 – B1 * B1))&#x2F;(2* A1)</span><br><span class="line">a2 &#x3D; -(B1 - sqrt(4A1C1 – B1 * B1))&#x2F;(2* A1)</span><br></pre></td></tr></table></figure>
-<p>这里可以取a1、a2中的任意一个作为a的值<br>根据式8可以计算b<br>根据式11可以计算c<br>根据式10可以计算x3<br>从上面分段线开始，是基于<code>式2</code>计算所有的参数，也就是基于点<code>(x1, y1)</code>，我们也可以基于<code>式3</code>进行计算，也就是基于点<code>(x2,y2)</code>，但是计算出的结果都是一致的</p>
-<h2 id="实现源码"><a href="#实现源码" class="headerlink" title="实现源码"></a>实现源码</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">void Start()</span><br><span class="line">    &#123;</span><br><span class="line">        float x1 &#x3D; 1.3245f;</span><br><span class="line">        float y1 &#x3D; 0.342f;</span><br><span class="line">        float x2 &#x3D; 11.24f;</span><br><span class="line">        float y2 &#x3D; 6.324f;</span><br><span class="line">        float y3 &#x3D; -8.213f;</span><br><span class="line">        if(Solve(x1, y1, x2, y2, y3, out var x3, out var a, out var b, out var c))</span><br><span class="line">        &#123;</span><br><span class="line">            Debug.LogError(string.Format(&quot;&#123;0&#125; &#x3D;&#x3D; &#123;1&#125;&quot;, y1, func(a, b, c, x1)));</span><br><span class="line">            Debug.LogError(string.Format(&quot;&#123;0&#125; &#x3D;&#x3D; &#123;1&#125;&quot;, y2, func(a, b, c, x2)));</span><br><span class="line">            Debug.LogError(string.Format(&quot;&#123;0&#125; &#x3D;&#x3D; &#123;1&#125;&quot;, y3, func(a, b, c, x3)));</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">            Debug.LogError(&quot;error&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    float func(float a, float b, float c, float x)</span><br><span class="line">    &#123;</span><br><span class="line">        return a * x * x + b * x + c;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; a * x * x + b * x + c &#x3D; y</span><br><span class="line">    bool Solve(float x1, float y1, float x2, float y2, float y3, out float x3, out float a, out float b, out float c)</span><br><span class="line">    &#123;</span><br><span class="line">        float eps &#x3D; 0.00001f;</span><br><span class="line">        bool rst &#x3D; true;</span><br><span class="line">        float m, n;</span><br><span class="line">        m &#x3D; (y1 - y2) &#x2F; (x1 - x2);</span><br><span class="line">        n &#x3D; x1 + x2;</span><br><span class="line"></span><br><span class="line">        float A1, B1, C1;</span><br><span class="line">        A1 &#x3D; 4 * x1 * x1 - 4 * n * x1 + n * n;</span><br><span class="line">        B1 &#x3D; 4 * m * x1 - 2 * m * n - 4 * (y1 - y3);</span><br><span class="line">        C1 &#x3D; m * m;</span><br><span class="line"></span><br><span class="line">        float A2, B2, C2;</span><br><span class="line">        A2 &#x3D; 4 * x2 * x2 - 4 * n * x2 + n * n;</span><br><span class="line">        B2 &#x3D; 4 * m * x2 - 2 * m * n - 4 * (y2 - y3);</span><br><span class="line">        C2 &#x3D; m * m;</span><br><span class="line"></span><br><span class="line">        float a1_1, a1_2;</span><br><span class="line">        a1_1 &#x3D; -(B1 + Mathf.Sqrt(B1 * B1 - 4 * A1 * C1)) &#x2F; (2 * A1);</span><br><span class="line">        a1_2 &#x3D; -(B1 - Mathf.Sqrt(B1 * B1 - 4 * A1 * C1)) &#x2F; (2 * A1);</span><br><span class="line">        float a2_1, a2_2;</span><br><span class="line">        a2_1 &#x3D; -(B2 + Mathf.Sqrt(B2 * B2 - 4 * A2 * C2)) &#x2F; (2 * A2);</span><br><span class="line">        a2_2 &#x3D; -(B2 - Mathf.Sqrt(B2 * B2 - 4 * A2 * C2)) &#x2F; (2 * A2);</span><br><span class="line"></span><br><span class="line">        if (Mathf.Abs(a1_1 - a2_1)&lt; eps)</span><br><span class="line">        &#123;</span><br><span class="line">            a &#x3D; a1_1;</span><br><span class="line">        &#125;</span><br><span class="line">        else if (Mathf.Abs(a1_2 - a2_2) &lt; eps)</span><br><span class="line">        &#123;</span><br><span class="line">            a &#x3D; a1_2;</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">            a &#x3D; 1;</span><br><span class="line">            rst &#x3D; false;</span><br><span class="line">        &#125;</span><br><span class="line">        b &#x3D; m - a * n;</span><br><span class="line">        c &#x3D; y3 + b * b &#x2F; (4 * a);</span><br><span class="line">        x3 &#x3D; - b &#x2F; (2 * a);</span><br><span class="line">        return rst;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/06/16/Are-Behavior-Trees-a-Thing-of-the-Past/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2021/06/16/Are-Behavior-Trees-a-Thing-of-the-Past/" class="post-title-link" itemprop="url">Are Behavior Trees a Thing of the Past?</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-06-16 15:01:00" itemprop="dateCreated datePublished" datetime="2021-06-16T15:01:00+08:00">2021-06-16</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-31 19:40:45" itemprop="dateModified" datetime="2022-03-31T19:40:45+08:00">2022-03-31</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/%E7%BF%BB%E8%AF%91/" itemprop="url" rel="index"><span itemprop="name">翻译</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/%E7%BF%BB%E8%AF%91/%E8%A1%8C%E4%B8%BA%E6%A0%91/" itemprop="url" rel="index"><span itemprop="name">行为树</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>原文：<br><a target="_blank" rel="noopener" href="https://www.gamasutra.com/blogs/JakobRasmussen/20160427/271188/Are_Behavior_Trees_a_Thing_of_the_Past.php">Are Behavior Trees a Thing of the Past?</a></p>
-<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>基于游戏沉浸感、以及和NPC智能交互的需求，游戏开发者在游戏中使用的AI技术成为了新的焦点。曾经在游戏中普遍使用，也是游戏中AI决策的主要方案的行为树，已经显得乏力。当游戏开发者希望实现更为复杂的AI行为时，例如处理突发情况，行为树已经无法满足。因此，更为先进的AI技术——Utility AI，已经逐步取代行为树的位置，开始在游戏中展现出更为优越的AI性能，开启一个新的游戏AI时代。</p>
-<h2 id="行为树是如何屹立游戏AI界（以及它的衰落）"><a href="#行为树是如何屹立游戏AI界（以及它的衰落）" class="headerlink" title="行为树是如何屹立游戏AI界（以及它的衰落）"></a>行为树是如何屹立游戏AI界（以及它的衰落）</h2><p>大多数AI开发者都知道有限状态机（FSM）是一种简单且实用AI方法。通过简单地定义状态、以及状态之间切换的条件，然后可以基于决策实现无限循环的AI行为。例如，FSM将持续保持某种状态，直到满足某种条件，才会从一种状态切换到另一种状态。</p>
-<p>任何两个状态之间都可以在特定条件下实现切换，很容易设计FSM来实现AI行为。但是，有利也有弊。在一些大型游戏中，构建FSM需要上百个状态，这么多的状态导致异常分析变的非常困难。Damian Isla在2005 GDC论坛中针对Halo 2的AI系统，详细的指出了这一点。<br><img src="https://gamasutra.com/db_area/images/blog/apexgametools05.png"></p>
-<p>为了解决这些问题，FSM进一步演化出层级结构，使得它易于设计和异常分析。分层结构使得FSM能够更好的处理大量的状态，但是并没有从根本上解决这个问题，当状态数量进一步增加时，FSM依然会变得难以管理。<br><img src="https://gamasutra.com/db_area/images/blog/apexgametools011.png"></p>
-<p>最终，在这种层级组织的思想上，进一步演化出任务组织的树状结构——行为树。和状态机一样，行为树也是由多个状态节点组成，同一时刻只占据一种状态。不同的是，状态机中，任意两个状态之间的跳转都需要单独配置跳转条件，而行为树则是将这些跳转条件进行拆分，这些拆分后的最小条件单元称为条件装饰器。状态机中的跳转仅仅是对当前状态中的条件进行判断，如果满足条件则跳转，而行为树是从根节点开始，定时进行条件遍历，每经过一个装饰器，会进行次条件判断，然后选择不同的状态分支，以此类推。如果最终筛选出的状态和当前状态不同，那么执行状态跳转。因此，行为树解决了FSM中存在的很多问题，例如，FSM中可能发生条件满足却没有跳转的情况，或者其他跳转异常。在Unreal引擎中就实现了一套非常不错的行为树机制。<br><img src="https://gamasutra.com/db_area/images/blog/271188/image02.png"></p>
-<p>相较于层级FSM，行为树能够实现更为复杂、同时容易理解的AI系统。并且这种树结构也便于实现可视化的异常分析。<br><img src="https://gamasutra.com/db_area/images/blog/271188/apexgametools00.png"></p>
-<p>然而，行为树也有很多缺陷。很多人试图通过实现各种扩展来消除这些缺陷。</p>
-<p>当行为树状态数量变得庞大时，每次条件遍历都需要花费大量的时间。因此，有人引入了子树方案，就是将整个行为树分割为多个嵌套的子树，每次条件遍历只需要遍历当前状态所处的子树就可以，这样可以减少遍历数量，只有满足特定条件，才能跳出子树。但是子树的存在，导致行为树在控制、异常处理方便，变得和FSM一样复杂。</p>
-<h2 id="顶级的AI需要满足什么条件"><a href="#顶级的AI需要满足什么条件" class="headerlink" title="顶级的AI需要满足什么条件"></a>顶级的AI需要满足什么条件</h2><p>这需要我们重新回顾一下顶级AI的特性。</p>
-<p>顶级AI需要具备更为复杂的、更深层次的、沉浸式的游戏世界的处理能力。例如在《Hitman》、《Witcher》、《Assassin’s Creed》中，NPC的数量、定制化数量、生活化的行为数量都变得越来越多。在《Call of Duty》、《The Division》中，对手的数量、以及深度的要求，可变且复杂的策略行为爆炸式的增长。静态的、脚本化的游戏设计不再适用，需要支持动态的、甚至可演化的场景来满足当下的游戏设计。</p>
-<p>这依赖于易于设计的、具有复杂行为表达能力的AI机制。例如，这样的AI能够提高突发处理能力，能够应对游戏设计者未曾预料的场景，能够像人类一样表达更为复杂的行为模式。</p>
-<p>以上提到AI技术显然无法处理更为庞大的数据输入。AI设计者不可能使用行为树、或状态机来表示所有可能的情况。更别说设计一套保证AI正常使用的测试用例。因此，我们需要一种更好、且更稳定的AI技术。</p>
-<p>处理复杂的行为可能是AI中主要的挑战。在游戏开发中的，有很多问题是由于数据量增加、而AI处理能力不足导致的。</p>
-<p>1、 技术性遗留问题 - 如果在游戏开发过程中，扩展AI的难度很大，那么后面需要修复的问题、以及所花费的时间将会暴增。<br>2、 生产效率 - 如果不能快速实现满足游戏设计方案的AI系统，那么游戏设计者无法快速原型化其思路。最终结果是游戏缺乏内容，或者内容偏向程序化、没有趣味性。<br>3、 质量 - 最终很多游戏只能放弃、或者最终只是实现无聊的智障游戏。</p>
-<h2 id="一个新的AI范例"><a href="#一个新的AI范例" class="headerlink" title="一个新的AI范例"></a>一个新的AI范例</h2><p>Killzone 2 就具有非常棒的AI设计。Guerilla 游戏使用了一个AI公共系统来实现动态决策，并且展示了如何使用简单的打分系统来实现AI决策，即便是在对游戏世界不了解的情况下，该AI决策系统也能达到一个良好的效果。同样的系统已经使用在其他游戏，例如《文明》。</p>
-<p>这种公共系统实现方式是，识别可选项，然后基于当前状态，对每一种选项进行打分，然后选出评分最高的选项最为决策项。这种方案具有很多优势：<br>1、设计简单 -<br>2、易于扩展 -<br>3、质量高 - </p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/05/27/WebReference/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1044,7 +651,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-31 19:40:45" itemprop="dateModified" datetime="2022-03-31T19:40:45+08:00">2022-03-31</time>
+                <time title="修改时间：2022-04-04 21:27:15" itemprop="dateModified" datetime="2022-04-04T21:27:15+08:00">2022-04-04</time>
               </span>
 
           
@@ -1132,7 +739,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-31 19:40:45" itemprop="dateModified" datetime="2022-03-31T19:40:45+08:00">2022-03-31</time>
+                <time title="修改时间：2022-04-04 21:27:15" itemprop="dateModified" datetime="2022-04-04T21:27:15+08:00">2022-04-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1177,10 +784,412 @@
   
   
 
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/04/06/URP_Render_Water/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/04/06/URP_Render_Water/" class="post-title-link" itemprop="url">URP Water</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-06 10:01:00" itemprop="dateCreated datePublished" datetime="2021-04-06T10:01:00+08:00">2021-04-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-04 21:27:15" itemprop="dateModified" datetime="2022-04-04T21:27:15+08:00">2022-04-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/URP/" itemprop="url" rel="index"><span itemprop="name">URP</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> WaterFeature :ScriptableRendererFeature</span><br><span class="line">&#123;</span><br><span class="line">    [<span class="meta">Serializable</span>]</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Settings</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="built_in">string</span> TextureName = <span class="string">&quot;_NormalGrabTexture&quot;</span>;</span><br><span class="line">        <span class="keyword">public</span> LayerMask LayerMask;</span><br><span class="line">        <span class="keyword">public</span> Material normalGrabMaterial;</span><br><span class="line">        <span class="keyword">public</span> <span class="built_in">int</span> normalGrabMaterialPassIndex = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">public</span> LayerMask WaterLayerMask;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">class</span> <span class="title">NormalGrabPass</span> : <span class="title">ScriptableRenderPass</span></span><br><span class="line">    &#123;</span><br><span class="line">        Settings settings;</span><br><span class="line">        Material normalGrabMaterial;</span><br><span class="line">        <span class="built_in">int</span> normalGrabMaterialPassIndex = <span class="number">0</span>;</span><br><span class="line">        RenderTargetHandle tempNormalTarget;</span><br><span class="line">        List&lt;ShaderTagId&gt; m_ShaderTagIdList = <span class="keyword">new</span> List&lt;ShaderTagId&gt;();</span><br><span class="line">        FilteringSettings m_FilteringSettings;</span><br><span class="line">        RenderStateBlock m_RenderStateBlock;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">NormalGrabPass</span>(<span class="params">Settings settings</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="keyword">this</span>.settings = settings;</span><br><span class="line">            normalGrabMaterial = <span class="keyword">new</span> Material(Shader.Find(<span class="string">&quot;Unlit/NormalTexture&quot;</span>));</span><br><span class="line">            normalGrabMaterialPassIndex = <span class="number">0</span>;</span><br><span class="line">            renderPassEvent = RenderPassEvent.AfterRenderingOpaques;</span><br><span class="line">            tempNormalTarget.Init(settings.TextureName);</span><br><span class="line">            m_ShaderTagIdList.Add(<span class="keyword">new</span> ShaderTagId(<span class="string">&quot;UniversalForward&quot;</span>));</span><br><span class="line">            m_ShaderTagIdList.Add(<span class="keyword">new</span> ShaderTagId(<span class="string">&quot;LightweightForward&quot;</span>));</span><br><span class="line">            m_ShaderTagIdList.Add(<span class="keyword">new</span> ShaderTagId(<span class="string">&quot;SPRDefaultUnlit&quot;</span>));</span><br><span class="line">            m_FilteringSettings = <span class="keyword">new</span> FilteringSettings(RenderQueueRange.all, settings.LayerMask);</span><br><span class="line">            m_RenderStateBlock = <span class="keyword">new</span> RenderStateBlock(RenderStateMask.Nothing);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> overide <span class="keyword">void</span> <span class="title">Configure</span>(<span class="params">CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            cmd.GetTemporaryRT(tempNormalTarget.id, cameraTextureDescriptor);</span><br><span class="line">            cmd.SetGlobalTexture(settings.TextureName, tempNormalTarget.Identifier());</span><br><span class="line">            ConfigureTarget(tempNormalTarget.Identifier()); <span class="comment">//sceen view</span></span><br><span class="line">            cmd.SetRenderTarget(tempNormalTarget.Identifier()); <span class="comment">// game view</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> overrider <span class="keyword">void</span> <span class="title">Execute</span>(<span class="params">ScriptableRenderContext context, <span class="keyword">ref</span> RenderingData renderingData</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            CommandBuffer cmd = CommandBufferPool.Get();</span><br><span class="line">            context.ExecuteCommandBuffer(cmd);</span><br><span class="line">            cmd.Clear();</span><br><span class="line">            Matrix4x4 viewMatrix = renderingData.cameraData.camera.worldToCameraMatrix;</span><br><span class="line">            Vector3 normal = viewMatrix.MultiplyVector(<span class="keyword">new</span> Vector3(<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>));</span><br><span class="line">            cmd.ClearRenderTarget(<span class="literal">false</span>, <span class="literal">true</span>, <span class="keyword">new</span> Color(normal.x, normal.y, normal.z));</span><br><span class="line">            context.ExecuteCommandBuffer(cmd);</span><br><span class="line">            cmd.Clear();</span><br><span class="line"></span><br><span class="line">            DrawingSettings drawingSettings = CreateDrawingSettings(m_ShaderTagIdList, <span class="keyword">ref</span> renderingData, SortingCriteria.CommonOpaque);</span><br><span class="line">            drawingSettings.overrideMaterial = normalGrabMaterial;</span><br><span class="line">            drawingSettings.overrideMaterialPassIndex = normalGrabMaterialPassIndex;</span><br><span class="line">            contex.DrawRenderers(renderingData.cullResults, <span class="keyword">ref</span> drawingSettings, <span class="keyword">ref</span> m_FilteringSettings, <span class="keyword">ref</span> m_RenderStateBlock);</span><br><span class="line"></span><br><span class="line">            context.ExecuteCommandBuffer(cmd);</span><br><span class="line">            CommandBufferPool.Release(cmd);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">FrameCleanup</span>(<span class="params">CommandBuffer cmd</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            cmd.ReleaseTemporaryRT(tempNormalTarget.id);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">class</span> <span class="title">WaterPass</span> : <span class="title">ScriptableRenderPass</span></span><br><span class="line">    &#123;</span><br><span class="line">        List&lt;ShaderTagId&gt; m_ShaderTagIdList = <span class="keyword">new</span> List&lt;ShaderTagId&gt;();</span><br><span class="line">        RenderStateBlock m_RenderStateBlock;</span><br><span class="line">        FilteringSettings m_FilteringSettings;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">WaterPass</span>(<span class="params">Settings settings</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            renderPassEvent = RenderPassEvent.BeforeRenderingTransparents;</span><br><span class="line">            m_ShaderTagIdList.Add(<span class="keyword">new</span> ShaderTagId(<span class="string">&quot;Water&quot;</span>));</span><br><span class="line">            m_RenderStateBlock = <span class="keyword">new</span> RenderStateBlock(RenderStateMask.Nothing);</span><br><span class="line">            m_FilteringSettings = <span class="keyword">new</span> FilteringSettings(RenderQueueRange.transparent, settings.WaterLayerMask);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Execute</span>(<span class="params">ScriptableRenderContext context, <span class="keyword">ref</span> RenderingData renderingData</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            CommandBuffer cmd = CommandBufferPool.Get();</span><br><span class="line">            context.ExecuteCommandBuffer(cmd);</span><br><span class="line">            cmd.Clear();</span><br><span class="line"></span><br><span class="line">            DrawingSettings drawingSettings = CreateDrawingSettings(m_ShaderTagIdList, <span class="keyword">ref</span> renderingData, SortingCriteria.CommonOpaque);</span><br><span class="line">            contex.DrawRenderers(renderingData.cullResults, <span class="keyword">ref</span> drawingSettings, <span class="keyword">ref</span> m_FilteringSettings, <span class="keyword">ref</span> m_RenderStateBlock);</span><br><span class="line"></span><br><span class="line">            context.ExecuteCommandBuffer(cmd);</span><br><span class="line">            CommandBufferPool.Release(cmd);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    [<span class="meta">SerializeField</span>] Settings settings = <span class="keyword">new</span> Settings();</span><br><span class="line">    NormalGrabPass normalGrabPass;</span><br><span class="line">    WaterPass waterPass;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">AddRenderPasses</span>(<span class="params">ScriptableRenderer renderer, <span class="keyword">ref</span> RenderingData renderingData</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        renderer.EnqueuePass(normalGrabPass);</span><br><span class="line">        renderer.EnqueuePass(waterPass);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Create</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        normalGrabPass = <span class="keyword">new</span> NormalGrabPass(settings);</span><br><span class="line">        waterPass = <span class="keyword">new</span> WaterPass(settings);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Unlit/NormalTexture&quot;</span></span><br><span class="line">&#123;</span><br><span class="line">    Properties&#123;&#125;</span><br><span class="line">    SubShader</span><br><span class="line">    &#123;</span><br><span class="line">        Tags &#123;<span class="string">&quot;RenderType&quot;</span> = <span class="string">&quot;Opaque&quot;</span> <span class="string">&quot;RenderPipeline&quot;</span> = <span class="string">&quot;UniversalPipeline&quot;</span>&#125;</span><br><span class="line">        ZWrite Off</span><br><span class="line">        ZTest Always</span><br><span class="line">        Pass</span><br><span class="line">        &#123;</span><br><span class="line">            Name <span class="string">&quot;NormalTexture&quot;</span></span><br><span class="line">            HLSLPROGRAM</span><br><span class="line">            <span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">            <span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line">            <span class="meta">#include &quot;Packages/com.unity.render-pipelines.universal/ShaderLibrary/Corel.hlsl&quot;</span></span><br><span class="line">            <span class="keyword">struct</span> VertexInput</span><br><span class="line">            &#123;</span><br><span class="line">                float4 posotionCS : POSITION;</span><br><span class="line">                float3 normal : NORMAL;</span><br><span class="line">            &#125;;</span><br><span class="line">            <span class="keyword">struct</span> FragInput</span><br><span class="line">            &#123;</span><br><span class="line">                float4 positionCS : SV_POSITION;</span><br><span class="line">                float3 normal : TEXCOORD0;</span><br><span class="line">            &#125;;</span><br><span class="line">            <span class="function">FragInput <span class="title">vert</span>(<span class="params">VertexInput i</span>)</span></span><br><span class="line"><span class="function"></span>            &#123;</span><br><span class="line">                FragInput o;</span><br><span class="line">                float3 worldPos = TransformObjectToWorld(i.positionOS.xyz);</span><br><span class="line">                float4 clipPos = TransformWorldToHClip(worldPos);</span><br><span class="line">                o.positionCS = clipPos;</span><br><span class="line">                float3 worldNormal = TransformObjectToWorldNormal(i.normal);</span><br><span class="line">                o.normal = TransformWorldToViewDir(worldNormal);</span><br><span class="line">                <span class="keyword">return</span> o;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="function">half4 <span class="title">frag</span>(<span class="params">FragInput i</span>) : SV_TARGET</span></span><br><span class="line"><span class="function"></span>            &#123;</span><br><span class="line">                <span class="keyword">return</span> half4(i.normal, <span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            ENDHLSL</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Unlit/ToonWater&quot;</span></span><br><span class="line">&#123;</span><br><span class="line">    Properties</span><br><span class="line">    &#123;</span><br><span class="line">        _DepthGradientShallow(<span class="string">&quot;Depth Gradient Shallow&quot;</span>, Color) = (<span class="number">0</span>,<span class="number">3</span>,<span class="number">0.8</span>,<span class="number">0.9</span>,<span class="number">0.4</span>)</span><br><span class="line">        _DepthGradientDeep(<span class="string">&quot;Depth Gradient Deep&quot;</span>, Color) = (<span class="number">0.08</span>, <span class="number">0.4</span>, <span class="number">0.1</span>, <span class="number">0.7</span>)</span><br><span class="line">        _DepthMaxDistance(<span class="string">&quot;Depth Maximum Distance&quot;</span>, Float) = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        _SurfaceNoise(<span class="string">&quot;Surface Noise&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span>&#123;&#125;</span><br><span class="line">        _SurfaceNoiseCutoff(<span class="string">&quot;Surface Noise Cutoff&quot;</span>, Range(<span class="number">0</span>,<span class="number">1</span>)) = <span class="number">0.77</span></span><br><span class="line">        _FoamColor(<span class="string">&quot;Foam Color&quot;</span>, Color) = (<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>)</span><br><span class="line">        _FoamMaxDistance(<span class="string">&quot;Foam Max Distance&quot;</span>, Float) = <span class="number">1</span></span><br><span class="line">        _FoamMinDistance(<span class="string">&quot;Foam Min Distance&quot;</span>, Float) = <span class="number">0.4</span></span><br><span class="line">        _SurfaceNoiseScroll(<span class="string">&quot;Surface Noise Scroll Amount&quot;</span>, Vector) = (<span class="number">0.03</span>, <span class="number">0.03</span>, <span class="number">0</span>, <span class="number">0</span>)</span><br><span class="line">        _SurfaceDistortion(<span class="string">&quot;Surface Distortion&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span>&#123;&#125;</span><br><span class="line">        _SurfaceDistortionAmount(<span class="string">&quot;Surface Distortion Amount&quot;</span>, Range(<span class="number">0</span>,<span class="number">1</span>)) = <span class="number">0.27</span></span><br><span class="line">    &#125;</span><br><span class="line">    SubShader</span><br><span class="line">    &#123;</span><br><span class="line">        Tags &#123; <span class="string">&quot;RenderType&quot;</span> = <span class="string">&quot;Transparent&quot;</span> <span class="string">&quot;Queue&quot;</span> = <span class="string">&quot;Transparent&quot;</span> <span class="string">&quot;RenderPipeline&quot;</span> = <span class="string">&quot;UniversalPipeline&quot;</span> &#125;</span><br><span class="line">        Blend SrcAlpha OneMinusSrcAlpha</span><br><span class="line">        ZWrite Off</span><br><span class="line">        Pass</span><br><span class="line">        &#123;</span><br><span class="line">            Tags &#123;<span class="string">&quot;LightMode&quot;</span> = <span class="string">&quot;Water&quot;</span> &#125;</span><br><span class="line">            HLSLPROGRAM</span><br><span class="line">            <span class="meta">#<span class="meta-keyword">define</span> SMOOTHSTEP_AA 0.01</span></span><br><span class="line">            <span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">            <span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line">            <span class="meta">#include &quot;Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl&quot;</span></span><br><span class="line">            <span class="meta">#include &quot;Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl&quot;</span></span><br><span class="line">            float4 _DepthGradientShallow;</span><br><span class="line">            float4 _DepthGradientDeep;</span><br><span class="line">            <span class="built_in">float</span> _DepthMaxDistance;</span><br><span class="line">            TEXTURE2D(_SurfaceNoise);   SAMPLER(sampler_SurfaceNoise);</span><br><span class="line">            float4 _SurfaceNoise_ST;</span><br><span class="line">            <span class="built_in">float</span> _SurfaceNoiseCutoff;</span><br><span class="line">            <span class="built_in">float</span> _FoamMaxDistance;</span><br><span class="line">            <span class="built_in">float</span> _FoamMinDistance;</span><br><span class="line">            float2 _SurfaceNoiseScroll;</span><br><span class="line">            TEXTURE2D(_SurfaceDistortion);  SAMPLER(sampler_SurfaceDistortion);</span><br><span class="line">            float4 _SurfaceDistortion_ST;</span><br><span class="line">            <span class="built_in">float</span> _SurfaceDistortionAmount;</span><br><span class="line">            TEXTURE2D(_NormalGrabTexture); SAMPLER(sampler_NormalGrabTexture);</span><br><span class="line">            float4 _FoamColor;</span><br><span class="line">            <span class="keyword">struct</span> VertexInput</span><br><span class="line">            &#123;</span><br><span class="line">                float4 positionOS : POSITION;</span><br><span class="line">                float2 uv : TEXCOORD0;</span><br><span class="line">                float3 normal : NORMAL;</span><br><span class="line">            &#125;;</span><br><span class="line">            <span class="keyword">struct</span> FragInput</span><br><span class="line">            &#123;</span><br><span class="line">                float4 positionCS : SV_POSITION;</span><br><span class="line">                float4 screenPos : TEXCOORD0;</span><br><span class="line">                float3 viewPos : TEXCOORD1;</span><br><span class="line">                float2 noiseUV : TEXCOORD2;</span><br><span class="line">                float2 distortUV : TEXCOORD3;</span><br><span class="line">                float3 viewNormal : NORMAL;</span><br><span class="line">            &#125;;</span><br><span class="line">            <span class="function">FragInput <span class="title">vert</span>(<span class="params">VertexInput i</span>)</span></span><br><span class="line"><span class="function"></span>            &#123;</span><br><span class="line">                FragInput o;</span><br><span class="line">                float3 worldPos = TransformObjectToWorld(i.positionOS.xyz);</span><br><span class="line">                float4 clipPos= TransformWorldToHClip(worldPos);</span><br><span class="line">                float4 screenPos = ConputeScreenPos(clipPos);</span><br><span class="line">                float3 viewPos = TransformWorldToView(worldPos);</span><br><span class="line">                o.positionCS = clipPos;</span><br><span class="line">                o.screenPos = screenPos;</span><br><span class="line">                o.viewPos = viewPos;</span><br><span class="line">                o.noiseUV = TRANSFORM_TEX(i.uv, _SurfaceNoise);</span><br><span class="line">                o.distortUV = TRANSORM_TEX(i.uv, _SurfaceDistortion);</span><br><span class="line">                float3 worldNormal = TransformObjectToWorldNormal(i.normal);</span><br><span class="line">                o.viewNormal = TransformWorldToViewDir(worldNormal);</span><br><span class="line">                <span class="keyword">return</span> o;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="function">float4 <span class="title">AlpahBelnd</span>(<span class="params">float4 top, float4 bottom</span>)</span></span><br><span class="line"><span class="function"></span>            &#123;</span><br><span class="line">                float3 color = top.rgb * top.a + (<span class="number">1</span> - top.a) * bottom.rgb;</span><br><span class="line">                <span class="built_in">float</span> alpha = top.a + bottom.a * (<span class="number">1</span> - top.a);</span><br><span class="line">                <span class="keyword">return</span> float4(color, alpha);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="function">half4 <span class="title">frag</span>(<span class="params">FragInput i</span>) : SV_TARGET</span></span><br><span class="line"><span class="function"></span>            &#123;</span><br><span class="line">                half4 color = float4(<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>);</span><br><span class="line">                float2 screenUV = i.screenPos.xy / i.screenPos.w;</span><br><span class="line">                <span class="built_in">float</span> sceeneRawDepth = SampleSceneDepth(sceenUV);</span><br><span class="line">                <span class="built_in">float</span> sceenEyeDepth = LinearEyeDepth(sceneRawDepth, _ZBufferParams);</span><br><span class="line">                <span class="built_in">float</span> depthDifference = sceneEyeDepth - i.scenePos.w;</span><br><span class="line"></span><br><span class="line">                <span class="built_in">float</span> waterDephtDifference01 = saturate(depthDifference / _DepthMaxDistance);</span><br><span class="line">                float4 waterColor = lerp(_DepthGradientShallow, _DepthGradientDeep, waterDepthDifference01);</span><br><span class="line"></span><br><span class="line">                float2 distortSample = SAMPLE_TEXTURE2D(_SurfaceDistortion, sampler_SurfaceDistortion, i.distorUV).xy;</span><br><span class="line">                distortSample = (distortSample * <span class="number">2</span> - <span class="number">1</span>) * _SurfaceDIstortionAmount;</span><br><span class="line"></span><br><span class="line">                <span class="built_in">float</span> noiseUV = float2(i.noiseUV.x + _Time.y * _SurfaceNoiseScroll.x,</span><br><span class="line">                                        i.noiseUV.y + _Time.y * _SurfaceNoiseScroll.y);</span><br><span class="line">                <span class="built_in">float</span> surfaceNoiseSample = SAMPLE_TEXTURE2D(_SurfaceNoise, sampler_SurfaceNoise, noiseUV);</span><br><span class="line"></span><br><span class="line">                float3 existingNormal = SAMPLE_TEXTURE2D(_NormalGrabTexture, sampler_NormalGrabTexture, screenUV).rgb;</span><br><span class="line">                <span class="built_in">float</span> normalDot = saturate(<span class="keyword">do</span>(existingNormal, i.viewNormal));</span><br><span class="line">                <span class="built_in">float</span> foamDistance = lerp(_FoamMaxDistance, _FoamMinDistance, normalDot);</span><br><span class="line">                <span class="built_in">float</span> foamDipthDifference01 = saturate(depthDifference / foamDistance);</span><br><span class="line"></span><br><span class="line">                <span class="built_in">float</span> surfaceNoiseCutoff = foamDepthDifference01 * _surfaceNoiseCutoff;</span><br><span class="line">                <span class="built_in">float</span> surfaceNoise = smoothstep(surfaceNoiseCutoff - SMOOTHSTEP_AA, surfaceNoiseCutoff + SMOOTHSTEP_AA, surfaceNoiseSample);</span><br><span class="line"></span><br><span class="line">                float4 surfaceNoiseColor = _FoamColor * surfaceNoise;</span><br><span class="line">                color = ALphaBlend(surfaceNoiseColor, waterColor);</span><br><span class="line">                <span class="keyword">return</span> color;</span><br><span class="line">            &#125;</span><br><span class="line">            ENDHLSL</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/04/06/Unity-Editor/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/04/06/Unity-Editor/" class="post-title-link" itemprop="url">Unity Editor</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-06 10:01:00" itemprop="dateCreated datePublished" datetime="2021-04-06T10:01:00+08:00">2021-04-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-04 21:27:15" itemprop="dateModified" datetime="2022-04-04T21:27:15+08:00">2022-04-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Editor/" itemprop="url" rel="index"><span itemprop="name">Editor</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="获取当前选择的目录"><a href="#获取当前选择的目录" class="headerlink" title="获取当前选择的目录"></a>获取当前选择的目录</h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">string</span> <span class="title">GetCurrentAssetDirectory</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">foreach</span>(<span class="keyword">var</span> obj <span class="keyword">in</span> Selection.GetFiltered&lt;Object&gt;(SelectionMode.Assets))</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">var</span> path = AssetDataBase.GetAssetPath(obj);</span><br><span class="line">		<span class="keyword">if</span>(<span class="built_in">string</span>.IsNullOrEmpty(path))</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">return</span> path;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(System.IO.File.Exists(path))</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">return</span> System.IO.Path.GetDirectory(path);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="string">&quot;Assets&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="创建hlsl脚本"><a href="#创建hlsl脚本" class="headerlink" title="创建hlsl脚本"></a>创建hlsl脚本</h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title">AssetsMenu</span></span><br><span class="line">&#123;</span><br><span class="line">	[<span class="meta">MenuItem(<span class="meta-string">&quot;Assets/Create HLSL&quot;</span>)</span>]</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">CreateHLSL</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>	&#123;</span><br><span class="line">		<span class="comment">//string projectPath = Path.GetDirectoryName(Application.dataPath);</span></span><br><span class="line">		</span><br><span class="line">		<span class="built_in">string</span> assetPath = Path.Combine(GetCurrentAssetDirectory(), <span class="string">&quot;temp.hlsl&quot;</span>);</span><br><span class="line">		assetPath = AssetDataBase.generateuniqueAssetPath(assetPath);</span><br><span class="line">		</span><br><span class="line">		AssetDataBase.CreateAsset(<span class="keyword">new</span> TextAsset(<span class="string">&quot;--&quot;</span>, assetPath);</span><br><span class="line">		File.WriteAllText(assetPath, <span class="string">&quot;&quot;</span>); <span class="comment">// clean</span></span><br><span class="line">		</span><br><span class="line">		AssetDataBase.SaveAssets();</span><br><span class="line">		AssetDataBase.Refresh();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/01/30/EmmyLua-for-IntelliJ-IDEA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/01/30/EmmyLua-for-IntelliJ-IDEA/" class="post-title-link" itemprop="url">EmmyLua 的使用方法</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-30 10:38:34" itemprop="dateCreated datePublished" datetime="2021-01-30T10:38:34+08:00">2021-01-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-04 21:27:15" itemprop="dateModified" datetime="2022-04-04T21:27:15+08:00">2022-04-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Lua/" itemprop="url" rel="index"><span itemprop="name">Lua</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Lua/EmmyLua/" itemprop="url" rel="index"><span itemprop="name">EmmyLua</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>EmmyLua是Jetbrains IDE的一个插件，它提供了一套注解的语法，可以帮助IDE进行代码之间索引跳转，以及变量名称提示等功能。总而言之，EmmyLua是丰富IDE的功能，和实际的代码没有关系，IDE的跳转也只是限于注释之间。</p>
+<h2 id="类的声明"><a href="#类的声明" class="headerlink" title="类的声明"></a>类的声明</h2><p>EmmyLua使用@class来模拟面向对象编程，支持继承和属性</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">--- my supper class</span><br><span class="line">---@class Transport</span><br><span class="line">local p &#x3D; Class()</span><br><span class="line"></span><br><span class="line">--- 子类</span><br><span class="line">---@class Car : Transport</span><br><span class="line">local cls &#x3D; Class(p)</span><br><span class="line">function c:test()</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<p>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">--@class my_type[: parent_type] [@comment]</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">---@class Car : Transport @define class Car extends Transport</span><br><span class="line">local cls &#x3D; class()</span><br><span class="line">function clas:test()</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<p>上面定义了一个Car类，我们可以使用@type Car来表明某个变量属于Car类</p>
+<h2 id="变量的声明"><a href="#变量的声明" class="headerlink" title="变量的声明"></a>变量的声明</h2><p>使用<code>@type</code>可以指明某个变量的类型</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">---@type Car</span><br><span class="line">local car1 &#x3D; getCar()</span><br><span class="line">---@type Car</span><br><span class="line">global_car &#x3D; getCar()</span><br><span class="line">global_car:test()</span><br></pre></td></tr></table></figure>
+<p>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@type my_type[|other_type] [@comment]</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">---@type Car @instance of car</span><br><span class="line">local car1 &#x3D; &#123;&#125;</span><br><span class="line"></span><br><span class="line">---@type Car|Ship @transport tools, car or ship. Since lua is dynamic-typed, a variable may be of different types</span><br><span class="line">---use | to list all possible types</span><br><span class="line">local transport &#x3D; &#123;&#125;</span><br><span class="line"></span><br><span class="line">---@type Car @global variable type</span><br><span class="line">global_car &#x3D; &#123;&#125;</span><br><span class="line"></span><br><span class="line">local obj &#x3D; &#123;&#125;</span><br><span class="line">---@type Car @property type</span><br><span class="line">obj.car &#x3D; getCar()</span><br></pre></td></tr></table></figure>
+
+<h2 id="别名注释"><a href="#别名注释" class="headerlink" title="别名注释"></a>别名注释</h2><p>使用<code>@alias</code>将一些复杂不容易输入的类型注册为新的容易输入的类型<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@alias new_name type</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">---@alias Handler fun( type: string, data: any):void</span><br><span class="line">---@param handler Handler</span><br><span class="line">function addHandler(handler)</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h2 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h2><p>使用<code>@param</code>来指定函数的参数类型<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@param param_name my_type[|other_type] [@comment]</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">---@param car Car</span><br><span class="line">local function setCar(car)</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">---@param car Car</span><br><span class="line">setCallback(function(car)</span><br><span class="line">end)</span><br><span class="line"></span><br><span class="line">---@param car Car</span><br><span class="line">for k, car in pairs(list) do</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h2 id="函数返回值类型说明"><a href="#函数返回值类型说明" class="headerlink" title="函数返回值类型说明"></a>函数返回值类型说明</h2><p>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@return my_type[|other_type] [@comment]</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">---@return Car|Ship</span><br><span class="line">local function crate()</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">---here car_or_ship doesn&#39;t need @type annotation, EmmyLua has already inferred the type via &quot;create&quot; function</span><br><span class="line">local car_or_ship &#x3D; create()</span><br><span class="line"></span><br><span class="line">---@return Car</span><br><span class="line">function factory:create()</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h2 id="属性声明"><a href="#属性声明" class="headerlink" title="属性声明"></a>属性声明</h2><p>使用<code>@field</code>可以标明类所具有的属性，即使类中没有使用到这个属性<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@field [public|protected|private] field_name field_type[|other_type] [@comment]</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">---@class Car</span><br><span class="line">---@field public name string @add name field to class Car, you&#39;ll see it in code completion</span><br><span class="line">local cls &#x3D; class()</span><br></pre></td></tr></table></figure>
+
+<h2 id="泛型声明"><a href="#泛型声明" class="headerlink" title="泛型声明"></a>泛型声明</h2><p>使用<code>@generic</code>来模拟一些高级语言的泛型<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@generic T1 [: parent_type] [, T2 [: parent_type]]</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">---@generic T : Transport, K</span><br><span class="line">---@param param1 T</span><br><span class="line">---@param param2 K</span><br><span class="line">---@return T</span><br><span class="line">local function test(param1, param2)</span><br><span class="line">	-- todo</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">---@type Car</span><br><span class="line">local car &#x3D; ...</span><br><span class="line">local value &#x3D; test(car)</span><br></pre></td></tr></table></figure>
+<p>这里说明一下，上面的<code>T</code>和<code>K</code>都是类型，只不过<code>T</code>是继承自<code>Transport</code>的一种类型，而<code>K</code>可以是任何类型。<br>然后<code>param1</code>是类型<code>T</code>的实例</p>
+<h2 id="不定参数的注释"><a href="#不定参数的注释" class="headerlink" title="不定参数的注释"></a>不定参数的注释</h2><p>使用<code>@vararg</code>注解函数不定参数部分<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@vararg type</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">---@vararg string</span><br><span class="line">---@return string</span><br><span class="line">local function format(...)</span><br><span class="line">	local tbl &#x3D; &#123;...&#125; --inferred as string[]</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h2 id="嵌入其他语言"><a href="#嵌入其他语言" class="headerlink" title="嵌入其他语言"></a>嵌入其他语言</h2><p>使用<code>@language</code>可以在lua代码中嵌入其他语言<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@language language_id</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">---@language JSON</span><br><span class="line">local jsonText &#x3D; [[&#123;</span><br><span class="line">	&quot;name&quot;:&quot;Emmy&quot;</span><br><span class="line">	&#125;]]</span><br></pre></td></tr></table></figure>
+
+<h2 id="数组类型声明"><a href="#数组类型声明" class="headerlink" title="数组类型声明"></a>数组类型声明</h2><p>使用<code>@type mytype[]</code>可以指定变量类型为数组<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@type my_type[]</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">---@type Car[]</span><br><span class="line">local list &#x3D; &#123;&#125;</span><br><span class="line">local car &#x3D; list[1]</span><br><span class="line">-- car, and you &#39;ll see completion</span><br><span class="line"></span><br><span class="line">for i, car in pairs(list) do</span><br><span class="line">	-- car. and you&#39;ll see completion</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h2 id="table类型声明"><a href="#table类型声明" class="headerlink" title="table类型声明"></a>table类型声明</h2><p>使用<code>@type table</code>可以表示某变量为表格类型<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@type table&lt;key_type, value_type&gt;</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">---@type table&lt;string, Car&gt;</span><br><span class="line">local dict &#x3D; &#123;&#125;</span><br><span class="line">local car &#x3D; dict[&#39;key&#39;]</span><br><span class="line">-- car. and you&#39;ll see completion</span><br><span class="line">for key, car in pairs(dict) do</span><br><span class="line">	-- car. and you&#39;ll see completion</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h2 id="函数声明"><a href="#函数声明" class="headerlink" title="函数声明"></a>函数声明</h2><p>使用<code>fun(param:my_type):return_type</code>来表示函数类型变量<br>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">---@type fun(param:my_type):return_type</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@type fun(key:string):Car</span><br><span class="line">local carCreatorFn1</span><br><span class="line"></span><br><span class="line">local car &#x3D; carCreatorFn1(&#39;key&#39;)</span><br><span class="line">-- car. and you see code completion</span><br><span class="line"></span><br><span class="line">---@type fun():Car[]</span><br><span class="line">local carCreatorFn2</span><br><span class="line"></span><br><span class="line">for i, car in pairs(carCreatorFn2()) do</span><br><span class="line">	-- car. and you see completion</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h2 id="字面常量类型声明"><a href="#字面常量类型声明" class="headerlink" title="字面常量类型声明"></a>字面常量类型声明</h2><p>字面常量也可以指定特定字符串来作为代码提示，结合别名，可以起到类似于枚举的效果<br>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">---@alias Handler fun(type: string, data: any): void</span><br><span class="line"></span><br><span class="line">---@param event string | &quot;&#39;onClised&#39;&quot; | &quot;&#39;onData&#39;&quot;</span><br><span class="line">---@param handler Handler | &quot;function(type, data) print(data) end&quot;</span><br><span class="line">function addEventListener(event, handler)</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<p>上面的写法还是比较复杂，我们可以用<code>@alias</code>再简化一下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">---@alias Handler fun(type: string, data: any): void</span><br><span class="line">---@alias IOEventEnum string | &quot;&#39;onClised&#39;&quot; | &quot;&#39;onData&#39;&quot;</span><br><span class="line">---@param event IOEventEnum</span><br><span class="line">---@param handler Handler | &quot;function(type, data) print(data) end&quot;</span><br><span class="line">function addEventListener(event, handler)</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/12/23/Joy-Stick-Function-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2020/12/23/Joy-Stick-Function-2/" class="post-title-link" itemprop="url">摇杆实现方法2</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-23 22:02:00" itemprop="dateCreated datePublished" datetime="2020-12-23T22:02:00+08:00">2020-12-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-04 21:27:15" itemprop="dateModified" datetime="2022-04-04T21:27:15+08:00">2022-04-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Component/" itemprop="url" rel="index"><span itemprop="name">Component</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>自己做了个飞行模拟的小游戏，发布到手机上需要用到摇杆来控制。原先是通过一个Joystick类来实现，摇杆位置固定，详细请参考<a href="https://tyson-wu.github.io/blogs/2020/12/23/Joy-Stick-Function/">这里</a><br>但是后面策划说要做成王者荣耀那种，摇杆的位置会根据手指的位置有一定的活动区域，所以我重新写了一份逻辑，并且对代码进行一定的逻辑细分，效果如下：<br><img src="/blogs/images/src/ezgif.com-gif-maker-2.gif" alt="wwwwwww"></p>
+<p>首先，我这里将摇杆分为几个部分：</p>
+<ul>
+<li>摇杆可触发区域，紫色区域，当手指放在该区域时，可以操控摇杆</li>
+<li>摇杆中心位置可活动区域，黄色区域，绿色的圆形摇杆背景图的中心点可到达的区域</li>
+<li>最后是白色的摇杆和绿色摇杆背景的组合</li>
+</ul>
+<p>前两个都挂载了一个区域判断的类-<code>TriggerAreaHandler</code>，主要用来判断屏幕点是否在该区域内，如图所示：<br><img src="/blogs/images/src/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20201223224837.png" alt="wwwwwww"><br>详细代码如下：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 用于UI区域判定</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">TriggerAreaHandler</span> : <span class="title">MonoBehaviour</span></span><br><span class="line">&#123;</span><br><span class="line">    RectTransform[] _triggerArea = <span class="literal">null</span>;<span class="comment">//触发区域</span></span><br><span class="line">    Camera _camera = <span class="literal">null</span>;<span class="comment">//画布摄像机</span></span><br><span class="line">    Canvas _canvas = <span class="literal">null</span>;<span class="comment">//画布</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">InitTriggerArea</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;<span class="comment">//初始化区域</span></span><br><span class="line">        <span class="keyword">if</span> (_triggerArea != <span class="literal">null</span>) <span class="keyword">return</span>;</span><br><span class="line">        _triggerArea = GetComponentsInChildren&lt;RectTransform&gt;();</span><br><span class="line">        _canvas = GetComponentInParent&lt;Canvas&gt;();</span><br><span class="line">        _camera = _canvas.worldCamera;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 计算屏幕区域是否在当前区域内</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;screenPos&quot;&gt;</span>屏幕坐标<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="built_in">bool</span> <span class="title">CheckScreenPosInArea</span>(<span class="params">Vector2 screenPos</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        InitTriggerArea();</span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">int</span> i=<span class="number">0</span>;i&lt; _triggerArea.Length;++i)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (RectTransformUtility.RectangleContainsScreenPoint(_triggerArea[i], screenPos, _camera))</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 将屏幕点夹紧到该区域</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;screenPos&quot;&gt;</span><span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Vector2 <span class="title">Clamp</span>(<span class="params">Vector2 screenPos</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        InitTriggerArea();</span><br><span class="line">        Vector2 clampPos = _camera.WorldToScreenPoint(_triggerArea[<span class="number">0</span>].position);</span><br><span class="line">        <span class="built_in">float</span> len = <span class="built_in">float</span>.MaxValue;</span><br><span class="line">        InitTriggerArea();</span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; _triggerArea.Length; ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            RectTransform rectTransform = _triggerArea[i];</span><br><span class="line">            <span class="keyword">if</span> (RectTransformUtility.RectangleContainsScreenPoint(_triggerArea[i], screenPos, _camera))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">return</span> screenPos;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line"></span><br><span class="line">                Vector2 rectPos = _camera.WorldToScreenPoint(rectTransform.position);</span><br><span class="line">                Rect rect = RectTransformUtility.PixelAdjustRect(rectTransform, _canvas);</span><br><span class="line">                Vector2 clampPos_temp = Clamp(screenPos, rectPos, <span class="keyword">new</span> Vector2(rect.width/<span class="number">2</span>, rect.height/<span class="number">2</span>));</span><br><span class="line">                <span class="built_in">float</span> distance = (clampPos_temp - screenPos).sqrMagnitude;</span><br><span class="line">                <span class="keyword">if</span> (distance &lt; len)</span><br><span class="line">                &#123;</span><br><span class="line">                    len = distance;</span><br><span class="line">                    clampPos = clampPos_temp;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> clampPos;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function">Vector2 <span class="title">Clamp</span>(<span class="params">Vector2 <span class="keyword">value</span>,Vector2 center, Vector2 halfSize</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Vector2(Clamp(<span class="keyword">value</span>.x, center.x - halfSize.x, center.x + halfSize.x),</span><br><span class="line">            Clamp(<span class="keyword">value</span>.y, center.y - halfSize.y, center.y + halfSize.y));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="built_in">float</span> <span class="title">Clamp</span>(<span class="params"><span class="built_in">float</span> <span class="keyword">value</span>, <span class="built_in">float</span> min, <span class="built_in">float</span> max</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">value</span> = <span class="keyword">value</span> &gt; min ? <span class="keyword">value</span> : min;</span><br><span class="line">        <span class="keyword">value</span> = <span class="keyword">value</span> &lt; max ? <span class="keyword">value</span> : max;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">value</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第三部分的摇杆组合，主要是用来显示的，所以下面挂载了一个控制其显示的脚本-<code>JoyStickView</code>，该脚本控制摇杆组合的位置显示，如图所示：<br><img src="/blogs/images/src/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20201223225034.png" alt="wwwwwww"><br>代码如下：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 控制摇杆显示</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">JoyStickView</span> : <span class="title">MonoBehaviour</span></span><br><span class="line">&#123;</span><br><span class="line">    [<span class="meta">SerializeField</span>] RectTransform _joyStickCenter;<span class="comment">//摇杆的端点</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] RectTransform _joyStickOutline;<span class="comment">//摇杆端点区域背景,设置为摇杆端点的父节点</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] <span class="built_in">float</span> _joyStickAreaScale = <span class="number">1</span>;<span class="comment">//在背景区域的基础上进行缩放，得到一个活动区域</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">bool</span> _initSize = <span class="literal">false</span>;</span><br><span class="line">    Canvas _canvas = <span class="literal">null</span>;</span><br><span class="line">    Vector3 _joyStickOriginScreenPos0 = Vector3.zero; <span class="comment">//摇杆初始原点</span></span><br><span class="line">    Vector3 _joyStickOriginScreenPos = Vector3.zero; <span class="comment">//摇杆原点</span></span><br><span class="line">    <span class="built_in">float</span> _joyStickRadius = <span class="number">0</span>;<span class="comment">//摇杆真实的屏幕活动半径</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 获取摇杆屏幕活动半径</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="built_in">float</span> <span class="title">GetJoyStickRadius</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">return</span> _joyStickRadius;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 计算背景区域的屏幕尺寸</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 在所有函数之前调用</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">CalculateAreaSize</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">if</span> (_initSize) <span class="keyword">return</span>; </span><br><span class="line">        _initSize = <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">if</span>(_canvas==<span class="literal">null</span>)  _canvas = GetComponentInParent&lt;Canvas&gt;();</span><br><span class="line">        _joyStickOriginScreenPos0 = _canvas.worldCamera.WorldToScreenPoint(_joyStickOutline.position);</span><br><span class="line">        _joyStickOriginScreenPos = _joyStickOriginScreenPos0;</span><br><span class="line">        SetJoyStickOriginPos(_joyStickOriginScreenPos0);</span><br><span class="line">        Rect rect = RectTransformUtility.PixelAdjustRect(_joyStickOutline, _canvas);</span><br><span class="line">        _joyStickRadius = _joyStickAreaScale * rect.width / <span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 重置摇杆原点为初始原点</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span>摇杆中心点在屏幕上的位置<span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Vector2 <span class="title">ResetJoyStickOrigionPos</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        SetJoyStickOriginPos(_joyStickOriginScreenPos0);</span><br><span class="line">        <span class="keyword">return</span> _joyStickOriginScreenPos0;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 设置整个摇杆的位置</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;screenPos&quot;&gt;</span>屏幕坐标<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SetJoyStickOriginPos</span>(<span class="params">Vector3 screenPos</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _joyStickOriginScreenPos.x = screenPos.x;</span><br><span class="line">        _joyStickOriginScreenPos.y = screenPos.y;</span><br><span class="line">        _joyStickOutline.position = _canvas.worldCamera.ScreenToWorldPoint(_joyStickOriginScreenPos);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 基于偏移向量，设置摇杆显示位置</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;dir&quot;&gt;</span>移动向量<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SetJoyStick</span>(<span class="params">Vector2 dir</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Vector3 dir3 = dir.sqrMagnitude &gt; <span class="number">1</span> ? dir.normalized : dir;</span><br><span class="line">        Vector3 joyStickScreenPos = dir3 * _joyStickRadius + _joyStickOriginScreenPos;</span><br><span class="line">        _joyStickCenter.position = _canvas.worldCamera.ScreenToWorldPoint(joyStickScreenPos);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 判断屏幕坐标是否在摇杆触发区域里</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;screenPos&quot;&gt;</span>屏幕坐标<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="built_in">bool</span> <span class="title">InJoyStickArea</span>(<span class="params">Vector2 screenPos</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="built_in">float</span> len = Vector2.Distance(screenPos, _joyStickOriginScreenPos);</span><br><span class="line">        <span class="keyword">return</span>  len &lt; _joyStickRadius;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后是整个摇杆逻辑实现部分-<code>JoyStickTrigger</code>，这个类里面记录了触发事件，以及对外的参数，如图所示：<br><img src="/blogs/images/src/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20201223223000.png"><br>同样的，通过属性器可以获取当前摇杆的状态参数，包括偏移方向以及强度，方向是360度，强度是[0-1]。详细代码如下：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> UnityEngine.EventSystems;</span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 摇杆控制模块</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">JoyStickTrigger</span> : <span class="title">MonoBehaviour</span>, <span class="title">IPointerDownHandler</span>, <span class="title">IPointerUpHandler</span>, <span class="title">IDragHandler</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> JoyStickTrigger instance;</span><br><span class="line">    [<span class="meta">SerializeField</span>] TriggerAreaHandler _joyStickCenterArea;<span class="comment">//摇杆背景中心点活动区域</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] TriggerAreaHandler _joyStickTriggerArea;<span class="comment">//可激活摇杆的区域</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] JoyStickView _joyStick;<span class="comment">//摇杆</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] <span class="built_in">float</span> _sensitivity = <span class="number">1</span>;<span class="comment">//摇杆灵敏度</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] <span class="built_in">float</span> _triggerAreaScale = <span class="number">1</span>;<span class="comment">//摇杆控制区域</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆偏移方向</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> Vector2 MoveDir &#123; <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆偏移长度[0-1]</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> MoveLen &#123; <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 是否在操控摇杆</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">bool</span> IsDraging &#123; <span class="keyword">get</span> &#123; <span class="keyword">return</span> _onJoyStickActive; &#125; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆横向偏移量</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> Horizontal &#123; <span class="keyword">get</span> &#123; <span class="keyword">return</span> MoveDir.x * MoveLen; &#125; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆纵向偏移量</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> Vertical &#123; <span class="keyword">get</span> &#123; <span class="keyword">return</span> MoveDir.y * MoveLen; &#125; &#125;</span><br><span class="line"></span><br><span class="line">    Vector2 _originScreenPos = Vector2.zero;<span class="comment">//激活摇杆的手指点击位置</span></span><br><span class="line">    Vector2 _dragScreenPos = Vector2.zero;<span class="comment">//实时拖动手指位置</span></span><br><span class="line">    Vector2 _interpolateScreenPos = Vector2.zero;<span class="comment">//实时摇杆位置</span></span><br><span class="line">    <span class="built_in">bool</span> _onJoyStickActive = <span class="literal">false</span>;<span class="comment">//摇杆是否激活</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Awake</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        instance = <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnEnable</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _joyStick.CalculateAreaSize();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnDisable</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        OnPointerUp(<span class="literal">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnPointerDown</span>(<span class="params">PointerEventData eventData</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">if</span> (!_joyStickTriggerArea.CheckScreenPosInArea(eventData.position))</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        _onJoyStickActive = <span class="literal">true</span>;</span><br><span class="line">        <span class="comment">//_originScreenPos = eventData.position;</span></span><br><span class="line">        _originScreenPos = _joyStickCenterArea.Clamp(eventData.position);</span><br><span class="line">        _interpolateScreenPos = _dragScreenPos = eventData.position;</span><br><span class="line">        _joyStick.SetJoyStickOriginPos(_originScreenPos);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnDrag</span>(<span class="params">PointerEventData eventData</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">if</span> (!_onJoyStickActive) <span class="keyword">return</span>;</span><br><span class="line">        _dragScreenPos = eventData.position;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnPointerUp</span>(<span class="params">PointerEventData eventData</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _onJoyStickActive = <span class="literal">false</span>;</span><br><span class="line">        _dragScreenPos = _joyStick.ResetJoyStickOrigionPos();<span class="comment">//手指位置归于原点</span></span><br><span class="line">        <span class="comment">//_interpolateScreenPos += _dragScreenPos - _originScreenPos;//将插值点随摇杆位置一起归位</span></span><br><span class="line">        _interpolateScreenPos = _dragScreenPos;<span class="comment">//</span></span><br><span class="line">        _originScreenPos = _dragScreenPos;<span class="comment">//</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Update</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _interpolateScreenPos = Vector2.Lerp(_interpolateScreenPos, _dragScreenPos, Time.deltaTime * _sensitivity);</span><br><span class="line">        Vector2 dir = _interpolateScreenPos - _originScreenPos;</span><br><span class="line">        dir /= _joyStick.GetJoyStickRadius();</span><br><span class="line">        dir = dir.sqrMagnitude &gt; <span class="number">1</span> ? dir.normalized : dir;</span><br><span class="line">        MoveDir = dir;</span><br><span class="line">        MoveLen = dir.magnitude;</span><br><span class="line">        _joyStick.SetJoyStick(dir);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/blogs/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/blogs/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blogs/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/blogs/page/5/">5</a><a class="page-number" href="/blogs/page/6/">6</a><a class="extend next" rel="next" href="/blogs/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/blogs/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/blogs/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blogs/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/blogs/page/5/">5</a><a class="extend next" rel="next" href="/blogs/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1248,20 +1257,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">58</span>
+          <span class="site-state-item-count">44</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/blogs/categories/">
           
-        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/blogs/tags/">
           
-        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-count">19</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
