@@ -291,3 +291,17 @@ date: 2021-05-27 17:01:34
 
 [MVP - Bing Maps : une année supplémentaire !](http://blogs.developpeur.org/nicoboo/default.aspx)
 [Geocoding and Routing improvements added to Bing Maps](https://rbrundritt.wordpress.com/)
+
+## CG Tutorial
+[redshift3d](https://docs.redshift3d.com/display/redshift3d/redshift3d+Home)
+[cgwiki](https://www.tokeru.com/cgwiki/index.php?title=Main_Page)
+[houdini](http://mattebb.com/projects/houdini/course/slides.pdf)
+[cargo](https://mattebb.cargo.site/)
+[Houdini Resources](http://deborahrfowler.com/HoudiniResources/HOUDINI-RESOURCES.html)
+[HOUDINI DOCUMENTATION](https://www.sidefx.com/docs/)
+[houdini docs](https://www.sidefx.com/docs/houdini/)
+
+
+## App
+[胡迪尼 SideFX Houdini FX v19.0.383 破解版](https://wgbqr.com/Houdini.html):亲测有效
+[SideFX Houdini FX19【3D特效制作工具】免费破解版下载](https://www.yutu.cn/softhtml/downsoft_6733.html):这个我并没有测试过
