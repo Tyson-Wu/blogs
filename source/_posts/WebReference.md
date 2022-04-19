@@ -281,11 +281,14 @@ date: 2021-05-27 17:01:34
 ### Library
 [Clipper - an open source freeware library](http://www.angusj.com/delphi/clipper.php):The Clipper library performs line & polygon clipping - intersection, union, difference & exclusive-or,and line & polygon offsetting. The library is based on Vatti's clipping algorithm;
 [The Unity Library](https://unity.stelabouras.com/):The Unity Library;
+[HoudiniEngineForUnity](https://github.com/sideeffects/HoudiniEngineForUnity/tree/Houdini19.0)
+[Houdini Engine for Unity](https://www.sidefx.com/docs/unity/_getting_started.html)
 
 ### Papers
 [10 Best Turn-Based Strategy Games in 2021 for Master Tacticians](https://www.highgroundgaming.com/best-turn-based-strategy-games/):10 Best Turn-Based Strategy Games in 2021 for Master Tacticians;
 [壹种念头Unity blog](https://cloud.tencent.com/developer/column/88095)
 [收录些关于渲染相关的文章](https://zhuanlan.zhihu.com/p/266712908)
+[What is Houdini?](https://www.educba.com/what-is-houdini/)
 
 ## Bing Map
 
@@ -300,7 +303,11 @@ date: 2021-05-27 17:01:34
 [Houdini Resources](http://deborahrfowler.com/HoudiniResources/HOUDINI-RESOURCES.html)
 [HOUDINI DOCUMENTATION](https://www.sidefx.com/docs/)
 [houdini docs](https://www.sidefx.com/docs/houdini/)
-
+[HOUDINI TUTORIAL](https://www.3dart.it/en/category/tutorial-library/houdini-tutorial/)
+[Houdini Tech Blog](http://wordpress.discretization.de/houdini/)
+[Houdini Render Passes](http://houdini.dreamerzstudio.net/)
+[Houdini - Unity - Rigid Body Fracturing Pipeline](https://www.indiedb.com/games/ecotales/tutorials/houdini-unity-rigid-body-fracturing-pipeline)
+[Best Houdini Tutorials For Learning VFX & Animation (Free + Premium)](https://conceptartempire.com/houdini-tutorials/)
 
 ## App
 [胡迪尼 SideFX Houdini FX v19.0.383 破解版](https://wgbqr.com/Houdini.html):亲测有效
