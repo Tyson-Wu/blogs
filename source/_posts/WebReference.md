@@ -199,6 +199,8 @@ date: 2021-05-27 17:01:34
 ## Engine
 
 ### Unity
+[Automatic Setup of a Humanoid](https://blog.unity.com/technology/automatic-setup-of-a-humanoid)
+[Mecanim Humanoids](https://blog.unity.com/technology/mecanim-humanoids)
 [Unity Blogs](https://blog.unity.com/?p=82308)
 [Running multiple instances of Unity referencing the same project](https://support.unity.com/hc/en-us/articles/115003118426-Running-multiple-instances-of-Unity-referencing-the-same-project)
 [Pathfinding in Games](https://www.raywenderlich.com/16977649-pathfinding-with-navmesh-getting-started)
@@ -300,6 +302,7 @@ date: 2021-05-27 17:01:34
 [cgwiki](https://www.tokeru.com/cgwiki/index.php?title=Main_Page)
 [houdini](http://mattebb.com/projects/houdini/course/slides.pdf)
 [cargo](https://mattebb.cargo.site/)
+[Authoring Particle Systems in Unity through Houdini](https://github.com/chrisj3d/NodeFX)
 [Houdini Resources](http://deborahrfowler.com/HoudiniResources/HOUDINI-RESOURCES.html)
 [HOUDINI DOCUMENTATION](https://www.sidefx.com/docs/)
 [houdini docs](https://www.sidefx.com/docs/houdini/)
@@ -308,6 +311,11 @@ date: 2021-05-27 17:01:34
 [Houdini Render Passes](http://houdini.dreamerzstudio.net/)
 [Houdini - Unity - Rigid Body Fracturing Pipeline](https://www.indiedb.com/games/ecotales/tutorials/houdini-unity-rigid-body-fracturing-pipeline)
 [Best Houdini Tutorials For Learning VFX & Animation (Free + Premium)](https://conceptartempire.com/houdini-tutorials/)
+[Houdini Engine for Unity](https://3dtotal.com/news/general/houdini-engine-for-unity)
+[Creating a bones in Houdini](https://www.youtube.com/watch?v=STMJCA-UC_I)
+[A Houdini Blog](https://siver.artstation.com/blog?page=5)
+[Houdini Python](https://ikrima.dev/houdini/basics/hou-python/)
+[How To Reuse Python Code In A Houdini Scene](https://www.andynicholas.com/post/how-to-reuse-python-code-in-a-houdini-scene)
 
 ## App
 [胡迪尼 SideFX Houdini FX v19.0.383 破解版](https://wgbqr.com/Houdini.html):亲测有效
