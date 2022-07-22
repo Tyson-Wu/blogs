@@ -151,6 +151,7 @@ date: 2021-05-27 17:01:34
 [Rendering Implicit Surfaces and Distance Fields: Sphere Tracing](https://www.scratchapixel.com/lessons/advanced-rendering/rendering-distance-fields/introduction):Rendering Implicit Surfaces and Distance Fields: Sphere Tracing;
 [Shader Tutorials by Ronja](https://www.ronja-tutorials.com/):The focus of this tutorials is on unity shaders with hlsl;
 [depth](https://www.cyanilux.com/tutorials/depth/):This post goes over everything about depth that I’ve come across (so you could say it’s an in-depth post about depth!), mainly focusing on Unity and the Universal RP (but also includes some High Definition RP stuff). Includes info for both Shader Graph and URP Shader Code (HLSL).
+[Water simulation](https://watersimulation.tumblr.com/)
 
 ## AI
 
@@ -303,6 +304,8 @@ date: 2021-05-27 17:01:34
 [houdini](http://mattebb.com/projects/houdini/course/slides.pdf)
 [cargo](https://mattebb.cargo.site/)
 [Authoring Particle Systems in Unity through Houdini](https://github.com/chrisj3d/NodeFX)
+[BASICS OF GEOMETRY NODES](http://wordpress.discretization.de/houdini/home/introduction/understanding-nodes/)
+[Houdini Guide](https://ikrima.dev/houdini/)
 [Houdini Resources](http://deborahrfowler.com/HoudiniResources/HOUDINI-RESOURCES.html)
 [HOUDINI DOCUMENTATION](https://www.sidefx.com/docs/)
 [houdini docs](https://www.sidefx.com/docs/houdini/)
@@ -316,7 +319,13 @@ date: 2021-05-27 17:01:34
 [A Houdini Blog](https://siver.artstation.com/blog?page=5)
 [Houdini Python](https://ikrima.dev/houdini/basics/hou-python/)
 [How To Reuse Python Code In A Houdini Scene](https://www.andynicholas.com/post/how-to-reuse-python-code-in-a-houdini-scene)
+[Nodes, Networks and Digital Assets](https://www.sidefx.com/media/uploads/tutorial/H11_lessons/go_pro/hguide_02_nodes.pdf)
 
 ## App
 [胡迪尼 SideFX Houdini FX v19.0.383 破解版](https://wgbqr.com/Houdini.html):亲测有效
 [SideFX Houdini FX19【3D特效制作工具】免费破解版下载](https://www.yutu.cn/softhtml/downsoft_6733.html):这个我并没有测试过
+
+## Assets
+[AIM@SHAPE](http://visionair.ge.imati.cnr.it/ontologies/shapes/viewmodels.jsp)
+[opengameart](https://opengameart.org/content/50-free-textures-4-normalmaps)
+[Create, upload, and share Houdini Digital Assets](https://www.orbolt.com/)
