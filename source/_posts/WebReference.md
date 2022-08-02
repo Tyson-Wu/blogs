@@ -200,6 +200,8 @@ date: 2021-05-27 17:01:34
 ## Engine
 
 ### Unity
+[UIParticleSystem](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls/UIParticleSystem)
+[Particle Effect For UGUI](https://github.com/mob-sakai/ParticleEffectForUGUI)
 [Automatic Setup of a Humanoid](https://blog.unity.com/technology/automatic-setup-of-a-humanoid)
 [Mecanim Humanoids](https://blog.unity.com/technology/mecanim-humanoids)
 [Unity Blogs](https://blog.unity.com/?p=82308)
@@ -320,6 +322,7 @@ date: 2021-05-27 17:01:34
 [Houdini Python](https://ikrima.dev/houdini/basics/hou-python/)
 [How To Reuse Python Code In A Houdini Scene](https://www.andynicholas.com/post/how-to-reuse-python-code-in-a-houdini-scene)
 [Nodes, Networks and Digital Assets](https://www.sidefx.com/media/uploads/tutorial/H11_lessons/go_pro/hguide_02_nodes.pdf)
+[有关All In One 的houdini实现道路](https://github.com/FofightFong/All_In_One)
 
 ## App
 [胡迪尼 SideFX Houdini FX v19.0.383 破解版](https://wgbqr.com/Houdini.html):亲测有效
@@ -329,8 +332,12 @@ date: 2021-05-27 17:01:34
 [Dillinger](https://dillinger.io/)采用MarkDown语言的在线文本编辑工具，可以实时预览编辑效果。
 [MathJax Online Editor](https://www.cg.alphacodingskills.com/edit-mathjax-online.php)线上编辑数学公式。例：$$x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$
 [mathjax](https://www.mathjax.org/)数学公式编辑软件。
+[Install-FFmpeg-on-Windows](https://www.wikihow.com/Install-FFmpeg-on-Windows):ffmpeg官网好像进不了，不过这个网站的下载链接可以直接链接到官网地址，进行直接下载。
 
 ## Assets
 [AIM@SHAPE](http://visionair.ge.imati.cnr.it/ontologies/shapes/viewmodels.jsp)
 [opengameart](https://opengameart.org/content/50-free-textures-4-normalmaps)
 [Create, upload, and share Houdini Digital Assets](https://www.orbolt.com/)
+[scanslibrary](https://www.scanslibrary.com/library?credit=0)
+[Texture Synthesis Houdini](https://shadesoforange.de/blog/)
+[turbosquid](https://www.turbosquid.com/AssetManager/Downloads?stgAction=getFiles&intFileSystemId=0)
