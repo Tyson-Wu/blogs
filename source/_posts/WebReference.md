@@ -323,6 +323,7 @@ date: 2021-05-27 17:01:34
 [How To Reuse Python Code In A Houdini Scene](https://www.andynicholas.com/post/how-to-reuse-python-code-in-a-houdini-scene)
 [Nodes, Networks and Digital Assets](https://www.sidefx.com/media/uploads/tutorial/H11_lessons/go_pro/hguide_02_nodes.pdf)
 [有关All In One 的houdini实现道路](https://github.com/FofightFong/All_In_One)
+[VEX tutorial](https://jtomori.github.io/vex_tutorial/)
 
 ## App
 [胡迪尼 SideFX Houdini FX v19.0.383 破解版](https://wgbqr.com/Houdini.html):亲测有效
