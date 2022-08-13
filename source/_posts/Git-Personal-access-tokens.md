@@ -1,5 +1,5 @@
 ---
-title: Git Personal Assess Tokens
+title: Git Personal Access Tokens
 date: 2022-04-4 15:01:00
 categories:
 - [Git]
@@ -8,10 +8,10 @@ tags:
 ---
 
 
-最近使用GitHub提交项目时，发现原先的账号密码的方式已经失效，GitHub官方表示不再支持使用账号密码的方式，而是改为使用`Personal Assess Tokens`访问令牌的方式。
+最近使用GitHub提交项目时，发现原先的账号密码的方式已经失效，GitHub官方表示不再支持使用账号密码的方式，而是改为使用`Personal Access Tokens`访问令牌的方式。
 ![](https://jhooq.com/wp-content/uploads/ssl/git-personal-access-token/git-personal-access-token-error.webp)
 
-`Personal Assess Tokens`是通过在GitHub上创建令牌，并且设置令牌的使用时限，来限制访问者的访问权限。也可以直接删除令牌来清除访问者的访问权限。而令牌的作用域时针对整个GitHub账号下的所有项目。所以创建方式也是在GitHub下的总Setting下设置。创造令牌的步骤如下：
+`Personal Access Tokens`是通过在GitHub上创建令牌，并且设置令牌的使用时限，来限制访问者的访问权限。也可以直接删除令牌来清除访问者的访问权限。而令牌的作用域时针对整个GitHub账号下的所有项目。所以创建方式也是在GitHub下的总Setting下设置。创造令牌的步骤如下：
 1：登录GitHub账号；
 2：选择右上角的头像图标 `-> Profile Pic -> Setting`；
 ![](https://jhooq.com/wp-content/uploads/ssl/git-personal-access-token/git-personal-access-token-settings.webp)
