@@ -329,6 +329,7 @@ date: 2021-05-27 17:01:34
 [胡迪尼 SideFX Houdini FX v19.0.383 破解版](https://wgbqr.com/Houdini.html):亲测有效
 [SideFX Houdini FX19【3D特效制作工具】免费破解版下载](https://www.yutu.cn/softhtml/downsoft_6733.html):这个我并没有测试过
 [7-Zip](https://www.7-zip.org/download.html)一个非常好用的压缩软件
+[hfs](https://www.rejetto.com/hfs/?f=dl)
 [Ghostwriter](https://wereturtle.github.io/ghostwriter/)采用MarkDown语言的免费文本编辑工具，可以实时预览编辑效果。
 [Dillinger](https://dillinger.io/)采用MarkDown语言的在线文本编辑工具，可以实时预览编辑效果。
 [MathJax Online Editor](https://www.cg.alphacodingskills.com/edit-mathjax-online.php)线上编辑数学公式。例：$$x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$
