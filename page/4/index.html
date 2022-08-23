@@ -163,6 +163,104 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/02/Ronja_Planar_Mapping/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/07/02/Ronja_Planar_Mapping/" class="post-title-link" itemprop="url">Planar Mapping</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-07-02 10:01:00" itemprop="dateCreated datePublished" datetime="2021-07-02T10:01:00+08:00">2021-07-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-24 01:02:31" itemprop="dateModified" datetime="2022-08-24T01:02:31+08:00">2022-08-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/008-planar-mapping/">Planar Mapping</a></p>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>有时候我们的网格数据中并没有UV坐标，或者说器UV坐标并不适用于将要使用的纹理，或者我们想让纹理和模型表面根据某一规则对齐。或者还有其他什么原因，我们需要动态生成UV坐标。那么接下来的教程，我们将以最简单的方法，二维平面映射，来创建我们的UV坐标。</p>
+<p>本教程是在上一个<a href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Sprite_Shaders/">图片着色器</a>的基础上实现的。但是你也可以根据其基本思路，以表面着色器的形式重写其功能。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/008/Result.png"></p>
+<h2 id="Basics"><a href="#Basics" class="headerlink" title="Basics"></a>Basics</h2><p>首先我们将输入结构体中的uv变量删除掉，因为我们打算通过脚本生成。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">    <span class="keyword">float</span> vertex : POSITION;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>因为片段着色器中的输入参数是由顶点着色器中的输出参数插值而得到的，因此我们选择在顶点着色器中计算新的uv值。首先我们将其顶点UV设置为顶点在模型坐标系下的<code>x</code>和<code>z</code>的值。这样足以让纹理出现在模型表面了，并且其效果看起来就好像是图片从上往下投影到模型表面一样。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">    v2f o;</span><br><span class="line">    o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">    o.uv = v.vertex.xz;</span><br><span class="line">    <span class="keyword">return</span> o;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Adjustable-Tiling"><a href="#Adjustable-Tiling" class="headerlink" title="Adjustable Tiling"></a>Adjustable Tiling</h2><p>前面并没有考虑图片的缩放，或者我们可能希望图片显示不跟随模型一起旋转。</p>
+<p>图片缩放的问题可以通过<code>TRANSFORM_TEX</code>宏来执行UV变换，这样最终用于纹理采样的UV可以跟随纹理缩放而相应改变。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">    v2f o;</span><br><span class="line">    o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">    o.uv = TRANSFORM_TEX(v.vertex.xz, _MainTex);</span><br><span class="line">    <span class="keyword">return</span> o;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/008/AdjustTilingOffset.gif"></p>
+<h2 id="Texture-Coordinates-based-on-World-Position"><a href="#Texture-Coordinates-based-on-World-Position" class="headerlink" title="Texture Coordinates based on World Position"></a>Texture Coordinates based on World Position</h2><p>为了消除模型位置、和旋转对UV坐标的影响，我们需要将顶点坐标转换到世界坐标系，前面的例子是使用模型坐标系中的顶点坐标来生成UV坐标的。计算世界坐标的方法很简单，只需要将顶点坐标乘以模型空间矩阵。在我们得到世界坐标后，使用其世界坐标来生成UV坐标。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">	v2f o;</span><br><span class="line">	<span class="comment">//计算裁剪空间下的顶点坐标</span></span><br><span class="line">	o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">	<span class="comment">//计算世界空间下的顶点坐标</span></span><br><span class="line">	float4 worldPos = mul(unity_ObjectToWorld, v.vertex);</span><br><span class="line">	<span class="comment">//应用纹理缩放，执行UV变换</span></span><br><span class="line">	o.uv = TRANSFORM_TEX(worldPos.xz, _MainTex);</span><br><span class="line">	<span class="keyword">return</span> o;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/008/MoveSphere.gif"></p>
+<p>从上面我们也可以看到基于世界坐标的二维平面映射也不完美，因为我们必须使用可重复的图片，否则无法覆盖整个空间区域。而且最终用渲染出来的纹理也会因为观察角度不同而发生扭曲。但是我们可以使用更牛的技术来改进，例如后面将会介绍的,三维平面映射。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/008_Planar_Mapping&quot;</span>&#123;</span><br><span class="line">	<span class="comment">//材质面板上显示的属性</span></span><br><span class="line">	Properties&#123;</span><br><span class="line">		_Color (<span class="string">&quot;Tint&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">		_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	SubShader&#123;</span><br><span class="line">		<span class="comment">//渲染不透明物体</span></span><br><span class="line">		Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Geometry&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line">		Pass&#123;</span><br><span class="line">			CGPROGRAM</span><br><span class="line"></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UnityCG.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//定义公共变量</span></span><br><span class="line">			sampler2D _MainTex;</span><br><span class="line">			float4 _MainTex_ST;</span><br><span class="line"></span><br><span class="line">			fixed4 _Color;</span><br><span class="line"></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">				float4 vertex : POSITION;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">				float4 position : SV_POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">				v2f o;</span><br><span class="line">				<span class="comment">//计算裁剪空间下的坐标</span></span><br><span class="line">				o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">				<span class="comment">//计算世界空间下的坐标</span></span><br><span class="line">				float4 worldPos = mul(unity_ObjectToWorld, v.vertex);</span><br><span class="line">				<span class="comment">//执行UV变换</span></span><br><span class="line">				o.uv = TRANSFORM_TEX(worldPos.xz, _MainTex);</span><br><span class="line">				<span class="keyword">return</span> o;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">				<span class="comment">//纹理采样</span></span><br><span class="line">				fixed4 col = tex2D(_MainTex, i.uv);</span><br><span class="line">				<span class="comment">//多个颜色叠加</span></span><br><span class="line">				col *= _Color;</span><br><span class="line">				<span class="keyword">return</span> col;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	FallBack <span class="string">&quot;Standard&quot;</span> <span class="comment">//当当前着色器不支持时，选择后补着色器中的功能</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>你可以在以下链接找到源码：<a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/008_Planar_Mapping/planar_mapping.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/008_Planar_Mapping/planar_mapping.shader</a></p>
+<p>希望你能喜欢这个教程哦！如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Sprite_Shaders/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -194,7 +292,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-22 23:15:25" itemprop="dateModified" datetime="2022-08-22T23:15:25+08:00">2022-08-22</time>
+                <time title="修改时间：2022-08-24 01:02:31" itemprop="dateModified" datetime="2022-08-24T01:02:31+08:00">2022-08-24</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -292,7 +390,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-22 23:15:25" itemprop="dateModified" datetime="2022-08-22T23:15:25+08:00">2022-08-22</time>
+                <time title="修改时间：2022-08-24 01:02:31" itemprop="dateModified" datetime="2022-08-24T01:02:31+08:00">2022-08-24</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -394,7 +492,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-22 23:15:25" itemprop="dateModified" datetime="2022-08-22T23:15:25+08:00">2022-08-22</time>
+                <time title="修改时间：2022-08-24 01:02:31" itemprop="dateModified" datetime="2022-08-24T01:02:31+08:00">2022-08-24</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -526,7 +624,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-22 23:15:25" itemprop="dateModified" datetime="2022-08-22T23:15:25+08:00">2022-08-22</time>
+                <time title="修改时间：2022-08-24 01:02:31" itemprop="dateModified" datetime="2022-08-24T01:02:31+08:00">2022-08-24</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -628,7 +726,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-22 23:15:25" itemprop="dateModified" datetime="2022-08-22T23:15:25+08:00">2022-08-22</time>
+                <time title="修改时间：2022-08-24 01:02:31" itemprop="dateModified" datetime="2022-08-24T01:02:31+08:00">2022-08-24</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -736,7 +834,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-22 23:15:25" itemprop="dateModified" datetime="2022-08-22T23:15:25+08:00">2022-08-22</time>
+                <time title="修改时间：2022-08-24 01:02:31" itemprop="dateModified" datetime="2022-08-24T01:02:31+08:00">2022-08-24</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -869,7 +967,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-22 23:15:25" itemprop="dateModified" datetime="2022-08-22T23:15:25+08:00">2022-08-22</time>
+                <time title="修改时间：2022-08-24 01:02:31" itemprop="dateModified" datetime="2022-08-24T01:02:31+08:00">2022-08-24</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -972,7 +1070,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-22 23:15:25" itemprop="dateModified" datetime="2022-08-22T23:15:25+08:00">2022-08-22</time>
+                <time title="修改时间：2022-08-24 01:02:31" itemprop="dateModified" datetime="2022-08-24T01:02:31+08:00">2022-08-24</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1085,7 +1183,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-22 23:15:25" itemprop="dateModified" datetime="2022-08-22T23:15:25+08:00">2022-08-22</time>
+                <time title="修改时间：2022-08-24 01:02:31" itemprop="dateModified" datetime="2022-08-24T01:02:31+08:00">2022-08-24</time>
               </span>
 
           
@@ -1118,7 +1216,7 @@
 <h3 id="Fog"><a href="#Fog" class="headerlink" title="Fog"></a>Fog</h3><p><a target="_blank" rel="noopener" href="http://bobkoon.com/how-to-implement-a-fog-of-war-part-1-chunky/">How To: Implement a Fog of War – Part 1 – Chunky</a><br><a target="_blank" rel="noopener" href="https://bit-hack.net/2013/07/27/lode-storm-implementing-classic-fog-of-war/">Lode Storm – Implementing classic fog of war</a><br><a target="_blank" rel="noopener" href="https://github.com/topics/fog-of-war">fog-of-war</a><br><a target="_blank" rel="noopener" href="https://wiki.roll20.net/Advanced_Fog_of_War">Advanced Fog of War</a><br><a target="_blank" rel="noopener" href="http://phungdinhthang.com/2016/12/12/unreal-engine-4-fog-of-war-tutorial/?i=1">Unreal Engine 4 Fog Of War Tutorial – Ready To Use</a><br><a target="_blank" rel="noopener" href="https://github.com/manlaig/FogOfWar">Fog Of War in Unity</a></p>
 <h2 id="Engine"><a href="#Engine" class="headerlink" title="Engine"></a>Engine</h2><h3 id="Unity"><a href="#Unity" class="headerlink" title="Unity"></a>Unity</h3><p><a target="_blank" rel="noopener" href="https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls/UIParticleSystem">UIParticleSystem</a><br><a target="_blank" rel="noopener" href="https://github.com/mob-sakai/ParticleEffectForUGUI">Particle Effect For UGUI</a><br><a target="_blank" rel="noopener" href="https://blog.unity.com/technology/automatic-setup-of-a-humanoid">Automatic Setup of a Humanoid</a><br><a target="_blank" rel="noopener" href="https://blog.unity.com/technology/mecanim-humanoids">Mecanim Humanoids</a><br><a target="_blank" rel="noopener" href="https://blog.unity.com/?p=82308">Unity Blogs</a><br><a target="_blank" rel="noopener" href="https://support.unity.com/hc/en-us/articles/115003118426-Running-multiple-instances-of-Unity-referencing-the-same-project">Running multiple instances of Unity referencing the same project</a><br><a target="_blank" rel="noopener" href="https://www.raywenderlich.com/16977649-pathfinding-with-navmesh-getting-started">Pathfinding in Games</a><br><a target="_blank" rel="noopener" href="https://github.com/Unity-Technologies/NavMeshComponents">NavMeshComponents</a><br><a target="_blank" rel="noopener" href="https://github.com/GOLDhjy/TreeViewExamples">TreeViewExamples</a><br><a target="_blank" rel="noopener" href="https://programmerall.com/search">unity editor</a><br><a target="_blank" rel="noopener" href="https://github.com/MattRix/UnityDecompiled">UnityDecompiled</a><br><a target="_blank" rel="noopener" href="https://github.com/CyberFoxHax/Unity3D_PreviewRenderUtility_Documentation/wiki/PreviewRenderUtility">PreviewRenderUtility</a><br><a target="_blank" rel="noopener" href="https://www.blog.radiator.debacle.us/2016/06/working-with-custom-objectpreviews-and.html">Working with custom ObjectPreviews and SkinnedMeshRenderers in Unity</a><br><a target="_blank" rel="noopener" href="https://timaksu.com/post/126337219047/spruce-up-your-custom-unity-inspectors-with-a">Spruce up your custom Unity inspectors with a preview area!</a><br><a target="_blank" rel="noopener" href="https://programming.vip/docs/unityprevieweditor-create-a-preview-window-using-previewrendertutility.html">create a preview window using previewrendertutility</a><br><a target="_blank" rel="noopener" href="https://answers.unity.com/questions/448086/is-it-possible-to-create-a-custom-model-preview-in.html">Is it possible to create a custom model preview in an Editor window akin to the one displayed when an FBX is selected?</a><br><a target="_blank" rel="noopener" href="https://forum.unity.com/threads/editorwindow-preview-of-prefab.1057988/">EditorWindow - Preview of prefab</a><br><a target="_blank" rel="noopener" href="http://zh.esotericsoftware.com/forum/How-to-correctly-draw-preview-in-EditorWindow-13046">How to correctly draw preview in EditorWindow </a><br><a target="_blank" rel="noopener" href="https://github.com/akof1314/UnityParticleSystemPreview">Unity 粒子特效预览工具</a><br><a target="_blank" rel="noopener" href="https://github.com/Yene2017">这个家伙有点牛逼</a><br><a target="_blank" rel="noopener" href="https://learn.unity.com/tutorial/introduction-to-scriptable-objects?language=en#">Introduction to Scriptable Objects</a><br><a target="_blank" rel="noopener" href="https://learn.unity.com/tutorial/creating-basic-editor-tools?language=en#">Creating Basic Editor Tools</a><br><a target="_blank" rel="noopener" href="https://learn.unity.com/tutorial/property-drawers-and-custom-inspectors?language=en">Property Drawers and Custom Inspectors</a><br><a target="_blank" rel="noopener" href="https://learn.unity.com/tutorial/creating-custom-gizmos-for-development-2019-3?language=en#">Creating Custom Gizmos for Development</a><br><a target="_blank" rel="noopener" href="https://learn.unity.com/tutorial/editor-scripting?language=en#5c7f8528edbc2a002053b5fa">Editor Scripting</a><br><a target="_blank" rel="noopener" href="https://github.com/BanMing/TextEmoji">TextEmoji</a><br><a target="_blank" rel="noopener" href="https://github.com/Dandarawy/UnityBookPageCurl">Unity3D Book Page Curl</a><br><a target="_blank" rel="noopener" href="https://github.com/yasirkula/UnityDynamicPanels">Dynamic Panels for Unity 3D</a><br><a target="_blank" rel="noopener" href="https://github.com/garsonlab/GText">GText</a><br><a target="_blank" rel="noopener" href="https://github.com/AKJ1/CruddyEditor">CruddyEditor</a><br><a target="_blank" rel="noopener" href="https://github.com/djfariel/UnityBugTracker">UnityBugTracker</a><br><a target="_blank" rel="noopener" href="https://github.com/YMD-ZhangZhang/ZZUnityEditor">ZZUnityEditor</a><br><a target="_blank" rel="noopener" href="https://github.com/ZoserLock/unity-editor-tools">Unity Editor Tools</a><br><a target="_blank" rel="noopener" href="https://github.com/Cyanilux/ToDo">ToDo</a><br><a target="_blank" rel="noopener" href="https://github.com/charcolle/UnityEditorMemo">UnityEditorMemo</a><br><a target="_blank" rel="noopener" href="https://thegamedev.guru/">BECOME A GAME PERFORMANCE EXPERT</a><br><a target="_blank" rel="noopener" href="https://mailchi.mp/3f4a331f4255/issue-3803533?e=697c40775c">Unity合集</a>：非常丰富；<br><a target="_blank" rel="noopener" href="https://github.com/baba-s/awesome-unity-open-source-on-github">Awesome Unity Open Source on GitHub (800+)</a>:一大包Unity技术合集，力荐；<br><a target="_blank" rel="noopener" href="https://github.com/sugi-cho/Animation-Texture-Baker">Animation Texture Baker for Unity</a>:动画烘焙成贴图;<br><a target="_blank" rel="noopener" href="https://weeklyhow.com/unity-custom-editor-window/">Unity Tutorials: How To Create Custom Editor Window</a>:Create Custom Editor Window;<br><a target="_blank" rel="noopener" href="https://unitylist.com/p/5c3/Unity-editor-icons">Unity Editor Built-in Icons</a>:Unity version: 2020.1.0f1 Icons what can load using EditorGUIUtility.IconContent;<br><a target="_blank" rel="noopener" href="https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@7.1/manual/universalrp-asset.html">Universal Render Pipeline</a>:URP;<br><a target="_blank" rel="noopener" href="https://www.cyanilux.com/tutorials/intro-to-shader-graph/">Intro to Shader Graph</a>:This post is a detailed introduction to using Shader Graph ;<br><a target="_blank" rel="noopener" href="https://cyangamedev.wordpress.com/2020/06/05/urp-shader-code/">Writing Shader Code for the Universal RP</a>:Writing Shader Code for the Universal RP;<br><a target="_blank" rel="noopener" href="https://github.com/Unity-Technologies/UniversalRenderingExamples">Universal Rendering Examples</a>:This project contains a collection of Custom Renderer examples. This will be updated as we refine the feature and add more options;<br><a target="_blank" rel="noopener" href="https://www.codinblack.com/the-big-shader-graph-tutorial-introduction/">The Big Shader Graph Tutorial: Introduction</a>:This is the first part of a fundamental tutorial about shader graph;<br><a target="_blank" rel="noopener" href="https://forum.unity.com/threads/urp-sampling-shadow-map-from-shader-graph.857581/">URP - Sampling Shadow Map from Shader Graph</a>:URP - Sampling Shadow Map from Shader Graph;<br><a target="_blank" rel="noopener" href="https://www.raywenderlich.com/138-introduction-to-unity-particle-systems">Introduction To Unity: Particle Systems</a>:Unity’s particle system is both robust and feature packed. In this tutorial, you’ll learn the ins-and-outs of it to create both fire and explosions;<br><a target="_blank" rel="noopener" href="https://forum.unity.com/threads/using-materialpropertyblocks-with-shadergraph-shaders-help-wanted.651547/">Using MaterialPropertyBlocks with ShaderGraph shaders</a>:Using MaterialPropertyBlocks with ShaderGraph shaders;<br><a target="_blank" rel="noopener" href="https://game-developers.org/how-to-use-terrain-with-urp-in-unity-2020-beginner-tutorial/">How to Use Terrain with URP in Unity 2020 | Beginner Tutorial</a>:How to Use Terrain with URP in Unity 2020 | Beginner Tutorial;<br><a target="_blank" rel="noopener" href="https://forum.unity.com/threads/bake-static-light-and-shadows-directly-into-texture-optimizing-for-mobile.824526/">Bake static light and shadows directly into texture ! optimizing for mobile</a>:Bake static light and shadows directly into texture ! optimizing for mobile;<br><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/gaming/acoustics/unity-baking">Project Acoustics Unity Bake Tutorial</a>:his article describes acoustics baking by using Project Acoustics in Unity;<br><a target="_blank" rel="noopener" href="https://support.unity.com/hc/en-us/articles/210223733-How-to-customize-Unity-script-templates">How to customize Unity script templates</a>:When I create a new script, the Unity Editor generates its content. For C# scripts it uses the file name as the class name;<br><a target="_blank" rel="noopener" href="https://github.com/joaoborks/myunitytools-script-template">Unity Tools - Script Template</a>:This tool adds custom Script Templates to Unity that will serve as alternatives for the default “C#Script” that I personally always modify before writing my scripts;<br><a target="_blank" rel="noopener" href="https://riptutorial.com/unity3d/example/14519/editor-window">Editor Window</a>:Create a basic EditorWindow;<br><a target="_blank" rel="noopener" href="https://www.synnaxium.com/en/2019/01/unity-custom-map-editor-part-1/">Unity – Creating a custom map editor</a>:make a custom map editor in Unity;<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/114371275">unity编辑器扩展之SceneUI</a>:unity编辑器扩展之SceneUI——贴在Scene View的SceneCanvas;<br><a target="_blank" rel="noopener" href="https://www.gamasutra.com/blogs/ByronMayne/20160121/258356/Code_Generation_in_Unity.php">Code Generation in Unity</a><br><a target="_blank" rel="noopener" href="https://www.arcturuscollective.com/archives/22">Compile C# at runtime in Unity3D</a><br><a target="_blank" rel="noopener" href="https://gram.gs/gramlog/creating-node-based-editor-unity/">Creating a Node Based Editor in Unity</a><br><a target="_blank" rel="noopener" href="https://needle.tools/package-reference/list/">package-reference</a>:<a target="_blank" rel="noopener" href="https://github.com/needle-mirror?q=&type=&language=&sort=">Unity Package</a><br><a target="_blank" rel="noopener" href="https://unity3d.com/get-unity/download/archive">Unity download archive</a>:Unity内置shader源码下载<br><a target="_blank" rel="noopener" href="https://github.com/tiredamage42/OpenWorldFramework#readme">OpenWorldFramework</a><br><a target="_blank" rel="noopener" href="https://github.com/ShadowLancer42/Long-Term-Open-World">Long-Term-Open-World</a><br><a target="_blank" rel="noopener" href="https://github.com/Mrchrissross/Procedural-Content-Generation">Procedural-Content-Generation</a><br><a target="_blank" rel="noopener" href="https://forum.unity.com/threads/filter-which-objects-i-can-select-in-the-scene-object-via-editor-tool-how-to-do-custom-selection.516897/">Filter which objects I can select in the scene object via editor tool</a><br><a target="_blank" rel="noopener" href="http://www.roboryantron.com/2017/10/unite-2017-game-architecture-with.html">Game Architecture with Scriptable Objects</a></p>
 <h3 id="Duality"><a href="#Duality" class="headerlink" title="Duality"></a>Duality</h3><p><a target="_blank" rel="noopener" href="https://docs.duality2d.net/pages/v3/getting-started.html">Getting Started</a>:It’s an extensible 2D game engine;<br><a target="_blank" rel="noopener" href="https://hub.packtpub.com/turn-based-game-framework-duality-c/">Turn-based game framework in Duality (C#)</a>:This post presents a simple turn-based game framework using the Duality game engine;</p>
-<h2 id="Other"><a href="#Other" class="headerlink" title="Other"></a>Other</h2><h3 id="Tutorial"><a href="#Tutorial" class="headerlink" title="Tutorial"></a>Tutorial</h3><p><a target="_blank" rel="noopener" href="https://gamedevacademy.org/category/tutorials/unity-tutorials/unity-3d-tutorials/">GameDev Academy</a><br><a target="_blank" rel="noopener" href="https://www.mbsoftworks.sk/index.php?page=tutorials&series=1&tutorial=24">C++, OpenGL and more…</a>:…;<br><a target="_blank" rel="noopener" href="https://www.construct.net/en/tutorials?flang=45">GAME DEVELOPMENT TUTORIALS</a>:Read our free tutorials on game development submitted by our staff and expert users in our community;<br><a target="_blank" rel="noopener" href="https://gamasutra.com/blogs/MikeMarrone/20210312/378423/Game_Dev_Digest_Issue_85__Platforms_Performance_and_Tutorials.php">Performance optimization tips: Physics in Unity | Tutorial</a>:…;</p>
+<h2 id="Other"><a href="#Other" class="headerlink" title="Other"></a>Other</h2><h3 id="Tutorial"><a href="#Tutorial" class="headerlink" title="Tutorial"></a>Tutorial</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/linxinfa/article/details/118816132">【游戏开发进阶】教你Unity通过Jenkins实现自动化打包，打包这种事情就交给策划了（保姆级教程 | 命令行打包 | 自动构建）</a><br><a target="_blank" rel="noopener" href="https://linxinfa.blog.csdn.net/article/details/118553713">【游戏开发进阶】教你自制离线Maven仓库，实现Unity离线环境使用Gradle打包（Unity | Android | 谷歌 | Gradle）</a><br><a target="_blank" rel="noopener" href="https://gamedevacademy.org/category/tutorials/unity-tutorials/unity-3d-tutorials/">GameDev Academy</a><br><a target="_blank" rel="noopener" href="https://www.mbsoftworks.sk/index.php?page=tutorials&series=1&tutorial=24">C++, OpenGL and more…</a>:…;<br><a target="_blank" rel="noopener" href="https://www.construct.net/en/tutorials?flang=45">GAME DEVELOPMENT TUTORIALS</a>:Read our free tutorials on game development submitted by our staff and expert users in our community;<br><a target="_blank" rel="noopener" href="https://gamasutra.com/blogs/MikeMarrone/20210312/378423/Game_Dev_Digest_Issue_85__Platforms_Performance_and_Tutorials.php">Performance optimization tips: Physics in Unity | Tutorial</a>:…;</p>
 <h3 id="ECS"><a href="#ECS" class="headerlink" title="ECS"></a>ECS</h3><p><a target="_blank" rel="noopener" href="https://github.com/pvigier/ecs">entity-component-system</a>:A simple and easy to use entity-component-system C++ library;</p>
 <h3 id="Library"><a href="#Library" class="headerlink" title="Library"></a>Library</h3><p><a target="_blank" rel="noopener" href="http://www.angusj.com/delphi/clipper.php">Clipper - an open source freeware library</a>:The Clipper library performs line &amp; polygon clipping - intersection, union, difference &amp; exclusive-or,and line &amp; polygon offsetting. The library is based on Vatti’s clipping algorithm;<br><a target="_blank" rel="noopener" href="https://unity.stelabouras.com/">The Unity Library</a>:The Unity Library;<br><a target="_blank" rel="noopener" href="https://github.com/sideeffects/HoudiniEngineForUnity/tree/Houdini19.0">HoudiniEngineForUnity</a><br><a target="_blank" rel="noopener" href="https://www.sidefx.com/docs/unity/_getting_started.html">Houdini Engine for Unity</a></p>
 <h3 id="Papers"><a href="#Papers" class="headerlink" title="Papers"></a>Papers</h3><p><a target="_blank" rel="noopener" href="https://www.highgroundgaming.com/best-turn-based-strategy-games/">10 Best Turn-Based Strategy Games in 2021 for Master Tacticians</a>:10 Best Turn-Based Strategy Games in 2021 for Master Tacticians;<br><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/column/88095">壹种念头Unity blog</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/266712908">收录些关于渲染相关的文章</a><br><a target="_blank" rel="noopener" href="https://www.educba.com/what-is-houdini/">What is Houdini?</a></p>
@@ -1126,86 +1224,6 @@
 <h2 id="CG-Tutorial"><a href="#CG-Tutorial" class="headerlink" title="CG Tutorial"></a>CG Tutorial</h2><p><a target="_blank" rel="noopener" href="https://docs.redshift3d.com/display/redshift3d/redshift3d+Home">redshift3d</a><br><a target="_blank" rel="noopener" href="https://www.tokeru.com/cgwiki/index.php?title=Main_Page">cgwiki</a><br><a target="_blank" rel="noopener" href="http://mattebb.com/projects/houdini/course/slides.pdf">houdini</a><br><a target="_blank" rel="noopener" href="https://mattebb.cargo.site/">cargo</a><br><a target="_blank" rel="noopener" href="https://github.com/chrisj3d/NodeFX">Authoring Particle Systems in Unity through Houdini</a><br><a target="_blank" rel="noopener" href="http://wordpress.discretization.de/houdini/home/introduction/understanding-nodes/">BASICS OF GEOMETRY NODES</a><br><a target="_blank" rel="noopener" href="https://ikrima.dev/houdini/">Houdini Guide</a><br><a target="_blank" rel="noopener" href="http://deborahrfowler.com/HoudiniResources/HOUDINI-RESOURCES.html">Houdini Resources</a><br><a target="_blank" rel="noopener" href="https://www.sidefx.com/docs/">HOUDINI DOCUMENTATION</a><br><a target="_blank" rel="noopener" href="https://www.sidefx.com/docs/houdini/">houdini docs</a><br><a target="_blank" rel="noopener" href="https://www.3dart.it/en/category/tutorial-library/houdini-tutorial/">HOUDINI TUTORIAL</a><br><a target="_blank" rel="noopener" href="http://wordpress.discretization.de/houdini/">Houdini Tech Blog</a><br><a target="_blank" rel="noopener" href="http://houdini.dreamerzstudio.net/">Houdini Render Passes</a><br><a target="_blank" rel="noopener" href="https://www.indiedb.com/games/ecotales/tutorials/houdini-unity-rigid-body-fracturing-pipeline">Houdini - Unity - Rigid Body Fracturing Pipeline</a><br><a target="_blank" rel="noopener" href="https://conceptartempire.com/houdini-tutorials/">Best Houdini Tutorials For Learning VFX &amp; Animation (Free + Premium)</a><br><a target="_blank" rel="noopener" href="https://3dtotal.com/news/general/houdini-engine-for-unity">Houdini Engine for Unity</a><br><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=STMJCA-UC_I">Creating a bones in Houdini</a><br><a target="_blank" rel="noopener" href="https://siver.artstation.com/blog?page=5">A Houdini Blog</a><br><a target="_blank" rel="noopener" href="https://ikrima.dev/houdini/basics/hou-python/">Houdini Python</a><br><a target="_blank" rel="noopener" href="https://www.andynicholas.com/post/how-to-reuse-python-code-in-a-houdini-scene">How To Reuse Python Code In A Houdini Scene</a><br><a target="_blank" rel="noopener" href="https://www.sidefx.com/media/uploads/tutorial/H11_lessons/go_pro/hguide_02_nodes.pdf">Nodes, Networks and Digital Assets</a><br><a target="_blank" rel="noopener" href="https://github.com/FofightFong/All_In_One">有关All In One 的houdini实现道路</a><br><a target="_blank" rel="noopener" href="https://jtomori.github.io/vex_tutorial/">VEX tutorial</a></p>
 <h2 id="App"><a href="#App" class="headerlink" title="App"></a>App</h2><p><a target="_blank" rel="noopener" href="https://wgbqr.com/Houdini.html">胡迪尼 SideFX Houdini FX v19.0.383 破解版</a>:亲测有效<br><a target="_blank" rel="noopener" href="https://www.yutu.cn/softhtml/downsoft_6733.html">SideFX Houdini FX19【3D特效制作工具】免费破解版下载</a>:这个我并没有测试过<br><a target="_blank" rel="noopener" href="https://www.7-zip.org/download.html">7-Zip</a>一个非常好用的压缩软件<br><a target="_blank" rel="noopener" href="https://www.rejetto.com/hfs/?f=dl">hfs</a><br><a target="_blank" rel="noopener" href="https://wereturtle.github.io/ghostwriter/">Ghostwriter</a>采用MarkDown语言的免费文本编辑工具，可以实时预览编辑效果。<br><a target="_blank" rel="noopener" href="https://dillinger.io/">Dillinger</a>采用MarkDown语言的在线文本编辑工具，可以实时预览编辑效果。<br><a target="_blank" rel="noopener" href="https://www.cg.alphacodingskills.com/edit-mathjax-online.php">MathJax Online Editor</a>线上编辑数学公式。例：$$x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$<br><a target="_blank" rel="noopener" href="https://www.mathjax.org/">mathjax</a>数学公式编辑软件。<br><a target="_blank" rel="noopener" href="https://www.wikihow.com/Install-FFmpeg-on-Windows">Install-FFmpeg-on-Windows</a>:ffmpeg官网好像进不了，不过这个网站的下载链接可以直接链接到官网地址，进行直接下载。</p>
 <h2 id="Assets"><a href="#Assets" class="headerlink" title="Assets"></a>Assets</h2><p><a target="_blank" rel="noopener" href="http://visionair.ge.imati.cnr.it/ontologies/shapes/viewmodels.jsp">AIM@SHAPE</a><br><a target="_blank" rel="noopener" href="https://opengameart.org/content/50-free-textures-4-normalmaps">opengameart</a><br><a target="_blank" rel="noopener" href="https://www.orbolt.com/">Create, upload, and share Houdini Digital Assets</a><br><a target="_blank" rel="noopener" href="https://www.scanslibrary.com/library?credit=0">scanslibrary</a><br><a target="_blank" rel="noopener" href="https://shadesoforange.de/blog/">Texture Synthesis Houdini</a><br><a target="_blank" rel="noopener" href="https://www.turbosquid.com/AssetManager/Downloads?stgAction=getFiles&intFileSystemId=0">turbosquid</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/05/27/Line/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2021/05/27/Line/" class="post-title-link" itemprop="url">Line</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-05-27 15:01:00" itemprop="dateCreated datePublished" datetime="2021-05-27T15:01:00+08:00">2021-05-27</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-22 23:15:25" itemprop="dateModified" datetime="2022-08-22T23:15:25+08:00">2022-08-22</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Math/" itemprop="url" rel="index"><span itemprop="name">Math</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Math/Line/" itemprop="url" rel="index"><span itemprop="name">Line</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="线段相交"><a href="#线段相交" class="headerlink" title="线段相交"></a>线段相交</h2><p>对于平面上给定的两个线段line0、line1，求解其交点</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">bool</span> <span class="title">LinesIntersect</span>(<span class="params">Vector2 line0_start, Vector2 line0_end, Vector2 line1_start, Vector2 line1_end, <span class="keyword">out</span> <span class="built_in">float</span> line0_cross_line1, <span class="keyword">out</span> <span class="built_in">float</span> along_line0, <span class="keyword">out</span> along_line1, <span class="keyword">out</span> Vector2 intersect_point</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">var</span> dir_line0 = line0_end - line0_start;</span><br><span class="line">	<span class="keyword">var</span> dir_line1 = line1_end - line1_start;</span><br><span class="line">	line0_cross_line1 = dir_line0.x * dir_line1.y - dir_line0.y * dir_line1.x;</span><br><span class="line">	along_line0 = <span class="number">0</span>;</span><br><span class="line">	along_line1 = <span class="number">0</span>;</span><br><span class="line">	intersect_point = Vector2.zero;</span><br><span class="line">	<span class="keyword">if</span>(line0_cross_line1 == <span class="number">0</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	<span class="keyword">var</span> dir_line_start01 = line0_start - line1_start;</span><br><span class="line">	along_line0 = (dir_line1.x * dir_line_start01.y - dir_line1.y * dir_line_start01.x) / line0_cross_line1;</span><br><span class="line">	along_line1 = (dir_line0.x * dir_line_start01.y - dir_line0.y * dir_line_start01.x) / line0_cross_line1;</span><br><span class="line">	<span class="comment">// if (along_line0 &lt; 0 || along_line0 &gt; 1 || along_line1 &lt; 0 || along_line1 &gt; 1) return false;</span></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>相关链接：<br><a target="_blank" rel="noopener" href="https://mathopenref.com/coordintersection.html">Math Open Reference</a><br><a target="_blank" rel="noopener" href="https://sean.cm/a/polygon-clipping-pt1">Polygon Clipping</a><br><a target="_blank" rel="noopener" href="https://barendgehrels.blogspot.com/2010/12/intersections-1.html">Barend’s Blog</a><br><a target="_blank" rel="noopener" href="https://cs.stackexchange.com/questions/99927/concave-polygon-intersection-algorithm">Concave Polygon Intersection - Algorithm</a><br><a target="_blank" rel="noopener" href="https://fribbels.github.io/shortestpath/writeup.html">Euclidean Shortest Paths</a></p>
 
       
     </div>
@@ -1292,20 +1310,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">48</span>
+          <span class="site-state-item-count">49</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/blogs/categories/">
           
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">16</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/blogs/tags/">
           
-        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
