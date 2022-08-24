@@ -347,4 +347,7 @@ date: 2021-05-27 17:01:34
 [turbosquid](https://www.turbosquid.com/AssetManager/Downloads?stgAction=getFiles&intFileSystemId=0)
 [vfxcamp](https://www.vfxcamp.com/wp-content/themes/begin/download.php?id=Mzg3MzE=)
 [3DS Max/Blender/Houdini/Modo/Maya三角面转四边形网格重拓扑插件Exoside QuadRemesher v1.01](https://c4dsky.com/76397.html)
-[SideFX“实验室”SideFX Labs](https://www.vfxforce.cn/archives/10804)
+[SideFX“实验室”SideFX Labs](https://www.vfxforce.cn/archives/10804)没看
+[Exoside_QuadRemesher 四边化插件](http://www.zhaotaisen.top/2020/03/25/exoside_quadremesher-%E5%9B%9B%E8%BE%B9%E5%8C%96%E6%8F%92%E4%BB%B6/)插件下载
+[QuadRemesh为houdini](https://www.zf3d.com/Products_rj.asp?id=13698)付费
+[Quad Remesher is available as plugins for](https://exoside.com/quadremesher/)四边化插件官网，Houdini里面其实也是用他们家的
