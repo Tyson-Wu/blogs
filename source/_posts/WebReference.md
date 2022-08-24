@@ -345,3 +345,6 @@ date: 2021-05-27 17:01:34
 [scanslibrary](https://www.scanslibrary.com/library?credit=0)
 [Texture Synthesis Houdini](https://shadesoforange.de/blog/)
 [turbosquid](https://www.turbosquid.com/AssetManager/Downloads?stgAction=getFiles&intFileSystemId=0)
+[vfxcamp](https://www.vfxcamp.com/wp-content/themes/begin/download.php?id=Mzg3MzE=)
+[3DS Max/Blender/Houdini/Modo/Maya三角面转四边形网格重拓扑插件Exoside QuadRemesher v1.01](https://c4dsky.com/76397.html)
+[SideFX“实验室”SideFX Labs](https://www.vfxforce.cn/archives/10804)
