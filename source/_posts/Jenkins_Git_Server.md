@@ -6,7 +6,7 @@ categories:
 tags:
 - Jenkins
 - Git
-- Server
+- Bonobo Git Server
 ---
 
 ## 记录
