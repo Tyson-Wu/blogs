@@ -163,6 +163,125 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/02/Ronja_Triplanar_Mapping/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/07/02/Ronja_Triplanar_Mapping/" class="post-title-link" itemprop="url">Triplanar Mapping</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-07-02 13:01:00" itemprop="dateCreated datePublished" datetime="2021-07-02T13:01:00+08:00">2021-07-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-27 03:49:58" itemprop="dateModified" datetime="2022-08-27T03:49:58+08:00">2022-08-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/010-triplanar-mapping/">Triplanar Mapping</a></p>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>在前面我们介绍过二维平面映射的实现方法，这里我们来讲讲三维平面的映射方法。<br>纳尼？平面本身是二维的叫二维平面还可以理解，你这来个三维平面，是欺负我读书少，想糊弄我？？？<br>稍安勿躁！首先专业名字本身依据其专业用途、含义来取的，很容易和我们习惯相冲突，比如数学领域各种眼花缭乱的术语。这里我们的三维平面更多的值得是三维空间上的平面，可以有三个维度的取值。之前提到的二维平面映射，是只从一个方向进行投影，换句话说，我们只用沿着其投影方向进行渲染，才能看到我们的纹理贴合在模型表面，如果换个角度，你可能就看不到了，即便看到了也可能是模糊不清的。而三维平面映射，是从分别从三个维度进行投影映射，然后将得到的三个纹理颜色进行混合，这样无论我们采用怎样刁钻的角度，也挑不出啥毛病。</p>
+<p>当然，本文也是在之前的二维平面映射的基础上扩展的，在了解其原理后，你也可以使用表面着色器重写一遍。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/010/Result.gif"></p>
+<h2 id="Calcualte-Projection-Planes"><a href="#Calcualte-Projection-Planes" class="headerlink" title="Calcualte Projection Planes"></a>Calcualte Projection Planes</h2><p>首先，为了得到三个不同方向的UV坐标，我们需要改变UV坐标的生成方式。在二维平面映射中，我们是在顶点着色器中进行UV变换。这里我们直接将顶点的世界坐标传递到片段着色器中，然后在片段着色器中进行uv变换。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">    float4 position : SV_POSITION;</span><br><span class="line">    float3 worldPos : TEXCOORD0;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">    v2f o;</span><br><span class="line">    <span class="comment">//计算裁剪空间坐标</span></span><br><span class="line">    o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">    <span class="comment">//计算世界坐标</span></span><br><span class="line">    float4 worldPos = mul(unity_ObjectToWorld, v.vertex);</span><br><span class="line">    o.worldPos = worldPos.xyz;</span><br><span class="line">    <span class="keyword">return</span> o;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来我们对三个方向投影所对应的uv坐标进行UV变换。在这里我把世界坐标的<code>y</code>轴对应uv坐标的<code>v</code>，这样渲染出来的纹理就是正的。当然，你也可以随意尝试多种对应关系，看看会有什么不一样的效果。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    <span class="comment">//分别计算三个投影方向的uv变换</span></span><br><span class="line">    float2 uv_front = TRANSFORM_TEX(i.worldPos.xy, _MainTex);</span><br><span class="line">    float2 uv_side = TRANSFORM_TEX(i.worldPos.zy, _MainTex);</span><br><span class="line">    float2 uv_top = TRANSFORM_TEX(i.worldPos.xz, _MainTex);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后使用变换后的uv值进行纹理采样，并将三个不同的采样值进行平均。当然你也可以直接求和，不过最终结果会显得非常亮。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//分别对三个方向进行纹理采样</span></span><br><span class="line">fixed4 col_front = tex2D(_MainTex, uv_front);</span><br><span class="line">fixed4 col_side = tex2D(_MainTex, uv_side);</span><br><span class="line">fixed4 col_top = tex2D(_MainTex, uv_top);</span><br><span class="line"></span><br><span class="line"><span class="comment">//求平均值</span></span><br><span class="line">fixed4 col = (col_front + col_side + col_top) / <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//叠加材质颜色</span></span><br><span class="line">col *= _Color;</span><br><span class="line"><span class="keyword">return</span> col;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/010/AllSides.png"></p>
+<h2 id="Normals"><a href="#Normals" class="headerlink" title="Normals"></a>Normals</h2><p>到目前为止，你会发现整个材质表现的非常怪异，各种重影迭起，这是因为我们只是单纯的对三个方向的采样值进行平均。为了消除这种重影，我们可以根据不同的朝向，侧重显示对应朝向的采样值。表面朝向有个专业点的名称：法向向量。在我们的网格数据中就包含法向数据。因为一些特殊考虑，网格数据中的法向和顶点是一一对应的。</p>
+<p>所以，我们首先要做的是在我们的输入结构体中加入法向变量，然后在顶点着色其中将其变换到世界坐标系，并且通过插值数据传入到片段着色器中参与后续的计算。这里之所以要变换到世界坐标系，是因为我们的纹理映射是基于世界坐标系的。换句话说，我们在进行计算时，应该保证空间数据的空间一致性。</p>
+<p>其中将法向从模型坐标系变换到世界坐标系有些特殊。一般的顶点在两个坐标系之间转换是直接乘以模型矩阵，但是法向是乘以模型矩阵转置的逆矩阵。当然其中的矩阵推导比较复杂，我们记住这个结论就行。如果你好奇心很强，那我这里可以先定性地给你分析一下为什么不能直接乘以模型矩阵。前面说过，法向是垂直与表面的向量，假设我们将模型沿着<code>x</code>轴正方向拉伸，这时候表面相对于<code>y</code>轴会变得越来越陡，如果我们也对法向做同样的拉伸，你会发现法向也变得越来越陡，这时候法向和表面不再是垂直关系。我们这里描述的拉伸实际上就是一个空间变换的操作，因此法向和顶点不能使用同样的空间变换，否则将会打破两者的垂直关系。而模型矩阵转置的逆矩阵正是一种相反的操作，可以始终保持两者的垂直关系。当然我们还需要将该矩阵裁剪为<code>3X3</code>的矩阵，因为<code>4x4</code>矩阵还包含了平移变换，而我们的法向量最为方向是没有位置的概念的，所以需要剔除掉矩阵中的平移部分。</p>
+<p>事实上，在实际的代码中，我们可能并不会直接使用模型矩阵转置的逆矩阵，而是会采用一些小巧的方法，尽可能的减少计算量。例如世界到模型的变换矩阵刚好等于模型矩阵的逆矩阵，同时向量与矩阵乘积的顺序调转，刚好可以替代转置操作。所以实际上我们可以用法向量左乘世界到模型的变换矩阵来计算在世界坐标系下的法向量。是不是很绕、很晕？那没办法，给你一张图自己去捂捂！<br><img src="https://www.ronja-tutorials.com/assets/images/posts/010/NormalScaling.png"></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">    float4 vertex : POSITION;</span><br><span class="line">    float3 normal : NORMAL;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">    float4 position : SV_POSITION;</span><br><span class="line">    float3 worldPos : TEXCOORD0;</span><br><span class="line">    float3 normal : NORMAL;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">    v2f o;</span><br><span class="line">    <span class="comment">//计算裁剪空间下的坐标</span></span><br><span class="line">    o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">    <span class="comment">//计算世界空间下的坐标</span></span><br><span class="line">    float4 worldPos = mul(unity_ObjectToWorld, v.vertex);</span><br><span class="line">    o.worldPos = worldPos.xyz;</span><br><span class="line">    <span class="comment">//计算世界空间下的法向量</span></span><br><span class="line">    float3 worldNormal = mul(v.normal, (float3x3)unity_WorldToObject);<span class="comment">//再给你点提提示，向量在左叫左乘，后面是从世界到模型空间的变换矩阵</span></span><br><span class="line">    o.normal = normalize(worldNormal);</span><br><span class="line">    <span class="keyword">return</span> o;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在学习渲染的过程中，记住可视化是我们的看家本领，所以很多时候都可以通过渲染后的表现效果来分析我们的计算过程。这里可以将法向量进行可视化，很简单就是直接将法向量当成颜色返回。所谓的高大上的可视化到咱这还不算一行代码的事，实在不行就多写两行！</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> fixed4(i.normal.xyz, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/010/Normals.png"></p>
+<p>在得到世界空间下的法向后，我们还需要对法向取绝对值才能应用到后面的权重分配部分。因为法向作为方向向量其取值是在<code>[-1,1]</code>之间，这也是为什么前面的法向可视化中，朝着负轴向的表面颜色是黑色。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">float3 weights = i.normal;</span><br><span class="line">weights = <span class="built_in">abs</span>(weights);</span><br></pre></td></tr></table></figure>
+
+<p>法向的各个轴向值得大小表明了法向与各个轴向的重合程度。所以我们将权重的各个轴向值分别乘以前面三个投影方向的采样值，例如<code>xy</code>投影平面的投影方向是<code>z</code>轴，所以将其采样值乘以<code>z</code>轴的权重值，依次类推。</p>
+<p>这里我们不需要做平均，因为我们并不是简单的将三个采样值进行相加。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/010/ZPlane.png"></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//在世界坐标系下的法向量当做权重值</span></span><br><span class="line">float3 weights = i.normal;</span><br><span class="line"><span class="comment">//取其绝对值</span></span><br><span class="line">weights = <span class="built_in">abs</span>(weights);</span><br><span class="line"></span><br><span class="line"><span class="comment">//乘以权重值</span></span><br><span class="line">col_front *= weights.z;</span><br><span class="line">col_side *= weights.x;</span><br><span class="line">col_top *= weights.y;</span><br><span class="line"></span><br><span class="line"><span class="comment">//求和</span></span><br><span class="line">fixed4 col = col_front + col_side + col_top;</span><br><span class="line"></span><br><span class="line"><span class="comment">//叠加材质的基本颜色</span></span><br><span class="line">col *= _Color;</span><br><span class="line"><span class="keyword">return</span> col;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/010/AddPlanes.jpg"></p>
+<p>上图可以看到整个模型看你来更加凝实了，少了很多眼花缭乱的重影。但是还有一个问题，前面的例子中有一个求平均的过程，但是为甚么要求平均呢，因为求平均可以保证最终混合结果不会过亮。但是我们这里使用法向权重值之和会大概率会大于1,最终导致显示过亮。所以我么可以先除以权重和。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//保证权重之和为 1</span></span><br><span class="line">weights = weights / (weights.x + weights.y + weights.z);</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/010/AddPlanesNormalized.jpg"></p>
+<p>现在看起来和纹理原本的亮度差不多。</p>
+<p>最后一步是尽可能的提高各个投影方向纹理的权重差异。因为上图的显示效果还是有很大一部分相互叠加。这是因为即便某个投影方向有权重优势，但这种优势并不是碾压式的，不能占有绝对比重。为了使强者越强、弱者越弱，指数函数是一个很好地选择。我们先定义一个表示指数的参数。然后在权重之前，对其各个分量执行指数操作。然后在材质面板上调节这个指数参数，观察显示变化。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">_Sharpness(<span class="string">&quot;Blend Sharpness&quot;</span>, Range(<span class="number">1</span>, <span class="number">64</span>)) = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">float</span> _Sharpness;</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//指数操作，强者越强，弱者越弱</span></span><br><span class="line">weights = <span class="built_in">pow</span>(weights, _sharpness)</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/010/BlendSharpness.gif"></p>
+<p>上面的三维平面映射效果还有些问题，表面45度的地方存在明显的过渡痕迹，不过这种痕迹的出现是由于纹理上下左右边界不衔接导致的。另外三维平面映射的性能消耗要更大，因为这里执行了三次纹理采样。</p>
+<p>我们可以将三维平面映射应用在表面着色器上，例如对<code>albedo</code>进行三维平面映射，或者对<code>specular</code>等纹理。但是法向纹理需要额外的操作才行，因为我们在三维平面映射的过程中使用的法向向量，这里不做深入研究了。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/010_Triplanar_Mapping&quot;</span>&#123;</span><br><span class="line">	<span class="comment">//材质面板显示的属性</span></span><br><span class="line">	Properties&#123;</span><br><span class="line">		_Color (<span class="string">&quot;Tint&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">		_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">		_Sharpness (<span class="string">&quot;Blend sharpness&quot;</span>, Range(<span class="number">1</span>, <span class="number">64</span>)) = <span class="number">1</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	SubShader&#123;</span><br><span class="line">		<span class="comment">//不透明物体</span></span><br><span class="line">		Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Geometry&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line">		Pass&#123;</span><br><span class="line">			CGPROGRAM</span><br><span class="line"></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UnityCG.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//纹理数据</span></span><br><span class="line">			sampler2D _MainTex;</span><br><span class="line">			float4 _MainTex_ST;</span><br><span class="line"></span><br><span class="line">			fixed4 _Color;</span><br><span class="line">			<span class="keyword">float</span> _Sharpness;</span><br><span class="line"></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">				float4 vertex : POSITION;</span><br><span class="line">				float3 normal : NORMAL;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">				float4 position : SV_POSITION;</span><br><span class="line">				float3 worldPos : TEXCOORD0;</span><br><span class="line">				float3 normal : NORMAL;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">				v2f o;</span><br><span class="line">				<span class="comment">//计算裁剪空间坐标</span></span><br><span class="line">				o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">				<span class="comment">//计算世界空间坐标</span></span><br><span class="line">				float4 worldPos = mul(unity_ObjectToWorld, v.vertex);</span><br><span class="line">				o.worldPos = worldPos.xyz;</span><br><span class="line">				<span class="comment">//计算世界空间法向量</span></span><br><span class="line">				float3 worldNormal = mul(v.normal, (float3x3)unity_WorldToObject);</span><br><span class="line">				o.normal = normalize(worldNormal);</span><br><span class="line">				<span class="keyword">return</span> o;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">				<span class="comment">//分别计算三个方向的uv变换</span></span><br><span class="line">				float2 uv_front = TRANSFORM_TEX(i.worldPos.xy, _MainTex);</span><br><span class="line">				float2 uv_side = TRANSFORM_TEX(i.worldPos.zy, _MainTex);</span><br><span class="line">				float2 uv_top = TRANSFORM_TEX(i.worldPos.xz, _MainTex);</span><br><span class="line">				</span><br><span class="line">				<span class="comment">//分别执行三个方向的纹理采样</span></span><br><span class="line">				fixed4 col_front = tex2D(_MainTex, uv_front);</span><br><span class="line">				fixed4 col_side = tex2D(_MainTex, uv_side);</span><br><span class="line">				fixed4 col_top = tex2D(_MainTex, uv_top);</span><br><span class="line"></span><br><span class="line">				<span class="comment">//将法向量当成权重</span></span><br><span class="line">				float3 weights = i.normal;</span><br><span class="line">				<span class="comment">//绝对值</span></span><br><span class="line">				weights = <span class="built_in">abs</span>(weights);</span><br><span class="line">				<span class="comment">//求权重指数</span></span><br><span class="line">				weights = <span class="built_in">pow</span>(weights, _Sharpness);</span><br><span class="line">				<span class="comment">//权重归一</span></span><br><span class="line">				weights = weights / (weights.x + weights.y + weights.z);</span><br><span class="line"></span><br><span class="line">				<span class="comment">//权重应用</span></span><br><span class="line">				col_front *= weights.z;</span><br><span class="line">				col_side *= weights.x;</span><br><span class="line">				col_top *= weights.y;</span><br><span class="line"></span><br><span class="line">				<span class="comment">//求和</span></span><br><span class="line">				fixed4 col = col_front + col_side + col_top;</span><br><span class="line"></span><br><span class="line">				<span class="comment">//应用基本颜色</span></span><br><span class="line">				col *= _Color;</span><br><span class="line"></span><br><span class="line">				<span class="keyword">return</span> col;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	FallBack <span class="string">&quot;Standard&quot;</span> <span class="comment">//当当前着色器不支持时，选择后补着色器中的功能</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>希望本文能够帮助你理解什么是三维平面映射。</p>
+<p>你可以在以下链接找到源码：<a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/010_Triplanar_Mapping/triplanar_mapping.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/010_Triplanar_Mapping/triplanar_mapping.shader</a></p>
+<p>希望你能喜欢这个教程哦！如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/02/Ronja_Color_Interpolation/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -194,7 +313,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-25 23:31:25" itemprop="dateModified" datetime="2022-08-25T23:31:25+08:00">2022-08-25</time>
+                <time title="修改时间：2022-08-27 03:49:58" itemprop="dateModified" datetime="2022-08-27T03:49:58+08:00">2022-08-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -313,7 +432,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-25 23:31:25" itemprop="dateModified" datetime="2022-08-25T23:31:25+08:00">2022-08-25</time>
+                <time title="修改时间：2022-08-27 03:49:58" itemprop="dateModified" datetime="2022-08-27T03:49:58+08:00">2022-08-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -411,7 +530,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-25 23:31:25" itemprop="dateModified" datetime="2022-08-25T23:31:25+08:00">2022-08-25</time>
+                <time title="修改时间：2022-08-27 03:49:58" itemprop="dateModified" datetime="2022-08-27T03:49:58+08:00">2022-08-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -509,7 +628,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-25 23:31:25" itemprop="dateModified" datetime="2022-08-25T23:31:25+08:00">2022-08-25</time>
+                <time title="修改时间：2022-08-27 03:49:58" itemprop="dateModified" datetime="2022-08-27T03:49:58+08:00">2022-08-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -611,7 +730,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-25 23:31:25" itemprop="dateModified" datetime="2022-08-25T23:31:25+08:00">2022-08-25</time>
+                <time title="修改时间：2022-08-27 03:49:58" itemprop="dateModified" datetime="2022-08-27T03:49:58+08:00">2022-08-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -743,7 +862,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-25 23:31:25" itemprop="dateModified" datetime="2022-08-25T23:31:25+08:00">2022-08-25</time>
+                <time title="修改时间：2022-08-27 03:49:58" itemprop="dateModified" datetime="2022-08-27T03:49:58+08:00">2022-08-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -845,7 +964,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-25 23:31:25" itemprop="dateModified" datetime="2022-08-25T23:31:25+08:00">2022-08-25</time>
+                <time title="修改时间：2022-08-27 03:49:58" itemprop="dateModified" datetime="2022-08-27T03:49:58+08:00">2022-08-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -953,7 +1072,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-25 23:31:25" itemprop="dateModified" datetime="2022-08-25T23:31:25+08:00">2022-08-25</time>
+                <time title="修改时间：2022-08-27 03:49:58" itemprop="dateModified" datetime="2022-08-27T03:49:58+08:00">2022-08-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1086,7 +1205,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-25 23:31:25" itemprop="dateModified" datetime="2022-08-25T23:31:25+08:00">2022-08-25</time>
+                <time title="修改时间：2022-08-27 03:49:58" itemprop="dateModified" datetime="2022-08-27T03:49:58+08:00">2022-08-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1154,123 +1273,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/06/21/Compute_Shader/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2021/06/21/Compute_Shader/" class="post-title-link" itemprop="url">Compute Shader</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-06-21 15:01:00" itemprop="dateCreated datePublished" datetime="2021-06-21T15:01:00+08:00">2021-06-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-25 23:31:25" itemprop="dateModified" datetime="2022-08-25T23:31:25+08:00">2022-08-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/050-compute-shader/">Compute Shader</a></p>
-<p>至此，我们已经学会了如何使用固定管线来渲染纹理，但是目前的显卡能做的远远不止这些。除了使用固定管线，我们还可以使用compute shader来实现。</p>
-<p>你可能会问，为什么要用compute shader，目前的cpu其实已经很强大了，即便遇到大量的处理数据，我们也可以使用多线程来处理。是的，对于一些非图形任务，我们并不需要使用GPU。如果强行使用GPU来处理，很可能会产生各种未知错误，另外也无法使用常用的异常分析手段。优化就更麻烦了，因为需要考虑CPU与GPU之间的数据传输，而GPU并行处理也和CPU编程思路不一样。作为初学者，我们是否需要使用compute shader，首先要明白为什么要用compute shader，使用后是否能够达到比现有方法更好的效果。</p>
-<p>如果你觉得你需要使用compute shader，那么继续读下去。在Unity中，你可以使用<code>SystemInfo.supportsComputeShaders</code>方法来查看你的GPU是否支持compute shader。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/050/result.gif"></p>
-<h2 id="Basic-Compute-Shader"><a href="#Basic-Compute-Shader" class="headerlink" title="Basic Compute Shader"></a>Basic Compute Shader</h2><p>我们可以通过选中<code>Create&gt;Shader&gt;Compute Shader</code>来创建compute shader。默认创建的compute shader执行向图片中写入数据的操作。但是在本节，我将演示一个更简单的例子——写入一组坐标。</p>
-<p>在compute shader中，我们可以向<code>RWStructuredBuffer</code>中写入一组数据，而<code>StructuredBuffer</code>是只读数据。在它们后面补充数据单元类型，类型包括<code>vector</code>或者<code>struct</code>。在本节中，我们使用<code>float3</code>。</p>
-<p>我们把用于计算的方法块叫做<code>kernel</code>。我们必须在方法块前面添加<code>numthreads</code>标志符，同时方法块有一个输入参数，因为方法块是针对每一个元素进行并行计算的，所以需要一个索引值来表明当前方法块所对应的元素。在这里，我们定义x轴64线程，y、z轴都是1线程。只要支持compute shader的显卡，基本可以处理这种线程设置。因为整个线程设置是一维的，所以我们处理的数据也是一维的，而在并行处理中，我们只需要考虑单个元素的处理过程。因为我们的线程设置是基于三个维度，所以我们输入参数也是三个维度，参数中的值对应相应维度的线程。因为我们这里的数据都集中在x轴上，所以我们的参数也只需要考虑x轴的索引。和普通的Shader一样，我们需要为输入参数添加标志符，方便程序识别参数的语意，这里我们参数的标志符是<code>SV_DispatchThreadID</code>。</p>
-<p>为了区分compute shader中的普通方法块和核方法块，我们需要使用<code>pragma</code>标识符，语法为<code>#pragma kernel &lt;functionname&gt;</code>。当然，在一个compute shader中可以拥有多个核函数。例如：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 指定一个核函数，我们可以拥有多个核函数</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> kernel Spheres</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出</span></span><br><span class="line">RWStructuredBuffer&lt;float3&gt; Result;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[numthreads(<span class="number">64</span>, <span class="number">1</span>, <span class="number">1</span>)]</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Spheres</span><span class="params">(uint3 id : SV_DispatchThreadID)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">// compute shader 代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>首先，让我们输出坐标<code>(id, 0, 0)</code>到<code>Result</code>中：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[numthreads(<span class="number">64</span>, <span class="number">1</span>, <span class="number">1</span>)]</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Spheres</span><span class="params">(uint3 id : SV_DispathcThreadID)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Result[id.x] = float3(id.x, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Executing-Compute-Shaders"><a href="#Executing-Compute-Shaders" class="headerlink" title="Executing Compute Shaders"></a>Executing Compute Shaders</h2><p>和普通的Shader不同的是，compute shader并不是通过材质绑定的方式来执行，而是通过<code>C#</code>脚本来实现调用。</p>
-<p>我们可以创建一个GameObject，并且在它上面创建一个<code>C#</code>脚本，在脚本上创建一个<code>ComputeShader</code>变量来引用前面创建的compute shader。同时我们创建一个整形变量，用来存储核函数的签名，这个签名是核函数在GPU中的索引ID。首先在<code>Start</code>函数中我们调用<code>FindKernel(&lt;kernelname&gt;)</code>来获取核函数的签名。在得到核函数签名后，我们可以使用该签名来获取该核函数的线程设置，也就是在compute shader中的<code>[numthreads(64, 1, 1)]</code>。我们只提取x轴的线程数，其他两个维度可以用<code>_</code>来表示忽略。</p>
-<p>另外，我们在<code>C#</code>脚本中创建一个长度变量，用来指定compute shader中buffer的长度。知道buffer的长度，以及buffer中存储的数据类型<code>float3</code>，我们可以向GPU申请一块存储空间——<code>ComputeBuffer</code>。这个空间将会用来存储计算结果，也就是compute shader中的<code>Result</code>。创建<code>ComputeBuffer</code>需要两个参数，第一参数是元素的个数，第二个参数是元素的大小。我们的元素是<code>float3</code>，也就是大小为3个<code>float</code>。另外，我们需要在CPU中申请一块和<code>ComputeBuffer</code>同样大小的数组空间，以便于将计算后的结果转移到CPU，方便后续计算使用。在计算结束后，我们可以通过<code>ComputeBuffer.Dispose</code>方法来释放GPU申请的缓存空间。</p>
-<p>当一切设置好后，我们可以在<code>Update</code>中使用compute shader。首先，我们需要将我们在GPU创建的<code>ComputeBuffer</code>和compute shader中的buffer相关联。在调用compute shader之前，我们还需要计算整个核函数需要执行多少遍，这个叫做线程组。因为核函数单次批处理的数量有限，所以需要分为多组，分批次处理。例如这里我们单次x轴处理量为64，而总的需要处理的数量为buffer长度，那么线程组的个数为后者处以前者。然后通过<code>dispatch</code>方法来启用核函数，最终计算结果通过<code>GetData</code>函数传回到CPU中。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BasicComputeSpheres</span> :</span> MonoBehaviour</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> SphereAmount = <span class="number">17</span>;</span><br><span class="line">    <span class="keyword">public</span> ComputeShader Shader;</span><br><span class="line"></span><br><span class="line">    ComputeBuffer resultBuffer;</span><br><span class="line">    <span class="keyword">int</span> kernel;</span><br><span class="line">    uint threadGroupSize;</span><br><span class="line">    Vector3[] output;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Start</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 获取核函数签名</span></span><br><span class="line">        kernel = Shader.FindKernel(<span class="string">&quot;Spheres&quot;</span>);</span><br><span class="line">		<span class="comment">// 获取核函数线程设置</span></span><br><span class="line">        Shader.GetKernelThreadGroupSizes(kernel, out threadGroupSize, out _, out _);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//buffer on the gpu in the ram</span></span><br><span class="line">        resultBuffer = <span class="keyword">new</span> ComputeBuffer(SphereAmount, <span class="keyword">sizeof</span>(<span class="keyword">float</span>) * <span class="number">3</span>);</span><br><span class="line">        output = <span class="keyword">new</span> Vector3[SphereAmount];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Update</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">		<span class="comment">//绑定数据</span></span><br><span class="line">        Shader.SetBuffer(kernel, <span class="string">&quot;Result&quot;</span>, resultBuffer);</span><br><span class="line">        <span class="keyword">int</span> threadGroups = (<span class="keyword">int</span>) ((SphereAmount + (threadGroupSize - <span class="number">1</span>)) / threadGroupSize);</span><br><span class="line">        Shader.Dispatch(kernel, threadGroups, <span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">        resultBuffer.GetData(output);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnDestroy</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        resultBuffer.Dispose();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>现在我们有了计算结果，但是并不能直观的去观察这些结果。有很多种方法可以直接在GPU中处理并显示这些结果，但是这并不是本文的重点。所以我选择使用生成一系列模型空间分布，来展示最终生成的结果。<br>在<code>Update</code>中直接将计算的坐标赋值给游戏物体空间坐标。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// in start method</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//spheres we use for visualisation</span></span><br><span class="line">instances = <span class="keyword">new</span> Transform[SphereAmount];</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; SphereAmount; i++)</span><br><span class="line">&#123;</span><br><span class="line">    instances[i] = Instantiate(Prefab, transform).transform;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//in update method</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; instances.Length; i++)</span><br><span class="line">    instances[i].localPosition = output[i];</span><br></pre></td></tr></table></figure>
-<p><img src="https://www.ronja-tutorials.com/assets/images/posts/050/Row.png"></p>
-<h2 id="A-tiny-bit-more-complex-Compute-Shader"><a href="#A-tiny-bit-more-complex-Compute-Shader" class="headerlink" title="A tiny bit more complex Compute Shader"></a>A tiny bit more complex Compute Shader</h2><p>为了达到一个更好的视觉效果，请继续阅读，别担心这里涉及到的也只是基本的hlsl语法。</p>
-<p>在compute shader中我加入了<a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/024-white-noise/">randomness</a>教程中关于噪声的函数，同时加入时间变量。在核函数中，我基于输入参数来构造一个长度为[0.1-1]的随机向量。然后采用叉乘的方法计算出与这些随机向量垂直的向量。然后使用时间变量的平方，加上一个比较大的奇数，得到一个关于时间的<code>sin</code>值和<code>cos</code>，最后将这两个值和两个随机向量相乘，并求和。在这个基础上乘以20，使得记过看起来更明显。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Each #kernel tells which function to compile; you can have many kernels</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> kernel Spheres</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;Random.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">//variables</span></span><br><span class="line">RWStructuredBuffer&lt;float3&gt; Result;</span><br><span class="line">uniform <span class="keyword">float</span> Time;</span><br><span class="line"></span><br><span class="line">[numthreads(<span class="number">64</span>,<span class="number">1</span>,<span class="number">1</span>)]</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Spheres</span> <span class="params">(uint3 id : SV_DispatchThreadID)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//generate 2 orthogonal vectors</span></span><br><span class="line">    float3 baseDir = normalize(rand1dTo3d(id.x) - <span class="number">0.5</span>) * (rand1dTo1d(id.x)*<span class="number">0.9</span>+<span class="number">0.1</span>);</span><br><span class="line">    float3 orthogonal = normalize(cross(baseDir, rand1dTo3d(id.x + <span class="number">7.1393</span>) - <span class="number">0.5</span>)) * (rand1dTo1d(id.x+<span class="number">3.7443</span>)*<span class="number">0.9</span>+<span class="number">0.1</span>);</span><br><span class="line">    <span class="comment">//scale the time and give it a random offset</span></span><br><span class="line">    <span class="keyword">float</span> scaledTime = Time * <span class="number">2</span> + rand1dTo1d(id.x) * <span class="number">712.131234</span>;</span><br><span class="line">    <span class="comment">//calculate a vector based on vectors</span></span><br><span class="line">    float3 dir = baseDir * <span class="built_in">sin</span>(scaledTime) + orthogonal * <span class="built_in">cos</span>(scaledTime);</span><br><span class="line">    Result[id.x] = dir * <span class="number">20</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>当然，我们很需要在<code>C#</code>脚本中向compute shader中传入时间变量。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Shader.SetFloat(<span class="string">&quot;Time&quot;</span>, Time.time);</span><br></pre></td></tr></table></figure>
-
-<p>然后使用自发光材质，以及泛光后处理技术，最后呈现出下面绚烂的效果。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/050/result.gif"></p>
-<h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><p><a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/050_Compute_Shader/BasicCompute.compute">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/050_Compute_Shader/BasicCompute.compute</a></p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Each #kernel tells which function to compile; you can have many kernels</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> kernel Spheres</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;Random.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">//variables</span></span><br><span class="line">RWStructuredBuffer&lt;float3&gt; Result;</span><br><span class="line">uniform <span class="keyword">float</span> Time;</span><br><span class="line"></span><br><span class="line">[numthreads(<span class="number">64</span>,<span class="number">1</span>,<span class="number">1</span>)]</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Spheres</span> <span class="params">(uint3 id : SV_DispatchThreadID)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//generate 2 orthogonal vectors</span></span><br><span class="line">    float3 baseDir = normalize(rand1dTo3d(id.x) - <span class="number">0.5</span>) * (rand1dTo1d(id.x)*<span class="number">0.9</span>+<span class="number">0.1</span>);</span><br><span class="line">    float3 orthogonal = normalize(cross(baseDir, rand1dTo3d(id.x + <span class="number">7.1393</span>) - <span class="number">0.5</span>)) * (rand1dTo1d(id.x+<span class="number">3.7443</span>)*<span class="number">0.9</span>+<span class="number">0.1</span>);</span><br><span class="line">    <span class="comment">//scale the time and give it a random offset</span></span><br><span class="line">    <span class="keyword">float</span> scaledTime = Time * <span class="number">2</span> + rand1dTo1d(id.x) * <span class="number">712.131234</span>;</span><br><span class="line">    <span class="comment">//calculate a vector based on vectors</span></span><br><span class="line">    float3 dir = baseDir * <span class="built_in">sin</span>(scaledTime) + orthogonal * <span class="built_in">cos</span>(scaledTime);</span><br><span class="line">    Result[id.x] = dir * <span class="number">20</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/050_Compute_Shader/BasicComputeSpheres.cs">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/050_Compute_Shader/BasicComputeSpheres.cs</a></p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BasicComputeSpheres</span> :</span> MonoBehaviour</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> SphereAmount = <span class="number">17</span>;</span><br><span class="line">    <span class="keyword">public</span> ComputeShader Shader;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> GameObject Prefab;</span><br><span class="line"></span><br><span class="line">    ComputeBuffer resultBuffer;</span><br><span class="line">    <span class="keyword">int</span> kernel;</span><br><span class="line">    uint threadGroupSize;</span><br><span class="line">    Vector3[] output;</span><br><span class="line"></span><br><span class="line">    Transform[] instances;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Start</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">//program we&#x27;re executing</span></span><br><span class="line">        kernel = Shader.FindKernel(<span class="string">&quot;Spheres&quot;</span>);</span><br><span class="line">        Shader.GetKernelThreadGroupSizes(kernel, out threadGroupSize, out _, out _);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//buffer on the gpu in the ram</span></span><br><span class="line">        resultBuffer = <span class="keyword">new</span> ComputeBuffer(SphereAmount, <span class="keyword">sizeof</span>(<span class="keyword">float</span>) * <span class="number">3</span>);</span><br><span class="line">        output = <span class="keyword">new</span> Vector3[SphereAmount];</span><br><span class="line"></span><br><span class="line">        <span class="comment">//spheres we use for visualisation</span></span><br><span class="line">        instances = <span class="keyword">new</span> Transform[SphereAmount];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; SphereAmount; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            instances[i] = Instantiate(Prefab, transform).transform;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Update</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        Shader.SetFloat(<span class="string">&quot;Time&quot;</span>, Time.time);</span><br><span class="line">        Shader.SetBuffer(kernel, <span class="string">&quot;Result&quot;</span>, resultBuffer);</span><br><span class="line">        <span class="keyword">int</span> threadGroups = (<span class="keyword">int</span>) ((SphereAmount + (threadGroupSize - <span class="number">1</span>)) / threadGroupSize);</span><br><span class="line">        Shader.Dispatch(kernel, threadGroups, <span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">        resultBuffer.GetData(output);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; instances.Length; i++)</span><br><span class="line">            instances[i].localPosition = output[i];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnDestroy</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        resultBuffer.Dispose();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>希望你能喜欢这个教程 :-)</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/blogs/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/blogs/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blogs/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/blogs/page/5/">5</a><a class="extend next" rel="next" href="/blogs/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/blogs/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/blogs/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blogs/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/blogs/page/5/">5</a><a class="page-number" href="/blogs/page/6/">6</a><a class="extend next" rel="next" href="/blogs/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1338,7 +1344,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-count">51</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
