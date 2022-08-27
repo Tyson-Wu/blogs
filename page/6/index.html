@@ -163,6 +163,337 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/12/23/Joy-Stick-Function/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2020/12/23/Joy-Stick-Function/" class="post-title-link" itemprop="url">摇杆实现方法1</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-23 22:01:00" itemprop="dateCreated datePublished" datetime="2020-12-23T22:01:00+08:00">2020-12-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-27 19:32:47" itemprop="dateModified" datetime="2022-08-27T19:32:47+08:00">2022-08-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Component/" itemprop="url" rel="index"><span itemprop="name">Component</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><img src="/blogs/images/src/ezgif.com-gif-maker-1.gif" alt="wwwwwww"><br>自己做了个飞行模拟的小游戏，发布到手机上需要用到摇杆来控制，所以自己写了一个Joystick类，代码如下：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> UnityEngine.EventSystems;</span><br><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> UGUI游戏摇杆</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Joystick</span> : <span class="title">MonoBehaviour</span>, <span class="title">IPointerDownHandler</span>, <span class="title">IPointerUpHandler</span>, <span class="title">IDragHandler</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Joystick instance;</span><br><span class="line">    [<span class="meta">SerializeField</span>] Camera uiCamera;<span class="comment">//摇杆对应的ui摄像机</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] RectTransform _triggerArea;<span class="comment">//触发启动摇杆区域</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] RectTransform _joyStickArea;<span class="comment">//摇杆活动区域</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] RectTransform centerTrans;<span class="comment">//摇杆图标</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] <span class="built_in">float</span> sensitivity = <span class="number">1</span>;<span class="comment">//摇杆灵敏度</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] <span class="built_in">float</span> triggerAreaScale = <span class="number">1</span>;<span class="comment">//摇杆控制区域</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆偏移方向</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> Vector2 moveDir &#123; <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆偏移长度[0-1]</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> moveLen &#123; <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 是否在操控摇杆</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">bool</span> isDraging &#123; <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆横向偏移量</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> Horizontal &#123; <span class="keyword">get</span> &#123; <span class="keyword">return</span> moveDir.x * moveLen; &#125; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆纵向偏移量</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> Vertical &#123; <span class="keyword">get</span> &#123; <span class="keyword">return</span> moveDir.y * moveLen; &#125; &#125;</span><br><span class="line"></span><br><span class="line">    Canvas _canvas;</span><br><span class="line">    Canvas canvas &#123; <span class="keyword">get</span> &#123; <span class="keyword">if</span> (_canvas == <span class="literal">null</span>) _canvas = transform.GetComponentInParent&lt;Canvas&gt;(); <span class="keyword">return</span> _canvas; &#125; &#125;</span><br><span class="line">    Vector3 targetScreenPointPos = Vector3.zero;</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">    <span class="built_in">float</span> radius = <span class="number">0f</span>;</span><br><span class="line">    Vector3 centerScreenPos;</span><br><span class="line">    <span class="built_in">float</span> depth &#123; <span class="keyword">get</span> &#123; <span class="keyword">return</span> centerScreenPos.z; &#125; &#125;</span><br><span class="line">    <span class="built_in">bool</span> hasInit = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Action onJoyStickPointerUp;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Start</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        instance = <span class="keyword">this</span>;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnEnable</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        InitParam();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnDisable</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        isDraging = <span class="literal">false</span>;</span><br><span class="line">        targetScreenPointPos = centerScreenPos;</span><br><span class="line">        centerTrans.localPosition = Vector3.zero;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">InitParam</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">if</span> (hasInit) <span class="keyword">return</span>;</span><br><span class="line">        hasInit = <span class="literal">true</span>;</span><br><span class="line">        centerScreenPos = uiCamera.WorldToScreenPoint(_joyStickArea.position);</span><br><span class="line">        Rect rect = RectTransformUtility.PixelAdjustRect(_joyStickArea, canvas);</span><br><span class="line">        radius = triggerAreaScale * rect.width/<span class="number">2</span>;</span><br><span class="line">        targetScreenPointPos = centerScreenPos;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnPointerDown</span>(<span class="params">PointerEventData eventData</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        InitParam();</span><br><span class="line">        Vector2 pointScreenPos = eventData.position;</span><br><span class="line">        <span class="comment">//if (Vector2.Distance(pointScreenPos, centerScreenPos) &gt; radius) return;</span></span><br><span class="line"></span><br><span class="line">        isDraging = <span class="literal">true</span>;</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        <span class="comment">//targetScreenPointPos = uiCamera.WorldToScreenPoint(eventData.pointerCurrentRaycast.worldPosition);</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnDrag</span>(<span class="params">PointerEventData eventData</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">if</span> (!isDraging) <span class="keyword">return</span>;</span><br><span class="line">        Vector3 pointScreenPos = eventData.position;</span><br><span class="line">        pointScreenPos.z = depth;</span><br><span class="line">        Vector3 dir = pointScreenPos - centerScreenPos;</span><br><span class="line">        <span class="built_in">float</span> len = dir.magnitude;</span><br><span class="line">        len = len &gt; radius ? radius : len;</span><br><span class="line">        dir = len * dir.normalized;</span><br><span class="line">        targetScreenPointPos = centerScreenPos + dir;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnPointerUp</span>(<span class="params">PointerEventData eventData</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        isDraging = <span class="literal">false</span>;</span><br><span class="line">        targetScreenPointPos = centerScreenPos;</span><br><span class="line">        onJoyStickPointerUp?.Invoke();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Update</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Vector3 screenPointPos = uiCamera.WorldToScreenPoint(centerTrans.position);</span><br><span class="line">        <span class="keyword">if</span>(Vector3.Distance(screenPointPos, targetScreenPointPos)&lt;<span class="number">4</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            screenPointPos = targetScreenPointPos;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            screenPointPos = Vector3.Lerp(screenPointPos, targetScreenPointPos, sensitivity * Time.deltaTime);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        centerTrans.position = uiCamera.ScreenToWorldPoint(screenPointPos);</span><br><span class="line">        moveDir = screenPointPos - centerScreenPos;</span><br><span class="line">        moveDir /= radius;</span><br><span class="line">        moveLen = moveDir.magnitude;</span><br><span class="line">        moveLen = moveLen &gt; <span class="number">1</span> ? <span class="number">1</span> : moveLen;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过属性器可以获取当前摇杆的状态参数，包括偏移方向以及强度，方向是360度，强度是[0-1]。还有几个<code>SerializeField</code>面板设置参数，结构如下图：<br><img src="/blogs/images/src/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20201223220715.png"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/11/22/Rendering-with-Replaced-Shaders/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2020/11/22/Rendering-with-Replaced-Shaders/" class="post-title-link" itemprop="url">Rendering with Replaced Shaders</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-22 18:01:34" itemprop="dateCreated datePublished" datetime="2020-11-22T18:01:34+08:00">2020-11-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-27 19:32:47" itemprop="dateModified" datetime="2022-08-27T19:32:47+08:00">2022-08-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>通常每个需要渲染的物体都自带材质以及相应的shader，但是有时候我们可能希望使用同一个Shader对场景中的进行渲染。例如，当我们对屏幕图像进行边缘检测时，需要知道每个像素点所对应三维空间点的法向量，然后根据法向量的差异来判断是否是边缘。还有一些情况我们需要场景的深度信息。无论是法向纹理还是深度散纹理等，都可以通过Relpace Shader来实现。<br>Replace Shader和普通shader没什么区别，我们只需要调用Camera.RenderWithShader或者<code>Camera.SetReplacementShader</code>函数，并指定需要用于替换的shader,以及shader的Tags值。<br>假如我们有以下三个shader，其中shaderA被设置为Relace Shader，且repalcementTag为”ReplacementTag”，其余两个都是挂载在模型上的shader：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Shader A&quot;</span></span><br><span class="line">&#123;</span><br><span class="line">	...</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">		Tags &#123;<span class="string">&quot;ReplacementTag&quot;</span>=<span class="string">&quot;true&quot;</span>&#125;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">		Tags &#123;<span class="string">&quot;OtherTag&quot;</span>=<span class="string">&quot;whatever&quot;</span>&#125;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Shader B&quot;</span></span><br><span class="line">&#123;</span><br><span class="line">	...</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">		Tags &#123;<span class="string">&quot;ReplacementTag&quot;</span>=<span class="string">&quot;false&quot;</span>&#125;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">		Tags &#123;<span class="string">&quot;OtherTag&quot;</span>=<span class="string">&quot;whatever&quot;</span>&#125;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Shader C&quot;</span></span><br><span class="line">&#123;</span><br><span class="line">	...</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">		Tags &#123;<span class="string">&quot;ReplacementTag&quot;</span>=<span class="string">&quot;true&quot;</span>&#125;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">		Tags &#123;<span class="string">&quot;OtherTag&quot;</span>=<span class="string">&quot;whatever&quot;</span>&#125;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这时候，只有挂载ShaderC的模型会被渲染。虽然ShaderB和ShaderC都含有“ReplacementTag”,但是ShaderA中的<code>&quot;ReplacementTag&quot;=&quot;true&quot;</code>，只有ShaderC中的第一个SubShader有匹配的Tag值。</p>
+<h2 id="Lit-Shader-replacement"><a href="#Lit-Shader-replacement" class="headerlink" title="Lit Shader replacement"></a>Lit Shader replacement</h2><p>replacement渲染需要指定一个camera来实现，被指定camera的渲染设置都会应用到repalcement渲染过程中，例如render path、light、shadow等。</p>
+<h2 id="Built-in-scene-depth-normals-texture"><a href="#Built-in-scene-depth-normals-texture" class="headerlink" title="Built-in scene depth/normals texture"></a>Built-in scene depth/normals texture</h2><p>camera本身内置了深度、法向纹理的渲染功能，只需要设置<code>Camera.depthTextureMode</code>，便可以开启这些功能，而渲染后的深度纹理可以用全局的<code>_CameraDepthTexture</code>变量来引用。<br>而这种内置的渲染功能的实际渲染方法与硬件相关。有些硬件就是通过replacement渲染的方式来实现的。因为ReplacementTag会对实际渲染的物体进行筛选，所以在编写Shader时，要正确使用“RenderType”这个标签。</p>
+<h2 id="Code-Example"><a href="#Code-Example" class="headerlink" title="Code Example"></a>Code Example</h2><p>在Start()函数中指定replacement shader:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Start</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	camera.SetReplacementShader(EffiectShader,<span class="string">&quot;RenderType&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>EffiectShader需要包含”RenderType”这个标签，如果没有”RenderType”这个，那么不会有任何物体被渲染。另外，EffiectShader可以有多个SubShader，每个SubShader对应一个”RenderType”。例如，我们需要渲染透明物体，可以指定两个SubShader分别渲染”RenderType”=”Transparent”和”RenderType”=”TransparentCutout”。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;EffectShader&quot;</span> &#123;</span><br><span class="line">     SubShader &#123;</span><br><span class="line">         Tags &#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> &#125;</span><br><span class="line">         Pass &#123;</span><br><span class="line">             ...</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line">     SubShader &#123;</span><br><span class="line">         Tags &#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;SomethingElse&quot;</span> &#125;</span><br><span class="line">         Pass &#123;</span><br><span class="line">             ...</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line"> ...</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>SetReplacementShader函数会查找场景中所有物体，这些物体自带的Shader的”RenderType”值和EffectShader中的”RenderType”值匹配的话，那么这些物体将会使用EffectShader中相对应的SubShader进行渲染。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/11/21/Markdown-Basics/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2020/11/21/Markdown-Basics/" class="post-title-link" itemprop="url">Markdown Basics</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-21 13:01:34" itemprop="dateCreated datePublished" datetime="2020-11-21T13:01:34+08:00">2020-11-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-27 19:32:47" itemprop="dateModified" datetime="2022-08-27T19:32:47+08:00">2022-08-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Markdown/" itemprop="url" rel="index"><span itemprop="name">Markdown</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Markdown/Basics/" itemprop="url" rel="index"><span itemprop="name">Basics</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="属性Markdown语法要点"><a href="#属性Markdown语法要点" class="headerlink" title="属性Markdown语法要点"></a>属性Markdown语法要点</h2><p>本节展示基本的Markdown用法。在<a target="_blank" rel="noopener" href="https://daringfireball.net/projects/markdown/syntax">Syntax</a>中提供了更为详细的语法介绍。下面通过同时显示了转换前和转换后的例子，展示Markdown语法与HTML格式的对照关系。<br>同时我们可以使用<a target="_blank" rel="noopener" href="https://daringfireball.net/projects/markdown/dingus">Dingus</a>在线语法验证工具来更好的理解Markdown语法。</p>
+<h2 id="段落、标题、引用"><a href="#段落、标题、引用" class="headerlink" title="段落、标题、引用"></a>段落、标题、引用</h2><p>段落由一行或多行连续的文本构成，段落之间通过一行或多行空格分隔。正常的段落不应该使用space或tabs进行缩进。</p>
+<p>Markdown提供两种风格的标题格式：Setext和atx：</p>
+<ul>
+<li>Setext风格是采用下滑线的形式来对标题进行标记。例如一级标题和二级标题，分别使用 = 和 - 来代表；</li>
+<li>atx风格的标题，采用1-6个置于行首的#号来表示。#号的个数代表标题的等级；</li>
+</ul>
+<blockquote>
+<p>块引用使用的是邮件风格的&gt;号表示。</p>
+</blockquote>
+<p>Markdown:</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">一级标题</span><br><span class="line">========</span><br><span class="line">二级标题</span><br><span class="line">--------</span><br><span class="line">然后这里是贝拉巴啦啦吧一堆描述的、正儿八经的段落。</span><br><span class="line">再来一段。</span><br><span class="line"></span><br><span class="line"><span class="section">### 三级标题</span></span><br><span class="line"><span class="quote">&gt; 这是块引用</span></span><br><span class="line"><span class="quote">&gt; </span></span><br><span class="line"><span class="quote">&gt; 这是块引用的第二段</span></span><br><span class="line"><span class="quote">&gt; 这是块引用的第三段</span></span><br><span class="line">&gt;</span><br><span class="line"><span class="quote">&gt; ## 这是块引用中的二级标题</span></span><br></pre></td></tr></table></figure>
+<p>HTML:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>一级标题<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h2</span>&gt;</span>二级标题<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>然后这里是贝拉巴啦啦吧一堆描述的、正儿八经的段落。<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>再来一段<span class="tag">&lt;<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h3</span>&gt;</span>三级标题<span class="tag">&lt;/<span class="name">h3</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">blockquote</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">p</span>&gt;</span>这是块引用<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">p</span>&gt;</span>这是块引用的第二段<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">p</span>&gt;</span>这是块引用的第三段<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">h2</span>&gt;</span>这是块引用中的二级标题<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">blockquote</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="短语强调"><a href="#短语强调" class="headerlink" title="短语强调"></a>短语强调</h2><p>Markdown使用 * 或 _ 来表示强调范围<br>Markdown：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">有些<span class="emphasis">*人*</span>就是特殊</span><br><span class="line">有些<span class="emphasis">_事_</span>就是漂亮</span><br><span class="line"></span><br><span class="line">还有些<span class="strong">**人**</span>特殊到无以复加</span><br><span class="line">还有些<span class="strong">__事__</span>漂亮到难以形容</span><br></pre></td></tr></table></figure>
+<p>HTML：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>有些<span class="tag">&lt;<span class="name">em</span>&gt;</span>人<span class="tag">&lt;/<span class="name">em</span>&gt;</span>就是特殊<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>有些<span class="tag">&lt;<span class="name">em</span>&gt;</span>事<span class="tag">&lt;/<span class="name">em</span>&gt;</span>就是漂亮<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>还有些<span class="tag">&lt;<span class="name">strong</span>&gt;</span>人<span class="tag">&lt;/<span class="name">strong</span>&gt;</span>特殊到无以复加<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>还有些<span class="tag">&lt;<span class="name">strong</span>&gt;</span>事<span class="tag">&lt;/<span class="name">strong</span>&gt;</span>漂亮到难以形容<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h2><p>无序号的列表使用 * 和 + 以及 - 号来表示。这三个符号表达的是一个意思;<br>例如这个：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">*</span> Candy</span><br><span class="line"><span class="bullet">*</span> Gum</span><br><span class="line"><span class="bullet">*</span> Booze</span><br></pre></td></tr></table></figure>
+<p>这个：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">+</span> Candy</span><br><span class="line"><span class="bullet">+</span> Gum</span><br><span class="line"><span class="bullet">+</span> Booze</span><br></pre></td></tr></table></figure>
+<p>还有这个：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> Candy</span><br><span class="line"><span class="bullet">-</span> Gum</span><br><span class="line"><span class="bullet">-</span> Booze</span><br></pre></td></tr></table></figure>
+<p>这三个输出的结果都是同样的HTML格式：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ul</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Candy<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Gum<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Booze<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>有需要的列表使用的是数字加 . 的方式：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">1.</span> Red</span><br><span class="line"><span class="bullet">2.</span> Green</span><br><span class="line"><span class="bullet">3.</span> Blue</span><br></pre></td></tr></table></figure>
+<p>HTML：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ol</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Red<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Green<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Blue<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ol</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>如果列表之间有空行，那么这些列表元素就会被认为是段落。如果单个元素由多个段落构成，那么需要将后续的段落进行缩进处理：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">1.</span> Red</span><br><span class="line"></span><br><span class="line"><span class="bullet">2.</span> Green</span><br><span class="line">green</span><br><span class="line"><span class="bullet">3.</span> Blue</span><br><span class="line">   blue</span><br><span class="line"></span><br><span class="line"><span class="bullet">4.</span> yellow</span><br><span class="line"></span><br><span class="line"><span class="bullet">5.</span> Orange</span><br></pre></td></tr></table></figure>
+<p>HTML:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ol</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>Red<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>Green</span><br><span class="line">green<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>Blue</span><br><span class="line">blue<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>yellow<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">p</span>&gt;</span>Orange<span class="tag">&lt;/<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ol</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h2><p>Markdown提供两种链接方式：</p>
+<ul>
+<li>inline，内联方式；</li>
+<li>reference，引用方式；</li>
+</ul>
+<p>这两种方式都需要使用方括号来分隔需要显示的文本。<br>内联方式直接在方括号后面使用圆括号来表示链接，例如：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这是[<span class="string">链接名称</span>](<span class="link">http://example.com/</span>)。</span><br></pre></td></tr></table></figure>
+<p>HTML：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>这是<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://example.com/&quot;</span>&gt;</span>链接名称<span class="tag">&lt;/<span class="name">a</span>&gt;</span>。<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>另外，我们也可以给网址命个名：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这是[<span class="string">链接名称</span>](<span class="link">http://example.com/ &quot;黑网&quot;</span>)。</span><br></pre></td></tr></table></figure>
+<p>HTML：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>这是<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://example.com/&quot;</span> <span class="attr">title</span>=<span class="string">&quot;黑网&quot;</span>&gt;</span>链接名称<span class="tag">&lt;/<span class="name">a</span>&gt;</span>。<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>引用方式通过给链接命名的方式进行链接：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">我从[<span class="string">黑网</span>][<span class="symbol">1</span>]跳到[<span class="string">白网</span>][<span class="symbol">2</span>]再跳到[<span class="string">红网</span>][<span class="symbol">3</span>]</span><br><span class="line"></span><br><span class="line">[<span class="symbol">1</span>]: <span class="link">http://black-net.com/ &quot;黑网&quot;</span></span><br><span class="line">[<span class="symbol">2</span>]: <span class="link">http://white-net.com/ &quot;白网 1&quot;</span></span><br><span class="line">[<span class="symbol">3</span>]: <span class="link">http://red-net.com/ &quot;红网 2&quot;</span></span><br></pre></td></tr></table></figure>
+<p>HTML：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>我从<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://black-net.com/&quot;</span> <span class="attr">title</span>=<span class="string">&quot;黑网&quot;</span>&gt;</span>黑网<span class="tag">&lt;/<span class="name">a</span>&gt;</span>跳到<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://white-net.com/&quot;</span> <span class="attr">title</span>=<span class="string">&quot;白网 1&quot;</span>&gt;</span>白网<span class="tag">&lt;/<span class="name">a</span>&gt;</span>再跳到<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://red-net.com/&quot;</span> <span class="attr">title</span>=<span class="string">&quot;红网 2&quot;</span>&gt;</span>红网<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>上面的title属性可有可无。链接名由字母、数字、空格构成，不区分大小写：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">我在[<span class="string">红网a</span>][<span class="symbol">red 1</span>]看到你的照片</span><br><span class="line">[<span class="symbol">REd 1</span>]: <span class="link">http://red-a-net.com/</span></span><br></pre></td></tr></table></figure>
+<p>HTML:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>我在<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://red-a-net.com/&quot;</span>&gt;</span>红网a<span class="tag">&lt;/<span class="name">a</span>&gt;</span>看到你的照片<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="图片"><a href="#图片" class="headerlink" title="图片"></a>图片</h2><p>图片的语法和链接非常相似，也是有Inline和Reference两种方式，如下所示，其中Title属性是可有可无的：</p>
+<ul>
+<li>Inline，内联方式：<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">![<span class="string">alt text</span>](<span class="link">/path/to/img.jpg &quot;Title&quot;</span>)</span><br></pre></td></tr></table></figure></li>
+<li>Reference,引用方式：<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">![<span class="string">alt tex</span>][<span class="symbol">id</span>]</span><br><span class="line">[<span class="symbol">id</span>]: <span class="link">/path/to/img.jpg &quot;Title&quot;</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>无论哪种方式得到的结果都一样：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;/path/to/img.jpg&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;alt tex&quot;</span> <span class="attr">title</span>=<span class="string">&quot;Title&quot;</span> /&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="代码块"><a href="#代码块" class="headerlink" title="代码块"></a>代码块</h2><p>在普通的段落中，我们可以给使用反引号 ` ，也就是ECS键下面的那个 ` 键， 从而将代码插入到普通段落中。这样可以使得普通段落和代码块的之间界限分明。还有一点就是 &amp; 和 &lt; 、 &gt; 这几个符合是HTML的命令实体，需要转义后才能以普通字符的形式显示。但是在反引号 ` 包裹下的所有字符都只被当作普通字符，而不需要而外的转义操作。这就很方便在Markdown文档中编写HTML的示例代码：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">I strongly recommend against using any <span class="code">`&lt;blink&gt;`</span> tags.</span><br><span class="line"></span><br><span class="line">I wish SmartyPants used named entities like <span class="code">`&amp;mdash;`</span></span><br><span class="line">instead of decimal-encoded entites like <span class="code">`&amp;#8212;`</span>.</span><br></pre></td></tr></table></figure>
+<p>HTML：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>I strongly recommend against using any</span><br><span class="line"><span class="tag">&lt;<span class="name">code</span>&gt;</span><span class="symbol">&amp;lt;</span>blink<span class="symbol">&amp;gt;</span><span class="tag">&lt;/<span class="name">code</span>&gt;</span> tags.<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>I wish SmartyPants used named entities like</span><br><span class="line"><span class="tag">&lt;<span class="name">code</span>&gt;</span><span class="symbol">&amp;amp;</span>mdash;<span class="tag">&lt;/<span class="name">code</span>&gt;</span> instead of decimal-encoded</span><br><span class="line">entites like <span class="tag">&lt;<span class="name">code</span>&gt;</span><span class="symbol">&amp;amp;</span>#8212;<span class="tag">&lt;/<span class="name">code</span>&gt;</span>.<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>最终在网页上显示的效果：<br>I strongly recommend against using any <code>&lt;blink&gt;</code> tags.</p>
+<p>I wish SmartyPants used named entities like <code>&amp;mdash;</code><br>instead of decimal-encoded entites like <code>&amp;#8212;</code>.<br>如果希望将整个代码块进行格式化，那么将代码块中的每一行缩进4个spaces或1个tab。其所产生的效果和使用反引号 ` 标记的代码块一样，其中的 &amp; 、&lt; 、&gt; 这些符号都被自动转义了：<br>Markdown:</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">If you want your page to validate under XHTML 1.0 Strict,</span><br><span class="line">you&#x27;ve got to put paragraph tags in your blockquotes:</span><br><span class="line"></span><br><span class="line"><span class="code">    &lt;blockquote&gt;</span></span><br><span class="line"><span class="code">        &lt;p&gt;For example.&lt;/p&gt;</span></span><br><span class="line"><span class="code">    &lt;/blockquote&gt;</span></span><br></pre></td></tr></table></figure>
+<p>HTML:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>If you want your page to validate under XHTML 1.0 Strict,</span><br><span class="line">you&#x27;ve got to put paragraph tags in your blockquotes:<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">pre</span>&gt;</span><span class="tag">&lt;<span class="name">code</span>&gt;</span><span class="symbol">&amp;lt;</span>blockquote<span class="symbol">&amp;gt;</span></span><br><span class="line">    <span class="symbol">&amp;lt;</span>p<span class="symbol">&amp;gt;</span>For example.<span class="symbol">&amp;lt;</span>/p<span class="symbol">&amp;gt;</span></span><br><span class="line"><span class="symbol">&amp;lt;</span>/blockquote<span class="symbol">&amp;gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">code</span>&gt;</span><span class="tag">&lt;/<span class="name">pre</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>最终在网页上显示的效果：<br>If you want your page to validate under XHTML 1.0 Strict,<br>you’ve got to put paragraph tags in your blockquotes:</p>
+<pre><code>&lt;blockquote&gt;
+    &lt;p&gt;For example.&lt;/p&gt;
+&lt;/blockquote&gt;</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/11/21/Markdown-Main/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -194,7 +525,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-27 03:49:58" itemprop="dateModified" datetime="2022-08-27T03:49:58+08:00">2022-08-27</time>
+                <time title="修改时间：2022-08-27 19:32:47" itemprop="dateModified" datetime="2022-08-27T19:32:47+08:00">2022-08-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -315,20 +646,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">51</span>
+          <span class="site-state-item-count">54</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/blogs/categories/">
           
-        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-count">17</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/blogs/tags/">
           
-        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
