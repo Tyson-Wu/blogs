@@ -281,6 +281,8 @@ date: 2021-05-27 17:01:34
 [C++, OpenGL and more...](https://www.mbsoftworks.sk/index.php?page=tutorials&series=1&tutorial=24):...;
 [GAME DEVELOPMENT TUTORIALS](https://www.construct.net/en/tutorials?flang=45):Read our free tutorials on game development submitted by our staff and expert users in our community;
 [Performance optimization tips: Physics in Unity | Tutorial](https://gamasutra.com/blogs/MikeMarrone/20210312/378423/Game_Dev_Digest_Issue_85__Platforms_Performance_and_Tutorials.php):...;
+[【Docker闪退】【解决方法】It looks like there is an error with Docker Desktop, restart it to fix it](https://blog.csdn.net/baidu_30506559/article/details/125838506)
+
 
 ### ECS
 [entity-component-system](https://github.com/pvigier/ecs):A simple and easy to use entity-component-system C++ library;
@@ -337,6 +339,7 @@ date: 2021-05-27 17:01:34
 [MathJax Online Editor](https://www.cg.alphacodingskills.com/edit-mathjax-online.php)线上编辑数学公式。例：$$x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$
 [mathjax](https://www.mathjax.org/)数学公式编辑软件。
 [Install-FFmpeg-on-Windows](https://www.wikihow.com/Install-FFmpeg-on-Windows):ffmpeg官网好像进不了，不过这个网站的下载链接可以直接链接到官网地址，进行直接下载。
+[下载Java 11 下载路径](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
 
 ## Assets
 [AIM@SHAPE](http://visionair.ge.imati.cnr.it/ontologies/shapes/viewmodels.jsp)
