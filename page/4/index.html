@@ -163,6 +163,126 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/06/Ronja_Vertex_Displacement/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/07/06/Ronja_Vertex_Displacement/" class="post-title-link" itemprop="url">Vertex Displacement</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-07-06 13:01:00" itemprop="dateCreated datePublished" datetime="2021-07-06T13:01:00+08:00">2021-07-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-30 00:35:25" itemprop="dateModified" datetime="2022-08-30T00:35:25+08:00">2022-08-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/015-wobble-displacement/">Vertex Displacement</a></p>
+<p>目前为止，我们使用到最多的就是裁剪坐标系和世界坐标系，其实在顶点着色器中，我们能做的远远不止这些。接下来我将介绍如果将三角函数应用到模型上，从而实现模型抖动效果。</p>
+<p>本篇的例子是采用表面着色器，如果你对表面着色器还不了解的话，建议你先从<a href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Surface_Shader_Basics/">这篇教程</a>看起。当然本篇介绍的思路可以用于到其他着色器上。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/015/Result.gif"></p>
+<p>一般我们对顶点坐标的操作都是在顶点着色器中，而我们的表面着色器中似乎并没有顶点着色器函数，实际上表面着色器最终会被翻译为顶点、片段着色器，只不过这些都是由Unity来完成。而在表面着色器中其实还有一个和顶点着色器同名的函数，也是用来处理顶点数据的，只不过定义的时候是和表面着色器一起定义的。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//表面着色器</span></span><br><span class="line"><span class="comment">//表面着色器函数和标准光照模型</span></span><br><span class="line"><span class="comment">//fullforwardshadows 使用所有的阴影Pass</span></span><br><span class="line"><span class="comment">//vertex:vert 用来处理顶点变换</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> surface surf Standard fullforwardshadows vertex:vert</span></span><br></pre></td></tr></table></figure>
+
+<p>然后我们需要去实现这个顶点处理函数。在无光照的着色器中，我们是在顶点着色器函数中处理裁剪变换。而在表面着色器中，这里的顶点处理函数并不需要处理裁剪变换，因为那些基础部分都由Unity自动生成。这我们只需要处理顶点坐标，然后将处理后的结果传给下一步由Unity自动生成的代码处理。</p>
+<p>可以这么说，这里的顶点处理函数是在普通的顶点着色器函数之前执行的，所以顶点处理函数的输入参数也是模型网格数据。这里可以使用Unity提供给我们的<code>appadata_full</code>，也可以自定义。</p>
+<p>和表面着色器函数一样，这里的顶点处理函数也不返回任何值，而是通过<code>inout</code>来向外部传递结果。</p>
+<p>因为在表面着色器中，所有必要的顶点变换都是由Unity自动生成的，所以定义一个空的顶点处理函数并不会影响原先的表面着色器。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">vert</span><span class="params">(inout appdata_full data)</span></span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>比较简单的顶点处理就是给所有的顶点乘以一个缩放因子，这样我们就可以控制模型变大变小。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">void vert(inout appdata_full data)&#123;</span><br><span class="line">    data.vertex.xyz *&#x3D; 2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/015/ShadowRealm.png"></p>
+<p>虽然模型变大了，但是整个显示却变得不正常了。这里的阴影还是基于原来的为改变的模型顶点来计算的。这是因为表面着色器并不会根据需求自动生成阴影Pass，而依然是复制已有的阴影Pass。为了解决这个问题，我们可以定义<code>addshadow</code>关键字，这样错误的阴影就会消失了。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//addshadows 是告诉表面着色器，基于顶点处理函数，重现创建一个阴影Pass</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> surface surf Standard fullforwardshadows vertex:vert addshadow</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/015/FixedShadows.png"></p>
+<p>仅仅是缩放模型显得单调了，接下来我们可以实现更有趣的效果。通过计算顶点坐标的x值得三角函数，来改变器y值，从而产生一种波动的效果。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">vert</span><span class="params">(inout appdata_full data)</span></span>&#123;</span><br><span class="line">    data.vertex.y += <span class="built_in">sin</span>(data.vertex.x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/015/QueerMonkey.png"></p>
+<p>上面的结果表明当前使用的三角函数波形较大、频率低，因此我们增加两个控制波形的变量。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">_Amplitude (<span class="string">&quot;Wave Size&quot;</span>, Range(<span class="number">0</span>,<span class="number">1</span>)) = <span class="number">0.4</span></span><br><span class="line">_Frequency (<span class="string">&quot;Wave Freqency&quot;</span>, Range(<span class="number">1</span>, <span class="number">8</span>)) = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">float</span> _Amplitude;</span><br><span class="line"><span class="keyword">float</span> _Frequency;</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">vert</span><span class="params">(inout appdata_full data)</span></span>&#123;</span><br><span class="line">float4 modifiedPos = data.vertex;</span><br><span class="line">modifiedPos.y += <span class="built_in">sin</span>(data.vertex.x * _Frequency) * _Amplitude;</span><br><span class="line">data.vertex = modifiedPos;</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/015/Sliders.png"><br><img src="https://www.ronja-tutorials.com/assets/images/posts/015/WobblyMonkey.png"></p>
+<p>现在我们可以很好地控制我们的模型波形了，但是在顶点处理函数中只处理了顶点坐标，而没有同时处理法向量，因此法向量相对应模型表面来说实际上是不匹配的。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/015/WrongNormalsExplanation.png"></p>
+<p>这里最简单且最灵活的计算自定义模型表面法向量的方法是，通过采集模型表面上的点来重新计算法向量。</p>
+<p>理论上来说，我们可以采集变形后的局部区域的任意点来计算切平面，进而计算法向量。但是我们需要充分利用已有数据来解析这个切平面。首先对于切向空间我们需要有所了解，在切向空间中，法向量叫<code>normal</code>，切向向量叫<code>tangent</code>，还有一个叫不出名字的<code>bitangent</code>，这三个向量相互垂直，构成切向空间的三个轴。如下图所示，蓝色是法向量，红色是切向量，黄色是<code>bitangent</code>。其中变形前的切向量和法向量都可以从模型网格数据中获取。所以变形前的<code>bitangent</code>可以通过前两者的叉乘来计算。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/015/ShowNormals.png"></p>
+<p>在知道变形前的切向向量和<code>bitangent</code>就表示我们知道变形前的切平面，那么计算变形后的切平面我们同样可以先计算变形后的切向量和<code>bitangent</code>。因为这两个向量是沿着模型表面一同变形的，所以可以使用前面的波形函数计算两个向量变形后的方向，然后再通过叉乘来计算变形后的法向量。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//求解变形后的切向方向临近点的坐标</span></span><br><span class="line">float3 posPlusTangent = data.vertex + data.tangent * <span class="number">0.01</span>;</span><br><span class="line">posPlusTangent.y += <span class="built_in">sin</span>(posPlusTangent.x * _Frequency) * _Amplitude;</span><br><span class="line"><span class="comment">//求解变形后的bitangent方向临近点的坐标</span></span><br><span class="line">float3 bitangent = cross(data.normal, data.tangent);</span><br><span class="line">float3 posPlusBitangent = data.vertex + bitangent * <span class="number">0.01</span>;</span><br><span class="line">posPlusBitangent.y += <span class="built_in">sin</span>(posPlusBitangent.x * _Frequency) * _Amplitude;</span><br></pre></td></tr></table></figure>
+
+<p>上面求解了两个临近点变形后的位置，加上前面计算好的顶点变形后的位置，我们就可以得到变性后的切向平面，然后求切平面的法向量。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">vert</span><span class="params">(inout appdata_full data)</span></span>&#123;</span><br><span class="line">    <span class="comment">//求解变形后的顶点坐标</span></span><br><span class="line">    float4 modifiedPos = data.vertex;</span><br><span class="line">    modifiedPos.y += <span class="built_in">sin</span>(data.vertex.x * _Frequency) * _Amplitude;</span><br><span class="line">    <span class="comment">//求解变形后的切向方向临近点的坐标</span></span><br><span class="line">    float3 posPlusTangent = data.vertex + data.tangent * <span class="number">0.01</span>;</span><br><span class="line">    posPlusTangent.y += <span class="built_in">sin</span>(posPlusTangent.x * _Frequency) * _Amplitude;</span><br><span class="line">    <span class="comment">//求解变形后的bitangent方向临近点的坐标</span></span><br><span class="line">    float3 bitangent = cross(data.normal, data.tangent);</span><br><span class="line">    float3 posPlusBitangent = data.vertex + bitangent * <span class="number">0.01</span>;</span><br><span class="line">    posPlusBitangent.y += <span class="built_in">sin</span>(posPlusBitangent.x * _Frequency) * _Amplitude;</span><br><span class="line">    <span class="comment">//求解变形后的切平面</span></span><br><span class="line">    float3 modifiedTangent = posPlusTangent - modifiedPos;</span><br><span class="line">    float3 modifiedBitangent = posPlusBitangent - modifiedPos;</span><br><span class="line">    <span class="comment">//求解变形后切平面的法向量，也就是模型变形后的法向量</span></span><br><span class="line">    float3 modifiedNormal = cross(modifiedTangent, modifiedBitangent);</span><br><span class="line">    data.normal = normalize(modifiedNormal);</span><br><span class="line">    data.vertex = modifiedPos;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/015/CorrectNormals.png"></p>
+<p>最后我希望我们的波形抖动随着时间变化而变化。前面我们只采用了模型顶点坐标的x值作为波形函数的参数，从而得到变形后的坐标，在此基础上引入时间变量是非常简单的。</p>
+<p>Unity向着色器中传递的时间变量是一个四维向量，其中第一个元素的值是时间处以20，第二是是时间，第三个是时间成以2，第四个是时间乘以三，这里的时间都是以秒为单位。这里我们选择第二个参数时间来控制波形，另外我们还需要控制波形动画速度的变量。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">_AnimationSpeed (<span class="string">&quot;Animation Speed&quot;</span>, Range(<span class="number">0</span>,<span class="number">5</span>)) = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">float</span> _AnimationSpeed;</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">vert</span><span class="params">(inout appdata_full data)</span></span>&#123;</span><br><span class="line">    float4 modifiedPos = data.vertex;</span><br><span class="line">    modifiedPos.y += <span class="built_in">sin</span>(data.vertex.x * _Frequency + _Time.y * _AnimationSpeed) * _Amplitude;</span><br><span class="line">    </span><br><span class="line">    float3 posPlusTangent = data.vertex + data.tangent * <span class="number">0.01</span>;</span><br><span class="line">    posPlusTangent.y += <span class="built_in">sin</span>(posPlusTangent.x * _Frequency + _Time.y * _AnimationSpeed) * _Amplitude;</span><br><span class="line"></span><br><span class="line">    float3 bitangent = cross(data.normal, data.tangent);</span><br><span class="line">    float3 posPlusBitangent = data.vertex + bitangent * <span class="number">0.01</span>;</span><br><span class="line">    posPlusBitangent.y += <span class="built_in">sin</span>(posPlusBitangent.x * _Frequency + _Time.y * _AnimationSpeed) * _Amplitude;</span><br><span class="line"></span><br><span class="line">    float3 modifiedTangent = posPlusTangent - modifiedPos;</span><br><span class="line">    float3 modifiedBitangent = posPlusBitangent - modifiedPos;</span><br><span class="line"></span><br><span class="line">    float3 modifiedNormal = cross(modifiedTangent, modifiedBitangent);</span><br><span class="line">    data.normal = normalize(modifiedNormal);</span><br><span class="line">    data.vertex = modifiedPos;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/015/Result.gif"></p>
+<p>上面计算临近点的时候我们是使用0.01个偏移来是变形更加平滑。这个值越小，其变形变越明显，越大，整个形变越光滑。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/015_vertex_manipulation&quot;</span> &#123;</span><br><span class="line">    <span class="comment">//材质面板</span></span><br><span class="line">    Properties &#123;</span><br><span class="line">        _Color (<span class="string">&quot;Tint&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">        _MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">        _Smoothness (<span class="string">&quot;Smoothness&quot;</span>, Range(<span class="number">0</span>, <span class="number">1</span>)) = <span class="number">0</span></span><br><span class="line">        _Metallic (<span class="string">&quot;Metalness&quot;</span>, Range(<span class="number">0</span>, <span class="number">1</span>)) = <span class="number">0</span></span><br><span class="line">        [HDR] _Emission (<span class="string">&quot;Emission&quot;</span>, color) = (<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">        _Amplitude (<span class="string">&quot;Wave Size&quot;</span>, Range(<span class="number">0</span>,<span class="number">1</span>)) = <span class="number">0.4</span></span><br><span class="line">        _Frequency (<span class="string">&quot;Wave Freqency&quot;</span>, Range(<span class="number">1</span>, <span class="number">8</span>)) = <span class="number">2</span></span><br><span class="line">        _AnimationSpeed (<span class="string">&quot;Animation Speed&quot;</span>, Range(<span class="number">0</span>,<span class="number">5</span>)) = <span class="number">1</span></span><br><span class="line">    &#125;</span><br><span class="line">    SubShader &#123;</span><br><span class="line">        <span class="comment">//不透明物体</span></span><br><span class="line">        Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Geometry&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line">        CGPROGRAM</span><br><span class="line"></span><br><span class="line">        <span class="comment">//表面着色器</span></span><br><span class="line">        <span class="comment">//表面着色器函数和标准光照模型</span></span><br><span class="line">        <span class="comment">//fullforwardshadows 使用所有的阴影Pass</span></span><br><span class="line">        <span class="comment">//vertex:vert 用来处理顶点变换</span></span><br><span class="line">        <span class="comment">//addshadows 是告诉表面着色器，基于顶点处理函数，重现创建一个阴影Pass</span></span><br><span class="line">        <span class="meta">#<span class="meta-keyword">pragma</span> surface surf Standard fullforwardshadows vertex:vert addshadow</span></span><br><span class="line">        <span class="meta">#<span class="meta-keyword">pragma</span> target 3.0</span></span><br><span class="line"></span><br><span class="line">        sampler2D _MainTex;</span><br><span class="line">        fixed4 _Color;</span><br><span class="line"></span><br><span class="line">        half _Smoothness;</span><br><span class="line">        half _Metallic;</span><br><span class="line">        half3 _Emission;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">float</span> _Amplitude;</span><br><span class="line">        <span class="keyword">float</span> _Frequency;</span><br><span class="line">        <span class="keyword">float</span> _AnimationSpeed;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//表面着色器的输入数据</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">Input</span> &#123;</span></span><br><span class="line">            float2 uv_MainTex;</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">vert</span><span class="params">(inout appdata_full data)</span></span>&#123;</span><br><span class="line">            float4 modifiedPos = data.vertex;</span><br><span class="line">            modifiedPos.y += <span class="built_in">sin</span>(data.vertex.x * _Frequency + _Time.y * _AnimationSpeed) * _Amplitude;</span><br><span class="line">            </span><br><span class="line">            float3 posPlusTangent = data.vertex + data.tangent * <span class="number">0.01</span>;</span><br><span class="line">            posPlusTangent.y += <span class="built_in">sin</span>(posPlusTangent.x * _Frequency + _Time.y * _AnimationSpeed) * _Amplitude;</span><br><span class="line"></span><br><span class="line">            float3 bitangent = cross(data.normal, data.tangent);</span><br><span class="line">            float3 posPlusBitangent = data.vertex + bitangent * <span class="number">0.01</span>;</span><br><span class="line">            posPlusBitangent.y += <span class="built_in">sin</span>(posPlusBitangent.x * _Frequency + _Time.y * _AnimationSpeed) * _Amplitude;</span><br><span class="line"></span><br><span class="line">            float3 modifiedTangent = posPlusTangent - modifiedPos;</span><br><span class="line">            float3 modifiedBitangent = posPlusBitangent - modifiedPos;</span><br><span class="line"></span><br><span class="line">            float3 modifiedNormal = cross(modifiedTangent, modifiedBitangent);</span><br><span class="line">            data.normal = normalize(modifiedNormal);</span><br><span class="line">            data.vertex = modifiedPos;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//表面着色器函数</span></span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">surf</span> <span class="params">(Input i, inout SurfaceOutputStandard o)</span> </span>&#123;</span><br><span class="line">            <span class="comment">//纹理采样</span></span><br><span class="line">            fixed4 col = tex2D(_MainTex, i.uv_MainTex);</span><br><span class="line">            col *= _Color;</span><br><span class="line">            o.Albedo = col.rgb;</span><br><span class="line">            <span class="comment">//设置标准光照参数</span></span><br><span class="line">            o.Metallic = _Metallic;</span><br><span class="line">            o.Smoothness = _Smoothness;</span><br><span class="line">            o.Emission = _Emission;</span><br><span class="line">        &#125;</span><br><span class="line">        ENDCG</span><br><span class="line">    &#125;</span><br><span class="line">    FallBack <span class="string">&quot;Standard&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>希望本篇能启发你对模型顶点处理的思考，然后创造出美轮美奂的效果。</p>
+<p>你可以在以下链接找到源码：<br><a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/015_VertexManipulation/vertexmanipulation.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/015_VertexManipulation/vertexmanipulation.shader</a></p>
+<p>希望你能喜欢这个教程哦！如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/06/Ronja_Polygon_Clipping/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -194,7 +314,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-29 23:53:05" itemprop="dateModified" datetime="2022-08-29T23:53:05+08:00">2022-08-29</time>
+                <time title="修改时间：2022-08-30 00:35:25" itemprop="dateModified" datetime="2022-08-30T00:35:25+08:00">2022-08-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -331,7 +451,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-29 23:53:05" itemprop="dateModified" datetime="2022-08-29T23:53:05+08:00">2022-08-29</time>
+                <time title="修改时间：2022-08-30 00:35:25" itemprop="dateModified" datetime="2022-08-30T00:35:25+08:00">2022-08-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -449,7 +569,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-29 23:53:05" itemprop="dateModified" datetime="2022-08-29T23:53:05+08:00">2022-08-29</time>
+                <time title="修改时间：2022-08-30 00:35:25" itemprop="dateModified" datetime="2022-08-30T00:35:25+08:00">2022-08-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -560,7 +680,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-29 23:53:05" itemprop="dateModified" datetime="2022-08-29T23:53:05+08:00">2022-08-29</time>
+                <time title="修改时间：2022-08-30 00:35:25" itemprop="dateModified" datetime="2022-08-30T00:35:25+08:00">2022-08-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -666,7 +786,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-29 23:53:05" itemprop="dateModified" datetime="2022-08-29T23:53:05+08:00">2022-08-29</time>
+                <time title="修改时间：2022-08-30 00:35:25" itemprop="dateModified" datetime="2022-08-30T00:35:25+08:00">2022-08-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -785,7 +905,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-29 23:53:05" itemprop="dateModified" datetime="2022-08-29T23:53:05+08:00">2022-08-29</time>
+                <time title="修改时间：2022-08-30 00:35:25" itemprop="dateModified" datetime="2022-08-30T00:35:25+08:00">2022-08-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -904,7 +1024,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-29 23:53:05" itemprop="dateModified" datetime="2022-08-29T23:53:05+08:00">2022-08-29</time>
+                <time title="修改时间：2022-08-30 00:35:25" itemprop="dateModified" datetime="2022-08-30T00:35:25+08:00">2022-08-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1002,7 +1122,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-29 23:53:05" itemprop="dateModified" datetime="2022-08-29T23:53:05+08:00">2022-08-29</time>
+                <time title="修改时间：2022-08-30 00:35:25" itemprop="dateModified" datetime="2022-08-30T00:35:25+08:00">2022-08-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1100,7 +1220,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-29 23:53:05" itemprop="dateModified" datetime="2022-08-29T23:53:05+08:00">2022-08-29</time>
+                <time title="修改时间：2022-08-30 00:35:25" itemprop="dateModified" datetime="2022-08-30T00:35:25+08:00">2022-08-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1151,138 +1271,6 @@
 <p>如果我们的纹理贴图也存在半透明通道，那么最终渲染出来的效果将是各个部位的透明程度有差异。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/006/TextureTransparentCube.png"></p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/006_Basic_Transparency&quot;</span>&#123;</span><br><span class="line">	Properties&#123;</span><br><span class="line">		_Color (<span class="string">&quot;Tint&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">		_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	SubShader&#123;</span><br><span class="line">		Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Transparent&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Transparent&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line">		Blend SrcAlpha OneMinusSrcAlpha</span><br><span class="line">		ZWrite off</span><br><span class="line"></span><br><span class="line">		Pass&#123;</span><br><span class="line">			CGPROGRAM</span><br><span class="line"></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UnityCG.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line">			sampler2D _MainTex;</span><br><span class="line">			float4 _MainTex_ST;</span><br><span class="line"></span><br><span class="line">			fixed4 _Color;</span><br><span class="line"></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">				float4 vertex : POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">				float4 position : SV_POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">				v2f o;</span><br><span class="line">				o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">				o.uv = TRANSFORM_TEX(v.uv, _MainTex);</span><br><span class="line">				<span class="keyword">return</span> o;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">				fixed4 col = tex2D(_MainTex, i.uv);</span><br><span class="line">				col *= _Color;</span><br><span class="line">				<span class="keyword">return</span> col;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>你可以在以下链接找到源码：<a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/006_Transparency/transparent.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/006_Transparency/transparent.shader</a></p>
-<p>希望你能喜欢这个教程哦！如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Surface_Shader_Basics/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2021/07/01/Ronja_Surface_Shader_Basics/" class="post-title-link" itemprop="url">Surface Shader Basics</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-07-01 13:01:00" itemprop="dateCreated datePublished" datetime="2021-07-01T13:01:00+08:00">2021-07-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-29 23:53:05" itemprop="dateModified" datetime="2022-08-29T23:53:05+08:00">2022-08-29</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/005-simple-surface/">Surface Shader Basics</a></p>
-<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>在Unity中，我们可以创建一个空的着色器脚本，然后手动一行一行的去实现整个脚本。当然这种方式比较费时，毕竟着色器有一套固定的流程，因此可以将一部分代码复用，例如光照模型。如果能够直接配置一些参数就能自动生成相关代码，你一定会喜欢吧。Unity就是这么会投其所好，它实现了一种名叫表面着色器的东东，刚好能够满足咱懒人的需求。懒-是推动科技发展的第一生产力，至理名言啊！</p>
-<p>那什么是表面作色器呢？在进入正题之前，我建议你先了解最简单的无光照的着色器，如果你不清楚，可以参考我上一个<a href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Basic_Shader/">教程</a>。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/005/Result.png"></p>
-<h2 id="Conversion-to-simple-Surface-Shader"><a href="#Conversion-to-simple-Surface-Shader" class="headerlink" title="Conversion to simple Surface Shader"></a>Conversion to simple Surface Shader</h2><p>相比于前面介绍的着色器实现方法，表面着色器的实现就显得更加简洁，原先需要处理的很多内容都可以剔除，因为Unity会自动帮我们生成相关代码。以上一个教程的着色器脚本为例，如果我们要用表面着色器来实现，那么前面提到的什么顶点着色器都可以不要了。与之相对应的宏命令也可以删除，两者之间的插值数据也可以不要了。甚至是<code>UnityCG.cginc</code>文件也可以不要，还有<code>MainTex_ST</code>等等。这些代码最终都会由Unity自动生成。一顿大刀阔斧，来看看我们的成果吧：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/005_surface&quot;</span> &#123;</span><br><span class="line">	Properties &#123;</span><br><span class="line">		_Color (<span class="string">&quot;Tint&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">		_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	SubShader &#123;</span><br><span class="line">		Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Geometry&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line">		CGPROGRAM</span><br><span class="line"></span><br><span class="line">		sampler2D _MainTex;</span><br><span class="line">		fixed4 _Color;</span><br><span class="line"></span><br><span class="line">		<span class="function">fixed4 <span class="title">frag</span> <span class="params">(v2f i)</span> : SV_TARGET </span>&#123;</span><br><span class="line">			fixed4 col = tex2D(_MainTex, i.uv);</span><br><span class="line">			col *= _Color;</span><br><span class="line">			<span class="keyword">return</span> col;</span><br><span class="line">		&#125;</span><br><span class="line">		ENDCG</span><br><span class="line">	&#125;</span><br><span class="line">	FallBack <span class="string">&quot;Standard&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>简洁的令人发指！等等，先别急着感叹，还有事没做完。上面的着色器脚本并不能执行，因为表面着色器有自己的一些要求。</p>
-<p>首先，我们需要添加一个新的数据类型作为片段着色器的输入。这个数据类型将会包含所有与片段着色相关的必要数据。当然，我们这个简单的不能再简单的着色器只需要传递UV坐标。UV坐标还是二维向量。但是，这里的UV变量命名有特殊的规则。因为UV坐标是用来纹理采样的，上一章讲过UV变换，每一个纹理都有自己的缩放、偏移参数，所以必须将变换后的UV和对应的纹理相关联。这里采用命名规则来实现，首先UV变量必须以<code>uv</code>开头，然后后面跟随纹理变量的名称。这样，在后面自动生成代码的时候，程序就知道谁和谁配对了。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Input</span> &#123;</span></span><br><span class="line">	float2 uv_MainTex;<span class="comment">//此时配对的纹理是 _MainTex</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>接下来我们要对之前的片段着色其进行修改，使其编程表面着色器。为了区分两者，先把函数名改为<code>surf</code>。然后表面着色器函数是没有返回值的，所以函数返回类型改为<code>void</code>。</p>
-<p>然后再拓展出两个参数。第一个参数正是我们刚刚定义好的<code>Input</code>结构，通过这个参数，表面着色器可以获取所有相关的必要参数；第二个参数是一个叫做<code>SurfaceOutputStandard</code>的结构体，从字面意思可以看出，这就是表面着色器的最终输出数据。当然，在函数结束之前，必须计算好、并赋值所有需要外传的参数。除了<code>SurfaceOutputStandard</code>结构外，Unity还定义了其他类似的结构，它们之间的区别在于适用于不同的光照模型。而这些结构中的成员变量就包含了后续光照处理所必须的数据，这些数据的具体含义将在后面介绍。</p>
-<p>然后是删除<code>SV_Target</code>语义标识符，因为我们的<code>surf</code>函数的返回类型是<code>void</code>。</p>
-<p>最后是把<code>return</code>语句删除。然后将计算所得的数据通过<code>SurfaceOutputStandard</code>传递出去。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">surf</span> <span class="params">(Input i, inout SurfaceOutputStandard o)</span> </span>&#123;</span><br><span class="line">	fixed4 col = tex2D(_MainTex, i.uv_MainTex);</span><br><span class="line">	col *= _Color;</span><br><span class="line">	o.Albedo = col.rgb;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>最后一步，我们需要引入光照模型，同时将写好的表面着色器函数与表面着色器相关联，这个和顶点着色器类似，都是通过<code>#pragma</code>来实现。因为我们这里的<code>surf</code>的输出结构是<code>SurfaceOutputStandard</code>，意味着我们使用标准的光照模型。所以在其后我们还得加上<code>Standard</code>来说明所用的光照模型，最后的<code>fullforwordshadows</code>是告诉Unity使用前向阴影。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/005_surface&quot;</span> &#123;</span><br><span class="line">	Properties &#123;</span><br><span class="line">		_Color (<span class="string">&quot;Tint&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">		_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	SubShader &#123;</span><br><span class="line">		Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Geometry&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line">		CGPROGRAM</span><br><span class="line"></span><br><span class="line">		<span class="meta">#<span class="meta-keyword">pragma</span> surface surf Standard fullforwardshadows</span></span><br><span class="line"></span><br><span class="line">		sampler2D _MainTex;</span><br><span class="line">		fixed4 _Color;</span><br><span class="line"></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> <span class="title">Input</span> &#123;</span></span><br><span class="line">			float2 uv_MainTex;</span><br><span class="line">		&#125;;</span><br><span class="line"></span><br><span class="line">		<span class="function"><span class="keyword">void</span> <span class="title">surf</span> <span class="params">(Input i, inout SurfaceOutputStandard o)</span> </span>&#123;</span><br><span class="line">			fixed4 col = tex2D(_MainTex, i.uv_MainTex);</span><br><span class="line">			col *= _Color;</span><br><span class="line">			o.Albedo = col.rgb;</span><br><span class="line">		&#125;</span><br><span class="line">		ENDCG</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="https://www.ronja-tutorials.com/assets/images/posts/005/SimpleAlbedo.png"></p>
-<h2 id="Standard-Lighting-Properties"><a href="#Standard-Lighting-Properties" class="headerlink" title="Standard Lighting Properties"></a>Standard Lighting Properties</h2><p>在<code>SurfaceOutputStandard</code>结构中包含很多材质相关的属性参数，具体如下：</p>
-<ul>
-<li>Albedo : 表示材质表面的颜色。而材质最终呈现的颜色受光照的影响，因为材质本身只能决定对吸收哪些波段的光。</li>
-<li>Normal : 表示材质表面法向向量。法向向量一般和顶点坐标一起，存储在模型数据中，这时候法向向量所在的坐标系是切向空间。什么是切向空间呢？可以简单的理解为沿着模型表面的坐标系。而法向是指垂直与模型表面的方向。法向向量一般要变换到世界坐标系再参与计算。</li>
-<li>Emission ：表示材质的自发光特性。一般的的模型渲染依赖于外部光源，如果关闭外部光源，那么模型表现为黑色。而具备自发光材质的模型即便没有外部光源也能显示出原本的颜色。一般场景中的灯具、或者熔岩会使用自发光属性。</li>
-<li>Metallic ：表示材质的金属特性。现实中，金属材料和非金属材料的光学特性不一样，例如即便黑色的金属也能在阳光下反射光芒，但是黑色的非金属就表现的黯淡无光。</li>
-<li>Smoothness : 表示材质的光滑度。光滑程度主要决定漫反射、和镜面反射之间的权重分布。玻璃的光滑度非常高，所以可以用来做镜子，而一般木材非常粗糙。</li>
-<li>Occlusion ：表示环境遮罩特性。举个例子，平坦的桌面上，光线能够达到每个角落。而崎岖不平的背包上，那些深深的褶皱显得格外阴暗。这些因为表面相互遮挡而产生的阴影就是我们这里的环境遮罩效果。</li>
-<li>Alpha : 表示材质的透明度。从字面可以很好理解，有些材质是透明的，如玻璃，有些不是，如木头。</li>
-</ul>
-<p>上面提到的这些参数前三个是向量，后四个是标量。这些参数有些可以直接暴露在材质面板，方便美术编辑材质效果。</p>
-<h2 id="Implement-a-few-Lighting-Properties"><a href="#Implement-a-few-Lighting-Properties" class="headerlink" title="Implement a few Lighting Properties"></a>Implement a few Lighting Properties</h2><p>接下来我们把<code>emission</code>、<code>metallic</code>、<code>smoothness</code>三个参数为例，将其作为材质的可调参数。当然你也可以根据实际需求做调整。</p>
-<p>首先，我们定义两个公共变量：光滑度和金属度。它们的类型我选择<code>half</code>。一般来说除了坐标采用<code>float</code>，其他的都选<code>half</code>类型。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">half _Smoothness;</span><br><span class="line">half _Metallic;</span><br></pre></td></tr></table></figure>
-
-<p>然后将这些公共变量添加到<code>Properties</code>块中，将其暴露在材质面板上。但是材质面板并不知道所显示的变量的类型，所以还需要在其名称后增加类型说明，如下所示：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Properties &#123;</span><br><span class="line">	_Color (<span class="string">&quot;Tint&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">	_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">	_Smoothness (<span class="string">&quot;Smoothness&quot;</span>, <span class="keyword">float</span>) = <span class="number">0</span></span><br><span class="line">	_Metallic (<span class="string">&quot;Metalness&quot;</span>, <span class="keyword">float</span>) = <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在<code>surf</code>函数中，我们可以直接将这些公共变量传递给<code>SurfaceOutputStandard</code>结构体，这样在后续的光照计算中，就可以使用这些参数了，同时我们修改材质面板上的值，便能立即改变材质的表现效果。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">surf</span> <span class="params">(Input i, inout SurfaceOutputStandard o)</span> </span>&#123;</span><br><span class="line">	fixed4 col = tex2D(_MainTex, i.uv_MainTex);</span><br><span class="line">	col *= _Color;</span><br><span class="line">	o.Albedo = col.rgb;</span><br><span class="line">	o.Metallic = _Metallic;</span><br><span class="line">	o.Smoothness = _Smoothness;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>目前为止，表面着色器已经基本完成了。但是还有些需要完善的地方，因为我们在材质面板上修改参数时，很容易设置到非法值，最终导致材质显示异常。我们可以在<code>Properties</code>做些小修改，将<code>float</code>修改为<code>Range(0,1)</code>就可以将这些参数限定在一个有效范围内。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Properties &#123;</span><br><span class="line">	_Color (<span class="string">&quot;Tint&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">	_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">	_Smoothness (<span class="string">&quot;Smoothness&quot;</span>, Range(<span class="number">0</span>, <span class="number">1</span>)) = <span class="number">0</span></span><br><span class="line">	_Metallic (<span class="string">&quot;Metalness&quot;</span>, Range(<span class="number">0</span>, <span class="number">1</span>)) = <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="https://www.ronja-tutorials.com/assets/images/posts/005/Inspector.png"></p>
-<p>接下来我们添加自发光颜色。同样的我们也需要在公共变量、和<code>Properties</code>中加入<code>_Emission</code>的定义。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">_Emission (<span class="string">&quot;Emission&quot;</span>, Color) = (<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">half3 _Emission;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">o.Emission = _Emission;</span><br></pre></td></tr></table></figure>
-<p><img src="https://www.ronja-tutorials.com/assets/images/posts/005/Emissive.png"></p>
-<p>为了避免自发光材质过度曝光，我们只能将自发光颜色限定在<code>[0-1]</code>之间。当然，如果我们将自发光颜色定义为HDR类型的话，就可以不用担心过曝的问题了。如果我们使用纹理来将材质各个部位的自发光特性差别化，那么可以产生很炫的效果。例如怪兽的眼睛放光的效果。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[HDR] _Emission (<span class="string">&quot;Emission&quot;</span>, Color) = (<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
-<p><img src="https://www.ronja-tutorials.com/assets/images/posts/005/HdrInspector.png"></p>
-<h2 id="Minor-Improvements"><a href="#Minor-Improvements" class="headerlink" title="Minor Improvements"></a>Minor Improvements</h2><p>最后，让我们做一些小改动，让我们的材质看起来更自然。首先，我们在着色器脚本最后面加上<code>fallback shader</code>，这样我们可以复用其他着色器中的代码。这里我将标准着色器作为我们的<code>fallback shader</code>，然后复用其中的阴影渲染部分<code>shadow pass</code>的代码，这样就可以让我们的材质也表现出阴影效果。我们使用<code>fullfowardshadows</code>参数进而获得很好的阴影效果。另外我们也可以指定当前着色器的目标平台，例如设置<code>target</code>为3.0。其中<code>target</code>的值越高，表示可以使用的特性越多，但是支持的硬件平台会越少。这里<code>target</code>为3.0，已经可以使用大多数的高级特性了，所以能够实现更好的光照效果。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/005_surface&quot;</span> &#123;</span><br><span class="line">	Properties &#123;</span><br><span class="line">		_Color (<span class="string">&quot;Tint&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">		_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">		_Smoothness (<span class="string">&quot;Smoothness&quot;</span>, Range(<span class="number">0</span>, <span class="number">1</span>)) = <span class="number">0</span></span><br><span class="line">		_Metallic (<span class="string">&quot;Metalness&quot;</span>, Range(<span class="number">0</span>, <span class="number">1</span>)) = <span class="number">0</span></span><br><span class="line">		[HDR] _Emission (<span class="string">&quot;Emission&quot;</span>, color) = (<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	SubShader &#123;</span><br><span class="line">		Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Geometry&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line">		CGPROGRAM</span><br><span class="line"></span><br><span class="line">		<span class="meta">#<span class="meta-keyword">pragma</span> surface surf Standard fullforwardshadows</span></span><br><span class="line">		<span class="meta">#<span class="meta-keyword">pragma</span> target 3.0</span></span><br><span class="line"></span><br><span class="line">		sampler2D _MainTex;</span><br><span class="line">		fixed4 _Color;</span><br><span class="line"></span><br><span class="line">		half _Smoothness;</span><br><span class="line">		half _Metallic;</span><br><span class="line">		half3 _Emission;</span><br><span class="line"></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> <span class="title">Input</span> &#123;</span></span><br><span class="line">			float2 uv_MainTex;</span><br><span class="line">		&#125;;</span><br><span class="line"></span><br><span class="line">		<span class="function"><span class="keyword">void</span> <span class="title">surf</span> <span class="params">(Input i, inout SurfaceOutputStandard o)</span> </span>&#123;</span><br><span class="line">			fixed4 col = tex2D(_MainTex, i.uv_MainTex);</span><br><span class="line">			col *= _Color;</span><br><span class="line">			o.Albedo = col.rgb;</span><br><span class="line">			o.Metallic = _Metallic;</span><br><span class="line">			o.Smoothness = _Smoothness;</span><br><span class="line">			o.Emission = _Emission;</span><br><span class="line">		&#125;</span><br><span class="line">		ENDCG</span><br><span class="line">	&#125;</span><br><span class="line">	FallBack <span class="string">&quot;Standard&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="https://www.ronja-tutorials.com/assets/images/posts/005/Result.png"></p>
-<p>希望本章的介绍能让你有所收获！</p>
-<p>你可以在以下链接找到源码：<a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/005_Surface_Basics/simple_surface.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/005_Surface_Basics/simple_surface.shader</a></p>
 <p>希望你能喜欢这个教程哦！如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
 
       
@@ -1370,7 +1358,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-count">56</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1383,7 +1371,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/blogs/tags/">
           
-        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-count">28</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
