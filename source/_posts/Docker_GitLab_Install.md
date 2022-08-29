@@ -49,7 +49,25 @@ irb(main):007:0> user.save!
 irb(main):008:0>
 ```
 
-> 补充，我发现[Docker 搭建 Gitlab 服务器 (完整详细版)](https://blog.csdn.net/BThinker/article/details/124097795)教程好像更完整。其中修改IP那一步，我一直没有搞成功，后面突然有一次成功了，那一次我是用本机IP。之前没成功的，都是随便选的IP。甚至我还选了`127.0.0.1`，因为本地打开网页就是显示这个IP，修改后，网页正常打开等操作都正常，甚至本地拉去也正常。但是当使用Jenkins去关联GitLab路径时始终，都连接失败，后面IP改成本机实际的IP才成功。
+> 补充，我发现[Docker 搭建 Gitlab 服务器 (完整详细版)](https://blog.csdn.net/BThinker/article/details/124097795)教程好像更完整。其中修改IP那一步，我一直没有搞成功，后面突然有一次成功了，那一次我是用本机IP。之前没成功的，都是随便选的IP。甚至我还选了`127.0.0.1`，因为本地打开网页就是显示这个IP，修改后，网页正常打开等操作都正常，甚至本地拉去也正常。但是当使用Jenkins去关联GitLab路径时始终，都连接失败，后面IP改成本机实际的IP才成功。如下图：
+![wwwwwww](/blogs/images/src/Snipaste_2022-08-29_23-18-45.png)
+> gitlab.rb
+```bash
+external_url 'http://192.**.***'
+gitlab_rails['gitlab_ssh_host'] = '192.168.**.***'
+gitlab_rails['gitlab_shell_ssh_port'] = 9922
+
+## GitLab configuration settings
+```
+> gitlab.yml
+```bash
+  ## GitLab settings
+  gitlab:
+    ## Web server settings (note: host is the FQDN, do not include http://)
+    host: 192.168.'**.***'
+    port: 9980
+    https: false
+```
 
 ## 参考
 
