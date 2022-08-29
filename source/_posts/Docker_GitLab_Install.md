@@ -1,6 +1,6 @@
 ---
 title: GitLab Install
-date: 2022-06-27 15:03:00
+date: 2022-08-29 18:03:00
 categories:
 - [Docker]
 tags:

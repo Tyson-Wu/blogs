@@ -1,6 +1,6 @@
 ---
 title: GitLab and Jenkins
-date: 2022-08-29 17:03:00
+date: 2022-08-29 18:03:00
 categories:
 - [Docker]
 tags:
