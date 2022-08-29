@@ -20,17 +20,21 @@
     var CONFIG = {"hostname":"tyson-wu.github.io","root":"/blogs/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="If you want, Just do it!">
-<meta property="og:type" content="website">
-<meta property="og:title" content="TysonWu&#39;s Blog">
-<meta property="og:url" content="https://tyson-wu.github.io/blogs/tags/Unity/page/3/index.html">
+  <meta name="description" content="这里是介绍如何将GitLab和Jenkins关联到一起。其实主要是安装一些插件、再设置一些关键配置。  首先在Jenkins的插件安装界面找到Publish Over SSH并安装。安装完成后进入Jenkins的系统配置，拉到最下方应该可以看到Publish over SSH的配置，  参考docker+gitlab+jenkins从零搭建自动化部署">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GitLab and Jenkins">
+<meta property="og:url" content="https://tyson-wu.github.io/blogs/2022/08/29/Docker_GitLab_Jenkins/index.html">
 <meta property="og:site_name" content="TysonWu&#39;s Blog">
-<meta property="og:description" content="If you want, Just do it!">
+<meta property="og:description" content="这里是介绍如何将GitLab和Jenkins关联到一起。其实主要是安装一些插件、再设置一些关键配置。  首先在Jenkins的插件安装界面找到Publish Over SSH并安装。安装完成后进入Jenkins的系统配置，拉到最下方应该可以看到Publish over SSH的配置，  参考docker+gitlab+jenkins从零搭建自动化部署">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-08-29T09:03:00.000Z">
+<meta property="article:modified_time" content="2022-08-29T12:31:27.186Z">
 <meta property="article:author" content="Tyson Wu">
+<meta property="article:tag" content="GitLab">
+<meta property="article:tag" content="Jenkins">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://tyson-wu.github.io/blogs/tags/Unity/page/3/">
+<link rel="canonical" href="https://tyson-wu.github.io/blogs/2022/08/29/Docker_GitLab_Jenkins/">
 
 
 <script id="page-configurations">
@@ -38,12 +42,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>标签: Unity | TysonWu's Blog</title>
+  <title>GitLab and Jenkins | TysonWu's Blog</title>
   
 
 
@@ -157,235 +161,95 @@
         <div class="content-wrap">
           
 
-          <div class="content tag">
+          <div class="content post posts-expand">
             
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <h2 class="collection-header">Unity
-          <small>标签</small>
-        </h2>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2022/08/29/Docker_GitLab_Jenkins/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          GitLab and Jenkins
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-29 17:03:00 / 修改时间：20:31:27" itemprop="dateCreated datePublished" datetime="2022-08-29T17:03:00+08:00">2022-08-29</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2021</span>
-    </div>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2021-07-06T13:01:00+08:00"
-              content="2021-07-06">
-          07-06
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/blogs/2021/07/06/Ronja_Vertex_Displacement/" itemprop="url">
-            <span itemprop="name">Vertex Displacement</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2021-07-06T12:01:00+08:00"
-              content="2021-07-06">
-          07-06
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/blogs/2021/07/06/Ronja_Polygon_Clipping/" itemprop="url">
-            <span itemprop="name">Polygon Clipping</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2021-07-05T22:01:00+08:00"
-              content="2021-07-05">
-          07-05
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/blogs/2021/07/05/Ronja_Custom_Lighting/" itemprop="url">
-            <span itemprop="name">Custom Lighting</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2021-07-05T19:01:00+08:00"
-              content="2021-07-05">
-          07-05
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/blogs/2021/07/05/Ronja_Fresnel/" itemprop="url">
-            <span itemprop="name">Fresnel</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2021-07-05T13:01:00+08:00"
-              content="2021-07-05">
-          07-05
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/blogs/2021/07/05/Ronja_Checkerboard_Pattern/" itemprop="url">
-            <span itemprop="name">Checkerboard Pattern</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2021-07-02T13:01:00+08:00"
-              content="2021-07-02">
-          07-02
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/blogs/2021/07/02/Ronja_Triplanar_Mapping/" itemprop="url">
-            <span itemprop="name">Triplanar Mapping</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2021-07-02T11:01:00+08:00"
-              content="2021-07-02">
-          07-02
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/blogs/2021/07/02/Ronja_Color_Interpolation/" itemprop="url">
-            <span itemprop="name">Color Interpolation</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2021-07-02T10:01:00+08:00"
-              content="2021-07-02">
-          07-02
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/blogs/2021/07/02/Ronja_Planar_Mapping/" itemprop="url">
-            <span itemprop="name">Planar Mapping</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2021-07-01T15:01:00+08:00"
-              content="2021-07-01">
-          07-01
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/blogs/2021/07/01/Ronja_Sprite_Shaders/" itemprop="url">
-            <span itemprop="name">Sprite Shaders</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2021-07-01T14:01:00+08:00"
-              content="2021-07-01">
-          07-01
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/blogs/2021/07/01/Ronja_Basic_Transparency/" itemprop="url">
-            <span itemprop="name">Basic Transparency</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
+        <p>这里是介绍如何将GitLab和Jenkins关联到一起。其实主要是安装一些插件、再设置一些关键配置。</p>
+<ul>
+<li>首先在Jenkins的插件安装界面找到<code>Publish Over SSH</code>并安装。安装完成后进入Jenkins的系统配置，拉到最下方应该可以看到<code>Publish over SSH</code>的配置，</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weboof/article/details/104491998">docker+gitlab+jenkins从零搭建自动化部署</a></p>
 
     </div>
-  </div>
-  
-  
-  
 
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blogs/tags/GitLab/" rel="tag"># GitLab</a>
+              <a href="/blogs/tags/Jenkins/" rel="tag"># Jenkins</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blogs/2022/08/29/Docker_Jenkins_Install/" rel="prev" title="Jenkins Install">
+      <i class="fa fa-chevron-left"></i> Jenkins Install
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
   
-  <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/blogs/tags/Unity/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/blogs/tags/Unity/">1</a><a class="page-number" href="/blogs/tags/Unity/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/blogs/tags/Unity/page/4/">4</a><a class="extend next" rel="next" href="/blogs/tags/Unity/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
-  </nav>
+  
+  
 
 
 
@@ -437,6 +301,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">1.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
