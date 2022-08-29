@@ -1,6 +1,6 @@
 ---
 title: Jenkins Install
-date: 2022-06-27 15:02:00
+date: 2022-08-29 16:02:00
 categories:
 - [Docker]
 tags:
