@@ -1,6 +1,6 @@
 ---
 title: GitLab Install
-date: 2022-08-29 18:03:00
+date: 2022-08-29 17:03:00
 categories:
 - [Docker]
 tags:
@@ -49,7 +49,7 @@ irb(main):007:0> user.save!
 irb(main):008:0>
 ```
 
-> 补充，我发现[Docker 搭建 Gitlab 服务器 (完整详细版)](https://blog.csdn.net/BThinker/article/details/124097795)教程好像更完整。但是关于修改IP的那些操作我都没有成功，可能是应该我在本地搭的服务吧。我这里说的未成功是只我想改成任意Ip没有成功，因为最终GitLab网站都是通过`http://127.0.0.1:9980/`或者`http://localhost:9980/`访问的。但是这一步还是能少，只不过我们将修改的IP选择为`127.0.0.1`而已，因为如果不修改的话，GetLab上的仓库的路径URL会是一个随机数，所以没办法正确索引到正确的git路径。
+> 补充，我发现[Docker 搭建 Gitlab 服务器 (完整详细版)](https://blog.csdn.net/BThinker/article/details/124097795)教程好像更完整。其中修改IP那一步，我一直没有搞成功，后面突然有一次成功了，那一次我是用本机IP。之前没成功的，都是随便选的IP。甚至我还选了`127.0.0.1`，因为本地打开网页就是显示这个IP，修改后，网页正常打开等操作都正常，甚至本地拉去也正常。但是当使用Jenkins去关联GitLab路径时始终，都连接失败，后面IP改成本机实际的IP才成功。
 
 ## 参考
 
