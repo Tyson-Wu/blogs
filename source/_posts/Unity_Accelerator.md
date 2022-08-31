@@ -8,6 +8,11 @@ tags:
 - Accelerator
 ---
 
+拉取[这个工程](https://github.com/CanBaycay/UnityAcceleratorDocker)，如下所示：
+![wwwwwww](/blogs/images/src/Snipaste_2022-09-01_00-45-31.png)
+
+然后双击`Install.bat`执行，可以在Docker界面上发现加速器的容器。
+
 ## 参考
 
 [Unity Accelerator Docker Configuration](https://github.com/CanBaycay/UnityAcceleratorDocker)
