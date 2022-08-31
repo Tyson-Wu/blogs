@@ -163,6 +163,90 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2022/08/30/Docker_GitLab_Jenkins_Unity/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2022/08/30/Docker_GitLab_Jenkins_Unity/" class="post-title-link" itemprop="url">GitLab and Jenkins and Unity</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-30 18:03:00" itemprop="dateCreated datePublished" datetime="2022-08-30T18:03:00+08:00">2022-08-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-09-01 01:56:19" itemprop="dateModified" datetime="2022-09-01T01:56:19+08:00">2022-09-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在<a href="https://tyson-wu.github.io/blogs/2022/08/29/Docker_GitLab_Jenkins/">这篇文章</a>讲了如何在Docker上安装GitLab，Jenkins，并且最终Jenkins从GitLab上拉取到项目文件。<br>我最终的目的是希望能够对Unity项目进行打包部署，所以我开始关联Jenkins和Unity。因为我的Unity是装在物理机上，而Jenkins是装在Docker上，所以Jenkins没办法调取Unity进行打包操作。<br>所以我后面采用的是GitLab部署在Docker上，而Jenkins和Unity都是安装在物理机上，这样Jenkins通过GitLab的Url拉取项目，然后通过Unity Puglin插件调用Unity进行打包，当然也可以使用windows的批处理命令<code>build.bat</code>的方式。采用Unity Plugin的方式的一个好处就是unity的log会直接显示到Jenkins的log界面上。</p>
+<p>其中，虽然Jenkins和GitLab的安装位置不一样，但是他们之间的关联操作和之前的是一样的。这里我们讲一下Jenkins和Unity的关联步骤。<br>首先建一个Unity项目，然后在项目根目录下创建两个文件<code>build_image_url_link.bat</code>和<code>myqrcode.py</code>。<br><code>build_image_url_link.bat</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> BASE_PATH=D:\ServicesData\Publish\%1\%2</span><br><span class="line"><span class="built_in">set</span> BASE_URL=http://192.168.31.186:8080/Publish/%1/%2</span><br><span class="line">python myqrcode.py %BASE_URL%/%3_%4.apk %BASE_PATH%\qrcode.png</span><br><span class="line"><span class="built_in">echo</span> DESC_INFO:%BASE_URL%/qrcode.png,%BASE_URL%/%3_%4.apk</span><br></pre></td></tr></table></figure>
+<p><code>myqrcode.py</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> qrcode</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">data = sys.argv[<span class="number">1</span>]</span><br><span class="line">path=sys.argv[<span class="number">2</span>]</span><br><span class="line">img = qrcode.make(data)</span><br><span class="line">img.save(path)</span><br></pre></td></tr></table></figure>
+<p><img src="/blogs/images/src/Snipaste_2022-09-01_01-13-45.png" alt="wwwwwww"><br>然后在Editor下创建<code>BuildTools.cs</code>脚本。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> UnityEditor;</span><br><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">BuildTools</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title">BuildTargetName</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">const</span> <span class="built_in">string</span> android = <span class="string">&quot;Android&quot;</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">const</span> <span class="built_in">string</span> window = <span class="string">&quot;Window&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title">EnvironmentParam</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">const</span> <span class="built_in">string</span> projectName = <span class="string">&quot;--projectName&quot;</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">const</span> <span class="built_in">string</span> productName = <span class="string">&quot;--productName&quot;</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">const</span> <span class="built_in">string</span> version = <span class="string">&quot;--version&quot;</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">const</span> <span class="built_in">string</span> target = <span class="string">&quot;--target&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">bool</span> <span class="title">GetEnvironmentParam</span>(<span class="params"><span class="built_in">string</span> paramName, <span class="keyword">out</span> <span class="built_in">string</span> paramValue</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        paramValue = <span class="literal">null</span>;</span><br><span class="line">        <span class="built_in">string</span>[] args = System.Environment.GetCommandLineArgs();</span><br><span class="line">        <span class="keyword">foreach</span> (<span class="keyword">var</span> s <span class="keyword">in</span> args)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (s.Contains(paramName))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> (s.Split(<span class="string">&#x27;:&#x27;</span>).Length &gt; <span class="number">1</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    paramValue = s.Split(<span class="string">&#x27;:&#x27;</span>)[<span class="number">1</span>];</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    [<span class="meta">MenuItem(<span class="meta-string">&quot;Build/Build APK&quot;</span>)</span>]</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">int</span> <span class="title">BuildApk</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (!GetEnvironmentParam(EnvironmentParam.productName, <span class="keyword">out</span> <span class="built_in">string</span> productName))</span><br><span class="line">            &#123;</span><br><span class="line">                productName = <span class="string">&quot;productName&quot;</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (!GetEnvironmentParam(EnvironmentParam.version, <span class="keyword">out</span> <span class="built_in">string</span> bundleVersion))</span><br><span class="line">            &#123;</span><br><span class="line">                bundleVersion = <span class="string">&quot;bundleVersion&quot;</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (!GetEnvironmentParam(EnvironmentParam.projectName, <span class="keyword">out</span> <span class="built_in">string</span> projectName))</span><br><span class="line">            &#123;</span><br><span class="line">                projectName = <span class="string">&quot;projectName&quot;</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (!GetEnvironmentParam(EnvironmentParam.target, <span class="keyword">out</span> <span class="built_in">string</span> target))</span><br><span class="line">            &#123;</span><br><span class="line">                target = BuildTargetName.android;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">string</span> extention = <span class="string">&quot;.exe&quot;</span>;</span><br><span class="line">            PlayerSettings.productName = productName;</span><br><span class="line">            PlayerSettings.bundleVersion = bundleVersion;</span><br><span class="line">            BuildPlayerOptions opt = <span class="keyword">new</span> BuildPlayerOptions();</span><br><span class="line">            opt.scenes = <span class="keyword">new</span> <span class="built_in">string</span>[] &#123; <span class="string">&quot;Assets/Scenes/SampleScene.unity&quot;</span> &#125;;</span><br><span class="line">            <span class="keyword">switch</span> (target)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">case</span> BuildTargetName.android:</span><br><span class="line">                    opt.target = BuildTarget.Android;</span><br><span class="line">                    extention = <span class="string">&quot;.apk&quot;</span>;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> BuildTargetName.window:</span><br><span class="line">                    opt.target = BuildTarget.StandaloneWindows64;</span><br><span class="line">                    extention = <span class="string">&quot;.exe&quot;</span>;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            opt.locationPathName = <span class="string">$&quot;D:/ServicesData/Publish/<span class="subst">&#123;projectName&#125;</span>/<span class="subst">&#123;target&#125;</span>/<span class="subst">&#123;productName&#125;</span>_<span class="subst">&#123;bundleVersion&#125;</span><span class="subst">&#123;extention&#125;</span>&quot;</span>;</span><br><span class="line"></span><br><span class="line">            opt.options = BuildOptions.None;</span><br><span class="line">            BuildPipeline.BuildPlayer(opt);</span><br><span class="line">            Debug.Log(<span class="string">&quot;Build Done!&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        catch(Exception e)</span><br><span class="line">        &#123;</span><br><span class="line">            Debug.LogError(e.Message);</span><br><span class="line">            <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><img src="/blogs/images/src/Snipaste_2022-09-01_01-19-26.png" alt="wwwwwww"><br>到这一步Unity项目就建好了，然后将它提交的GitLab上。</p>
+<p>创建一个打包项目，关联到GitLab，操作步骤参考上面的链接。进入当前打包项目的配置界面。按下图配置。<br><img src="/blogs/images/src/Snipaste_2022-09-01_00-58-51.png" alt="wwwwwww"><br><img src="/blogs/images/src/Snipaste_2022-09-01_00-59-04.png" alt="wwwwwww"><br><img src="/blogs/images/src/Snipaste_2022-09-01_01-01-05.png" alt="wwwwwww"><br><img src="/blogs/images/src/Snipaste_2022-09-01_01-01-13.png" alt="wwwwwww"><br><img src="/blogs/images/src/Snipaste_2022-09-01_01-01-23.png" alt="wwwwwww"><br><img src="/blogs/images/src/Snipaste_2022-09-01_01-02-11.png" alt="wwwwwww"><br><img src="/blogs/images/src/Snipaste_2022-09-01_01-02-32.png" alt="wwwwwww"><br><code>-quit -batchmode -nographics -executeMethod BuildTools.BuildApk --productName:$productName --version:$version --projectName:JenkinsUnityForAndroid --target:$target</code><br><img src="/blogs/images/src/Snipaste_2022-09-01_01-14-37.png" alt="wwwwwww"><br><code>build_image_url_link.bat JenkinsUnityForAndroid %target% %productName% %version%</code><br><img src="/blogs/images/src/Snipaste_2022-09-01_01-02-57.png" alt="wwwwwww"><br><code>DESC_INFO:(.*),(.*)</code><br><code>&lt;img src=&quot;\1&quot; height=&quot;200&quot; width=&quot;200&quot;  /&gt; &lt;a href=&quot;\2&quot;&gt;点击下载&lt;/a&gt;</code></p>
+<p>这样就基本配置好Jenkins和Unity项目了。但是上面配置中多了很多奇怪的操作，像什么Python脚本之类的。这是因为我想将打包好的包发布到一个本地服务，然后通过二维码下载。<br>所以这里我需要搭建一个本地服务，看网上有说用蒲公英什么的来当作发布平台，但是我就想本地局域网用，所以使用我比较熟悉的<code>HFS</code>来冲动服务。<br><img src="/blogs/images/src/Snipaste_2022-09-01_01-39-11.png" alt="wwwwwww"><br>前面打包代码里面会将好的包放到这个服务路径下面，然后可以通过Url来访问，假设当前打好的包在这个路径下，那么手机输入对应的Url就可以下载了。不过每次都要输入Url很麻烦。所以这里考虑使用二维码。<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/rainboy2010/p/12007248.html">这里</a>讲了使用<code>qrcode</code>和<code>Image</code>两个python插件来生成二维码，所以首先我们要安装Python，这里<a target="_blank" rel="noopener" href="https://www.python.org/downloads/release/python-377/">Python 3.7.7</a>下载，安装默认安装，并勾选写入环境变量。<br>然后打开命令行窗口，分别输入<code>pip install qrcode</code>和<code>pip install Image</code>两个命令，安装好两个插件。<br>然后回到Jenkins，设置Jenkins内部的环境变量。<br><img src="/blogs/images/src/Snipaste_2022-09-01_01-31-34.png" alt="wwwwwww"><br><img src="/blogs/images/src/Snipaste_2022-09-01_01-31-47.png" alt="wwwwwww"><br>这里因为我的python是安装在<code>C:\Users\10524\AppData\Local\Programs\Python\Python37</code>目录下的。都准备好后，就可以开始构建了，下面是最终效果。<br><img src="/blogs/images/src/Snipaste_2022-09-01_01-50-28.png" alt="wwwwwww"></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weboof/article/details/104491998">docker+gitlab+jenkins从零搭建自动化部署</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/rainboy2010/p/12007248.html">Jenkins生成APK链接的二维码</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_42281648/article/details/120057980">Jenkins构建Python项目提示：‘python‘ 不是内部或外部命令，也不是可运行的程序</a><br><a target="_blank" rel="noopener" href="https://www.python.org/downloads/release/python-377/">Python 3.7.7</a>下载Windows x86-64 executable installer，安装默认安装，并勾选写入环境变量。<br><a target="_blank" rel="noopener" href="http://www.rejetto.com/hfs/">HFS</a>下载，搭建简易服务。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2022/08/29/Unity_Accelerator/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -194,7 +278,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-30 00:35:25" itemprop="dateModified" datetime="2022-08-30T00:35:25+08:00">2022-08-30</time>
+                <time title="修改时间：2022-09-01 01:56:19" itemprop="dateModified" datetime="2022-09-01T01:56:19+08:00">2022-09-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -217,7 +301,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://github.com/CanBaycay/UnityAcceleratorDocker">Unity Accelerator Docker Configuration</a><br><a target="_blank" rel="noopener" href="https://forum.unity.com/threads/easy-to-use-accelerator-installation-in-docker.992063/">Easy-To-Use Accelerator Installation In Docker</a></p>
+          <p>拉取<a target="_blank" rel="noopener" href="https://github.com/CanBaycay/UnityAcceleratorDocker">这个工程</a>，如下所示：<br><img src="/blogs/images/src/Snipaste_2022-09-01_00-45-31.png" alt="wwwwwww"></p>
+<p>然后双击<code>Install.bat</code>执行，可以在Docker界面上发现加速器的容器。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://github.com/CanBaycay/UnityAcceleratorDocker">Unity Accelerator Docker Configuration</a><br><a target="_blank" rel="noopener" href="https://forum.unity.com/threads/easy-to-use-accelerator-installation-in-docker.992063/">Easy-To-Use Accelerator Installation In Docker</a></p>
 
       
     </div>
@@ -268,7 +354,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-30 00:35:25" itemprop="dateModified" datetime="2022-08-30T00:35:25+08:00">2022-08-30</time>
+                <time title="修改时间：2022-09-01 01:56:19" itemprop="dateModified" datetime="2022-09-01T01:56:19+08:00">2022-09-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -346,7 +432,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-30 00:35:25" itemprop="dateModified" datetime="2022-08-30T00:35:25+08:00">2022-08-30</time>
+                <time title="修改时间：2022-09-01 01:56:19" itemprop="dateModified" datetime="2022-09-01T01:56:19+08:00">2022-09-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -438,7 +524,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-30 00:35:25" itemprop="dateModified" datetime="2022-08-30T00:35:25+08:00">2022-08-30</time>
+                <time title="修改时间：2022-09-01 01:56:19" itemprop="dateModified" datetime="2022-09-01T01:56:19+08:00">2022-09-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -525,7 +611,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-30 00:35:25" itemprop="dateModified" datetime="2022-08-30T00:35:25+08:00">2022-08-30</time>
+                <time title="修改时间：2022-09-01 01:56:19" itemprop="dateModified" datetime="2022-09-01T01:56:19+08:00">2022-09-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -604,7 +690,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-30 00:35:25" itemprop="dateModified" datetime="2022-08-30T00:35:25+08:00">2022-08-30</time>
+                <time title="修改时间：2022-09-01 01:56:19" itemprop="dateModified" datetime="2022-09-01T01:56:19+08:00">2022-09-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -692,7 +778,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-30 00:35:25" itemprop="dateModified" datetime="2022-08-30T00:35:25+08:00">2022-08-30</time>
+                <time title="修改时间：2022-09-01 01:56:19" itemprop="dateModified" datetime="2022-09-01T01:56:19+08:00">2022-09-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -776,7 +862,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-30 00:35:25" itemprop="dateModified" datetime="2022-08-30T00:35:25+08:00">2022-08-30</time>
+                <time title="修改时间：2022-09-01 01:56:19" itemprop="dateModified" datetime="2022-09-01T01:56:19+08:00">2022-09-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -854,7 +940,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-30 00:35:25" itemprop="dateModified" datetime="2022-08-30T00:35:25+08:00">2022-08-30</time>
+                <time title="修改时间：2022-09-01 01:56:19" itemprop="dateModified" datetime="2022-09-01T01:56:19+08:00">2022-09-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -887,83 +973,6 @@
 </blockquote>
 <p>但是使用上面SSH的方式，在从git服务拉取项目时，会报<code>No supported authentication methods available</code>的错误。这里有一篇文章讲述了如何解决这个问题：<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/Jeffxu_lib/article/details/112259246">TortoiseGit提示No supported authentication methods available错误</a></p>
 
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2022/08/18/Unity_Editor_Utils/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2022/08/18/Unity_Editor_Utils/" class="post-title-link" itemprop="url">Unity Editor Utils</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-18 10:01:00" itemprop="dateCreated datePublished" datetime="2022-08-18T10:01:00+08:00">2022-08-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-30 00:35:25" itemprop="dateModified" datetime="2022-08-30T00:35:25+08:00">2022-08-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Editor/" itemprop="url" rel="index"><span itemprop="name">Editor</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id=""><a href="#" class="headerlink" title=""></a></h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">MenuItem(<span class="meta-string">&quot;Assets/Helper/Get Texture Path For Houdini Terrain&quot;</span>,true,1)</span>]</span><br><span class="line"><span class="keyword">static</span> <span class="built_in">bool</span> _GetTexturePathForHoudiniTerrain()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(Selection.assetGUIDs.Length&gt;<span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">string</span> path = AssetDatabase.GUIDToAssetPath(Selection.assetGUIDs[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">string</span> temp = <span class="string">&quot;Resources/&quot;</span>;</span><br><span class="line">        <span class="built_in">int</span> index = path.IndexOf(temp);</span><br><span class="line">        <span class="keyword">if</span>(index&gt;<span class="number">-1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br><span class="line">[<span class="meta">MenuItem(<span class="meta-string">&quot;Assets/Helper/Get Texture Path For Houdini Terrain&quot;</span>,false,1)</span>]</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> _GetTexturePathForHoudiniTerrain()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">string</span> path = AssetDatabase.GUIDToAssetPath(Selection.assetGUIDs[<span class="number">0</span>]);</span><br><span class="line">    <span class="built_in">string</span> temp = <span class="string">&quot;Resources/&quot;</span>;</span><br><span class="line">    <span class="built_in">int</span> index = path.IndexOf(temp);</span><br><span class="line">    <span class="built_in">int</span> end = path.lastIndexOf(<span class="string">&#x27;,&#x27;</span>);</span><br><span class="line">    index += temo.Length;</span><br><span class="line">    GUIUtility.systemCopyBuffer = path.Substring(index,end-index);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">[<span class="meta">MenuItem(<span class="meta-string">&quot;Assets/Helper/Trim File Name&quot;</span>)</span>]</span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">TrimFileName</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(Selection.assetGUIDs.Length &gt;<span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="built_in">int</span> i=<span class="number">0</span>;i&lt;Selection.assetGUIDs.Length;++i)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">string</span> path = AssetDatabase.GUIDToAssetPath(Selection.assetGUIDs[i]);</span><br><span class="line">            <span class="built_in">string</span> fileName = Path.GetFileName(path);</span><br><span class="line">            <span class="built_in">int</span> index = path.IndexOf(<span class="string">&#x27; &#x27;</span>);</span><br><span class="line">            <span class="keyword">if</span>(index&gt;<span class="number">-1</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="built_in">string</span> newFileName = fileName.Replace(<span class="string">&#x27; &#x27;</span>,<span class="string">&#x27;_&#x27;</span>);</span><br><span class="line">                <span class="built_in">string</span> rst = AssetDatabase.RenameAsset(path,newFileName);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        AssetDatabase.SaveAssets();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
     </div>
 
@@ -1049,7 +1058,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">56</span>
+          <span class="site-state-item-count">57</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
