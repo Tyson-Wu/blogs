@@ -342,6 +342,7 @@ date: 2021-05-27 17:01:34
 [下载Java 11 下载路径](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
 
 ## Assets
+[mixamo](https://www.mixamo.com/)动作资源库
 [AIM@SHAPE](http://visionair.ge.imati.cnr.it/ontologies/shapes/viewmodels.jsp)
 [opengameart](https://opengameart.org/content/50-free-textures-4-normalmaps)
 [Create, upload, and share Houdini Digital Assets](https://www.orbolt.com/)
