@@ -200,6 +200,7 @@ date: 2021-05-27 17:01:34
 ## Engine
 
 ### Unity
+[How to stop automatic assembly compilation from script](https://support.unity.com/hc/en-us/articles/210452343-How-to-stop-automatic-assembly-compilation-from-script)
 [UIParticleSystem](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls/UIParticleSystem)
 [Particle Effect For UGUI](https://github.com/mob-sakai/ParticleEffectForUGUI)
 [Automatic Setup of a Humanoid](https://blog.unity.com/technology/automatic-setup-of-a-humanoid)
