@@ -69,6 +69,18 @@ gitlab_rails['gitlab_shell_ssh_port'] = 9922
     https: false
 ```
 
+## 重启后port自动改了
+
+当我第二天重启打开电脑，启动我的Gitlab时，我发现进不去了，因为`gitlab.yml`中的端口号又自动变回80。为了让原本已经配置好的Gitlab正常运行，需要重新修改端口号为9980。
+但是直接修改`gitlab.yml`并不行。需要在gitlab运行的时候，然后按照下面的步骤：
+- 打开命令行窗口
+- 输入`docker exec -it gitlab /bin/bash`，并运行，进入docker命令下。
+- 输入`vi /etc/gitlab/gitlab.rb`，在vi里面修改`gitlab.rb`Ip，参考上面的代码。或者直接在本地找到`gitlab.rb`，使用本地文本编辑器修改。
+- 输入`gitlab-ctl reconfigure`，这个命令会自动修改`gitlab.yml`的ip，但是端口号仍然是80。
+- 输入`vi /opt/gitlab/embedded/service/gitlab-rails/config/gitlab.yml`,在vi里面修改`gitlab.yml`端口，参考上面的代码。或者直接在本地找到`gitlab.yml`，使用本地文本编辑器修改。
+- 输入`gitlab-ctl restart`,这个命令会让最终修改的端口生效。
+- 最后输入`exit`，退出docker命令。
+
 ## 参考
 
 [Vim命令合集](https://www.jianshu.com/p/117253829581)
