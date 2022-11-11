@@ -194,7 +194,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-24 21:49:58" itemprop="dateModified" datetime="2022-09-24T21:49:58+08:00">2022-09-24</time>
+                <time title="修改时间：2022-11-11 10:02:55" itemprop="dateModified" datetime="2022-11-11T10:02:55+08:00">2022-11-11</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -218,6 +218,97 @@
 
       
           <p>撕夜<br>用心爱你你不懂<br>十年<br>时间都去哪儿了<br>其实你不懂我的心<br>关于你们之间的故事<br>假如爱有天意</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2022/11/10/Unity_Asset_Extractor/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2022/11/10/Unity_Asset_Extractor/" class="post-title-link" itemprop="url">Unity资源逆向解析</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-10 10:01:00" itemprop="dateCreated datePublished" datetime="2022-11-10T10:01:00+08:00">2022-11-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-11 10:02:55" itemprop="dateModified" datetime="2022-11-11T10:02:55+08:00">2022-11-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="Asset-Ripper"><a href="#Asset-Ripper" class="headerlink" title="Asset Ripper"></a>Asset Ripper</h2><p>支持将打包后的资源解包，而且试过成功解包出图片、材质、动画、Shader等等。效果非常好。<br><a target="_blank" rel="noopener" href="https://assetripper.github.io/AssetRipper/articles/Downloads.html">下载链接</a></p>
+<h2 id="UABE-AssetsBundleExtractor"><a href="#UABE-AssetsBundleExtractor" class="headerlink" title="UABE(AssetsBundleExtractor)"></a>UABE(AssetsBundleExtractor)</h2><p>支持解析打包后的资源，但是好像只能罗列出资源信息，不能像<code>Asset Ripper</code>一样完美的将资源解包出来。但是支持修改打包后的资源，这是其他工具所不具备的。<br><a target="_blank" rel="noopener" href="https://github.com/SeriousCache/UABE/releases/tag/2.2stablec">下载链接</a><br><a target="_blank" rel="noopener" href="https://community.7daystodie.com/topic/1871-uabe-asset-bundle-extractor/page/35/">社区</a></p>
+<h2 id="AssetStudio"><a href="#AssetStudio" class="headerlink" title="AssetStudio"></a>AssetStudio</h2><p>和<code>Asset Ripper</code>一样，支持将打包后的资源解包，但是试过只能解出部分资源。<br><a target="_blank" rel="noopener" href="https://github.com/Perfare/AssetStudio/releases">下载链接</a></p>
+<h2 id="关于Unity-Resources"><a href="#关于Unity-Resources" class="headerlink" title="关于Unity Resources"></a>关于Unity Resources</h2><p>Unity项目运行时可以通过Resources和AssetsBundle方式读取资源。推荐是使用AssetsBundle，但是Resource资源的组织方式影响着包体的大小，所以即便项目中没有使用到Resources资源读取方式，也还是需要有所了解。</p>
+<ul>
+<li>首先Resources资源读取方式，需要将资源放置在Assets目录及其子目录下的Resources目录。只有在这个文件夹下的资源才可以使用Resources的方式读取。</li>
+<li>打包项目工程时，Resources下的资源会直接打到项目App，如Apk。</li>
+<li>Resources资源在App中，是存储在<code>resources.assets</code>、<code>resources.assets.resS</code>、<code>sharedassets0.assets</code>、<code>sharedassets0.assets.resS</code>文件中。</li>
+<li>关于<code>*.assets</code>和<code>*.assets.resS</code>两个后缀文件，同名文件中的*.assets存储的是序列化文件。而<code>*.assets.resS</code>里面存储的是二进制数据源，如图片、音效等。</li>
+<li><code>*.assets</code>文件类似于<code>Prefab</code>，存储着资源的所有序列化信息，以及对二进制数据源的引用，比如说图片，而<code>*.assets.resS</code>里面便是<code>*.assets</code>里面所引用的实际的图片、音效等数据。</li>
+<li>Resources目录下的资源是打包到<code>resources*</code>中还是打包到<code>sharedassets*</code>文件中，是有一定的规律。未被引用的资源是打包到<code>resources*</code>中，比如新放入的图片还没有使用。而被引用的资源是被打包到<code>sharedassets*</code>，比如被其他Prefab引用的图片。</li>
+</ul>
+<p>除了我们自己创建的Resources资源，Unity在打包时还会拷贝一些默认资源，比如内置的着色器，按钮图集等等。这些资源是被统一打包到<code>unity default resources</code>文件中(实际操作是将这个文件直接拷贝到包内，这个资源文件是平台预先就打包好的)。<code>unity default resources</code>资源实际上是<code>*.assets</code>和<code>*.assets.resS</code>文件的合体，也就是包含序列化数据和二进制源数据。整个文件有好几兆，但是实际项目中我们可能不会使用这些内置资源，所以无疑会导致包体变大，资源空间浪费。而且在苹果IOS查重时，这个文件还可能被标记。所以可以适当的修改这个文件。</p>
+<p>以上这些Resources资源文件，都是可以使用上面的解包工具打开，可以查看到这些文件中具体包含了哪些资源。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://fileinfo.com/extension/ress">https://fileinfo.com/extension/ress</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/SeriousCache/UABE/issues/32">https://github.com/SeriousCache/UABE/issues/32</a></li>
+</ul>
 
       
     </div>
@@ -268,7 +359,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-24 21:49:58" itemprop="dateModified" datetime="2022-09-24T21:49:58+08:00">2022-09-24</time>
+                <time title="修改时间：2022-11-11 10:02:55" itemprop="dateModified" datetime="2022-11-11T10:02:55+08:00">2022-11-11</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -352,7 +443,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-24 21:49:58" itemprop="dateModified" datetime="2022-09-24T21:49:58+08:00">2022-09-24</time>
+                <time title="修改时间：2022-11-11 10:02:55" itemprop="dateModified" datetime="2022-11-11T10:02:55+08:00">2022-11-11</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -436,7 +527,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-24 21:49:58" itemprop="dateModified" datetime="2022-09-24T21:49:58+08:00">2022-09-24</time>
+                <time title="修改时间：2022-11-11 10:02:55" itemprop="dateModified" datetime="2022-11-11T10:02:55+08:00">2022-11-11</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -512,7 +603,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-24 21:49:58" itemprop="dateModified" datetime="2022-09-24T21:49:58+08:00">2022-09-24</time>
+                <time title="修改时间：2022-11-11 10:02:55" itemprop="dateModified" datetime="2022-11-11T10:02:55+08:00">2022-11-11</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -591,7 +682,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-24 21:49:58" itemprop="dateModified" datetime="2022-09-24T21:49:58+08:00">2022-09-24</time>
+                <time title="修改时间：2022-11-11 10:02:55" itemprop="dateModified" datetime="2022-11-11T10:02:55+08:00">2022-11-11</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -693,7 +784,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-24 21:49:58" itemprop="dateModified" datetime="2022-09-24T21:49:58+08:00">2022-09-24</time>
+                <time title="修改时间：2022-11-11 10:02:55" itemprop="dateModified" datetime="2022-11-11T10:02:55+08:00">2022-11-11</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -780,7 +871,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-24 21:49:58" itemprop="dateModified" datetime="2022-09-24T21:49:58+08:00">2022-09-24</time>
+                <time title="修改时间：2022-11-11 10:02:55" itemprop="dateModified" datetime="2022-11-11T10:02:55+08:00">2022-11-11</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -859,7 +950,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-24 21:49:58" itemprop="dateModified" datetime="2022-09-24T21:49:58+08:00">2022-09-24</time>
+                <time title="修改时间：2022-11-11 10:02:55" itemprop="dateModified" datetime="2022-11-11T10:02:55+08:00">2022-11-11</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -897,90 +988,6 @@
 </ul>
 <p>到这里整个流程就走完了，可以愉快的一键打包。但是打包的时候我发现打包前要构建Unity工程的Library文件夹，这个是Unity自动生成的，这个文件夹构建一次要花很长时间，所以需要部署资源缓存服务。我又开始找相应的教程，然后发现这个资源缓存服务不亚于Git服务的搭建，要装安多东西。<br>所以最终我还是决定方式Jenkins和Bonobo Git Server的组合。因为我都打算安装那么多服务了，就想直接使用Docker来作为容器，这样什么服务都可以搭，那就搭一个更牛逼的Git服务吧，比如说GitLab。<br>不过Jenkins和Bonobo Git Server的组合，整个安装过程都是非常简单的，适合初学者使用，或者需求没有那么复杂的个人使用。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1654086">Unity-Jenkins打包部署工具（一）</a><br><a target="_blank" rel="noopener" href="https://unoniceday.github.io/jenkins-autobuild-unity-local/">Jenkins!自動建置Unity專案-本地建置</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/C_yuxuan/article/details/119182706">Unity为Git项目部署Jenkins</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2022/08/25/Jenkins_Git_Server/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2022/08/25/Jenkins_Git_Server/" class="post-title-link" itemprop="url">Configure Git Hooks on Bonobo Git Server in Windows</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-25 19:01:34" itemprop="dateCreated datePublished" datetime="2022-08-25T19:01:34+08:00">2022-08-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-24 21:49:58" itemprop="dateModified" datetime="2022-09-24T21:49:58+08:00">2022-09-24</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Jenkins/" itemprop="url" rel="index"><span itemprop="name">Jenkins</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="记录"><a href="#记录" class="headerlink" title="记录"></a>记录</h2><p>因为最近想自己搭建个人自动部署服务，所以考虑采用Jenkins和Git结合的方式。其中Jenkins负责项目自动化部署，Git负责版本控制，两者相结合需要一个Git服务。目前我所了解到的Git服务有<a target="_blank" rel="noopener" href="https://github.com/">GitHub</a>、<a target="_blank" rel="noopener" href="https://about.gitlab.com/">GitLab</a>、<a target="_blank" rel="noopener" href="https://gitee.com/">Gitee</a>、<a target="_blank" rel="noopener" href="http://gitblit.github.io/gitblit/">gitblit</a>、<a target="_blank" rel="noopener" href="https://bonobogitserver.com/">Bonobo Git Server</a>。<br>这里前面几个是比较知名的Git服务了，前三者有在线运营的服务，我们可以直接注册，功能相对比较完善，用的人也多，但是免费版的存储、流量限制比较大。后面两者可能很少人知道，但是可以作为小团队Git服务进行部署私服，当然<a target="_blank" rel="noopener" href="https://about.gitlab.com/">GitLab</a>作为开源项目也可以部署私服，但是部署方式会比较繁琐，相比而言，最后这两种方式部署更为简单。<br>因为我是个人使用，同时经济限制，只有一台笔记本，Windows系统，所以我选择<a target="_blank" rel="noopener" href="https://bonobogitserver.com/">Bonobo Git Server</a>，第一次部署完成后，真的被她的简陋的功能给震惊了，一度怀疑被收了智商税，因为我发现除了上传、下载、commit、用户管理、仓库管理，就没了，我无法想象她是如何和Jenkins联动的。好在懒惰拯救了我，当我想放弃<a target="_blank" rel="noopener" href="https://bonobogitserver.com/">Bonobo Git Server</a>的时候，我再转头研究<a target="_blank" rel="noopener" href="http://gitblit.github.io/gitblit/">gitblit</a>，发现要下载一堆相关联的软件，所以我再一次抱着试一试的心态看有没有教程将如何将<a target="_blank" rel="noopener" href="https://bonobogitserver.com/">Bonobo Git Server</a>与Jenkins关联起来，还真被我找到了，最终结果你们应该也猜到了，确实实现了两者的完美结合（ps：毕竟不完美的完美才是最大的完美）。好了废话有点多，进入正题吧。</p>
-<p>首先安装<a target="_blank" rel="noopener" href="https://bonobogitserver.com/">Bonobo Git Server</a>本地服务，可以看<a target="_blank" rel="noopener" href="https://blog.csdn.net/u013851294/article/details/117811760">这篇</a>文章，我找了很多篇教程，这篇无疑是最简单而且真实有效的。</p>
-<p>当然我们也要提前安装号Jenkins，找到一篇真正意义上的保姆级教程，在这里谢谢这位无私的大佬。教程路径<a target="_blank" rel="noopener" href="https://blog.csdn.net/linxinfa/article/details/118816132">【游戏开发进阶】教你Unity通过Jenkins实现自动化打包，打包这种事情就交给策划了（保姆级教程 | 命令行打包 | 自动构建）</a></p>
-<blockquote>
-<p>这里提一嘴，Jenkins安装完成后，默认工作路径一般是在C盘，也就是所有的需要部署的文件副本都会放在这个工作路径下，很显然C盘不适合当作工作路径，所以需要更改其工作路径。更改方式其实也不难，主要是有很多老旧不适用的方式在网络上混淆视听，给我们错误的引导。这里简单说一下，我们需要找到Jenkins的安装目录，这里我是<code>D:\Program Files\Jenkins</code>，在安装目录下找到<code>jenkins.xml</code>文件，然后修改其中的工作路径配置。注意这里使用的<code>Jenkins</code>版本是<code>Jenkins 2.346.3</code>。按下面更改，改前要关闭Jenkins,改后再重启。对了，我是参考的这里<a target="_blank" rel="noopener" href="https://blog.csdn.net/devalone/article/details/119299044">Jenkins 修改主目录 JENKINS_HOME</a></p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- &lt;env name=&quot;JENKINS_HOME&quot; value=&quot;%ProgramData%\Jenkins\.jenkins&quot;/&gt; --&gt;</span> <span class="comment">&lt;!-- 这行是默认设置 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">env</span> <span class="attr">name</span>=<span class="string">&quot;JENKINS_HOME&quot;</span> <span class="attr">value</span>=<span class="string">&quot;D:\ServicesData\Jenkins\.jenkins&quot;</span>/&gt;</span> <span class="comment">&lt;!-- 这行是我更换的路径，路径你也可以自己选 --&gt;</span></span><br></pre></td></tr></table></figure>
-</blockquote>
-<p>重点来了，<a target="_blank" rel="noopener" href="https://www.cnblogs.com/wyzhhhh/p/15762137.html">这篇文章</a>不算很详细的介绍了如何配置的过程，但是相比于网络上稀缺的资料，蚊子再小也是肉。按照这篇文章大概能了解其中的基本步骤，但是其中还有有一些谬误，具体说就是<code>post-receive</code>这个文件，在该文章中写成了<code>post_receive</code>，导致我搞了半天也没成功。最后是在<a target="_blank" rel="noopener" href="https://blog.dangl.me/archive/configure-git-hooks-on-bonobo-git-server-in-windows/">这里</a>找到了解决方案。当然前面这篇中文教程也是有很大的参考意义的。前面说了<a target="_blank" rel="noopener" href="https://bonobogitserver.com/">Bonobo Git Server</a>非常简陋，没有钩子之类的工具(ps:我其实不太懂什么是钩子，我猜应该是网站之间相互订阅、通知之类的事件传输)。因此需要借助<a target="_blank" rel="noopener" href="https://curl.se/download.html">curl</a>来实现，搜了一下，<code>curl</code>应该是用来发送<code>http</code>这类网络协议的，所以可以实现两者通信。</p>
-<p>目前为止，确实实现了Jenkins部署时，会自动拉取Git服务中的项目，但是教程里面提到的Git上传修改会自动触发Jenkins进行部署的方法，我还没有试验成功。在文章中提到的方式就是借用<code>curl</code>，然后还需要配置一个<code>post-receive</code>文件，在提交Git时，确实能看到控制台里面多打印了一些消息，但是Jenkins并没有触发自动部署。所以这个问题暂时先搁置，等我找到方法再补充。</p>
-<p>这个博客有点简陋，没有评论交流的功能，所以有兴趣可以跳到知乎给我点个赞（哈哈哈，算了，知乎点赞好像也没什么用，等我有精力好好升级升级我这个破站）。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://blog.dangl.me/archive/configure-git-hooks-on-bonobo-git-server-in-windows/">Configure Git Hooks on Bonobo Git Server in Windows</a><br><a target="_blank" rel="noopener" href="https://curl.se/download.html">curl</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wyzhhhh/p/15762137.html">Jenkins+Bonobo.Git.Server自动部署.net core项目</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/u013851294/article/details/117811760">Windows环境搭建 Gitlab 服务器</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/linxinfa/article/details/118816132">【游戏开发进阶】教你Unity通过Jenkins实现自动化打包，打包这种事情就交给策划了（保姆级教程 | 命令行打包 | 自动构建）</a></p>
 
       
     </div>
@@ -1067,7 +1074,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">59</span>
+          <span class="site-state-item-count">60</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
