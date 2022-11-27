@@ -194,7 +194,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-11 10:02:55" itemprop="dateModified" datetime="2022-11-11T10:02:55+08:00">2022-11-11</time>
+                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -218,6 +218,166 @@
 
       
           <p>撕夜<br>用心爱你你不懂<br>十年<br>时间都去哪儿了<br>其实你不懂我的心<br>关于你们之间的故事<br>假如爱有天意</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2022/11/27/Unity_Ex_Editor_CreateParentForTransforms/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2022/11/27/Unity_Ex_Editor_CreateParentForTransforms/" class="post-title-link" itemprop="url">Create Parent For Transforms</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-11-27 10:01:00 / 修改时间：20:16:33" itemprop="dateCreated datePublished" datetime="2022-11-27T10:01:00+08:00">2022-11-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Extention/" itemprop="url" rel="index"><span itemprop="name">Extention</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Extention/Editor/" itemprop="url" rel="index"><span itemprop="name">Editor</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Extention/Editor/MenuUtility/" itemprop="url" rel="index"><span itemprop="name">MenuUtility</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="扩展命令"><a href="#扩展命令" class="headerlink" title="扩展命令"></a>扩展命令</h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> UnityEditor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title">CreateParentForTransforms</span> : <span class="title">ScriptableObject</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//[MenuItem(&quot;MenuUtility/Create Parent For Selection _p&quot;)]</span></span><br><span class="line">    [<span class="meta">MenuItem(<span class="meta-string">&quot;MenuUtility/Create Parent For Selection&quot;</span>)</span>]</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">MenuInsertParent</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Transform[] selection = Selection.GetTransforms(</span><br><span class="line">            SelectionMode.TopLevel | SelectionMode.Editable);</span><br><span class="line">        GameObject newParent = ObjectFactory.CreateGameObject(<span class="string">&quot;Parent&quot;</span>);</span><br><span class="line">        Undo.RegisterCreatedObjectUndo(newParent, <span class="string">&quot;Create Parent For Selection&quot;</span>);</span><br><span class="line">        <span class="keyword">foreach</span> (Transform t <span class="keyword">in</span> selection)</span><br><span class="line">        &#123;</span><br><span class="line">            Undo.SetTransformParent(t, newParent.transform, <span class="string">&quot;Create Parent For Selection 1&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Disable the menu if there is nothing selected</span></span><br><span class="line">    <span class="comment">//[MenuItem(&quot;MenuUtility/Create Parent For Selection _p&quot;, true)]</span></span><br><span class="line">    [<span class="meta">MenuItem(<span class="meta-string">&quot;MenuUtility/Create Parent For Selection&quot;</span>, true)</span>]</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="built_in">bool</span> <span class="title">ValidateSelection</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">return</span> Selection.activeTransform != <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2022/11/27/Unity_Ex_Editor_PackageMenuItem/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2022/11/27/Unity_Ex_Editor_PackageMenuItem/" class="post-title-link" itemprop="url">Unity Package Menu Item</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-11-27 10:01:00 / 修改时间：20:16:33" itemprop="dateCreated datePublished" datetime="2022-11-27T10:01:00+08:00">2022-11-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Extention/" itemprop="url" rel="index"><span itemprop="name">Extention</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Extention/Editor/" itemprop="url" rel="index"><span itemprop="name">Editor</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Extention/Editor/AssetsMenuUtility/" itemprop="url" rel="index"><span itemprop="name">AssetsMenuUtility</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="Package扩展命令"><a href="#Package扩展命令" class="headerlink" title="Package扩展命令"></a>Package扩展命令</h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"><span class="keyword">using</span> UnityEditor;</span><br><span class="line"><span class="keyword">using</span> UnityEditor.PackageManager.Requests;</span><br><span class="line"><span class="keyword">using</span> UnityEditor.PackageManager;</span><br><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> System.Text.RegularExpressions;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">Unity.Editor.Extention</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title">PackageMenuItem</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">static</span> String targetPackage;</span><br><span class="line">        <span class="keyword">static</span> EmbedRequest Request;</span><br><span class="line">        <span class="keyword">static</span> ListRequest LRequest;</span><br><span class="line"></span><br><span class="line">        [<span class="meta">MenuItem(<span class="meta-string">&quot;Assets/Package/Embed Installed Package&quot;</span>)</span>]</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">EmbedInstalledPackage</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="keyword">if</span>(Selection.assetGUIDs.Length &gt; <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="built_in">string</span> path = AssetDatabase.GUIDToAssetPath(Selection.assetGUIDs[<span class="number">0</span>]);</span><br><span class="line">                Match match = Regex.Match(path, <span class="string">&quot;^Packages/([^/]+)$&quot;</span>);</span><br><span class="line">                <span class="keyword">if</span>(match.Success)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="built_in">string</span> targetPackage = match.Groups[<span class="number">1</span>].Value;</span><br><span class="line">                    <span class="comment">//Debug.LogError(targetPackage);</span></span><br><span class="line">                    Embed(targetPackage);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        [<span class="meta">MenuItem(<span class="meta-string">&quot;Assets/Package/Embed Installed Package&quot;</span>, validate = true)</span>]</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="built_in">bool</span> <span class="title">Check_EmbedInstalledPackage</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="keyword">if</span> (Selection.assetGUIDs.Length &gt; <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="built_in">string</span> path = AssetDatabase.GUIDToAssetPath(Selection.assetGUIDs[<span class="number">0</span>]);</span><br><span class="line">                Match match = Regex.Match(path, <span class="string">&quot;^Packages/([^/]+)$&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span> match.Success;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Embed</span>(<span class="params"><span class="built_in">string</span> inTarget</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="comment">// Embed a package in the project</span></span><br><span class="line">            Debug.Log(<span class="string">&quot;Embed(&#x27;&quot;</span> + inTarget + <span class="string">&quot;&#x27;) called&quot;</span>);</span><br><span class="line">            Request = Client.Embed(inTarget);</span><br><span class="line">            EditorApplication.update += Progress;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Progress</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="keyword">if</span> (Request.IsCompleted)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> (Request.Status == StatusCode.Success)</span><br><span class="line">                    Debug.Log(<span class="string">&quot;Embedded: &quot;</span> + Request.Result.packageId);</span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (Request.Status &gt;= StatusCode.Failure)</span><br><span class="line">                    Debug.Log(Request.Error.message);</span><br><span class="line"></span><br><span class="line">                EditorApplication.update -= Progress;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="meta">#<span class="meta-keyword">region</span> Test</span></span><br><span class="line">        [<span class="meta">MenuItem(<span class="meta-string">&quot;Assets/Package/Test/Get Package Name&quot;</span>, priority = 100)</span>]</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">GetPackageName</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="comment">// First get the name of an installed package</span></span><br><span class="line">            LRequest = Client.List();</span><br><span class="line">            EditorApplication.update += LProgress;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">LProgress</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="keyword">if</span> (LRequest.IsCompleted)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> (LRequest.Status == StatusCode.Success)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">foreach</span> (<span class="keyword">var</span> package <span class="keyword">in</span> LRequest.Result)</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="comment">// Only retrieve packages that are currently installed in the</span></span><br><span class="line">                        <span class="comment">// project (and are neither Built-In nor already Embedded)</span></span><br><span class="line">                        <span class="keyword">if</span> (package.isDirectDependency &amp;&amp; package.source</span><br><span class="line">                            != PackageSource.BuiltIn &amp;&amp; package.source</span><br><span class="line">                            != PackageSource.Embedded)</span><br><span class="line">                        &#123;</span><br><span class="line">                            targetPackage = package.name;</span><br><span class="line">                            Debug.LogError(targetPackage);</span><br><span class="line">                            <span class="comment">//break;</span></span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                    Debug.Log(LRequest.Error.message);</span><br><span class="line"></span><br><span class="line">                EditorApplication.update -= LProgress;</span><br><span class="line"></span><br><span class="line">                <span class="comment">//Embed(targetPackage);</span></span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="meta">#<span class="meta-keyword">endregion</span></span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -268,7 +428,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-11 10:02:55" itemprop="dateModified" datetime="2022-11-11T10:02:55+08:00">2022-11-11</time>
+                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -359,7 +519,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-11 10:02:55" itemprop="dateModified" datetime="2022-11-11T10:02:55+08:00">2022-11-11</time>
+                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -443,7 +603,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-11 10:02:55" itemprop="dateModified" datetime="2022-11-11T10:02:55+08:00">2022-11-11</time>
+                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -527,7 +687,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-11 10:02:55" itemprop="dateModified" datetime="2022-11-11T10:02:55+08:00">2022-11-11</time>
+                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -603,7 +763,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-11 10:02:55" itemprop="dateModified" datetime="2022-11-11T10:02:55+08:00">2022-11-11</time>
+                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -682,7 +842,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-11 10:02:55" itemprop="dateModified" datetime="2022-11-11T10:02:55+08:00">2022-11-11</time>
+                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -784,7 +944,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-11 10:02:55" itemprop="dateModified" datetime="2022-11-11T10:02:55+08:00">2022-11-11</time>
+                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -836,177 +996,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2022/08/29/Docker_Install/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2022/08/29/Docker_Install/" class="post-title-link" itemprop="url">Docker Install</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-29 15:01:00" itemprop="dateCreated datePublished" datetime="2022-08-29T15:01:00+08:00">2022-08-29</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-11 10:02:55" itemprop="dateModified" datetime="2022-11-11T10:02:55+08:00">2022-11-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <ul>
-<li><a target="_blank" rel="noopener" href="https://docs.docker.com/desktop/install/windows-install/">Install Docker Desktop on Windows</a>官网，下载安装包安装。</li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/baidu_30506559/article/details/125838506">【Docker闪退】【解决方法】It looks like there is an error with Docker Desktop, restart it to fix it</a>安装完成后会闪退的话，看这里。</li>
-<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows/wsl/install-manual#step-4---download-the-linux-kernel-update-package">步骤 4 - 下载 Linux 内核更新包</a>打开后会有提示，进入到这一步</li>
-<li><a target="_blank" rel="noopener" href="https://apps.microsoft.com/store/detail/ubuntu-1804-on-windows/9N9TNGVNDL3Q?hl=zh-cn&gl=CN">Ubuntu 18.04 on Windows</a>然后跟着提示进入这一步</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2022/08/27/Jenkins_Git_Unity/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2022/08/27/Jenkins_Git_Unity/" class="post-title-link" itemprop="url">在Win10下面配置基于Bonobo Git Server和Jenkins的Unity项目部署</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-27 19:01:34" itemprop="dateCreated datePublished" datetime="2022-08-27T19:01:34+08:00">2022-08-27</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-11 10:02:55" itemprop="dateModified" datetime="2022-11-11T10:02:55+08:00">2022-11-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Jenkins/" itemprop="url" rel="index"><span itemprop="name">Jenkins</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="记录"><a href="#记录" class="headerlink" title="记录"></a>记录</h2><p>这里假设我们已经在Win10系统上安装安装好了Jenkins和Bonobo Git Server，并且有一个Unity工程JenkinsTest，同时安装了Unity，我这里是Unity 2020.3.33f1c2 (64-bit)，另外还装了Git，并且在Bonobo Git Server服务上搭建了JenkinsTest的版本仓库。</p>
-<p>在这些都准备好之后，下面是需要操作的步骤：</p>
-<ul>
-<li>在Jenkins里面新建一个Item，也就是一个新的部署项目。随便给它取个名字，这里使用JenkinsTest，然后选FreeStyle Project,最后点确定。</li>
-<li>之后会自动跳转到一个设置界面，这里有很多设置，但是本教程只需要关注Git这个选项的配置，我们需要加一个Git仓库配置，勾选Git，然后点击Add Repository，会出现Repository URL，这里填JenkinsTest项目在Bonobo Git Server中的URL，我这里是htt://localhost:8888/JenkinsTest.git。然后是Credentials，这里需要填一个Git拉去的访问权限的东西，有几种选择，因为Bonobo Git Server只提供账号密码的访问形式，所以这里我们在下面添加按钮，打开新建一个凭证，这个凭证是采用账号密码的形式，然后在对应框中输入账号和密码，点击确定，然后回到Credentials下，选择新建好的凭证。</li>
-<li>到这里为止，如果我们保存配置，然后对Jenkins进行构建的话，Jenkins会自动将Jenkins项目拉取到它的工作区。除此之外不会做任何其他事情。</li>
-<li>为了最终打包工程，我们需要在上面那个设置界面下的构建设置里面，选择构建的方式。在Windows中，可以使用Execute Windows batch command来构建，主要是通过调用一些bat类型的可执行文件，来间接调用Unity项目中的打包脚本。这总方法在网上有很多，比如<a target="_blank" rel="noopener" href="http://dingxiaowei.cn/2018/11/17/">这个</a>教程。</li>
-<li>但是还有一种方式，是直接使用Unity Editor的方式来打包，这种方式需要在Jenkins中安装Unity3D Plugin插件。然后在Jenkins的Global Tool Configuration的配置里面，找到Unity3d部分，那个有个Unity安装的按钮，点开，然后将电脑上已有的Unity配置上去。举个例子，我这里的Unity的安装路径是C:\Program Files\Unity\Hub\Editor\2020.3.33f1c2，然后别名随便。</li>
-<li>然后再会到JenkinsTest的配置界面，就会发现构建部分多了Invoke Unity3d Editor的选项，选它，然后Unity3d installation name这里会自动出现前面配置的Unity别名，意思是我们选择这个Unity版本来打包。</li>
-<li>然后在Editor command line arguments里面配置打包命令，这个是在Unity手册里面是有介绍到。我这里填的打包命令是<code>-quit -batchmode - - executeMethod BuildTools.BuildApk</code>。其中BuildTools是JenkinsTest工程下的编辑器脚本，BuildApk是该脚本下的一个打包函数，执行具体的打包操作。</li>
-<li>了解过Execute Windows batch command打包方式的人应该记得，打包命令里面一般会包含Unity的路径和需要打包的项目路径，但是这里并没有，这是因为前面已经配置了Unity的安装路径，而项目路径是Jenkins自动拉取的git目录，所以这两个目录Jenkins是知道的。我最开始配了这两个反而导致报错。</li>
-<li>最后，点击构建，开始打包JenkinsTest项目。</li>
-</ul>
-<p>到这里整个流程就走完了，可以愉快的一键打包。但是打包的时候我发现打包前要构建Unity工程的Library文件夹，这个是Unity自动生成的，这个文件夹构建一次要花很长时间，所以需要部署资源缓存服务。我又开始找相应的教程，然后发现这个资源缓存服务不亚于Git服务的搭建，要装安多东西。<br>所以最终我还是决定方式Jenkins和Bonobo Git Server的组合。因为我都打算安装那么多服务了，就想直接使用Docker来作为容器，这样什么服务都可以搭，那就搭一个更牛逼的Git服务吧，比如说GitLab。<br>不过Jenkins和Bonobo Git Server的组合，整个安装过程都是非常简单的，适合初学者使用，或者需求没有那么复杂的个人使用。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1654086">Unity-Jenkins打包部署工具（一）</a><br><a target="_blank" rel="noopener" href="https://unoniceday.github.io/jenkins-autobuild-unity-local/">Jenkins!自動建置Unity專案-本地建置</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/C_yuxuan/article/details/119182706">Unity为Git项目部署Jenkins</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/blogs/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/blogs/page/6/">6</a><a class="extend next" rel="next" href="/blogs/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/blogs/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/blogs/page/7/">7</a><a class="extend next" rel="next" href="/blogs/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1074,20 +1067,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-count">62</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/blogs/categories/">
           
-        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-count">22</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/blogs/tags/">
           
-        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-count">31</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
