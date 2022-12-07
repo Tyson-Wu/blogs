@@ -9,7 +9,7 @@ tags:
 
 ## Asset Ripper
 
-支持将打包后的资源解包，而且试过成功解包出图片、材质、动画、Shader等等。效果非常好。
+支持打开打包后的资源，对于图片等资源可以直接预览，但是Shader只能查看到名字属性等基本信息，里面的代码变体等信息都是假的。
 [下载链接](https://assetripper.github.io/AssetRipper/articles/Downloads.html)
 
 ## UABE(AssetsBundleExtractor)
@@ -19,7 +19,7 @@ tags:
 [社区](https://community.7daystodie.com/topic/1871-uabe-asset-bundle-extractor/page/35/)
 
 ## AssetStudio
-和`Asset Ripper`一样，支持将打包后的资源解包，但是试过只能解出部分资源。
+和`Asset Ripper`一样，支持打开打包后的资源，但是Shader信息展示的更多一点，可以看到变体信息，但是代码块部分仍然看不了。
 [下载链接](https://github.com/Perfare/AssetStudio/releases)
 
 ## 关于Unity Resources
