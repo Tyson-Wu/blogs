@@ -163,6 +163,117 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/05/Ronja_Fresnel/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/07/05/Ronja_Fresnel/" class="post-title-link" itemprop="url">Fresnel</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-07-05 19:01:00" itemprop="dateCreated datePublished" datetime="2021-07-05T19:01:00+08:00">2021-07-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-12-07 19:12:17" itemprop="dateModified" datetime="2022-12-07T19:12:17+08:00">2022-12-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/012-fresnel/">Fresnel</a></p>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>菲涅尔效果是渲染中常用的效果。使用菲涅尔效果我们可以很方便的对模型的边缘进行增亮、加黑等边缘效果，加强场景的深度感。</p>
+<p>本篇将采用表面着色器的实现方法，所以如果你对表面着色器还不了解的话，建议你先看看<a href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Surface_Shader_Basics/">这篇</a>文章。当然你也可以将菲涅尔效果应用到其他类型的着色器，来增强模型平滑度、或突出重点。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/012/Result.jpg"></p>
+<h2 id="Highlighting-one-Side-of-the-Model"><a href="#Highlighting-one-Side-of-the-Model" class="headerlink" title="Highlighting one Side of the Model"></a>Highlighting one Side of the Model</h2><p>我们通过修改表面着色器来实现菲涅尔效果。菲涅尔效果是根据法向来计算效果的密度、或厚度。因为要在片段着色器中使用到世界坐标系中的法向量，所以我们首先在顶点着色器中计算好世界坐标系中的顶点法向，然后通过中间插值结构传递给片段着色器。当然，我们的输入结构体和中间插值结构体都需要定义法向量。</p>
+<p>在<a href="https://tyson-wu.github.io/blogs/2021/07/02/Ronja_Triplanar_Mapping/">三维平面映射</a>我们介绍了如何计算顶点的世界法向量。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//输入的模型网格数据，其中采用宏定义来定义部分数据</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Input</span> &#123;</span></span><br><span class="line">    float2 uv_MainTex;</span><br><span class="line">    float3 worldNormal;</span><br><span class="line">    INTERNAL_DATA</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以通过计算相邻向量之间的点乘，从而了解模型表明的平滑度、或者梯度。单位向量之间的点乘越大，说明它们方向越一致。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/012/DotSphere.png"><br><img src="https://www.ronja-tutorials.com/assets/images/posts/012/DotDirection.png"></p>
+<p>首先，我将所有法向量与一个固定向量做点乘，可以让我们更容易理解点乘的意义。然后将点乘的结果传递给<code>emission</code>变量，将点乘结果通过自发光的形式表现出来。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//表面着色器函数，主要用了计算光照模型的输入参数，然后由光照模型进行最中的颜色计算</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">surf</span> <span class="params">(Input i, inout SurfaceOutputStandard o)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//两个向量之间的点乘</span></span><br><span class="line">    <span class="keyword">float</span> fresnel = dot(i.worldNormal, float3(<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>));</span><br><span class="line">    <span class="comment">//应用菲涅尔效果</span></span><br><span class="line">    o.Emission = _Emission + fresnel;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/012/WhiteTopBlackBottom.png"></p>
+<p>上图我们可以看到，越朝上的地方越亮、越朝下越暗。为了避免自发光出现负数，这里将菲涅尔值限定在<code>[0,1]</code>之间。这里有两个函数<code>staturate</code>和<code>clamp</code>都可以实现范围限定的功能，但是<code>staturate</code>在GPU上执行速度更快。下面是限定后的效果。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//表面着色器函数</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">surf</span> <span class="params">(Input i, inout SurfaceOutputStandard o)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//计算菲涅尔值</span></span><br><span class="line">    <span class="keyword">float</span> fresnel = dot(i.worldNormal, float3(<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>));</span><br><span class="line">    <span class="comment">//限定为 0 - 1 之间</span></span><br><span class="line">    fresnel = saturate(fresnel);</span><br><span class="line">    <span class="comment">//应用菲尼尔效果</span></span><br><span class="line">    o.Emission = _Emission + fresnel;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/012/WhiteTopBlackBottom.png"></p>
+<h2 id="Highlighting-the-outer-Parts"><a href="#Highlighting-the-outer-Parts" class="headerlink" title="Highlighting the outer Parts"></a>Highlighting the outer Parts</h2><p>接下来我们使用视角方向来计算菲涅尔值。视角放向可以直接定义输入结构体中，然后在表面着色器函数中就可以访问。</p>
+<p>如果是在无光照着色器中实现菲涅尔效果，那么视角方向可以通过摄像机的位置和顶点世界坐标来计算。其中摄像机坐标存储在<code>_WorldSpaceCameraPos</code>这个内置变量中，由Unity来赋值。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//表面着色器的输入结构体</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Input</span> &#123;</span></span><br><span class="line">    float2 uv_MainTex;</span><br><span class="line">    float3 worldNormal;</span><br><span class="line">    float3 viewDir;</span><br><span class="line">    INTERNAL_DATA</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">//表面着色器函数</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">surf</span> <span class="params">(Input i, inout SurfaceOutputStandard o)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//金属度与光滑度</span></span><br><span class="line">    o.Metallic = _Metallic;</span><br><span class="line">    o.Smoothness = _Smoothness;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//菲尼尔值</span></span><br><span class="line">    <span class="keyword">float</span> fresnel = dot(i.worldNormal, i.viewDir);</span><br><span class="line">    <span class="comment">//范围限定在 0 - 1</span></span><br><span class="line">    fresnel = saturate(fresnel);</span><br><span class="line">    <span class="comment">//应用菲涅尔值</span></span><br><span class="line">    o.Emission = _Emission + fresnel;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/012/WhiteFront.png"></p>
+<p>总体来说实现了菲涅尔效果，但是整个材质是靠近中心区域更亮，而不是边缘更亮。如果我们想让边缘更亮，我们可以将1减去菲涅尔值。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//表面着色器函数</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">surf</span> <span class="params">(Input i, inout SurfaceOutputStandard o)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//菲涅尔值</span></span><br><span class="line">    <span class="keyword">float</span> fresnel = dot(i.worldNormal, i.viewDir);</span><br><span class="line">    <span class="comment">//效果反转</span></span><br><span class="line">    fresnel = saturate(<span class="number">1</span> - fresnel);</span><br><span class="line">    <span class="comment">//应用菲涅尔效果</span></span><br><span class="line">    o.Emission = _Emission + fresnel;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/012/WhiteFresnel.png"></p>
+<h2 id="Add-Fresnel-Color-and-Intensity"><a href="#Add-Fresnel-Color-and-Intensity" class="headerlink" title="Add Fresnel Color and Intensity"></a>Add Fresnel Color and Intensity</h2><p>最后，我想增加一些自定义属性，比如菲涅尔颜色。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">_FresnelColor (<span class="string">&quot;Fresnel Color&quot;</span>, Color) = (<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">float3 _FresnelColor;</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//表面着色器函数</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">surf</span> <span class="params">(Input i, inout SurfaceOutputStandard o)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//菲涅尔值</span></span><br><span class="line">    <span class="keyword">float</span> fresnel = dot(i.worldNormal, i.viewDir);</span><br><span class="line">    <span class="comment">//效果反转</span></span><br><span class="line">    fresnel = saturate(<span class="number">1</span> - fresnel);</span><br><span class="line">    <span class="comment">//使用菲涅尔自定义颜色</span></span><br><span class="line">    float3 fresnelColor = fresnel * _FresnelColor;</span><br><span class="line">    <span class="comment">//应用菲涅尔效果</span></span><br><span class="line">    o.Emission = _Emission + fresnelColor;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/012/Result.jpg"></p>
+<p>然后再增加一个控制菲涅尔强度的属性。这里我们使用指数函数来调节菲涅尔强度。</p>
+<p>因为指数函数计算消耗非常大，所以如果有其他方法能实现相同的效果，尽量不要使用指数函数。当然，指数函数用法简单、便捷，在设计效果的时候可以直接使用指数函数。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">[PowerSlider(<span class="number">4</span>)] _FresnelExponent (<span class="string">&quot;Fresnel Exponent&quot;</span>, Range(<span class="number">0.25</span>, <span class="number">4</span>)) = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">float</span> _FresnelExponent;</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//表面着色器函数</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">surf</span> <span class="params">(Input i, inout SurfaceOutputStandard o)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//菲涅尔值</span></span><br><span class="line">    <span class="keyword">float</span> fresnel = dot(i.worldNormal, i.viewDir);</span><br><span class="line">    <span class="comment">//效果反转</span></span><br><span class="line">    fresnel = saturate(<span class="number">1</span> - fresnel);</span><br><span class="line">    <span class="comment">//使用菲涅尔自定义颜色</span></span><br><span class="line">    float3 fresnelColor = fresnel * _FresnelColor;</span><br><span class="line">    <span class="comment">//强度调节</span></span><br><span class="line">    fresnel = <span class="built_in">pow</span>(fresnel, _FresnelExponent);</span><br><span class="line">    <span class="comment">//应用菲涅尔效果</span></span><br><span class="line">    o.Emission = _Emission + fresnelColor;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://www.ronja-tutorials.com/assets/images/posts/012/ExponentAdjustment.gif"></p>
+<p>菲涅尔效果除了用来突出轮廓外，还可以用来实现各种渐变效果，这里不展开，有兴趣可以自行尝试。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/012_Fresnel&quot;</span> &#123;</span><br><span class="line">    <span class="comment">//材质面板</span></span><br><span class="line">    Properties &#123;</span><br><span class="line">        _Color (<span class="string">&quot;Tint&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">        _MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">        _Smoothness (<span class="string">&quot;Smoothness&quot;</span>, Range(<span class="number">0</span>, <span class="number">1</span>)) = <span class="number">0</span></span><br><span class="line">        _Metallic (<span class="string">&quot;Metalness&quot;</span>, Range(<span class="number">0</span>, <span class="number">1</span>)) = <span class="number">0</span></span><br><span class="line">        [HDR] _Emission (<span class="string">&quot;Emission&quot;</span>, color) = (<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">        _FresnelColor (<span class="string">&quot;Fresnel Color&quot;</span>, Color) = (<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>)</span><br><span class="line">        [PowerSlider(<span class="number">4</span>)] _FresnelExponent (<span class="string">&quot;Fresnel Exponent&quot;</span>, Range(<span class="number">0.25</span>, <span class="number">4</span>)) = <span class="number">1</span></span><br><span class="line">    &#125;</span><br><span class="line">    SubShader &#123;</span><br><span class="line">        <span class="comment">//不透明物体</span></span><br><span class="line">        Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Geometry&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line">        CGPROGRAM</span><br><span class="line"></span><br><span class="line">        <span class="comment">//这是表面着色器，unity会自动生成部分代码</span></span><br><span class="line">        <span class="comment">//surf 是被定义为表面着色器函数</span></span><br><span class="line">        <span class="comment">//fullforwardshadows 告诉Unity将所有阴影Pass都复制过来</span></span><br><span class="line">        <span class="meta">#<span class="meta-keyword">pragma</span> surface surf Standard fullforwardshadows</span></span><br><span class="line">        <span class="meta">#<span class="meta-keyword">pragma</span> target 3.0</span></span><br><span class="line"></span><br><span class="line">        sampler2D _MainTex;</span><br><span class="line">        fixed4 _Color;</span><br><span class="line"></span><br><span class="line">        half _Smoothness;</span><br><span class="line">        half _Metallic;</span><br><span class="line">        half3 _Emission;</span><br><span class="line"></span><br><span class="line">        float3 _FresnelColor;</span><br><span class="line">        <span class="keyword">float</span> _FresnelExponent;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//表面着色器的输入结构</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">Input</span> &#123;</span></span><br><span class="line">            float2 uv_MainTex;</span><br><span class="line">            float3 worldNormal;</span><br><span class="line">            float3 viewDir;</span><br><span class="line">            INTERNAL_DATA</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//表面着色器函数，主要用来计算光照模型所需的参数</span></span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">surf</span> <span class="params">(Input i, inout SurfaceOutputStandard o)</span> </span>&#123;</span><br><span class="line">            <span class="comment">//纹理采样</span></span><br><span class="line">            fixed4 col = tex2D(_MainTex, i.uv_MainTex);</span><br><span class="line">            col *= _Color;</span><br><span class="line">            o.Albedo = col.rgb;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//光滑度、和金属度</span></span><br><span class="line">            o.Metallic = _Metallic;</span><br><span class="line">            o.Smoothness = _Smoothness;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//菲涅尔值</span></span><br><span class="line">            <span class="keyword">float</span> fresnel = dot(i.worldNormal, i.viewDir);</span><br><span class="line">            <span class="comment">//效果翻转</span></span><br><span class="line">            fresnel = saturate(<span class="number">1</span> - fresnel);</span><br><span class="line">            <span class="comment">//控制菲涅尔强度</span></span><br><span class="line">            fresnel = <span class="built_in">pow</span>(fresnel, _FresnelExponent);</span><br><span class="line">            <span class="comment">//应用菲涅尔颜色</span></span><br><span class="line">            float3 fresnelColor = fresnel * _FresnelColor;</span><br><span class="line">            <span class="comment">//应用菲涅尔</span></span><br><span class="line">            o.Emission = _Emission + fresnelColor;</span><br><span class="line">        &#125;</span><br><span class="line">        ENDCG</span><br><span class="line">    &#125;</span><br><span class="line">    FallBack <span class="string">&quot;Standard&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>希望本篇能让你对菲涅尔效果有所了解。</p>
+<p>你可以在以下链接找到源码：<a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/012_Fresnel/Fresnel.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/012_Fresnel/Fresnel.shader</a></p>
+<p>希望你能喜欢这个教程哦！如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/05/Ronja_Checkerboard_Pattern/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -194,7 +305,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
+                <time title="修改时间：2022-12-07 19:12:17" itemprop="dateModified" datetime="2022-12-07T19:12:17+08:00">2022-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -300,7 +411,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
+                <time title="修改时间：2022-12-07 19:12:17" itemprop="dateModified" datetime="2022-12-07T19:12:17+08:00">2022-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -419,7 +530,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
+                <time title="修改时间：2022-12-07 19:12:17" itemprop="dateModified" datetime="2022-12-07T19:12:17+08:00">2022-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -538,7 +649,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
+                <time title="修改时间：2022-12-07 19:12:17" itemprop="dateModified" datetime="2022-12-07T19:12:17+08:00">2022-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -636,7 +747,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
+                <time title="修改时间：2022-12-07 19:12:17" itemprop="dateModified" datetime="2022-12-07T19:12:17+08:00">2022-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -734,7 +845,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
+                <time title="修改时间：2022-12-07 19:12:17" itemprop="dateModified" datetime="2022-12-07T19:12:17+08:00">2022-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -836,7 +947,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
+                <time title="修改时间：2022-12-07 19:12:17" itemprop="dateModified" datetime="2022-12-07T19:12:17+08:00">2022-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -968,7 +1079,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
+                <time title="修改时间：2022-12-07 19:12:17" itemprop="dateModified" datetime="2022-12-07T19:12:17+08:00">2022-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1070,7 +1181,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
+                <time title="修改时间：2022-12-07 19:12:17" itemprop="dateModified" datetime="2022-12-07T19:12:17+08:00">2022-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1128,139 +1239,6 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/001-004_Basic_Unlit&quot;</span>&#123;</span><br><span class="line">	<span class="comment">//这些值将会显示在材质面板上</span></span><br><span class="line">	Properties&#123;</span><br><span class="line">		_Color (<span class="string">&quot;Tint&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">		_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	SubShader&#123;</span><br><span class="line">		<span class="comment">//当前的标签设置表示的是：不透明渲染，和其他不透明物体处以同一渲染队列</span></span><br><span class="line">		Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Geometry&quot;</span> &#125;</span><br><span class="line"></span><br><span class="line">		Pass&#123;</span><br><span class="line">			CGPROGRAM</span><br><span class="line"></span><br><span class="line">			<span class="comment">//这里包括一些工具函数、以及内置变量</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UnityCG.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//定义顶点、片段着色函数</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line">			<span class="comment">//材质所用的纹理、以及缩放偏移量</span></span><br><span class="line">			sampler2D _MainTex;</span><br><span class="line">			float4 _MainTex_ST;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//材质的颜色，具体一点是：当纹理为白色图片时，材质的颜色</span></span><br><span class="line">			fixed4 _Color;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//模型网格、UI等输入数据，基本代表了模型内在属性</span></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">				float4 vertex : POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//当经过顶点着色器处理后，处理的数据经过栅格化插值，然后传入片段着色器</span></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">				float4 position : SV_POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//顶点着色器函数，主要执行坐标的空间变换</span></span><br><span class="line">			<span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">				v2f o;</span><br><span class="line">				<span class="comment">//将模型各顶点坐标，转换到裁剪空间</span></span><br><span class="line">				o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">				<span class="comment">//基于图片的缩放偏移参数，对UV进行变换</span></span><br><span class="line">				o.uv = TRANSFORM_TEX(v.uv, _MainTex);</span><br><span class="line">				<span class="keyword">return</span> o;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//片段作色器，主要是计算像素点的颜色</span></span><br><span class="line">			<span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">			    <span class="comment">//基于UV坐标，进行纹理采样</span></span><br><span class="line">				fixed4 col = tex2D(_MainTex, i.uv);</span><br><span class="line">				<span class="comment">//将纹理颜色和材质颜色相乘</span></span><br><span class="line">				col *= _Color;</span><br><span class="line">				<span class="comment">//返回最终的像素点颜色</span></span><br><span class="line">				<span class="keyword">return</span> col;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	Fallback <span class="string">&quot;VertexLit&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>希望你能喜欢这个教程哦！如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/06/29/Ronja_HLSL/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2021/06/29/Ronja_HLSL/" class="post-title-link" itemprop="url">HLSL</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-06-29 11:01:00" itemprop="dateCreated datePublished" datetime="2021-06-29T11:01:00+08:00">2021-06-29</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/002-hlsl/">HLSL</a></p>
-<h2 id="HLSL？"><a href="#HLSL？" class="headerlink" title="HLSL？"></a>HLSL？</h2><p>HLSL是Unity着色器中所使用的一种语言，可以通过HLSL来实现渲染逻辑。HLSL语言是微软设计的、面向D3D的GPU编程语言。严格的说，网络上现有的大多数Unity着色器脚本是通过CG语言编写的，CG是C for Graphics的简写，也就是为图形编辑而设计的C语言。但是CG语法和HLSL有很多共性，同时CG语言在2012年便不再维护，而我们很容易把两者混淆，不过这并不影响我们进一步的学习。理论上，Unity也支持GLSL语言，GLSL是为OpenGL设计的编程语言，也是类C的编程语言。由于HLSL的例子在网络上随处可见，同时Unity会根据平台不同，自动会将着色器脚本翻译为对应的语言，所以我们不必纠结使用哪种语言。为了方便，这里建议直接使用HLSL语言。</p>
-<p>因为着色器编程难度较大，所以建议初学者在系统学习过基本的编程，再考虑学习着色器编程。因为着色器脚本是在GPU中运行的，而一般的编辑软件是在CPU中运行，所以在着色器编程过程中，很难进行异常分析。因此这也导致我们开发过程中有很多限制，另外，和普通的软件开发相比，我们需要从不同的角度来思考问题。如果你已经具备了基本的编程素养，知道什么是数据类型、类、函数、循环、条件语句等，也大概知道CPU和GPU的区别、串行与并行的区别，那么欢迎你阅读下面的内容。</p>
-<h2 id="Builting-Types"><a href="#Builting-Types" class="headerlink" title="Builting Types"></a>Builting Types</h2><p>首先，我们需要知道在着色器编写过程中，有哪些可以使用的内置数据类型。</p>
-<h3 id="Scalar-Values"><a href="#Scalar-Values" class="headerlink" title="Scalar Values"></a>Scalar Values</h3><p>标量。在Unity的hlsl语言中，小数的类型有<code>fixed</code>、<code>half</code>、以及<code>float</code>，整形的类型有<code>int</code>、<code>uint</code>。需要指出的是，在最新的URP渲染管线中，小数的类型只支持<code>half</code>、和<code>float</code>。</p>
-<p>在移动端的GPU中，<code>fixed</code>的数据范围为<code>[-2, 2]</code>，其精度为<code>1/256</code>。而<code>half</code>和<code>float</code>分别是16位和32位的浮点数。在PC端的GPU中，这三类都是32位浮点数。所以在后面的内容中，你将会看到我基本上都是使用<code>float</code>来表示小数，当然，后面有工具可以对此进行优化。</p>
-<p>整形，也就是我们所知的整数，其中<code>int</code>可以是正数也可以是负数，而<code>uint</code>只能是正数，这两者之间合理的选择，也能达到细微的优化作用。</p>
-<p>另外，还支持<code>bool</code>类型，布尔类型数据用于表示是与否的两种状态。如果我们强行将布尔和数值进行加减乘除运算时，那么实际的布尔值的是就变成1、而否就变成0参与计算。</p>
-<h3 id="Vector-Values"><a href="#Vector-Values" class="headerlink" title="Vector Values"></a>Vector Values</h3><p>向量。向量在空间上表示的是一个方向，由各个维度的投影分量构成。上提到的标量，从广义上来说是一维向量。向量在HLSL中的表示很简单，只要在上面对应标量的后面加上维度。例如上面的<code>fixed</code>、<code>half</code>、<code>float</code>的四维向量分别是<code>fixed4</code>、<code>half4</code>、<code>float4</code>。向量的使用很常见，例如记录纹理坐标、颜色、位置等信息。</p>
-<p>当然，我们也可以访问向量中特定维度的分量。以4维向量v为例，向量数据是一个长度为4的数组，起始索引为0。也就是说v[0]实际上就是访问的第一个维度的值。另外，向量在着色器中主要用于表示空间、和颜色。所以为了方便，可以直接通过维度名称来索引，例如获取x轴的分量可以表示为v.x，获取红色通道的值可以表示为v.r。这些维度、通道的数据就是存储在前面所说的数组中，其顺序为xyzw、和rgba。换句话说，v[0]、v.x、v.r访问的是同一个值。</p>
-<p>另外，在实际使用中，我们可能经常遇到需要从一个向量中选取部分值，来重新构成一个新的向量。因此HLSL在语言设计时就引入了这种通过维度、或通道混合的方式来实现向量重构。举个例子：</p>
-<ul>
-<li>v.xy  ： 选取原向量中的前两个维度，构成一个新的二维向量；</li>
-<li>v.zyx ： 选取原向量中的前三个维度，并且调换顺序，构成一个新的三维向量；</li>
-<li>v.xxxx:  选取原向量中的第一个维度，构成一个四维向量，新构成的四维向量的各个维度的值都等于原向量中的第一个维度的值；</li>
-</ul>
-<h3 id="Matrix-Values"><a href="#Matrix-Values" class="headerlink" title="Matrix Values"></a>Matrix Values</h3><p>矩阵。如果说前面的向量是在标量的基础上，朝着一个方向扩展。那么矩阵就是朝着两个方向扩展，分别是横向r、和纵向c。因此矩阵的数据结构是一个二维数组，与标量对应的表示有<code>fixedrxc</code>、<code>halfrxc</code>、<code>floatrxc</code>，其中的r和c表示的是行数和列数。例如<code>float4x4</code>、<code>half3x2</code>、<code>bool2x4</code>。和向量类型，矩阵也可以使用二维数组的方式进行访问，例如<code>matrix[3][2]</code>，访问的是矩阵中第3行、第2列的元素，注意，这里的行号和列号都是从0开始的。除了二维数组的访问方式，还可以使用元素名称进行访问，例如_m32是第3行、第2列的名称。还可以使用名称混合的方式，实现向量重构。例如matrix._m03_m13_m23，是选取矩阵最后一列的前三个元素构成一个三维向量。如果我们采用二维数组的访问方式，但是只传入一个索引号，那么这个索引号表示的是行号，得到的是该行的向量。例如matrix[0]表示的是获取第0行的向量。</p>
-<p>矩阵处理非常繁琐，庆幸的是我们很少会需要去单独处理其中的元素，因此可以直接调用现有的辅助函数来实现矩阵运算。</p>
-<h3 id="Textures"><a href="#Textures" class="headerlink" title="Textures"></a>Textures</h3><p>HLSL同时也定义了纹理类型。纹理类型比较特殊，这里不做过多讲述，只需要知道，我们可以通过<code>tex2D(texture, coordinate)</code>来对纹理进行采样。当然，在后面的内容我们会了解跟多，I Promise!</p>
-<h2 id="Math"><a href="#Math" class="headerlink" title="Math"></a>Math</h2><p>在数学计算方面，HLSL提供基本的操作方法，例如<code>+</code>、<code>-</code>、<code>*</code>、<code>/</code>，可以执行基本的数值计算，而<code>&lt;</code>、<code>&gt;</code>、<code>==</code>、<code>!=</code>、<code>!</code>、<code>&gt;=</code>、<code>&lt;=</code>、<code>&amp;&amp;</code>、<code>||</code>可以用于条件比较。除此之外，HLSL还集成了像<code>abs</code>、<code>dot</code>、<code>lerp</code>、<code>pow</code>、<code>min</code>、<code>atan2</code>等常用函数，详情可参考<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/direct3dhlsl/dx-graphics-hlsl-intrinsic-functions">这里</a>。</p>
-<p>同时，HLSL也提供一些快捷操作符，例如<code>+=</code>、<code>*=</code>、<code>-=</code>、<code>/=</code>，这些在将操作符左右两边的数据除了后，复值给左边的数据。还有<code>++</code>、<code>--</code>可以用于自增、自减一个单位。</p>
-<p>需要注意的是，标量和向量的乘法，是标量乘以向量中的每一个元素，然后生成一个同维度的向量。例如<code>float2(2,7) * 3 == float2(6, 21)</code>。</p>
-<p>而矩阵与向量的乘积相对复杂点，在矩阵分析中有介绍，不过直观的理解就是矩阵表示空间坐标系之间的关系，而向量表示空间坐标系中的点、或方向，两者乘积的结果表示向量从一个空间变换到另一个空间。在应用过程中，我们并不太关系该操作的具体实现。初学者可以基于这种直观理解，然后参考模仿现有的应用案例，或者直接从中复制过来，久而久之就知道怎么用了。矩阵向量的乘积使用的函数是<code>mul</code>，具体可以参考<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/direct3dhlsl/dx-graphics-hlsl-mul">这里</a>。</p>
-<h2 id="Custom-Types"><a href="#Custom-Types" class="headerlink" title="Custom Types"></a>Custom Types</h2><p>除了内置类型，我们还可以添加一些自定义类型。自定义类型的语法和类C语言的结构体很像，但是需要注意的是，必须在自定义类型后面加上分号<code>;</code>。如下所示：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">typeName</span>&#123;</span></span><br><span class="line">  <span class="keyword">float</span> variable;</span><br><span class="line">  float2 otherVariable;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>理论上来说，我们也可以使用<code>class</code>关键字、继承、成员函数、甚至是接口类型。但是，目前为止，我只看到使用<code>struct</code>的情况，所以我们依照祖传习惯就好。如果你想做第一个吃螃蟹的人，那么你可以试着将<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/direct3dhlsl/overviews-direct3d-11-hlsl-dynamic-linking-class">这些</a>类C的语法应用上去，能不能正常使用，就全看天意了:-&gt;!</p>
-<p>和向量类似，如果我们想访问自定义结构中的成员变量，同样是采用<code>.</code>连接符。例如，instance.variable，或者可以访问成员的成员，如，instance.otherVariable.x。</p>
-<h2 id="Variables"><a href="#Variables" class="headerlink" title="Variables"></a>Variables</h2><p>变量。在HLSL中，所有的数据都是值类型，这意味着所有操作，都是直接作用在变量上，而不是变量的引用。同时，我们也不需要使用<code>new</code>之类的关键字来创建变量。</p>
-<p>当我们希望创建一个向量时，只需要把向量类型当做普通函数调用就可以。例如创建四维向量<code>float4()</code>、<code>float4(1,1,1,1)</code>。在这种情况下，创建向量的所有参数的维度总和，必须等于目标向量的维度。例如创建一个四维向量，可以传入四个标量，也可以传入两个二维向量，还可以传入两个标量加一个二维向量，或者直接传入一个四维向量。如下，以上面的自定义结构为例：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">typeName instance;</span><br><span class="line">instance.variable = <span class="number">3.14</span>;</span><br><span class="line">instance.otherVariable = float2(<span class="number">3</span>, <span class="number">1.4</span>);</span><br></pre></td></tr></table></figure>
-
-<p>另外，变量可以声明在函数内、和函数外。如果定义在函数内，那么能在函数内可以使用，并且使用的位置必须在定义之后。如果定义在函数外面，那么所有的函数都可以使用这个变量，不受顺序的影响，但是习惯上我们会将变量统一定义在函数之前。</p>
-<h2 id="Functions"><a href="#Functions" class="headerlink" title="Functions"></a>Functions</h2><p>在HLSL中，大多是函数都是全局函数。这意味着它们不属于任何数据结构，并且我们可以在任何位置调用它们。这些函数可以传入一个或多个参数，还可以返回计算结果。如果你不希望函数返回任何值，那么你可以在前面声明为<code>viod</code>。如下是一个函数范例：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">returnType <span class="title">functionName</span><span class="params">(argType arg1, otherArgType arg2)</span></span>&#123;</span><br><span class="line">  <span class="comment">//在这里实现函数功能逻辑</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> returnValue;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>当我们调用函数的时候，只需要写下函数名，以及后面跟的括号。如果函数接受传参的话，直接将所需参数以逗号分隔，依次写在括号内。这里的函数支持重载，函数和其参数共同构成了该函数的唯一标识，所以我们可以定义多个同名、但不同参的函数体。在调用时，程序会自动根据传入参数来判断所调用的函数。</p>
-<h2 id="Control-Flow"><a href="#Control-Flow" class="headerlink" title="Control Flow"></a>Control Flow</h2><p>对于大多是着色器，我们只需要一行接一行的执行相关逻辑，就可以实现我们想要的功能。但是有些复杂点的需求，我们可能需要重复执行某些命令，或者需要丢弃某些命令，这就涉及到代码执行路径选择的问题。在程序上这叫分支语句、或者叫条件语句，还有循环语句。很多人认为，使用分支语句会影响着色器的执行效率，尤其是移动端，所以应该使用<code>step</code>来代替分支语句。这中说法显然不对，因为在<code>step</code>这类函数中本身就是基于分支语句实现的。而且使用<code>step</code>这些函数会使我们程序在逻辑上变得复杂，不利于阅读。当然，上面关于执行效率的说法并不是完全没有依据，假如我们使用分支语句，刚好GPU会执行所有路径，然后丢弃其中一条路径的计算结果，这时候确实存着资源浪费。但是这并不能通过其他技术来避免，毕竟有些逻辑本身就存在分支，所以不要下意识的排斥使用条件语句，而应该多考虑代码的整体结构，是否美观、是否易于阅读。</p>
-<h3 id="if-statements"><a href="#if-statements" class="headerlink" title="if statements"></a>if statements</h3><p>如下所示的<code>if</code>语句，如果条件为<code>true</code>，那么执行上半部分的逻辑，否则，执行下半部分的逻辑。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(condition)&#123;</span><br><span class="line">  <span class="comment">//条件为true，执行这里</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="comment">//条件为false，执行这里</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>上面的<code>else&#123;...&#125;</code>部分是可选的。花括号中的逻辑相当于一个整体。如果我们不使用花括号，那么上面的条件语句只会将其后的一行逻辑代码当成它的分支。上面的<code>condition</code>值可以是<code>bool</code>、或<code>int</code>，也可以是一条语句，但是这条语句的结果必须是前面两者之一。另外，<code>!</code>可以用于逻辑取反，假设我们希望条件为<code>false</code>时执行<code>if</code>后的分支，那么只需要在条件之前加<code>!</code>。</p>
-<h3 id="Loops"><a href="#Loops" class="headerlink" title="Loops"></a>Loops</h3><p>除了分支语句，还有另外一种常见的控制流-循环语句。<code>While</code>循环是最简单的循环语句，如果条件为<code>ture</code>时，它将会一直循环下去，直到条件为<code>false</code>为止。如下：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>(condition)&#123;</span><br><span class="line">  <span class="comment">//执行循环逻辑</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>有一点要记住，在<code>while</code>循环语句中，必须要有某一段可执行代码来将条件置为<code>false</code>，如果没有这种代码，那么该循环将会一直执行下去，这是非常严重的问题。</p>
-<p>另一种循环叫做<code>for</code>循环，在<code>for</code>循环中可以假如控制循环次数的变量。如下所示：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(beforeLoopLogic; condition; inLoopLogic)&#123;</span><br><span class="line">  <span class="comment">//执行循环逻辑</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>for</code>循环下循环次数控制方便面，显得更加简单明了。比如从0开始到最大次数：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(uint index=<span class="number">0</span>;index&lt;maxValue;index++)&#123;</span><br><span class="line">  <span class="comment">//执行循环逻辑</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>当然，我们也可以使<code>while</code>循环来实现同样的功能，但是看起来就没有<code>for</code>循环那么整洁了：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">uint index = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">while</span>(index &lt; maxValue)&#123;</span><br><span class="line">  <span class="comment">//执行循环逻辑</span></span><br><span class="line"></span><br><span class="line">  index++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>所有的循环语句中都支持<code>break</code>和<code>continue</code>关键字。其中<code>break</code>用于中断循环语句，直接跳出循环。而<code>continue</code>是跳过本次循环，但是会继续执行后续的循环。</p>
-<p>好了，本篇终结！希望你能喜欢我的教程。如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
 
       
     </div>
@@ -1347,20 +1325,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-count">63</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/blogs/categories/">
           
-        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/blogs/tags/">
           
-        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-count">32</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

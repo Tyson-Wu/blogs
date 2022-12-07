@@ -163,6 +163,95 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/11/22/Rendering-with-Replaced-Shaders/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2020/11/22/Rendering-with-Replaced-Shaders/" class="post-title-link" itemprop="url">Rendering with Replaced Shaders</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-22 18:01:34" itemprop="dateCreated datePublished" datetime="2020-11-22T18:01:34+08:00">2020-11-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-12-07 19:12:17" itemprop="dateModified" datetime="2022-12-07T19:12:17+08:00">2022-12-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>通常每个需要渲染的物体都自带材质以及相应的shader，但是有时候我们可能希望使用同一个Shader对场景中的进行渲染。例如，当我们对屏幕图像进行边缘检测时，需要知道每个像素点所对应三维空间点的法向量，然后根据法向量的差异来判断是否是边缘。还有一些情况我们需要场景的深度信息。无论是法向纹理还是深度散纹理等，都可以通过Relpace Shader来实现。<br>Replace Shader和普通shader没什么区别，我们只需要调用Camera.RenderWithShader或者<code>Camera.SetReplacementShader</code>函数，并指定需要用于替换的shader,以及shader的Tags值。<br>假如我们有以下三个shader，其中shaderA被设置为Relace Shader，且repalcementTag为”ReplacementTag”，其余两个都是挂载在模型上的shader：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Shader A&quot;</span></span><br><span class="line">&#123;</span><br><span class="line">	...</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">		Tags &#123;<span class="string">&quot;ReplacementTag&quot;</span>=<span class="string">&quot;true&quot;</span>&#125;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">		Tags &#123;<span class="string">&quot;OtherTag&quot;</span>=<span class="string">&quot;whatever&quot;</span>&#125;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Shader B&quot;</span></span><br><span class="line">&#123;</span><br><span class="line">	...</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">		Tags &#123;<span class="string">&quot;ReplacementTag&quot;</span>=<span class="string">&quot;false&quot;</span>&#125;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">		Tags &#123;<span class="string">&quot;OtherTag&quot;</span>=<span class="string">&quot;whatever&quot;</span>&#125;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Shader C&quot;</span></span><br><span class="line">&#123;</span><br><span class="line">	...</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">		Tags &#123;<span class="string">&quot;ReplacementTag&quot;</span>=<span class="string">&quot;true&quot;</span>&#125;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">		Tags &#123;<span class="string">&quot;OtherTag&quot;</span>=<span class="string">&quot;whatever&quot;</span>&#125;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这时候，只有挂载ShaderC的模型会被渲染。虽然ShaderB和ShaderC都含有“ReplacementTag”,但是ShaderA中的<code>&quot;ReplacementTag&quot;=&quot;true&quot;</code>，只有ShaderC中的第一个SubShader有匹配的Tag值。</p>
+<h2 id="Lit-Shader-replacement"><a href="#Lit-Shader-replacement" class="headerlink" title="Lit Shader replacement"></a>Lit Shader replacement</h2><p>replacement渲染需要指定一个camera来实现，被指定camera的渲染设置都会应用到repalcement渲染过程中，例如render path、light、shadow等。</p>
+<h2 id="Built-in-scene-depth-normals-texture"><a href="#Built-in-scene-depth-normals-texture" class="headerlink" title="Built-in scene depth/normals texture"></a>Built-in scene depth/normals texture</h2><p>camera本身内置了深度、法向纹理的渲染功能，只需要设置<code>Camera.depthTextureMode</code>，便可以开启这些功能，而渲染后的深度纹理可以用全局的<code>_CameraDepthTexture</code>变量来引用。<br>而这种内置的渲染功能的实际渲染方法与硬件相关。有些硬件就是通过replacement渲染的方式来实现的。因为ReplacementTag会对实际渲染的物体进行筛选，所以在编写Shader时，要正确使用“RenderType”这个标签。</p>
+<h2 id="Code-Example"><a href="#Code-Example" class="headerlink" title="Code Example"></a>Code Example</h2><p>在Start()函数中指定replacement shader:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Start</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	camera.SetReplacementShader(EffiectShader,<span class="string">&quot;RenderType&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>EffiectShader需要包含”RenderType”这个标签，如果没有”RenderType”这个，那么不会有任何物体被渲染。另外，EffiectShader可以有多个SubShader，每个SubShader对应一个”RenderType”。例如，我们需要渲染透明物体，可以指定两个SubShader分别渲染”RenderType”=”Transparent”和”RenderType”=”TransparentCutout”。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;EffectShader&quot;</span> &#123;</span><br><span class="line">     SubShader &#123;</span><br><span class="line">         Tags &#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> &#125;</span><br><span class="line">         Pass &#123;</span><br><span class="line">             ...</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line">     SubShader &#123;</span><br><span class="line">         Tags &#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;SomethingElse&quot;</span> &#125;</span><br><span class="line">         Pass &#123;</span><br><span class="line">             ...</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line"> ...</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>SetReplacementShader函数会查找场景中所有物体，这些物体自带的Shader的”RenderType”值和EffectShader中的”RenderType”值匹配的话，那么这些物体将会使用EffectShader中相对应的SubShader进行渲染。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/11/21/Markdown-Basics/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -194,7 +283,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
+                <time title="修改时间：2022-12-07 19:12:17" itemprop="dateModified" datetime="2022-12-07T19:12:17+08:00">2022-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -355,7 +444,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
+                <time title="修改时间：2022-12-07 19:12:17" itemprop="dateModified" datetime="2022-12-07T19:12:17+08:00">2022-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -476,20 +565,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-count">63</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/blogs/categories/">
           
-        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/blogs/tags/">
           
-        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-count">32</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

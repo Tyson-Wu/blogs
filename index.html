@@ -194,7 +194,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
+                <time title="修改时间：2022-12-07 19:12:17" itemprop="dateModified" datetime="2022-12-07T19:12:17+08:00">2022-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -237,6 +237,131 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2022/12/07/Unity_Asset_Bundle/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2022/12/07/Unity_Asset_Bundle/" class="post-title-link" itemprop="url">Unity AssetBundles</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-12-07 10:01:00 / 修改时间：19:12:17" itemprop="dateCreated datePublished" datetime="2022-12-07T10:01:00+08:00">2022-12-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/AssetBundles/" itemprop="url" rel="index"><span itemprop="name">AssetBundles</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>接着上一篇<a href="https://tyson-wu.github.io/blogs/2022/11/10/Unity_Asset_Extractor/">Unity资源逆向解析</a>，这里再来谈一谈AssetBundles。</p>
+<h2 id="AssetBundles-使用"><a href="#AssetBundles-使用" class="headerlink" title="AssetBundles 使用"></a>AssetBundles 使用</h2><p>使用<code>AssetBundles</code>总体上分成两步，第一步是创建<code>AssetBundles</code>资源，第二部是使用<code>AssetBundles</code>资源。</p>
+<h3 id="AssetBundles-创建"><a href="#AssetBundles-创建" class="headerlink" title="AssetBundles 创建"></a>AssetBundles 创建</h3><p>Unity提供内置的<a target="_blank" rel="noopener" href="https://docs.unity3d.com/2020.3/Documentation/ScriptReference/BuildPipeline.BuildAssetBundles.html">BuildPipeline</a>管线和可编程的<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/com.unity.scriptablebuildpipeline.html">Scriptable Build Pipeline</a>,这里仅以内置的<code>BuildPipeline</code>管线为例进行讲解。</p>
+<p>首先内置的<code>BuildPipeline</code>管线提供了<code>BuildPipeline.BuildAssetBundles()</code>函数来帮助创建资源，有两种调用方式。</p>
+<ul>
+<li><p>方式一：<br><code>public static AssetBundleManifest BuildAssetBundles(string outputPath, BuildAssetBundleOptions assetBundleOptions, BuildTarget targetPlatform);</code></p>
+</li>
+<li><p>方式二：<br><code>public static AssetBundleManifest BuildAssetBundles(string outputPath, AssetBundleBuild[] builds, BuildAssetBundleOptions assetBundleOptions, BuildTarget targetPlatform);</code></p>
+</li>
+</ul>
+<p>方式一是针对项目中所有被标记为<code>AssetBundles</code>的资源，根据其标记的<code>AssetBundles</code>名称对这些资源进行打包的。<br>方式二是忽略<code>AssetBundles</code>的资源标记，而是通过纯代码的形式，向<code>BuildAssetBundles</code>传入所需要构建的资源，以及<code>AssetBundles</code>资源名称。</p>
+<p>如果想实现自动化构建资源的话，偏向于使用方式二，可以完全通过脚本进行控制。<br>但是这里为了方便，采用方式一进行构建资源。<br>因此资源构建代码如下：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> UnityEditor;</span><br><span class="line"><span class="keyword">using</span> System.IO;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">CreateAssetBundles</span></span><br><span class="line">&#123;</span><br><span class="line">    [<span class="meta">MenuItem(<span class="meta-string">&quot;Assets/Build AssetBundles&quot;</span>)</span>]</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">BuildAllAssetBundles</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="built_in">string</span> assetBundleDirectory = <span class="string">&quot;./assetBundleDirectory&quot;</span>;<span class="comment">// 这里传你需要的导出的路径</span></span><br><span class="line">        <span class="keyword">if</span>(!Directory.Existes(assetBundleDirectory))</span><br><span class="line">            Directory.CreateDirectory(assetBundleDirectory);</span><br><span class="line">        BuildPipeline.BuildAssetBundles(assetBundleDirectory,BuildAssetBundleOptions.None, BuildTarget.StandaloneWindows);</span><br><span class="line">        Debug.Log(<span class="string">&quot;build assetbundles done!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后要手动编辑哪些资源需要被打包成<code>AssetBundles</code>，根据官方文档，可以对Assets目录下的文件、以及文件夹进行标记，如果标记的是文件夹，那么相当于标记了文件夹下所有子文件。当然文件的标记优先级高于文件夹的优先级。<br>这里我的目录结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">资源                          AssetBundleName         资源依赖</span><br><span class="line">[Assets]</span><br><span class="line">    [texture]                 texture</span><br><span class="line">        mogutexture.png</span><br><span class="line">        planks.png</span><br><span class="line">        stone 2.png</span><br><span class="line">    2_ZJZ_zhiwu09.fbx         mogu</span><br><span class="line">    mogucolor.prefab          mogucolor              [2_ZJZ_zhiwu09.fbx|mogumaterial.mat]</span><br><span class="line">    mogumaterial.mat          mogumaterial           [MoguShader.shader|mogutexture.png]</span><br><span class="line">    MoguShader.shader         mogushader              </span><br><span class="line">    ShaderVar.shadervariants  mogushader</span><br></pre></td></tr></table></figure>
+
+<p>上面第一列是资源目录结构，第二列是针对资源的<code>AssetBundles</code>资源名称，第三列表示的是该资源所依赖的其他资源。</p>
+<p>一切准备就绪后，在Assets菜单下点击<code>Build AssetBundles</code>开始构建资源。<br>在<code>assetBundleDirectory</code>目录下得到如下资源：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[assetBundleDirectory]</span><br><span class="line">    assetBundleDirectory</span><br><span class="line">    assetBundleDirectory.manifest</span><br><span class="line">    texture</span><br><span class="line">    texture.manifest</span><br><span class="line">    mogu</span><br><span class="line">    mogu.manifest</span><br><span class="line">    mogucolor</span><br><span class="line">    mogucolor.manifest</span><br><span class="line">    mogumaterial</span><br><span class="line">    mogumaterial.manifest</span><br><span class="line">    mogushader</span><br><span class="line">    mogushader.manifest</span><br></pre></td></tr></table></figure>
+
+<p>其中以manifest为后缀的文件是给人读的，展示了一些基本信息。加载<code>AssetBundles</code>时只需要读取无后缀的文件就行。而<code>assetBundleDirectory</code>这个资源文件记录了其他所有资源的manifest文件信息。<br>上面打包出来的资源文件可以使用<a href="https://tyson-wu.github.io/blogs/2022/11/10/Unity_Asset_Extractor/">Unity资源逆向解析</a>中提到的解包工具打开。</p>
+<h3 id="AssetBundles-加载"><a href="#AssetBundles-加载" class="headerlink" title="AssetBundles 加载"></a>AssetBundles 加载</h3><p>本文加载的基本思路是读取<code>assetBundleDirectory</code>资源文件中的信息，然后去构建一个资源目录表，然后在使用资源时，首先访问资源目录表，看看该资源是否已经加载，如果没有加载的话就对该资源进行加载，加载时也会判断资源依赖，待所有依赖资源以及该资源都加载成功后，触发资源加载成功回调函数。<br>代码如下：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"><span class="keyword">using</span> System.IO;</span><br><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> UnityEngine.Events;</span><br><span class="line"><span class="keyword">using</span> UnityEngine.Networking;</span><br><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"></span><br><span class="line">pulic <span class="keyword">class</span> <span class="title">ResurceData</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">enum</span> LoadState</span><br><span class="line">    &#123;</span><br><span class="line">        Null,</span><br><span class="line">        Waiting,</span><br><span class="line">        Loading,</span><br><span class="line">        Loaded,</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">bool</span> isReadly = <span class="literal">false</span>; <span class="comment">// 该资源以及其依赖资源是否都成功加载</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> assetBundleName = <span class="built_in">string</span>.Empty; <span class="comment">// 该资源的assetBundle名称</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> serialId = <span class="number">0</span>; <span class="comment">// 给资源的一个唯一id</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">List</span>&lt;<span class="title">string</span>&gt; dependanceName</span> = <span class="keyword">new</span> List&lt;<span class="built_in">string</span>&gt;(); <span class="comment">// 其直接依赖的资源名称列表</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">List</span>&lt;<span class="title">string</span>&gt; parentName</span> = <span class="keyword">new</span> List&lt;<span class="built_in">string</span>&gt;(); <span class="comment">// 运行时引用了该资源的资源名称列表</span></span><br><span class="line">    <span class="keyword">public</span> AssetBundle assetBundle = <span class="literal">null</span>; <span class="comment">// 加载得到的AssetBundle</span></span><br><span class="line">    <span class="keyword">public</span> LoadState loadState = LoadState.Null; <span class="comment">// 加载状态</span></span><br><span class="line">    <span class="keyword">public</span> referenceCount = <span class="number">0</span>; <span class="comment">// 该资源被外部引用的次数（不包括资源与资源之间的引用）</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">bool</span> hasRequest &#123;<span class="keyword">get</span>&#123;<span class="keyword">return</span> loadState != LoadState.Null;&#125;&#125; <span class="comment">// 是否已经执行过资源下载命令</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">bool</span> hasError &#123;<span class="keyword">get</span>&#123; <span class="keyword">return</span> loadState == LoadState.Loaded &amp;&amp; assetBundle == <span class="literal">null</span>;&#125;&#125; <span class="comment">// 该资源是否加载失败</span></span><br><span class="line">&#125;</span><br><span class="line">[<span class="meta">Serializable</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">OnFinishLoadAssetBundle</span> : <span class="title">UnityEvent</span>&lt;<span class="title">int</span>, <span class="title">bool</span>&gt;&#123;&#125;</span><br><span class="line">[<span class="meta">Serializable</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">OnFinishLoadManifest</span> : <span class="title">UnityEvent</span>&lt;<span class="title">bool</span>&gt;&#123;&#125;;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">LoadAndUnloadRemoteAssets</span> : <span class="title">Singleton</span>&lt;<span class="title">LoadAndUnloadRemoteAssets</span>&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">in</span> m_MaxId = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">string</span> m_Uri;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">bool</span> m_Inited = <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">bool</span> inited =&gt; m_Inited;</span><br><span class="line">    <span class="keyword">private</span> UnityWebRequest m_MainfestRequest = <span class="literal">null</span>;</span><br><span class="line">    AssetBundleManifest m_AssetBundleManifest = <span class="literal">null</span>;</span><br><span class="line">    AssetBundle m_ManifestAssetBundle = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">    Queue&lt;<span class="built_in">int</span>&gt; m_WaitToCheck = <span class="keyword">new</span> Queue&lt;<span class="built_in">int</span>&gt;();</span><br><span class="line"></span><br><span class="line">    Dictionary&lt;<span class="built_in">int</span>, ResourceData&gt; allResource = <span class="keyword">new</span> Dictionary&lt;<span class="built_in">int</span>, ResourceData&gt;();</span><br><span class="line">    Queue&lt;<span class="built_in">int</span>&gt; m_WaitToLoad = <span class="keyword">new</span> Queue&lt;<span class="built_in">int</span>&gt;();</span><br><span class="line">    Dictionary&lt;<span class="built_in">int</span>, UnityWebRequest&gt; m_UnityWebRequests = <span class="keyword">new</span> Dictionary&lt;<span class="built_in">int</span>, UnityWebRequest&gt;();</span><br><span class="line">    Dictionary&lt;<span class="built_in">string</span>, <span class="built_in">int</span>&gt; m_NameToId = <span class="keyword">new</span> Dictionary&lt;<span class="built_in">string</span>, <span class="built_in">int</span>&gt;();</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">List</span>&lt;<span class="title">int</span>&gt; m_TORemoveRequest</span> = <span class="keyword">new</span> List&lt;<span class="built_in">int</span>&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> OnFinishLoadMainfest OnFinishLoadMainfest = <span class="keyword">new</span> OnFinishLoadMainfest();</span><br><span class="line">    <span class="keyword">public</span> OnFinishLoadManifest OnFinishLoadManifest = <span class="keyword">new</span> OnFinishLoadManifest();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// url 是`assetBundleDirectory`目录的路径，以http:等开头的形式</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Init</span>(<span class="params"><span class="built_in">string</span> url</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">if</span>(m_ManifestRequest != <span class="literal">null</span>) <span class="keyword">return</span>;</span><br><span class="line">        m_Inited = <span class="literal">false</span>;</span><br><span class="line">        m_Uri = url;</span><br><span class="line">        <span class="built_in">int</span> index = url.LastIndexOf(<span class="string">&#x27;/&#x27;</span>);</span><br><span class="line">        <span class="built_in">string</span> manifestName = url.Substring(index + <span class="number">1</span>);</span><br><span class="line">        url = Path.Combine(url, manifestName);</span><br><span class="line">        m_ManifestRequest = UnityWebRequestAssetBundle.GetAssetBundle(url, <span class="number">0</span>);</span><br><span class="line">        m_ManifestRequest.SendWebRequest();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="built_in">int</span> <span class="title">GetMaxId</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">return</span> ++m_MaxId;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> AssetBundle <span class="title">GetAssetBundle</span>(<span class="params"><span class="built_in">int</span> id</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">if</span>(allResource.TrayGetValue(id, <span class="keyword">out</span> <span class="keyword">var</span> resourceData))</span><br><span class="line">            <span class="keyword">return</span> resourceData.assetBundle;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="built_in">bool</span> <span class="title">UnloadAsset</span>(<span class="params"><span class="built_in">int</span> id</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="comment">// 暂时没时间写这块逻辑，感兴趣的话可以把这部分代码补上。</span></span><br><span class="line">        <span class="comment">// ToDo</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="built_in">int</span> <span class="title">LoadAsset</span>(<span class="params"><span class="built_in">string</span> assetbundleName</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">if</span>(!m_NameToId.TryGetValue(assetbundleName, <span class="keyword">out</span> <span class="keyword">in</span> id))</span><br><span class="line">            <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        <span class="keyword">return</span> LoadAssetInternal(assetbundleName, <span class="literal">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="built_in">int</span> <span class="title">LoadAssetInternal</span>(<span class="params"><span class="built_in">string</span> assetbundleName, <span class="built_in">string</span> parent</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        m_NameToId.TryGetValue(assetbundleName, <span class="keyword">out</span> <span class="keyword">var</span> id);</span><br><span class="line">        allResource.TryGetValue(id, <span class="keyword">out</span> <span class="keyword">var</span> resourceData);</span><br><span class="line">        <span class="keyword">if</span>(!resourceData.hasRequest)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">foreach</span>(<span class="keyword">var</span> dep <span class="keyword">in</span> resourceData.dependanceName)</span><br><span class="line">                LoadAssetInternal(dep, assetbundleName);</span><br><span class="line">            m_WaitToLoad.Enqueue(id);</span><br><span class="line">            resourceData.loadState = ResourceData.LoadState.Waiting;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(parent == <span class="literal">null</span>)</span><br><span class="line">            ++resourceData.referenceCount;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            resourceData.parentName.Add(parent);</span><br><span class="line">        <span class="keyword">return</span> id;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Update</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">if</span>(!m_Inited)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(m_ManifestRequest != <span class="literal">null</span> &amp;&amp; m_ManifestRequest.isDone)</span><br><span class="line">            &#123;</span><br><span class="line">                OnManifestDownloaded(m_ManifestRequest);</span><br><span class="line">                m_ManifestRequest.Dispose();</span><br><span class="line">                m_ManifestRequest = <span class="literal">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">foreach</span>(<span class="keyword">var</span> request <span class="keyword">in</span> m_UnityWebRequests)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span>(request.Value.isDone)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">if</span>(<span class="built_in">string</span>.IsNullOrEmpty(request.Value.error))</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="keyword">var</span> resource = allResource[request.Key];</span><br><span class="line">                        resour.loadState = ResourceData.LoadState.Loaded;</span><br><span class="line">                        resource.assetBundle = DownloadHandlerAssetBundle.GetContent(request.Value);</span><br><span class="line">                        <span class="keyword">var</span> isReady = <span class="literal">true</span>;</span><br><span class="line">                        <span class="comment">// 这个循环其实被包含在下面的循环逻辑中，可以因此该段代码</span></span><br><span class="line">                        <span class="keyword">foreach</span>(<span class="keyword">var</span> dep <span class="keyword">in</span> resource.dependanceName)</span><br><span class="line">                        &#123;</span><br><span class="line">                            <span class="keyword">if</span>(!allResource[m_NameToId[dep]].isReady)</span><br><span class="line">                            &#123;</span><br><span class="line">                                isReady = <span class="literal">false</span>;</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">if</span>(isReady)</span><br><span class="line">                        &#123;</span><br><span class="line">                            <span class="built_in">int</span> curId = request.Key;</span><br><span class="line">                            m_WaitToCheck.Enqueue(curId);</span><br><span class="line">                            <span class="keyword">while</span>(m_WaitToCheck.Count &gt; <span class="number">0</span>)</span><br><span class="line">                            &#123;</span><br><span class="line">                                curId = m_WaitToCheck.Dequeue();</span><br><span class="line">                                resource = allResource[curId];</span><br><span class="line">                                <span class="keyword">if</span>(resource.assetBundel == <span class="literal">null</span>)</span><br><span class="line">                                    <span class="keyword">continue</span>;</span><br><span class="line">                                </span><br><span class="line">                                isReady = <span class="literal">true</span>;</span><br><span class="line">                                <span class="comment">// 判断依赖文件</span></span><br><span class="line">                                <span class="keyword">foreach</span>(<span class="keyword">var</span> dep <span class="keyword">in</span> resource.dependanceName)</span><br><span class="line">                                &#123;</span><br><span class="line">                                    <span class="keyword">if</span>(!allResource[m_NameToId[dep]].isReady)</span><br><span class="line">                                    &#123;</span><br><span class="line">                                        isReady = <span class="literal">false</span>;</span><br><span class="line">                                    &#125;</span><br><span class="line">                                &#125;</span><br><span class="line">                                <span class="keyword">if</span>(isReady)</span><br><span class="line">                                &#123;</span><br><span class="line">                                    resource.isReady = <span class="literal">true</span>;</span><br><span class="line">                                    OnFinishLoadAssetBundle.Invoke(curId, <span class="literal">true</span>);</span><br><span class="line">                                    <span class="comment">// 往上迭代，检查哪些资源引用了该资源，并更新其状态</span></span><br><span class="line">                                    <span class="keyword">foreach</span>(<span class="keyword">var</span> parent <span class="keyword">in</span> resource.parentName)</span><br><span class="line">                                    &#123;</span><br><span class="line">                                        m_WaitToCheck.Enqueue(m_NameToId[parent]);</span><br><span class="line">                                    &#125;</span><br><span class="line">                                &#125;</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">else</span></span><br><span class="line">                    &#123;</span><br><span class="line">                        allResource[request.Key].loadState = ResourceData.LoadState.Loaded;</span><br><span class="line">                        OnFinishLoadAssetBundle.Invoke(request.Key, <span class="literal">false</span>);</span><br><span class="line">                        Debug.LogError(<span class="string">$&quot;fail to load <span class="subst">&#123;allResource[request.Key].assetBundleName&#125;</span>. Because:<span class="subst">&#123;request.Value.error&#125;</span>&quot;</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                    m_ToRemoveRequest.Add(request.Key);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">foreach</span>(<span class="keyword">var</span> id <span class="keyword">in</span> m_ToRemoveRequest)</span><br><span class="line">                m_UnityWebRequests.Remove(id);</span><br><span class="line">            m_ToRemoveRequest.Clear();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 暂时设置为最多同时加载4个资源</span></span><br><span class="line">            <span class="keyword">while</span>(m_UnityWebRequests.Count &lt; <span class="number">4</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span>(m_WaitToLoad.Count &gt; <span class="number">0</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">var</span> id = m_WaitToLoad.Dequeue();</span><br><span class="line">                    allResource[id].loadState = ResourceData.LoadState.Loading;</span><br><span class="line">                    <span class="keyword">var</span> url = Path.Combine(m_Uri, allResource[id].assetBundleName);</span><br><span class="line">                    <span class="keyword">var</span> request = UnityWebRequestAssetBundle.GetAssetBundle(url, <span class="number">0</span>);</span><br><span class="line">                    request.SendWebRequest();</span><br><span class="line">                    m_UnityWebRequest.Add(id, requeset);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">OnManifestDownloaded</span>(<span class="params">UnityWebRequest manifestRequest</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        AssetBundle bundle = DownloadHandlerAssetBundle.GetContent(manifestRequest);</span><br><span class="line">        <span class="keyword">var</span> assetBundleManifest = bundle.LoadAsset&lt;AssetBundleManifest&gt;(<span class="string">&quot;AssetBundleManifest&quot;</span>);</span><br><span class="line">        m_ManifestAssetBundle = bundle;</span><br><span class="line">        <span class="keyword">if</span>(AssetBundleManifest != <span class="literal">null</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            m_Inited  = <span class="literal">true</span>;</span><br><span class="line">            m_AssetBundleManifest = assetBundleManifest;</span><br><span class="line">            <span class="keyword">var</span> allAssetBundles = assetBundleManifest.GetAllAssetBundles();</span><br><span class="line">            <span class="keyword">foreach</span>(<span class="keyword">var</span> assbundle <span class="keyword">in</span> allAssetBundles)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">var</span> dirctD = assetBundleManifest.GetDirectDependencies(assbundle);</span><br><span class="line"></span><br><span class="line">                ResourceData resourceData = <span class="keyword">new</span> ResourceData();</span><br><span class="line">                resourceData.assetBundleName = assbundle;</span><br><span class="line">                resourceData.dependanceName.AddRange(dirctD);</span><br><span class="line">                resourceData.serialId = GetMaxId();</span><br><span class="line">                allResource.Add(resourceData.serialId, resourceData);</span><br><span class="line">                m_NameToId.Add(assbundle, resourceData.serialId);</span><br><span class="line">            &#125;</span><br><span class="line">            OnFinishLoadManifest.Invoke(<span class="literal">true</span>);</span><br><span class="line">            Debug.Log(<span class="string">&quot;successfully load AssetBundleManifest&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            OnFinishLoadManifest.Invoke(<span class="literal">false</span>);</span><br><span class="line">            Debug.LogError(<span class="string">&quot;fail to load AssetBundleManifest&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//=======================</span></span><br><span class="line"><span class="comment">//使用顺序</span></span><br><span class="line"><span class="comment">//先调用Init函数初始化AssetBundleManifest</span></span><br><span class="line"><span class="comment">//然后调用LoadAsset异步加载，每次调用引用加1</span></span><br><span class="line"><span class="comment">//OnFinishLoadManifest，和OnFinishLoadAssetBundle两个回调监听初始化和加载结果</span></span><br><span class="line"><span class="comment">//加载成功后使用GetAssetBundle获取资源包</span></span><br><span class="line"><span class="comment">//用完后使用UnloadAsset卸载资源包，每次调用引用减1，和LoadAsset配套使用</span></span><br><span class="line"><span class="comment">//=======================</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="AssetBundles-内存分析"><a href="#AssetBundles-内存分析" class="headerlink" title="AssetBundles 内存分析"></a>AssetBundles 内存分析</h2><p>这里以实例化<code>mogucolor.prefab</code>为例。总共有以下几个步骤：</p>
+<ul>
+<li>调用Init函数初始化<code>AssetBundleManifest</code></li>
+<li>LoadAsset异步加载<code>mogucolor</code>，因为其直接以及间接依赖的资源有<code>texture</code>、<code>mogu</code>、<code>mogumaterial</code>、<code>mogushader</code>,所以一共会有5个AssetBundle会被加载</li>
+<li>然后调用<code>AssetBundle.LoadAsset&lt;GameObject&gt;(&quot;mogucolor)</code>，提取其中的<code>mogucolor.prefab</code>资源供Unity后面使用。</li>
+<li>最后使用<code>GameObject.Inistatiate()</code>函数将<code>mogucolor.prefab</code>实例化出来。</li>
+</ul>
+<p>在Profiler监控窗口中，选中<code>Momory</code>,然后在下方选择<code>Detailed</code>。执行实例化加载流程，然后每一步点击<code>Task Sample Editor</code>进行性能数据采样，你会发现下方有以下5大类：</p>
+<ul>
+<li>Other</li>
+<li>Assets</li>
+<li>Not Saved</li>
+<li>Builtin Resources</li>
+<li>Scene Momory</li>
+</ul>
+<p>通过记录发现，每一步各个类型数据下都各有变化，以下是变化情况：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">第一步：调用Init函数初始化&#96;AssetBundleManifest&#96;</span><br><span class="line">Other +1 []</span><br><span class="line">NotSaved +2 [AssetBundle+1, AssetBundleManifest+1]</span><br><span class="line">Assets +0 []</span><br><span class="line">Builtin Resources +0 []</span><br><span class="line">SceenMemory +0 []</span><br><span class="line"></span><br><span class="line">第二步：LoadAsset异步加载&#96;mogucolor&#96;</span><br><span class="line">Other +5 []</span><br><span class="line">NotSaved +5 [AssetBundle+5]</span><br><span class="line">Assets +0 []</span><br><span class="line">Builtin Resources +0 []</span><br><span class="line">SceenMemory +0 []</span><br><span class="line"></span><br><span class="line">第三步：然后调用&#96;AssetBundle.LoadAsset&lt;GameObject&gt;(&quot;mogucolor)&#96;</span><br><span class="line">Other +0 []</span><br><span class="line">NotSaved +0 []</span><br><span class="line">Assets +8 [Shader+1, Texture+1, Mesh+1, Material+1, MeshRenderer+1, GameObject+1, MeshFilter+1]</span><br><span class="line">Builtin Resources +0 []</span><br><span class="line">SceenMemory +0 []</span><br><span class="line"></span><br><span class="line">第四步：最后使用&#96;GameObject.Inistatiate()&#96;</span><br><span class="line">Other +1 []</span><br><span class="line">NotSaved +2 [RenderTexture+2, Material+1]</span><br><span class="line">Assets +0 []</span><br><span class="line">Builtin Resources +1 [Shader+1]</span><br><span class="line">SceenMemory +4 [Transform+1, GameObject+1, MeshRenderer+1, MeshFilter+1]</span><br></pre></td></tr></table></figure>
+
+<p>可以发现，第一和第二步，主要是增加了NotSaved里面的AssetBundle。第三步增加的是Assets里面的资源数据。第四步增加的是场景里面的数据，至于NotSaved和Builtin Resources数据也被动增加，主要是因为新入场景的物体可能会导致渲染流程发生改变，所以内置的一些材质或者RenderTexture会有所增加。<br>至于Builtin Resources里面的数据，从分析上来看主要是GUI相关的的一些内置数据，以及异常Shader等。</p>
+<h2 id="AssetBundles-与-Shader"><a href="#AssetBundles-与-Shader" class="headerlink" title="AssetBundles 与 Shader"></a>AssetBundles 与 Shader</h2><p>Shader也是一种资源，和模型、贴图资源一样，可以打包进AssetBundle。但是Shader又是一种程序，只不过是运行在GPU上的，因此为了节约性能，需要对Shader进行裁剪，将不需要的变体剔除掉。而我们自己使用AssetBundles对Shader进行打包时，也会进行剔除。以下是官方文档中的<a target="_blank" rel="noopener" href="https://docs.unity3d.com/2020.3/Documentation/Manual/AssetBundles-Troubleshooting.html">原文</a>，介绍了如何根据需要将需要的变体打包。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Interactions between Shaders and AssetBundles</span><br><span class="line">When you build an AssetBundle, Unity uses information in that bundle to select which shader</span><br><span class="line"> variants to compile. This includes information about the scenes</span><br><span class="line">, materials, Graphics Settings, and ShaderVariantCollections in the AssetBundle.</span><br><span class="line"></span><br><span class="line">Separate build pipelines compile their own shaders independently of other pipelines. If both a Player build and an Addressables build reference a shader, Unity compiles two separate copies of the shader, one for each pipeline.</span><br><span class="line"></span><br><span class="line">This process doesn’t account for any runtime information such as keywords, textures, or changes due to code execution. If you want to include specific shaders in your build, either include a ShaderVariantCollection with the desired shaders, or include the shader in your build manually by adding it to the Always Included Shaders list in your graphics settings.</span><br></pre></td></tr></table></figure>
+
+<p>从文档总结就是，假设我们有一个Shader定义了多个关键字，如果我们只想打包某几个关键字相关的变体时，我们可以采用以下几种方式：</p>
+<ul>
+<li>创建与变体相对应的材质，然后将这些材质一起打包到这个Shader的AssetBundle中</li>
+<li>创建变体集，如ShaderVar.shadervariants，以shadervariants为后缀的资源，在这个变体集中定义变体，然后将变体集一起打包到这个Shader的AssetBundle中</li>
+<li>使用Graphics Settings,（暂时不知道怎么使用）。</li>
+</ul>
+<p>有一个很重要的点是，一个Shader可以打包进多个AssetBundle，各个AssetBundle中所生成的变体是相互独立的，最终运行时也是相互独立看待。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2022/11/27/Unity_Ex_Editor_CreateParentForTransforms/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -260,10 +385,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-11-27 10:01:00 / 修改时间：20:16:33" itemprop="dateCreated datePublished" datetime="2022-11-27T10:01:00+08:00">2022-11-27</time>
+              <time title="创建时间：2022-11-27 10:01:00" itemprop="dateCreated datePublished" datetime="2022-11-27T10:01:00+08:00">2022-11-27</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-12-07 19:12:17" itemprop="dateModified" datetime="2022-12-07T19:12:17+08:00">2022-12-07</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -340,10 +471,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-11-27 10:01:00 / 修改时间：20:16:33" itemprop="dateCreated datePublished" datetime="2022-11-27T10:01:00+08:00">2022-11-27</time>
+              <time title="创建时间：2022-11-27 10:01:00" itemprop="dateCreated datePublished" datetime="2022-11-27T10:01:00+08:00">2022-11-27</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-12-07 19:12:17" itemprop="dateModified" datetime="2022-12-07T19:12:17+08:00">2022-12-07</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -428,7 +565,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
+                <time title="修改时间：2022-12-07 19:12:17" itemprop="dateModified" datetime="2022-12-07T19:12:17+08:00">2022-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -451,9 +588,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="Asset-Ripper"><a href="#Asset-Ripper" class="headerlink" title="Asset Ripper"></a>Asset Ripper</h2><p>支持将打包后的资源解包，而且试过成功解包出图片、材质、动画、Shader等等。效果非常好。<br><a target="_blank" rel="noopener" href="https://assetripper.github.io/AssetRipper/articles/Downloads.html">下载链接</a></p>
+          <h2 id="Asset-Ripper"><a href="#Asset-Ripper" class="headerlink" title="Asset Ripper"></a>Asset Ripper</h2><p>支持打开打包后的资源，对于图片等资源可以直接预览，但是Shader只能查看到名字属性等基本信息，里面的代码变体等信息都是假的。<br><a target="_blank" rel="noopener" href="https://assetripper.github.io/AssetRipper/articles/Downloads.html">下载链接</a></p>
 <h2 id="UABE-AssetsBundleExtractor"><a href="#UABE-AssetsBundleExtractor" class="headerlink" title="UABE(AssetsBundleExtractor)"></a>UABE(AssetsBundleExtractor)</h2><p>支持解析打包后的资源，但是好像只能罗列出资源信息，不能像<code>Asset Ripper</code>一样完美的将资源解包出来。但是支持修改打包后的资源，这是其他工具所不具备的。<br><a target="_blank" rel="noopener" href="https://github.com/SeriousCache/UABE/releases/tag/2.2stablec">下载链接</a><br><a target="_blank" rel="noopener" href="https://community.7daystodie.com/topic/1871-uabe-asset-bundle-extractor/page/35/">社区</a></p>
-<h2 id="AssetStudio"><a href="#AssetStudio" class="headerlink" title="AssetStudio"></a>AssetStudio</h2><p>和<code>Asset Ripper</code>一样，支持将打包后的资源解包，但是试过只能解出部分资源。<br><a target="_blank" rel="noopener" href="https://github.com/Perfare/AssetStudio/releases">下载链接</a></p>
+<h2 id="AssetStudio"><a href="#AssetStudio" class="headerlink" title="AssetStudio"></a>AssetStudio</h2><p>和<code>Asset Ripper</code>一样，支持打开打包后的资源，但是Shader信息展示的更多一点，可以看到变体信息，但是代码块部分仍然看不了。<br><a target="_blank" rel="noopener" href="https://github.com/Perfare/AssetStudio/releases">下载链接</a></p>
 <h2 id="关于Unity-Resources"><a href="#关于Unity-Resources" class="headerlink" title="关于Unity Resources"></a>关于Unity Resources</h2><p>Unity项目运行时可以通过Resources和AssetsBundle方式读取资源。推荐是使用AssetsBundle，但是Resource资源的组织方式影响着包体的大小，所以即便项目中没有使用到Resources资源读取方式，也还是需要有所了解。</p>
 <ul>
 <li>首先Resources资源读取方式，需要将资源放置在Assets目录及其子目录下的Resources目录。只有在这个文件夹下的资源才可以使用Resources的方式读取。</li>
@@ -519,7 +656,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
+                <time title="修改时间：2022-12-07 19:12:17" itemprop="dateModified" datetime="2022-12-07T19:12:17+08:00">2022-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -603,7 +740,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
+                <time title="修改时间：2022-12-07 19:12:17" itemprop="dateModified" datetime="2022-12-07T19:12:17+08:00">2022-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -687,7 +824,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
+                <time title="修改时间：2022-12-07 19:12:17" itemprop="dateModified" datetime="2022-12-07T19:12:17+08:00">2022-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -763,7 +900,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
+                <time title="修改时间：2022-12-07 19:12:17" itemprop="dateModified" datetime="2022-12-07T19:12:17+08:00">2022-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -842,7 +979,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
+                <time title="修改时间：2022-12-07 19:12:17" itemprop="dateModified" datetime="2022-12-07T19:12:17+08:00">2022-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -894,93 +1031,6 @@
 <li>最后输入<code>exit</code>，退出docker命令。</li>
 </ul>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/117253829581">Vim命令合集</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2022/08/29/Docker_Jenkins_Install/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2022/08/29/Docker_Jenkins_Install/" class="post-title-link" itemprop="url">Jenkins Install</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-29 16:02:00" itemprop="dateCreated datePublished" datetime="2022-08-29T16:02:00+08:00">2022-08-29</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-27 20:16:33" itemprop="dateModified" datetime="2022-11-27T20:16:33+08:00">2022-11-27</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>在Win10上安装完Docker后，就可以在Docker上安装Jenkins了。<br>参考官网教程<a target="_blank" rel="noopener" href="https://www.jenkins.io/zh/doc/book/installing/">在Windows上</a>。</p>
-<ul>
-<li><p>打开命令提示符窗口。</p>
-</li>
-<li><p>下载 jenkinsci/blueocean 镜像并使用以下 docker run 命令将其作为Docker中的容器运行 ：</p>
-</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">docker run ^</span><br><span class="line">  -u root ^</span><br><span class="line">  --rm ^</span><br><span class="line">  -d ^</span><br><span class="line">  -p 8080:8080 ^</span><br><span class="line">  -p 50000:50000 ^</span><br><span class="line">  -v jenkins-data:/var/jenkins_home ^</span><br><span class="line">  -v /var/run/docker.sock:/var/run/docker.sock ^</span><br><span class="line">  jenkinsci/blueocean</span><br></pre></td></tr></table></figure>
-
-<p>上面这段命令是官网上的案例，但是我并没有使用上面的，而是做了修改。后面的 <code>^</code>只是表示一行命令多行显示。特别注意这里使用的是<code>jenkinsci/blueocean</code>这个是官方推荐的，也有其他版本的Jenkins，但是可能会出现插件安装失败的问题，我之前就看了别人使用其他版本的教程，导致一些奇奇怪怪的问题。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -u root -d --name jenkins --restart always -p 8000:8080 -p 50000:50000 -v D:/ServicesData/Jenkins/.jenkins:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock jenkinsci/blueocean</span><br></pre></td></tr></table></figure>
-<p>这里我加了<code>--name jenkins</code>表示我给这个容器取名为jenkins。这样创建的容器的名字就不是随机得了。<br>另外我删了<code>--rm</code>，因为这个表示关闭容器后会自动清理掉容器，也就是说在Docker上找不到了，下次再想开这个容器，还得重新敲命令，所以我就去掉这个。如果我真的想删掉这个容器，也可以直接在Docker容器界面上操作。<br>最后一个就是我将<code>jenkins-data</code>改成了<code>D:/ServicesData/Jenkins/.jenkins</code>,首先我们来看这个<code>-v jenkins-data:/var/jenkins_home</code>命令是干嘛的，因为Docker就相当与与一个虚拟机，里面有自己的文件管理系统，这里<code>/var/jenkins_home</code>就表示当前jenkins容器的工作目录，但是虚拟的毕竟是虚拟的，所以它搞了一个体的概念，就是Volume，专门用来春出数据的，而<code>jenkins-data</code>就是其中创建的一个体，是Docker在物理机上构建的一个私有文件目录，我们没办法管理与访问。直接安装Docker是装在C盘的，所以这些体数据，应该也是在C盘（猜的）。为了能够接管这些容器的工作数据，我们可以将虚拟文件目录映射到实际的物理机上，这里我在D盘建立一个目录，也就是说，之后Jenkins容器运行时产生的数据都会放到这个D盘目录下。<br>通过这个例子，我有点明白了Docker的一个基本运作方式了，打开Docker客户端，出现五个大选项，其中有三个就是容器、镜像、体。另外两个我没有用过，所以也不知道能干啥，但是这三个之间的关系似曾相识：MVC框架，嗯好像又不像。这么说吧，这三者其实是一件事情拆分成三个部分，其中镜像是我们的全局数据中心，然后容器是我们的控制总线，体是控制过程中产生的数据。在需要时，Docker会为我们创建任意个控制总线，相当与是一个壳子，然后向全局数据中心请求生产资料，最终产生的产品堆到各自的仓库里面，也就是体。</p>
-<p>继续按照<a target="_blank" rel="noopener" href="https://www.jenkins.io/zh/doc/book/installing/#setup-wizard">Post-installation setup wizard</a>安装。这里我们在浏览器上输入<code>http://localhost:8080/</code>，会看到Jenkins的解锁界面，这里需要一个密码，如果安装在物理机下的话，我们能够找到对应的文件，但是现在是装在容器里面，所以要在Docker客户端里面找，我们首先找到Jienkins的容器，然后点击该容器，进入Logs界面，这里就是Jenkins控制台日志输出中，复制自动生成的字母数字密码（在两组星号之间），然后拿到解锁界面解锁。之后的操作就和物理机上安装差不多了。</p>
-<p>然后在浏览器里面输入<code>http://localhost:8000/</code>就可进入了。<br>还有一个需要注意的是，如果启动容器后，网页访问不了Jenkins，可能是端口被占用了，换个端口试试。或者如果你知道怎么排查端口占用的情况就更直接了。</p>
 
       
     </div>
@@ -1067,20 +1117,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-count">63</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/blogs/categories/">
           
-        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/blogs/tags/">
           
-        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-count">32</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
