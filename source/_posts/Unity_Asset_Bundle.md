@@ -405,3 +405,25 @@ This process doesn’t account for any runtime information such as keywords, tex
 
 有一个很重要的点是，一个Shader可以打包进多个AssetBundle，各个AssetBundle中所生成的变体是相互独立的，最终运行时也是相互独立看待。
 
+## Shader变体分析
+
+既然谈到Shader变体，这里就再多说几句，在Unity中Shader变体主要是受Shader关键字控制，当然根据官网描述，一个shader里面拥有多个Pass，也是形成变体的因素。
+
+这里主要是谈一下关键字，首选关键字的增加，对于变体的数量影响很大，最极端的情况是变体的数量是关键字数量的指数级。所以我们需要控制关键字的数量，尽量减少关键字的使用。
+
+假设当前关键字的数量已经是最优的了，我们还可以控制关键字的搭配来控制变体的数量。上一节提到了变体与关键字的关系，就是通过材质和shadervariants等形式，来限定哪些变体生成。
+
+但是目前Unity在关键字上还有一个限制，就是关键字数量不超过256，其中Unity内部已经占用了一部分，所以留给我们用来定义关键字的数量根本够不到256。所以在定义关键字时是需要精打细算的。
+
+在Unity2018版本以及之前的版本，关键字只有global全局关键字，也就是说，所有Shader定义过的关键字数量之和不得超过256，这个限制就非常大，如果使用一些第三方资源，有可能会突破这个限制，最终导致项目崩溃等问题。
+
+Unity2018之后的版本，关键字分为了local和global两种，其中global还是延续了全局关键字的逻辑，也就是所有shader共享的，但是local关键字是从属于当前定义的shader。关键字256的数量限制还在，只不过是local和global两种关键字的总和。怎么理解呢？
+
+举个例子，现在只有两个Shader，Shader1和Shader2，Shader1中定义了100个global关键字，50个local关键字，Shader2中定义了90个global关键字，49个local关键字，这些关键字没有重复的。那么在Shader1看来，gloabl关键字有190个，local关键字有50个，两者之和没有超过256。那么在Shader2看来，gloabl关键字有190个，local关键字有49个，两者之和没有超过256。但是将所有关键字都加起来其实是超过256的。但是这两个Shader的变体组合是有效的。也就是说新的关键字规则将一部分全局关键字的份额分配给了局部关键字，具体来说就是192个全局关键字，和64个局部关键字。
+
+关于关键字的上限，以及因为这个上限导致的问题在[这里](https://forum.unity.com/threads/shader-keyword-limit.545491/page-2)有很多讨论，其中网友发现问题最多的是使用HDRP时，很容易超出限制，以及使用AssetStore里面的资源也会很容易超出限制。所以网友希望能够直接提高上限，或者给个上限可选项，但是Unity客服表示不太愿意这样做。这个问题提出了好几年了，关键字分为了local和global两种也是基于这个问题给出的一个解决方案。
+
+从程序优化的角度来讲，控制关键字的数量是非常有必要的，因此我们首先需要知道有哪些关键字被使用的了，Unity本身并没有提供这个功能（我目前没看到，并且从上面的讨论链接里面，Unity客服也表示这个很难实现）。但是广大的开发网友开发了一些工具可以用来辅助分析关键字。这里我知道的有两个：
+- [Shader Control](https://assetstore.unity.com/packages/vfx/shaders/shader-control-74817) ：Shader Control 是一款功能强大的编辑器插件，让你可以完全控制着色器的编译和关键字的使用以及它们在游戏中的影响(广告是这么说的，我穷没用过)
+- [Shader Keywords Tool UNITY3D](https://bitbucket.org/ArtIsDarkGames/shader-keywords-tool-unity3d/src/master/) ：免费开源的，用了一下下，可用。
+
