@@ -169,6 +169,22 @@ public class LoadAndUnloadRemoteAssets : Singleton<LoadAndUnloadRemoteAssets>
             return resourceData.assetBundle;
         return null;
     }
+    public void UnloadAllAssets()
+    {
+        foreach(var resource in allResource)
+        {
+            var resourceData = resource.Value;
+            if(resourceData.assetBundle)
+            {
+                resourceData.assetBundle.Unload(true);
+            }
+            resourceData.assetBundle = null;
+            resourceData.loadState = ResourceData.LoadState.Null;
+            resourceData.isReady = false;
+            resourceData.referencCount = 0;
+            resourceData.parentName.Clear();
+        }
+    }
     public bool UnloadAsset(int id)
     {
         // 暂时没时间写这块逻辑，感兴趣的话可以把这部分代码补上。
@@ -427,3 +443,4 @@ Unity2018之后的版本，关键字分为了local和global两种，其中global
 - [Shader Control](https://assetstore.unity.com/packages/vfx/shaders/shader-control-74817) ：Shader Control 是一款功能强大的编辑器插件，让你可以完全控制着色器的编译和关键字的使用以及它们在游戏中的影响(广告是这么说的，我穷没用过)
 - [Shader Keywords Tool UNITY3D](https://bitbucket.org/ArtIsDarkGames/shader-keywords-tool-unity3d/src/master/) ：免费开源的，用了一下下，可用。
 
+另外[这里](https://blog.unity.com/technology/stripping-scriptable-shader-variants)以及[这里](https://docs.unity3d.com/Manual/shader-variant-stripping.html)详细的介绍了变体相关的东西，包括变体数量的计算，以及如何控制变体的数量。而且Unity还提供`scriptable shader variants stripping`自定义变体剔除的方法，只要是实现[IPreprocessShaders](https://docs.unity3d.com/ScriptReference/Build.IPreprocessShaders.OnProcessShader.html)，这个回调接口在打包项目和打包Assetbundle资源时都会调用。
