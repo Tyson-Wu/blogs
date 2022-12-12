@@ -163,6 +163,87 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/12/23/Joy-Stick-Function/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2020/12/23/Joy-Stick-Function/" class="post-title-link" itemprop="url">摇杆实现方法1</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-23 22:01:00" itemprop="dateCreated datePublished" datetime="2020-12-23T22:01:00+08:00">2020-12-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-12-12 11:16:04" itemprop="dateModified" datetime="2022-12-12T11:16:04+08:00">2022-12-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Component/" itemprop="url" rel="index"><span itemprop="name">Component</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><img src="/blogs/images/src/ezgif.com-gif-maker-1.gif" alt="wwwwwww"><br>自己做了个飞行模拟的小游戏，发布到手机上需要用到摇杆来控制，所以自己写了一个Joystick类，代码如下：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> UnityEngine.EventSystems;</span><br><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> UGUI游戏摇杆</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Joystick</span> : <span class="title">MonoBehaviour</span>, <span class="title">IPointerDownHandler</span>, <span class="title">IPointerUpHandler</span>, <span class="title">IDragHandler</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Joystick instance;</span><br><span class="line">    [<span class="meta">SerializeField</span>] Camera uiCamera;<span class="comment">//摇杆对应的ui摄像机</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] RectTransform _triggerArea;<span class="comment">//触发启动摇杆区域</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] RectTransform _joyStickArea;<span class="comment">//摇杆活动区域</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] RectTransform centerTrans;<span class="comment">//摇杆图标</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] <span class="built_in">float</span> sensitivity = <span class="number">1</span>;<span class="comment">//摇杆灵敏度</span></span><br><span class="line">    [<span class="meta">SerializeField</span>] <span class="built_in">float</span> triggerAreaScale = <span class="number">1</span>;<span class="comment">//摇杆控制区域</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆偏移方向</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> Vector2 moveDir &#123; <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆偏移长度[0-1]</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> moveLen &#123; <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 是否在操控摇杆</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">bool</span> isDraging &#123; <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆横向偏移量</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> Horizontal &#123; <span class="keyword">get</span> &#123; <span class="keyword">return</span> moveDir.x * moveLen; &#125; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 摇杆纵向偏移量</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> Vertical &#123; <span class="keyword">get</span> &#123; <span class="keyword">return</span> moveDir.y * moveLen; &#125; &#125;</span><br><span class="line"></span><br><span class="line">    Canvas _canvas;</span><br><span class="line">    Canvas canvas &#123; <span class="keyword">get</span> &#123; <span class="keyword">if</span> (_canvas == <span class="literal">null</span>) _canvas = transform.GetComponentInParent&lt;Canvas&gt;(); <span class="keyword">return</span> _canvas; &#125; &#125;</span><br><span class="line">    Vector3 targetScreenPointPos = Vector3.zero;</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">    <span class="built_in">float</span> radius = <span class="number">0f</span>;</span><br><span class="line">    Vector3 centerScreenPos;</span><br><span class="line">    <span class="built_in">float</span> depth &#123; <span class="keyword">get</span> &#123; <span class="keyword">return</span> centerScreenPos.z; &#125; &#125;</span><br><span class="line">    <span class="built_in">bool</span> hasInit = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Action onJoyStickPointerUp;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Start</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        instance = <span class="keyword">this</span>;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnEnable</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        InitParam();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnDisable</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        isDraging = <span class="literal">false</span>;</span><br><span class="line">        targetScreenPointPos = centerScreenPos;</span><br><span class="line">        centerTrans.localPosition = Vector3.zero;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">InitParam</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">if</span> (hasInit) <span class="keyword">return</span>;</span><br><span class="line">        hasInit = <span class="literal">true</span>;</span><br><span class="line">        centerScreenPos = uiCamera.WorldToScreenPoint(_joyStickArea.position);</span><br><span class="line">        Rect rect = RectTransformUtility.PixelAdjustRect(_joyStickArea, canvas);</span><br><span class="line">        radius = triggerAreaScale * rect.width/<span class="number">2</span>;</span><br><span class="line">        targetScreenPointPos = centerScreenPos;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnPointerDown</span>(<span class="params">PointerEventData eventData</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        InitParam();</span><br><span class="line">        Vector2 pointScreenPos = eventData.position;</span><br><span class="line">        <span class="comment">//if (Vector2.Distance(pointScreenPos, centerScreenPos) &gt; radius) return;</span></span><br><span class="line"></span><br><span class="line">        isDraging = <span class="literal">true</span>;</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        <span class="comment">//targetScreenPointPos = uiCamera.WorldToScreenPoint(eventData.pointerCurrentRaycast.worldPosition);</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnDrag</span>(<span class="params">PointerEventData eventData</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">if</span> (!isDraging) <span class="keyword">return</span>;</span><br><span class="line">        Vector3 pointScreenPos = eventData.position;</span><br><span class="line">        pointScreenPos.z = depth;</span><br><span class="line">        Vector3 dir = pointScreenPos - centerScreenPos;</span><br><span class="line">        <span class="built_in">float</span> len = dir.magnitude;</span><br><span class="line">        len = len &gt; radius ? radius : len;</span><br><span class="line">        dir = len * dir.normalized;</span><br><span class="line">        targetScreenPointPos = centerScreenPos + dir;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnPointerUp</span>(<span class="params">PointerEventData eventData</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        isDraging = <span class="literal">false</span>;</span><br><span class="line">        targetScreenPointPos = centerScreenPos;</span><br><span class="line">        onJoyStickPointerUp?.Invoke();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Update</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Vector3 screenPointPos = uiCamera.WorldToScreenPoint(centerTrans.position);</span><br><span class="line">        <span class="keyword">if</span>(Vector3.Distance(screenPointPos, targetScreenPointPos)&lt;<span class="number">4</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            screenPointPos = targetScreenPointPos;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            screenPointPos = Vector3.Lerp(screenPointPos, targetScreenPointPos, sensitivity * Time.deltaTime);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        centerTrans.position = uiCamera.ScreenToWorldPoint(screenPointPos);</span><br><span class="line">        moveDir = screenPointPos - centerScreenPos;</span><br><span class="line">        moveDir /= radius;</span><br><span class="line">        moveLen = moveDir.magnitude;</span><br><span class="line">        moveLen = moveLen &gt; <span class="number">1</span> ? <span class="number">1</span> : moveLen;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过属性器可以获取当前摇杆的状态参数，包括偏移方向以及强度，方向是360度，强度是[0-1]。还有几个<code>SerializeField</code>面板设置参数，结构如下图：<br><img src="/blogs/images/src/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20201223220715.png"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2020/11/22/Rendering-with-Replaced-Shaders/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -194,7 +275,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-09 19:49:14" itemprop="dateModified" datetime="2022-12-09T19:49:14+08:00">2022-12-09</time>
+                <time title="修改时间：2022-12-12 11:16:04" itemprop="dateModified" datetime="2022-12-12T11:16:04+08:00">2022-12-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -283,7 +364,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-09 19:49:14" itemprop="dateModified" datetime="2022-12-09T19:49:14+08:00">2022-12-09</time>
+                <time title="修改时间：2022-12-12 11:16:04" itemprop="dateModified" datetime="2022-12-12T11:16:04+08:00">2022-12-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -444,7 +525,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-09 19:49:14" itemprop="dateModified" datetime="2022-12-09T19:49:14+08:00">2022-12-09</time>
+                <time title="修改时间：2022-12-12 11:16:04" itemprop="dateModified" datetime="2022-12-12T11:16:04+08:00">2022-12-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -565,7 +646,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">63</span>
+          <span class="site-state-item-count">64</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -578,7 +659,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/blogs/tags/">
           
-        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-count">33</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
