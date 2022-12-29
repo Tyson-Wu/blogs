@@ -163,6 +163,89 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2022/04/04/Git-Personal-access-tokens/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2022/04/04/Git-Personal-access-tokens/" class="post-title-link" itemprop="url">Git Personal Access Tokens</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-04-04 15:01:00" itemprop="dateCreated datePublished" datetime="2022-04-04T15:01:00+08:00">2022-04-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-12-29 20:06:14" itemprop="dateModified" datetime="2022-12-29T20:06:14+08:00">2022-12-29</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Git/" itemprop="url" rel="index"><span itemprop="name">Git</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>最近使用GitHub提交项目时，发现原先的账号密码的方式已经失效，GitHub官方表示不再支持使用账号密码的方式，而是改为使用<code>Personal Access Tokens</code>访问令牌的方式。<br><img src="https://jhooq.com/wp-content/uploads/ssl/git-personal-access-token/git-personal-access-token-error.webp"></p>
+<p><code>Personal Access Tokens</code>是通过在GitHub上创建令牌，并且设置令牌的使用时限，来限制访问者的访问权限。也可以直接删除令牌来清除访问者的访问权限。而令牌的作用域时针对整个GitHub账号下的所有项目。所以创建方式也是在GitHub下的总Setting下设置。创造令牌的步骤如下：<br>1：登录GitHub账号；<br>2：选择右上角的头像图标 <code>-&gt; Profile Pic -&gt; Setting</code>；<br><img src="https://jhooq.com/wp-content/uploads/ssl/git-personal-access-token/git-personal-access-token-settings.webp"><br>3：然后在Setting页面左侧菜单栏里面选择<code>Developer Settings</code>；<br><img src="https://jhooq.com/wp-content/uploads/ssl/git-personal-access-token/git-personal-access-token-developer-settings.webp"><br>4：然后在<code>Developer Settings</code>页面上选择<code>Personal Access Token </code>选项；<br><img src="https://jhooq.com/wp-content/uploads/ssl/git-personal-access-token/git-personal-access-token-generate.webp"><br>5：然后选择<code>Generate New Token</code>按钮开始创建令牌;<br><img src="https://jhooq.com/wp-content/uploads/ssl/git-personal-access-token/git-personal-access-token-generate-new-token.webp"><br>6：给令牌选择一个名字，令牌的使用时限，以及令牌的访问权限范围；<br><img src="https://jhooq.com/wp-content/uploads/ssl/git-personal-access-token/git-personal-access-token-new-scopes.webp"><br>7：然后点击<code>Generate Token</code>生成令牌；<br>8：生成的令牌是一串字符串，只有在令牌生成的时候才能看到令牌明码，我们需要复制这个字符串，后续再打开这个令牌界面的时候，就看不到令牌字符串了；<br><img src="https://jhooq.com/wp-content/uploads/ssl/git-personal-access-token/git-personal-access-token-copy-token.webp"><br>拿到令牌字符串后，我们就可以使用这个令牌来clone或者push该GitHub账号下的项目了。使用令牌时，我们需要使用令牌字符串来拼接git资源路径。<br>下面以<a target="_blank" rel="noopener" href="https://github.com/Tyson-Wu/Unity_Jenkins">https://github.com/Tyson-Wu/Unity_Jenkins</a>这个项目为例。通常我们clone时直接使用一下命令:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/Tyson-Wu/Unity_Jenkins.git</span><br></pre></td></tr></table></figure>
+<p>但是这个命令只能拷贝资源，拷贝后并不能上传修改后的资源。想要拥有上传权限，那就要用令牌来修改访问权限了。而拼接的规则如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://&lt;username&gt;:&lt;personal_access_token&gt;@github.com/&lt;username&gt;/&lt;project_name&gt;.git</span><br></pre></td></tr></table></figure>
+<p>假设此时我创建的令牌字符串为<code>ghp_7qb6ZektsWIFkHzJiaL4gH2GKzNUqD3P8ZoA</code>,对于上面子资源，拼接后的路径应该是：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://ghp_7qb6ZektsWIFkHzJiaL4gH2GKzNUqD3P8ZoA@github.com/Tyson-Wu/Unity_Jenkins.git</span><br></pre></td></tr></table></figure>
+<p>当拷贝完后，我们进入到Unity_Jenkins的本地拷贝根目录下，打开git命令行，然后修改它的orgion。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote set-url origin https://ghp_7qb6ZektsWIFkHzJiaL4gH2GKzNUqD3P8ZoA@github.com/Tyson-Wu/Unity_Jenkins.git</span><br></pre></td></tr></table></figure>
+<p>这时候就设置好了访问权限，假设我们本地文件修改后想提交，直接使用<code>Push</code>命令就行了。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2022/03/21/Unity-Editor-Project-Linker/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -194,7 +277,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-12 11:16:04" itemprop="dateModified" datetime="2022-12-12T11:16:04+08:00">2022-12-12</time>
+                <time title="修改时间：2022-12-29 20:06:14" itemprop="dateModified" datetime="2022-12-29T20:06:14+08:00">2022-12-29</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -278,7 +361,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-12 11:16:04" itemprop="dateModified" datetime="2022-12-12T11:16:04+08:00">2022-12-12</time>
+                <time title="修改时间：2022-12-29 20:06:14" itemprop="dateModified" datetime="2022-12-29T20:06:14+08:00">2022-12-29</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -357,7 +440,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-12 11:16:04" itemprop="dateModified" datetime="2022-12-12T11:16:04+08:00">2022-12-12</time>
+                <time title="修改时间：2022-12-29 20:06:14" itemprop="dateModified" datetime="2022-12-29T20:06:14+08:00">2022-12-29</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -443,7 +526,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-12 11:16:04" itemprop="dateModified" datetime="2022-12-12T11:16:04+08:00">2022-12-12</time>
+                <time title="修改时间：2022-12-29 20:06:14" itemprop="dateModified" datetime="2022-12-29T20:06:14+08:00">2022-12-29</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -522,7 +605,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-12 11:16:04" itemprop="dateModified" datetime="2022-12-12T11:16:04+08:00">2022-12-12</time>
+                <time title="修改时间：2022-12-29 20:06:14" itemprop="dateModified" datetime="2022-12-29T20:06:14+08:00">2022-12-29</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -652,7 +735,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-12 11:16:04" itemprop="dateModified" datetime="2022-12-12T11:16:04+08:00">2022-12-12</time>
+                <time title="修改时间：2022-12-29 20:06:14" itemprop="dateModified" datetime="2022-12-29T20:06:14+08:00">2022-12-29</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -781,7 +864,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-12 11:16:04" itemprop="dateModified" datetime="2022-12-12T11:16:04+08:00">2022-12-12</time>
+                <time title="修改时间：2022-12-29 20:06:14" itemprop="dateModified" datetime="2022-12-29T20:06:14+08:00">2022-12-29</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -928,7 +1011,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-12 11:16:04" itemprop="dateModified" datetime="2022-12-12T11:16:04+08:00">2022-12-12</time>
+                <time title="修改时间：2022-12-29 20:06:14" itemprop="dateModified" datetime="2022-12-29T20:06:14+08:00">2022-12-29</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1045,7 +1128,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-12 11:16:04" itemprop="dateModified" datetime="2022-12-12T11:16:04+08:00">2022-12-12</time>
+                <time title="修改时间：2022-12-29 20:06:14" itemprop="dateModified" datetime="2022-12-29T20:06:14+08:00">2022-12-29</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1151,135 +1234,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/08/Ronja_White_Noise/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2021/07/08/Ronja_White_Noise/" class="post-title-link" itemprop="url">White Noise</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-07-08 18:01:00" itemprop="dateCreated datePublished" datetime="2021-07-08T18:01:00+08:00">2021-07-08</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-12 11:16:04" itemprop="dateModified" datetime="2022-12-12T11:16:04+08:00">2022-12-12</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/024-white-noise/">White Noise</a></p>
-<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>在很多效果中需要用到随机数来生成纹理图案、又或者其他东西。下面我们以白色噪声图为例，来展示随机数用途。后面我们还会介绍其他使用随机数生成的具有一定组织结构的图案，例如泊林噪声图、和<code>vornoi</code>噪声图。本文是采用表面着色器来实现的，所以建议你先阅读我关于<a href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Surface_Shader_Basics/">表面着色器</a>的介绍。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/024/Result.png"></p>
-<h2 id="Scalar-noise-from-3d-Input"><a href="#Scalar-noise-from-3d-Input" class="headerlink" title="Scalar noise from 3d Input"></a>Scalar noise from 3d Input</h2><p>在着色器中，我们很难将上一帧画面的数据保存到下一帧，因此我们的随机数必须依赖于着色器中可访问的参数，这样无论什么时候我们都可以得到固定的随机值。这里我们使用世界坐标来生成随机值。当然如果你想让你的噪声图动起来，可以引入时间变量。</p>
-<p>因此我们需要在表面着色器的输入结构中加入世界坐标。另外因为我们打算通过随机数生成纹理图案，所以我们不需要纹理变量，相应的UV坐标也可以删除了。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Input</span> &#123;</span></span><br><span class="line">    float3 worldPos;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>接下来我们将实现随机噪声值生成函数，这样我们可以通过该函数很方便的制造随机数。首先我们的函数接收三维坐标参数，然后返回一个0-1之间的小数。将向量转换为标量最简单的方法就是点乘，但是点乘的结果可能非常大，所以我们使用<code>frac</code>函数只截取其中的小数部分。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">float</span> <span class="title">rand</span><span class="params">(float3 vec)</span></span>&#123;</span><br><span class="line">    <span class="keyword">float</span> random = dot(vec, float3(<span class="number">12.9898</span>, <span class="number">78.233</span>, <span class="number">37.719</span>));</span><br><span class="line">    random = frac(random);</span><br><span class="line">    <span class="keyword">return</span> random;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>如果我们在表面着色器函数中使用我们的随机函数，并以世界坐标为参数，将结果写入<code>Albedo</code>参数中，那么我们可以立马看到我们的随机值遍布在模型表面。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">surf</span> <span class="params">(Input i, inout SurfaceOutputStandard o)</span> </span>&#123;</span><br><span class="line">    o.Albedo = rand(i.worldPos);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="https://www.ronja-tutorials.com/assets/images/posts/024/DotFrac.png"><br><img src="https://www.ronja-tutorials.com/assets/images/posts/024/DotFracClose.png"></p>
-<p>上面生成的噪声图有一个问题，就是看起来并不是那么随机，我们可以看到有很多条纹图案。虽然这个”随机函数“是我随便写的，但是它执行很快，也能满足我们当前一些简单的随机需求。我们再将上面的伪随机值乘以一个非常大的值，然后截取结果的小数部分，这样可以产生非常细的条纹，几乎观察不到。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">float</span> <span class="title">rand</span><span class="params">(float3 vec)</span></span>&#123;</span><br><span class="line">    <span class="keyword">float</span> random = dot(vec, float3(<span class="number">12.9898</span>, <span class="number">78.233</span>, <span class="number">37.719</span>));</span><br><span class="line">    random = frac(random * <span class="number">143758.5453</span>);</span><br><span class="line">    <span class="keyword">return</span> random;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="https://www.ronja-tutorials.com/assets/images/posts/024/SimpleRandom.png"></p>
-<p>但是又有一个问题，就是乘以一个非常大的数，其结果很容易超出浮点数表示范围，例如我们的模型离世界原点非常远。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/024/FloatRange.png"></p>
-<p>为了修复这个问题，我们可以在乘积之前，将点乘结果限定在非常小的范围，这里我使用三角函数。因为三角函数是在特殊的计算单元中执行，所以其性能消耗只比加减乘除高点。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//基于向量计算随机值</span></span><br><span class="line"><span class="function"><span class="keyword">float</span> <span class="title">rand</span><span class="params">(float3 value)</span></span>&#123;</span><br><span class="line">    <span class="comment">//限制向量大小</span></span><br><span class="line">    float3 smallValue = <span class="built_in">sin</span>(value);</span><br><span class="line">    <span class="comment">//计算随机值</span></span><br><span class="line">    <span class="keyword">float</span> random = dot(smallValue, float3(<span class="number">12.9898</span>, <span class="number">78.233</span>, <span class="number">37.719</span>));</span><br><span class="line">    <span class="comment">//防止超出范围</span></span><br><span class="line">    random = frac(<span class="built_in">sin</span>(random) * <span class="number">143758.5453</span>);</span><br><span class="line">    <span class="keyword">return</span> random;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Different-Input-and-Output"><a href="#Different-Input-and-Output" class="headerlink" title="Different Input and Output"></a>Different Input and Output</h2><p>为了产生多维随机向量，我们可以沿着不同方向生成随机数，然后将结果合并成向量。但是不同方向的随机参数必须不同，这样不同方向的随机值才能不同。最简单的方法是将上面的固定向量改成变量，然后不同方向的随机值需要传入不同的向量。我们可以将上面的固定向量作为我们这个向量变量的默认参数，这样还可以以上面的方式调用。因为现在有一维、和三维随机数生成函数，所以我们需要给他们分别命名。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//生成一维随机数</span></span><br><span class="line"><span class="function"><span class="keyword">float</span> <span class="title">rand3dTo1d</span><span class="params">(float3 value, float3 dotDir = float3(<span class="number">12.9898</span>, <span class="number">78.233</span>, <span class="number">37.719</span>))</span></span>&#123;</span><br><span class="line">    <span class="comment">//限制向量大小</span></span><br><span class="line">    float3 smallValue = <span class="built_in">sin</span>(value);</span><br><span class="line">    <span class="comment">//计算随机值</span></span><br><span class="line">    <span class="keyword">float</span> random = dot(smallValue, dotDir);</span><br><span class="line">    <span class="comment">//防止超出范围</span></span><br><span class="line">    random = frac(<span class="built_in">sin</span>(random) * <span class="number">143758.5453</span>);</span><br><span class="line">    <span class="keyword">return</span> random;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>要生成三维随机数，我们可以将上面的方法调用三次。每次得到向量的一个维度值，每个维度使用不同的方向向量。这样我们可以得到一个彩色的随机噪声图。之所以将上面的方法执行三遍，而不是另外写一个直接生成三维向量的随机方法，是因为我们想让生成的随机向量的三个维度的值相互独立。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//生成三维随机向量</span></span><br><span class="line"><span class="function">float3 <span class="title">rand3dTo3d</span><span class="params">(float3 value)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> float3(</span><br><span class="line">        rand3dTo1d(value, float3(<span class="number">12.989</span>, <span class="number">78.233</span>, <span class="number">37.719</span>)),</span><br><span class="line">        rand3dTo1d(value, float3(<span class="number">39.346</span>, <span class="number">11.135</span>, <span class="number">83.155</span>)),</span><br><span class="line">        rand3dTo1d(value, float3(<span class="number">73.156</span>, <span class="number">52.235</span>, <span class="number">09.151</span>))</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">surf</span> <span class="params">(Input i, inout SurfaceOutputStandard o)</span> </span>&#123;</span><br><span class="line">    o.Albedo = rand3dTo3d(i.worldPos);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="https://www.ronja-tutorials.com/assets/images/posts/024/ColorfulWhiteNoise.png"></p>
-<p>上面是使用三维向量来生成随机数，我们也可以使用二维向量，只要把前面的三维向量改成二维向量就行。还可以使用标量，不过原先的点乘操作就用不上了。我们可以一次性将这些函数都实现，然后放在一个<code>include</code>文件中，这样以后都不用再重写这些方法了。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//一维随机数</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//使用三维向量计算一维随机数</span></span><br><span class="line"><span class="function"><span class="keyword">float</span> <span class="title">rand3dTo1d</span><span class="params">(float3 value, float3 dotDir = float3(<span class="number">12.9898</span>, <span class="number">78.233</span>, <span class="number">37.719</span>))</span></span>&#123;</span><br><span class="line">    <span class="comment">//限制向量大小</span></span><br><span class="line">    float3 smallValue = <span class="built_in">sin</span>(value);</span><br><span class="line">    <span class="comment">//计算随机值</span></span><br><span class="line">    <span class="keyword">float</span> random = dot(smallValue, dotDir);</span><br><span class="line">    <span class="comment">//防止超出范围</span></span><br><span class="line">    random = frac(<span class="built_in">sin</span>(random) * <span class="number">143758.5453</span>);</span><br><span class="line">    <span class="keyword">return</span> random;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">float</span> <span class="title">rand2dTo1d</span><span class="params">(float2 value, float2 dotDir = float2(<span class="number">12.9898</span>, <span class="number">78.233</span>))</span></span>&#123;</span><br><span class="line">    float2 smallValue = <span class="built_in">sin</span>(value);</span><br><span class="line">    <span class="keyword">float</span> random = dot(smallValue, dotDir);</span><br><span class="line">    random = frac(<span class="built_in">sin</span>(random) * <span class="number">143758.5453</span>);</span><br><span class="line">    <span class="keyword">return</span> random;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">float</span> <span class="title">rand1dTo1d</span><span class="params">(float3 value, <span class="keyword">float</span> mutator = <span class="number">0.546</span>)</span></span>&#123;</span><br><span class="line">	<span class="keyword">float</span> random = frac(<span class="built_in">sin</span>(value + mutator) * <span class="number">143758.5453</span>);</span><br><span class="line">	<span class="keyword">return</span> random;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//二维随机数</span></span><br><span class="line"></span><br><span class="line"><span class="function">float2 <span class="title">rand3dTo2d</span><span class="params">(float3 value)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> float2(</span><br><span class="line">        rand3dTo1d(value, float3(<span class="number">12.989</span>, <span class="number">78.233</span>, <span class="number">37.719</span>)),</span><br><span class="line">        rand3dTo1d(value, float3(<span class="number">39.346</span>, <span class="number">11.135</span>, <span class="number">83.155</span>))</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">float2 <span class="title">rand2dTo2d</span><span class="params">(float2 value)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> float2(</span><br><span class="line">        rand2dTo1d(value, float2(<span class="number">12.989</span>, <span class="number">78.233</span>)),</span><br><span class="line">        rand2dTo1d(value, float2(<span class="number">39.346</span>, <span class="number">11.135</span>))</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">float2 <span class="title">rand1dTo2d</span><span class="params">(<span class="keyword">float</span> value)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> float2(</span><br><span class="line">        rand2dTo1d(value, <span class="number">3.9812</span>),</span><br><span class="line">        rand2dTo1d(value, <span class="number">7.1536</span>)</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//三维随机数</span></span><br><span class="line"></span><br><span class="line"><span class="function">float3 <span class="title">rand3dTo3d</span><span class="params">(float3 value)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> float3(</span><br><span class="line">        rand3dTo1d(value, float3(<span class="number">12.989</span>, <span class="number">78.233</span>, <span class="number">37.719</span>)),</span><br><span class="line">        rand3dTo1d(value, float3(<span class="number">39.346</span>, <span class="number">11.135</span>, <span class="number">83.155</span>)),</span><br><span class="line">        rand3dTo1d(value, float3(<span class="number">73.156</span>, <span class="number">52.235</span>, <span class="number">09.151</span>))</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">float3 <span class="title">rand2dTo3d</span><span class="params">(float2 value)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> float3(</span><br><span class="line">        rand2dTo1d(value, float2(<span class="number">12.989</span>, <span class="number">78.233</span>)),</span><br><span class="line">        rand2dTo1d(value, float2(<span class="number">39.346</span>, <span class="number">11.135</span>)),</span><br><span class="line">        rand2dTo1d(value, float2(<span class="number">73.156</span>, <span class="number">52.235</span>))</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">float3 <span class="title">rand1dTo3d</span><span class="params">(<span class="keyword">float</span> value)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> float3(</span><br><span class="line">        rand1dTo1d(value, <span class="number">3.9812</span>),</span><br><span class="line">        rand1dTo1d(value, <span class="number">7.1536</span>),</span><br><span class="line">        rand1dTo1d(value, <span class="number">5.7241</span>)</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>然后我们将上面的随机生成的函数都放到一个叫<code>WhiteNoise.cginc</code>的文件中。并且在我们的着色器中引用它。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;WhiteNoise.cginc&quot;</span></span></span><br></pre></td></tr></table></figure>
-
-<p>为了防止我们多次误引用同一个文件，我们可以使用宏命令来规避这个问题。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> WHITE_NOISE</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> WHITE_NOISE</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//我们的包含库内容</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
-
-<h2 id="Cells"><a href="#Cells" class="headerlink" title="Cells"></a>Cells</h2><p>现在我们实现了通过世界坐标来生成随机颜色，这些颜色块非常小，当我们移动物体时，颜色也会快速变化。如果我们想让颜色块变大，我们可以将空间进行划分，所有处在同一块中的点使用同一个随机值。我们这里可以使用取整的方法，这样所有整数之间的小数对应的点都将使用同一随机值。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">surf</span> <span class="params">(Input i, inout SurfaceOutputStandard o)</span> </span>&#123;</span><br><span class="line">    float3 value = <span class="built_in">floor</span>(i.worldPos);</span><br><span class="line">    o.Albedo = rand3dTo3d(value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="https://www.ronja-tutorials.com/assets/images/posts/024/1Cells.png"></p>
-<p>现在我们得到泾渭分明的色块，然后我们可以修改色块的大小。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Properties &#123;</span><br><span class="line">    _CellSize (<span class="string">&quot;Cell Size&quot;</span>, Vector) = (<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">float3 _CellSize;</span><br></pre></td></tr></table></figure>
-
-<p>我们这将世界坐标除以色块尺寸。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">surf</span> <span class="params">(Input i, inout SurfaceOutputStandard o)</span> </span>&#123;</span><br><span class="line">    float3 value = <span class="built_in">floor</span>(i.worldPos / _CellSize);</span><br><span class="line">    o.Albedo = rand3dTo3d(value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="https://www.ronja-tutorials.com/assets/images/posts/024/Cells.png"></p>
-<h2 id="Source"><a href="#Source" class="headerlink" title="Source"></a>Source</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/024_white_noise/random&quot;</span> &#123;</span><br><span class="line">	Properties &#123;</span><br><span class="line">	&#125;</span><br><span class="line">	SubShader &#123;</span><br><span class="line">		Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Geometry&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line">		CGPROGRAM</span><br><span class="line"></span><br><span class="line">		<span class="meta">#<span class="meta-keyword">pragma</span> surface surf Standard fullforwardshadows</span></span><br><span class="line">		<span class="meta">#<span class="meta-keyword">pragma</span> target 3.0</span></span><br><span class="line"></span><br><span class="line">		<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;WhiteNoise.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">		struct Input &#123;</span><br><span class="line">			float3 worldPos;</span><br><span class="line">		&#125;;</span><br><span class="line"></span><br><span class="line">		<span class="function"><span class="keyword">void</span> <span class="title">surf</span> <span class="params">(Input i, inout SurfaceOutputStandard o)</span> </span>&#123;</span><br><span class="line">			float3 value = i.worldPos;</span><br><span class="line">			o.Albedo = rand3dTo3d(value);</span><br><span class="line">		&#125;</span><br><span class="line">		ENDCG</span><br><span class="line">	&#125;</span><br><span class="line">	FallBack <span class="string">&quot;Standard&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/024_white_noise/cells&quot;</span> &#123;</span><br><span class="line">	Properties &#123;</span><br><span class="line">		_CellSize (<span class="string">&quot;Cell Size&quot;</span>, Vector) = (<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	SubShader &#123;</span><br><span class="line">		Tags&#123; <span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Opaque&quot;</span> <span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Geometry&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line">		CGPROGRAM</span><br><span class="line"></span><br><span class="line">		<span class="meta">#<span class="meta-keyword">pragma</span> surface surf Standard fullforwardshadows</span></span><br><span class="line">		<span class="meta">#<span class="meta-keyword">pragma</span> target 3.0</span></span><br><span class="line"></span><br><span class="line">		<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;WhiteNoise.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">		float3 _CellSize;</span><br><span class="line"></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> <span class="title">Input</span> &#123;</span></span><br><span class="line">			float3 worldPos;</span><br><span class="line">		&#125;;</span><br><span class="line"></span><br><span class="line">		<span class="function"><span class="keyword">void</span> <span class="title">surf</span> <span class="params">(Input i, inout SurfaceOutputStandard o)</span> </span>&#123;</span><br><span class="line">			float3 value = <span class="built_in">floor</span>(i.worldPos / _CellSize);</span><br><span class="line">			o.Albedo = rand3dTo3d(value);</span><br><span class="line">		&#125;</span><br><span class="line">		ENDCG</span><br><span class="line">	&#125;</span><br><span class="line">	FallBack <span class="string">&quot;Standard&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> WHITE_NOISE</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> WHITE_NOISE</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//to 1d functions</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//get a scalar random value from a 3d value</span></span><br><span class="line"><span class="function"><span class="keyword">float</span> <span class="title">rand3dTo1d</span><span class="params">(float3 value, float3 dotDir = float3(<span class="number">12.9898</span>, <span class="number">78.233</span>, <span class="number">37.719</span>))</span></span>&#123;</span><br><span class="line">	<span class="comment">//make value smaller to avoid artefacts</span></span><br><span class="line">	float3 smallValue = <span class="built_in">sin</span>(value);</span><br><span class="line">	<span class="comment">//get scalar value from 3d vector</span></span><br><span class="line">	<span class="keyword">float</span> random = dot(smallValue, dotDir);</span><br><span class="line">	<span class="comment">//make value more random by making it bigger and then taking the factional part</span></span><br><span class="line">	random = frac(<span class="built_in">sin</span>(random) * <span class="number">143758.5453</span>);</span><br><span class="line">	<span class="keyword">return</span> random;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">float</span> <span class="title">rand2dTo1d</span><span class="params">(float2 value, float2 dotDir = float2(<span class="number">12.9898</span>, <span class="number">78.233</span>))</span></span>&#123;</span><br><span class="line">	float2 smallValue = <span class="built_in">sin</span>(value);</span><br><span class="line">	<span class="keyword">float</span> random = dot(smallValue, dotDir);</span><br><span class="line">	random = frac(<span class="built_in">sin</span>(random) * <span class="number">143758.5453</span>);</span><br><span class="line">	<span class="keyword">return</span> random;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">float</span> <span class="title">rand1dTo1d</span><span class="params">(float3 value, <span class="keyword">float</span> mutator = <span class="number">0.546</span>)</span></span>&#123;</span><br><span class="line">	<span class="keyword">float</span> random = frac(<span class="built_in">sin</span>(value + mutator) * <span class="number">143758.5453</span>);</span><br><span class="line">	<span class="keyword">return</span> random;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//to 2d functions</span></span><br><span class="line"></span><br><span class="line"><span class="function">float2 <span class="title">rand3dTo2d</span><span class="params">(float3 value)</span></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> float2(</span><br><span class="line">		rand3dTo1d(value, float3(<span class="number">12.989</span>, <span class="number">78.233</span>, <span class="number">37.719</span>)),</span><br><span class="line">		rand3dTo1d(value, float3(<span class="number">39.346</span>, <span class="number">11.135</span>, <span class="number">83.155</span>))</span><br><span class="line">	);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">float2 <span class="title">rand2dTo2d</span><span class="params">(float2 value)</span></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> float2(</span><br><span class="line">		rand2dTo1d(value, float2(<span class="number">12.989</span>, <span class="number">78.233</span>)),</span><br><span class="line">		rand2dTo1d(value, float2(<span class="number">39.346</span>, <span class="number">11.135</span>))</span><br><span class="line">	);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">float2 <span class="title">rand1dTo2d</span><span class="params">(<span class="keyword">float</span> value)</span></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> float2(</span><br><span class="line">		rand2dTo1d(value, <span class="number">3.9812</span>),</span><br><span class="line">		rand2dTo1d(value, <span class="number">7.1536</span>)</span><br><span class="line">	);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//to 3d functions</span></span><br><span class="line"></span><br><span class="line"><span class="function">float3 <span class="title">rand3dTo3d</span><span class="params">(float3 value)</span></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> float3(</span><br><span class="line">		rand3dTo1d(value, float3(<span class="number">12.989</span>, <span class="number">78.233</span>, <span class="number">37.719</span>)),</span><br><span class="line">		rand3dTo1d(value, float3(<span class="number">39.346</span>, <span class="number">11.135</span>, <span class="number">83.155</span>)),</span><br><span class="line">		rand3dTo1d(value, float3(<span class="number">73.156</span>, <span class="number">52.235</span>, <span class="number">09.151</span>))</span><br><span class="line">	);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">float3 <span class="title">rand2dTo3d</span><span class="params">(float2 value)</span></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> float3(</span><br><span class="line">		rand2dTo1d(value, float2(<span class="number">12.989</span>, <span class="number">78.233</span>)),</span><br><span class="line">		rand2dTo1d(value, float2(<span class="number">39.346</span>, <span class="number">11.135</span>)),</span><br><span class="line">		rand2dTo1d(value, float2(<span class="number">73.156</span>, <span class="number">52.235</span>))</span><br><span class="line">	);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">float3 <span class="title">rand1dTo3d</span><span class="params">(<span class="keyword">float</span> value)</span></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> float3(</span><br><span class="line">		rand1dTo1d(value, <span class="number">3.9812</span>),</span><br><span class="line">		rand1dTo1d(value, <span class="number">7.1536</span>),</span><br><span class="line">		rand1dTo1d(value, <span class="number">5.7241</span>)</span><br><span class="line">	);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
-
-<p>希望我的教程能够对你有所帮助。</p>
-<p>你可以在以下链接找到源码：<br><a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/024_White_Noise/WhiteNoise.cginc">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/024_White_Noise/WhiteNoise.cginc</a><br><a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/024_White_Noise/white_noise_random.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/024_White_Noise/white_noise_random.shader</a><br><a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/024_White_Noise/white_noise_cells.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/024_White_Noise/white_noise_cells.shader</a></p>
-<p>希望你能喜欢这个教程哦！如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1351,14 +1305,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">64</span>
+          <span class="site-state-item-count">65</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/blogs/categories/">
           
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
