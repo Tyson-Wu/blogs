@@ -22,18 +22,26 @@ using UnityEditor.ProjectWindowCallback;
 public partial class ShaderOpenTools : EditorWindow
 {
     const string k_WorkDirectoryKey = "Shader_WorkDirectoryKey";
+    static string m_keyPath = null;
+    static string keyPath{
+        get{
+            if(m_keyPath == null)
+                m_keyPath = $"{Application.dataPath}_{k_WorkDirectoryKey}";
+            return m_keyPath;
+        }
+    }
     static string workDirectory
     {
         get
         {
-            string path = SessionState.GetString(k_WorkDirectoryKey, null);
+            string path = EditorPrefs.GetString(keyPath, null);
             if(string.IsNullOrEmpty(path))
                 return Application.dataPath;
             return path;
         }
         set
         {
-            SessionState.SetString(k_WorkDirectoryKey, value);
+            EditorPrefs.SetString(keyPath, value);
         }
     }
     [MenuItem("Tools/ShaderOpenTools")]
@@ -111,11 +119,11 @@ public partial class ShaderOpenTools
             {
                 if(line > 0)
                 {
-                    sw.WriteLine($"code . && code -g {strFileName}:{line} -r");
+                    sw.WriteLine($"code . && code -g \"{strFileName}\":{line} -r");
                 }
                 else
                 {
-                    sw.WriteLine($"code . && code {strFileName} -r");
+                    sw.WriteLine($"code . && code \"{strFileName}\" -r");
                 }
             }
             bool rst = true;
