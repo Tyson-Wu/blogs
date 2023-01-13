@@ -103,7 +103,7 @@ public partial class ShaderOpenTools
         start.StandardErrorEncoding = Encoding.GetEncoding("GBK");
         return start;
     }
-    [OnOpenAsset(1)]
+    [OnOpenAsset(-100)]
     static bool OnShaderClick(int instanceID, int line)
     {
         string strFilePath = AssetDatabase.GetAssetPath(EditorUtility.InstanceIDToObject(instanceID));
@@ -112,7 +112,7 @@ public partial class ShaderOpenTools
         || strFilePath.EndsWith(".cginc"))
         {
             string rootDirectory = workDirectory;
-            string strFileName = $"{Application.dataPath}/{strFilePath.SubString("Assets/".Length)}";
+            string strFileName = Path.GetFullPath(strFilePath);
             ProcessStartInfo start = CreateProcessStartInfo(rootDirectory);
             Process process = Process.Start(start);
             using(var sw = process.StandardInput)
