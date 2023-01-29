@@ -202,3 +202,35 @@ public partial class ShaderOpenTools
 [VSCode Command line](https://code.visualstudio.com/docs/editor/command-line)
 [VSCode settings](https://code.visualstudio.com/docs/getstarted/settings)
 [VSCode GlobPattern](https://vshaxe.github.io/vscode-extern/vscode/GlobPattern.html):可以用于设置VSCode不显示`.meta`文件，在`Settings`界面，搜索`file:exclude`，然后增加`**/*.meta`。
+
+
+## 使用配置文件
+
+上面是通过路径打开VSCode文件，更实用的一种方法是直接通过配置文件打开。通过配置文件打开有几个好处，就是可以在同一个VSCode里面打开多个文件路径，并且保存设置。配置文件格式如下,文件名为`shaderworkspace.code-workspace`：
+```json
+{
+    "folder":[
+        {"path":"folder\\path1"},
+        {"path":"folder\\path2"}
+    ],
+    "settings":{
+        "files.exclude":{
+            "**/*.meta":true
+        }
+    }
+}
+```
+
+然后前面打开VSCode工程的命令可以改成：
+```C#
+if(line > 0)
+{
+    sw.WriteLine($"code shaderworkspace.code-workspace && code -g \"{strFileName}\":{line} -r");
+}
+else
+{
+    sw.WriteLine($"code shaderworkspace.code-workspace && code \"{strFileName}\" -r");
+}
+```
+
+当然，上面命令有效的前提是`shaderworkspace.code-workspace`文件在当前工作目录下。
