@@ -116,6 +116,7 @@ date: 2021-05-27 17:01:34
 ## Render
 
 ### Color
+[Linear, Gamma and sRGB Color Spaces](https://matt77hias.github.io/blog/2018/07/01/linear-gamma-and-sRGB-color-spaces.html)：详细解释了线性颜色空间和gamma颜色空间。
 [Studying Gamut Clipping](https://simonstechblog.blogspot.com/):色域裁剪研究，用于将颜色限定在有效范围内；
 [LUTs](https://blog.frame.io/2019/08/12/luts-101/)
 
