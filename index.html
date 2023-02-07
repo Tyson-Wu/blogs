@@ -194,7 +194,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-01-29 17:16:31" itemprop="dateModified" datetime="2023-01-29T17:16:31+08:00">2023-01-29</time>
+                <time title="修改时间：2023-02-07 21:06:39" itemprop="dateModified" datetime="2023-02-07T21:06:39+08:00">2023-02-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -218,6 +218,95 @@
 
       
           <p>撕夜<br>用心爱你你不懂<br>十年<br>时间都去哪儿了<br>其实你不懂我的心<br>关于你们之间的故事<br>假如爱有天意</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2023/01/31/Unity_SRP_Misc/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2023/01/31/Unity_SRP_Misc/" class="post-title-link" itemprop="url">Unity SRP Misc</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-01-31 10:01:00" itemprop="dateCreated datePublished" datetime="2023-01-31T10:01:00+08:00">2023-01-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-02-07 21:06:39" itemprop="dateModified" datetime="2023-02-07T21:06:39+08:00">2023-02-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/SRP/" itemprop="url" rel="index"><span itemprop="name">SRP</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="渲染指定物体"><a href="#渲染指定物体" class="headerlink" title="渲染指定物体"></a>渲染指定物体</h2><p>在SRP里面一个非常重要的函数是<code>ScriptableRenderContext.DrawRenderers</code>，通过它可以帮我们完成整个场景的渲染。但是这个函数用起来很方便，因为它封装了很多细节。但是在游戏UI中经常会用<code>RenderTexture</code>来混合UI和模型，就需要将个别物体渲染到<code>RenderTexture</code>。如果我们只想渲染某一两个物体时，操作起来就比较麻烦，因为首先我们需要将需要渲染的物体<code>ScriptableRenderContext.Cull</code>出来，这个剔除操作是针对整个场景的，必然有额外的消耗。特别是我们已经知道要渲染哪个物体的情况下，我们可能希望跳过剔除这一步。但是跳过剔除，<code>ScriptableRenderContext.DrawRenderers</code>函数就用不了了。</p>
+<p>这时候我们可以使用<code>CommandBuffer.DrawRanderer</code>函数，针对单个物体进行渲染。具体操作就是获取所有物体的<code>Render</code>组件、材质，使用<code>CommandBuffer</code>渲染。示例代码如下：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">RenderData</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> Renderer renderer;</span><br><span class="line">    <span class="keyword">public</span> Material material;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> sortingFudge;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> materialIndex;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="built_in">int</span> <span class="title">Comparison</span>(<span class="params">RenderData a, RenderData b</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(a.material.renderQueue == b.material.renderQueue)&#123;</span><br><span class="line">        <span class="keyword">if</span>(a.sortingFudge == b.sortingFudge)&#123;</span><br><span class="line">            <span class="built_in">string</span> aBlendMode = a.material.GetTag(<span class="string">&quot;BlendMode&quot;</span>, <span class="literal">false</span>);</span><br><span class="line">            <span class="built_in">string</span> bBlendMode = b.material.GetTag(<span class="string">&quot;BlendMode&quot;</span>, <span class="literal">false</span>);</span><br><span class="line">            <span class="keyword">if</span>(aBlendMode == bBlendMode)</span><br><span class="line">                <span class="keyword">return</span> a.materialIndex - b.materialIndex;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                <span class="keyword">return</span> aBlendMode == <span class="string">&quot;AlphaBlend&quot;</span> ? <span class="number">-1</span> : <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> a.sortingFudge &gt;b.sortingFudge ? <span class="number">-1</span> : <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> a.material.renderQueue - b.material.renderQueue;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">List&lt;RenderData&gt; renderList = <span class="keyword">new</span> List&lt;RenderData&gt;();</span><br><span class="line">List&lt;Renderer&gt; tempRenders = <span class="keyword">new</span> List&lt;Renderer&gt;();</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">CalculateRenderData</span>(<span class="params">GameObject go</span>)</span>&#123;</span><br><span class="line">    tempRenders.Clear();</span><br><span class="line">    renderList.Clear();</span><br><span class="line">    go.GetComponentsInChildren&lt;Renderer&gt;(tempRenders);</span><br><span class="line">    <span class="keyword">foreach</span>(<span class="keyword">var</span> render <span class="keyword">in</span> tempRenders)&#123;</span><br><span class="line">        <span class="built_in">float</span> sortingFudge = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span>(render <span class="keyword">is</span> SkinnedMeshRenderer sRender)&#123;</span><br><span class="line">            sRender.updateWhenOffscreen = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(render <span class="keyword">is</span> ParticleSystemRenderer pRender)&#123;</span><br><span class="line">            sortingFudge = pRender.sortingFudge;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">var</span> materials = render.sharedMaterials;</span><br><span class="line">        <span class="built_in">int</span> index = <span class="number">-1</span>;</span><br><span class="line">        <span class="keyword">foreach</span>(<span class="keyword">var</span> material <span class="keyword">in</span> materials)&#123;</span><br><span class="line">            index = index + <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">if</span>(material == <span class="literal">null</span>) <span class="keyword">continue</span>;</span><br><span class="line">            RenderData renderData = <span class="keyword">new</span> RenderData&#123;</span><br><span class="line">                renderer = render,</span><br><span class="line">                material = material,</span><br><span class="line">                materialIndex = index,</span><br><span class="line">                sortingFudge = sortingFudge,</span><br><span class="line">            &#125;;</span><br><span class="line">            renderList.Add(renderData);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">ScriptableRenderContex context;</span><br><span class="line">Camera camera;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">RenderSingleObject</span>(<span class="params">GameObject go, RenderTexture rt</span>)</span>&#123;</span><br><span class="line">    CalculateRenderData(go);</span><br><span class="line">    Camera.SetupCurrent(camera);</span><br><span class="line">    CommandBuffer cmd = CommandBufferPool.Get();</span><br><span class="line">    context.SetupCameraProperties(camera);</span><br><span class="line">    cmd.SetRenderTarget(rt);</span><br><span class="line">    cmd.ClearRenderTarget(<span class="literal">true</span>, <span class="literal">true</span>, Color.clear);</span><br><span class="line">    <span class="keyword">foreach</span>(<span class="keyword">var</span> data <span class="keyword">in</span> renderList)&#123;</span><br><span class="line">        <span class="keyword">if</span>(data.material.passCount &gt; <span class="number">0</span>)&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="built_in">int</span> i = <span class="number">0</span>; i&lt; data.material.passCount; ++i)&#123;</span><br><span class="line">                cmd.DrawRenderer(data.renderer, data.material, data.materialIndex, i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    context.ExecuteCommandBuffer(cmd);</span><br><span class="line">    CommandBufferPool.Release(cmd);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里有几个点需要注意：</p>
+<ul>
+<li>首先是<code>Camera.SetupCurrent(camera)</code>，如果没有这行代码的话，粒子系统是不会渲染的<a target="_blank" rel="noopener" href="https://forum.unity.com/threads/commandbuffers-and-particle-systems.965936/">参考</a>。</li>
+<li><code>ScriptableRenderContext.DrawRenderers</code>支持<code>SRPBatch</code>，但是其他绘制函数不一定支持，比如这里的<code>CommandBuffer.DrawRanderer</code>,这是当前方法的一个弊端。但是Unity2022版本增加了<a target="_blank" rel="noopener" href="https://docs.unity3d.com/2022.1/Documentation/Manual/batch-renderer-group-how.html">BatchRendererGroup</a>据说是可以实现<code>SRPBatch</code>,参考<a target="_blank" rel="noopener" href="https://forum.unity.com/threads/how-to-get-srp-batching-performance-while-using-command-buffer-drawmesh.1186063/">这里</a>，但是WebGL目前还不支持。<code>BatchRendererGroup</code>的原理是在<code>SRPBatch</code>上扩展的自定义合批方法。</li>
+<li><a target="_blank" rel="noopener" href="https://forum.unity.com/threads/how-to-cull-gameobject-from-camera-without-using-layers.800202/">这里</a>也有对剔除的探讨，但是好像并没有什么有价值的东西，暂且留个入口。</li>
+<li>另外，<code>Animator</code>组件和<code>ParticleSystem</code>组件上都带有<code>CullingMode</code>属性，一般来说当物体不可见时，我们希望动画和粒子系统都停止，从而减少性能消耗。<code>CullingMode</code>就是用来控制物体不可见时的行为。当使用<code>ScriptableRenderContext.DrawRenderers</code>绘制时，会自动标记物体是否可见的状态，所以通常设置为<code>Automatic</code>,也就是说不可见时停止，可见时照常运行。但是使用<code>CommandBuffer.DrawRanderer</code>绘制时，并不会标记这些可见状态，所以需要强制设置为<code>Always Simulate</code>，当然有些粒子系统设置为<code>Automatic</code>也能正常运行，这个应该是Unity的bug。</li>
+<li>当然，我非要用<code>ScriptableRenderContext.DrawRenderers</code>渲染某一个物体也不是不行，就是要把剔除流程走一遍。如果我们需要将多个物体分别渲染到多个纹理上呢？是不是就的把整个流程走多遍？有一种做法，可以只走一边剔除流程，就可以渲染多个模型到多个贴图上。<code>FilteringSettings.renderingLayerMask</code>这个参数就是可以用来控制本次渲染渲染指定渲染层的模型，我们可以为不同的模型设置不同的层，渲染多张纹理的时候把<code>FilteringSettings.renderingLayerMask</code>设置到对应的层。渲染层总共有32层，也就是最多可分32个独立渲染的物体。我之前想过渲染一次设置一次模型的渲染层，这样看起来就可以渲染无数多个独立渲染的物体，但是实际上这是行不通的，因为整个指令是<code>CommandBuffer</code>缓存执行，也就是说动态修改物体的渲染层是无效的，<code>CommandBuffer</code>指令只知道最后一次设置的渲染层。</li>
+</ul>
 
       
     </div>
@@ -268,7 +357,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-01-29 17:16:32" itemprop="dateModified" datetime="2023-01-29T17:16:32+08:00">2023-01-29</time>
+                <time title="修改时间：2023-02-07 21:06:39" itemprop="dateModified" datetime="2023-02-07T21:06:39+08:00">2023-02-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -355,7 +444,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-01-29 17:16:32" itemprop="dateModified" datetime="2023-01-29T17:16:32+08:00">2023-01-29</time>
+                <time title="修改时间：2023-02-07 21:06:39" itemprop="dateModified" datetime="2023-02-07T21:06:39+08:00">2023-02-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -430,7 +519,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-01-29 17:16:32" itemprop="dateModified" datetime="2023-01-29T17:16:32+08:00">2023-01-29</time>
+                <time title="修改时间：2023-02-07 21:06:39" itemprop="dateModified" datetime="2023-02-07T21:06:39+08:00">2023-02-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -575,7 +664,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-01-29 17:16:32" itemprop="dateModified" datetime="2023-01-29T17:16:32+08:00">2023-01-29</time>
+                <time title="修改时间：2023-02-07 21:06:39" itemprop="dateModified" datetime="2023-02-07T21:06:39+08:00">2023-02-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -661,7 +750,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-01-29 17:16:32" itemprop="dateModified" datetime="2023-01-29T17:16:32+08:00">2023-01-29</time>
+                <time title="修改时间：2023-02-07 21:06:39" itemprop="dateModified" datetime="2023-02-07T21:06:39+08:00">2023-02-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -747,7 +836,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-01-29 17:16:32" itemprop="dateModified" datetime="2023-01-29T17:16:32+08:00">2023-01-29</time>
+                <time title="修改时间：2023-02-07 21:06:39" itemprop="dateModified" datetime="2023-02-07T21:06:39+08:00">2023-02-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -838,7 +927,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-01-29 17:16:32" itemprop="dateModified" datetime="2023-01-29T17:16:32+08:00">2023-01-29</time>
+                <time title="修改时间：2023-02-07 21:06:39" itemprop="dateModified" datetime="2023-02-07T21:06:39+08:00">2023-02-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -922,7 +1011,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-01-29 17:16:31" itemprop="dateModified" datetime="2023-01-29T17:16:31+08:00">2023-01-29</time>
+                <time title="修改时间：2023-02-07 21:06:39" itemprop="dateModified" datetime="2023-02-07T21:06:39+08:00">2023-02-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -956,82 +1045,6 @@
 <p>创建一个打包项目，关联到GitLab，操作步骤参考上面的链接。进入当前打包项目的配置界面。按下图配置。<br><img src="/blogs/images/src/Snipaste_2022-09-01_00-58-51.png" alt="wwwwwww"><br><img src="/blogs/images/src/Snipaste_2022-09-01_00-59-04.png" alt="wwwwwww"><br><img src="/blogs/images/src/Snipaste_2022-09-01_01-01-05.png" alt="wwwwwww"><br><img src="/blogs/images/src/Snipaste_2022-09-01_01-01-13.png" alt="wwwwwww"><br><img src="/blogs/images/src/Snipaste_2022-09-01_01-01-23.png" alt="wwwwwww"><br><img src="/blogs/images/src/Snipaste_2022-09-01_01-02-11.png" alt="wwwwwww"><br><img src="/blogs/images/src/Snipaste_2022-09-01_01-02-32.png" alt="wwwwwww"><br><code>-quit -batchmode -nographics -executeMethod BuildTools.BuildApk --productName:$productName --version:$version --projectName:JenkinsUnityForAndroid --target:$target</code><br><img src="/blogs/images/src/Snipaste_2022-09-01_01-14-37.png" alt="wwwwwww"><br><code>build_image_url_link.bat JenkinsUnityForAndroid %target% %productName% %version%</code><br><img src="/blogs/images/src/Snipaste_2022-09-01_01-02-57.png" alt="wwwwwww"><br><code>DESC_INFO:(.*),(.*)</code><br><code>&lt;img src=&quot;\1&quot; height=&quot;200&quot; width=&quot;200&quot;  /&gt; &lt;a href=&quot;\2&quot;&gt;点击下载&lt;/a&gt;</code></p>
 <p>这样就基本配置好Jenkins和Unity项目了。但是上面配置中多了很多奇怪的操作，像什么Python脚本之类的。这是因为我想将打包好的包发布到一个本地服务，然后通过二维码下载。<br>所以这里我需要搭建一个本地服务，看网上有说用蒲公英什么的来当作发布平台，但是我就想本地局域网用，所以使用我比较熟悉的<code>HFS</code>来冲动服务。<br><img src="/blogs/images/src/Snipaste_2022-09-01_01-39-11.png" alt="wwwwwww"><br>前面打包代码里面会将好的包放到这个服务路径下面，然后可以通过Url来访问，假设当前打好的包在这个路径下，那么手机输入对应的Url就可以下载了。不过每次都要输入Url很麻烦。所以这里考虑使用二维码。<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/rainboy2010/p/12007248.html">这里</a>讲了使用<code>qrcode</code>和<code>Image</code>两个python插件来生成二维码，所以首先我们要安装Python，这里<a target="_blank" rel="noopener" href="https://www.python.org/downloads/release/python-377/">Python 3.7.7</a>下载，安装默认安装，并勾选写入环境变量。<br>然后打开命令行窗口，分别输入<code>pip install qrcode</code>和<code>pip install Image</code>两个命令，安装好两个插件。<br>然后回到Jenkins，设置Jenkins内部的环境变量。<br><img src="/blogs/images/src/Snipaste_2022-09-01_01-31-34.png" alt="wwwwwww"><br><img src="/blogs/images/src/Snipaste_2022-09-01_01-31-47.png" alt="wwwwwww"><br>这里因为我的python是安装在<code>C:\Users\10524\AppData\Local\Programs\Python\Python37</code>目录下的。都准备好后，就可以开始构建了，下面是最终效果。<br><img src="/blogs/images/src/Snipaste_2022-09-01_01-50-28.png" alt="wwwwwww"></p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weboof/article/details/104491998">docker+gitlab+jenkins从零搭建自动化部署</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/rainboy2010/p/12007248.html">Jenkins生成APK链接的二维码</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_42281648/article/details/120057980">Jenkins构建Python项目提示：‘python‘ 不是内部或外部命令，也不是可运行的程序</a><br><a target="_blank" rel="noopener" href="https://www.python.org/downloads/release/python-377/">Python 3.7.7</a>下载Windows x86-64 executable installer，安装默认安装，并勾选写入环境变量。<br><a target="_blank" rel="noopener" href="http://www.rejetto.com/hfs/">HFS</a>下载，搭建简易服务。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2022/08/29/Unity_Accelerator/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2022/08/29/Unity_Accelerator/" class="post-title-link" itemprop="url">Easy-To-Use Accelerator Installation In Docker</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-29 20:03:00" itemprop="dateCreated datePublished" datetime="2022-08-29T20:03:00+08:00">2022-08-29</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-01-29 17:16:32" itemprop="dateModified" datetime="2023-01-29T17:16:32+08:00">2023-01-29</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>拉取<a target="_blank" rel="noopener" href="https://github.com/CanBaycay/UnityAcceleratorDocker">这个工程</a>，如下所示：<br><img src="/blogs/images/src/Snipaste_2022-09-01_00-45-31.png" alt="wwwwwww"></p>
-<p>然后双击<code>Install.bat</code>执行，可以在Docker界面上发现加速器的容器。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://github.com/CanBaycay/UnityAcceleratorDocker">Unity Accelerator Docker Configuration</a><br><a target="_blank" rel="noopener" href="https://forum.unity.com/threads/easy-to-use-accelerator-installation-in-docker.992063/">Easy-To-Use Accelerator Installation In Docker</a></p>
 
       
     </div>
@@ -1118,20 +1131,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">65</span>
+          <span class="site-state-item-count">66</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/blogs/categories/">
           
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/blogs/tags/">
           
-        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-count">34</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
