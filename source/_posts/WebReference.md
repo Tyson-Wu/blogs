@@ -278,6 +278,7 @@ date: 2021-05-27 17:01:34
 ## Other
 
 ### Tutorial
+[GPU Gems 3](https://developer.nvidia.com/gpugems/gpugems3/contributors):英伟达提供的CG渲染书集资料
 [【游戏开发进阶】教你Unity通过Jenkins实现自动化打包，打包这种事情就交给策划了（保姆级教程 | 命令行打包 | 自动构建）](https://blog.csdn.net/linxinfa/article/details/118816132)
 [【游戏开发进阶】教你自制离线Maven仓库，实现Unity离线环境使用Gradle打包（Unity | Android | 谷歌 | Gradle）](https://linxinfa.blog.csdn.net/article/details/118553713)
 [GameDev Academy](https://gamedevacademy.org/category/tutorials/unity-tutorials/unity-3d-tutorials/)
