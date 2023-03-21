@@ -9,7 +9,7 @@ We are all in the gutter, but some of us are looking at the stars.
 下图展示了顶点坐标在顶点着色器中的不同阶段的变化。
 ![wwwwwww](/blogs/images/src/13765939_10153839732515897_1876395612751424638_o.jpg)
 
-其中NDC空间的z值，在DirectX和Opengl中的范围是不一样的：
+其中NDC空间的z值，在`DirectX`和Opengl中的范围是不一样的：
 
 - 在DirectX中，NDC的z值范围是[0,1];
 - 在Opengl中，NDC的z值范围是[-1,1];
