@@ -1,6 +1,8 @@
 ---
 title:  Web Reference
 date: 2021-05-27 17:01:34
+tags:
+- Reference
 ---
 
 
@@ -201,6 +203,9 @@ date: 2021-05-27 17:01:34
 ## Engine
 
 ### Unity
+[BRONSON ZGEB](https://bronsonzgeb.com/index.php/page/4/)
+[DAMIEN MAYANCE](https://dmayance.com/code/)
+[How to use Native Code in Unity](https://denisrizov.com/)
 [Unity Audio Clip Import Settings For The Best Performance](https://sharpcoderblog.com/blog/unity-3d-audio-clip-import-settings-for-the-best-performance)
 [Unity IL2CPP发布64位,以及代码裁剪Strip Engine Code](https://blog.csdn.net/final5788/article/details/100183528)发布Unity项目时，需要注意代码裁剪的问题，Unity只能正确处理Apk包内的代码裁剪，像assetbundle资源上的代码就没办法正确裁剪，最终可能导致裁剪掉有用的代码而报错。
 [How to stop automatic assembly compilation from script](https://support.unity.com/hc/en-us/articles/210452343-How-to-stop-automatic-assembly-compilation-from-script)
@@ -347,6 +352,7 @@ date: 2021-05-27 17:01:34
 [下载Java 11 下载路径](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
 
 ## Assets
+[free 3d models](http://telias.free.fr/Models_menu.html)
 [mixamo](https://www.mixamo.com/)动作资源库
 [AIM@SHAPE](http://visionair.ge.imati.cnr.it/ontologies/shapes/viewmodels.jsp)
 [opengameart](https://opengameart.org/content/50-free-textures-4-normalmaps)
