@@ -7,3 +7,4 @@ tags:
 
 ### Basic
 [getting-started-with-centos](https://www.freecodecamp.org/news/getting-started-with-centos-15eac7215c99/)
+[Server World](https://www.server-world.info/en/note?os=CentOS_7)
