@@ -19,3 +19,10 @@ tags:
 [Unity](https://www.mongodb.com/developer/technologies/unity/)
 [Getting Started with the Realm SDK for Unity](https://www.mongodb.com/developer/products/realm/getting-started-realm-sdk-unity/)
 
+### Node
+[How To Install Node.js on a CentOS 7 server](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-a-centos-7-server):注意，这里的源码安装方式，需要先编译，再安装，一定要确保下载的源码，比如这个地址：https://registry.npmmirror.com/-/binary/node/v16.19.1/node-v16.19.1.tar.gz
+[How to install GNU GCC 8 on CentOS 7](https://ahelpme.com/linux/centos7/how-to-install-gnu-gcc-8-on-centos-7/#:~:text=How%20to%20install%20GNU%20GCC%208%20on%20CentOS,the%20%E2%80%9Cdevtools%E2%80%9D...%20STEP%203%29%20Use%20the%20installed%20tools.)
+sudo yum remove --skip-broken gcc
+sudo yum install --skip-broken gcc
+
+
