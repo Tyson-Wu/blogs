@@ -24,5 +24,5 @@ tags:
 [How to install GNU GCC 8 on CentOS 7](https://ahelpme.com/linux/centos7/how-to-install-gnu-gcc-8-on-centos-7/#:~:text=How%20to%20install%20GNU%20GCC%208%20on%20CentOS,the%20%E2%80%9Cdevtools%E2%80%9D...%20STEP%203%29%20Use%20the%20installed%20tools.)
 sudo yum remove --skip-broken gcc
 sudo yum install --skip-broken gcc
-
+[虚拟机搭建web服务器](https://www.cnblogs.com/java-six/p/15915315.html#%E5%AE%89%E8%A3%85nginx%E6%9C%8D%E5%8A%A1%E5%99%A8)
 
