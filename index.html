@@ -194,7 +194,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-07-07 18:18:13" itemprop="dateModified" datetime="2023-07-07T18:18:13+08:00">2023-07-07</time>
+                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -218,6 +218,126 @@
 
       
           <p>撕夜<br>用心爱你你不懂<br>十年<br>时间都去哪儿了<br>其实你不懂我的心<br>关于你们之间的故事<br>假如爱有天意</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2024/04/19/TypeScript/createSimpleTSProject/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2024/04/19/TypeScript/createSimpleTSProject/" class="post-title-link" itemprop="url">创建最简单的TS项目</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-04-19 17:01:34" itemprop="dateCreated datePublished" datetime="2024-04-19T17:01:34+08:00">2024-04-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/TS/" itemprop="url" rel="index"><span itemprop="name">TS</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <ul>
+<li><p>创建文件夹<code>TSProjectDemo</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[TSProjectDemo]/</span><br></pre></td></tr></table></figure></li>
+<li><p>进入文件夹，打开cmd控制台</p>
+</li>
+<li><p>在控制台输入命令<code>npm init -y</code>,会创建<code>package.json</code>文件,</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[TSProjectDemo]/</span><br><span class="line">    package.json</span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;TSProjectDemo&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;version&quot;</span>: <span class="string">&quot;1.0.0&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;description&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;main&quot;</span>: <span class="string">&quot;index.js&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;scripts&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;test&quot;</span>: <span class="string">&quot;echo \&quot;Error: no test specified\&quot; &amp;&amp; exit 1&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;keywords&quot;</span>: [],</span><br><span class="line">  <span class="attr">&quot;author&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;license&quot;</span>: <span class="string">&quot;ISC&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在控制台可以执行<code>npm run test</code>来执行上面的<code>test</code>脚本</p>
+</li>
+<li><p>在目录下再创建一个<code>Src</code>子目录，ts脚本后面都放这里面</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[TSProjectDemo]/</span><br><span class="line">    package.json</span><br><span class="line">    [Src]/</span><br></pre></td></tr></table></figure></li>
+<li><p>在控制台输入<code>tsc --init</code>，会创建<code>tsconfig.json</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[TSProjectDemo]/</span><br><span class="line">    package.json</span><br><span class="line">    tsconfig.json</span><br><span class="line">    [Src]/</span><br></pre></td></tr></table></figure></li>
+<li><p>修改为</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;compilerOptions&quot;</span>:&#123;</span><br><span class="line">        <span class="attr">&quot;target&quot;</span>: <span class="string">&quot;ES6&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;module&quot;</span>: <span class="string">&quot;NodeNext&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;esModuleInterop&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">&quot;strict&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">        <span class="attr">&quot;outDir&quot;</span>: <span class="string">&quot;output&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;moduleResolution&quot;</span>: <span class="string">&quot;NodeNext&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">&quot;include&quot;</span>: [</span><br><span class="line">        <span class="comment">// 表示编译Src目录下的所有ts文件</span></span><br><span class="line">        <span class="string">&quot;./Src/**/*.ts&quot;</span></span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">&quot;exclude&quot;</span>: [</span><br><span class="line">        <span class="string">&quot;node_modules&quot;</span></span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>进Src目录，创建一个测试脚本<code>main.ts</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[TSProjectDemo]/</span><br><span class="line">    package.json</span><br><span class="line">    tsconfig.json</span><br><span class="line">    [Src]/</span><br><span class="line">        main.ts</span><br></pre></td></tr></table></figure>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// main.ts</span></span><br><span class="line"><span class="keyword">const</span> message : <span class="built_in">string</span> = <span class="string">&quot;test log .... &quot;</span></span><br><span class="line"><span class="built_in">console</span>.log(message)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>回到根目录，然后运行命令<code>tsc</code>,会编译出js脚本</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[TSProjectDemo]/</span><br><span class="line">    package.json</span><br><span class="line">    tsconfig.json</span><br><span class="line">    [Src]/</span><br><span class="line">        main.ts</span><br><span class="line">    [output]/</span><br><span class="line">        main.js</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>运行命令<code>node ./output/mian.js</code>可以执行代码</p>
+</li>
+<li><p>也可以修改<code>package.json</code>中的test脚本，这样就可以使用<code>npm run test</code>运行</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;TSProjectDemo&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;version&quot;</span>: <span class="string">&quot;1.0.0&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;description&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;main&quot;</span>: <span class="string">&quot;index.js&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;scripts&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;test&quot;</span>: <span class="string">&quot;node ./output/mian.js&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;keywords&quot;</span>: [],</span><br><span class="line">  <span class="attr">&quot;author&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;license&quot;</span>: <span class="string">&quot;ISC&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>上面是最简单的ts工程了，但是我们开发的时候可能需要外部库，比如nodejs相关的。</p>
+</li>
+<li><p>比如<code>require</code>指令，或者<code>fs</code>文件库。这时候我们要安装<code>npm install --save-dev @types/node</code></p>
+</li>
+<li><p>安装完成后，脚本里面可以引入<code>fs</code>包，import和require两种方式都可以</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// main.ts</span></span><br><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> fs <span class="keyword">from</span> <span class="string">&quot;fs&quot;</span></span><br><span class="line"><span class="keyword">const</span> fsLib = <span class="built_in">require</span>(<span class="string">&quot;fs&quot;</span>)</span><br><span class="line"><span class="keyword">const</span> messa : <span class="built_in">string</span> = <span class="string">&quot;test log .... &quot;</span></span><br><span class="line"><span class="built_in">console</span>.log(messa)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>假如我想读写xml文件，可以安装<code>npm install xml2js</code>,<code>xml2js</code>可以用来读写xml,实现js对象和xml数据进行转换</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// main.ts</span></span><br><span class="line"><span class="keyword">import</span> &#123; rejects &#125; <span class="keyword">from</span> <span class="string">&quot;assert&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> fs <span class="keyword">from</span> <span class="string">&quot;fs&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; resolve &#125; <span class="keyword">from</span> <span class="string">&quot;path&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> xml2js <span class="keyword">from</span> <span class="string">&quot;xml2js&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">readXmlFile</span>(<span class="params">filePath: <span class="built_in">string</span></span>):<span class="title">Promise</span>&lt;<span class="title">any</span>&gt;</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, rejects</span>)=&gt;</span>&#123;</span><br><span class="line">        fs.readFile(filePath, <span class="string">&#x27;utf-8&#x27;</span>, <span class="function">(<span class="params">err, data</span>)=&gt;</span>&#123;</span><br><span class="line">            <span class="keyword">if</span>(err)&#123;</span><br><span class="line">                rejects(err);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                xml2js.parseString(data, <span class="function">(<span class="params">err, result</span>)=&gt;</span>&#123;</span><br><span class="line">                    <span class="keyword">if</span>(err)&#123;</span><br><span class="line">                        rejects(err);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">else</span>&#123;</span><br><span class="line">                        resolve(result);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">writeXmlFile</span>(<span class="params">filePath:<span class="built_in">string</span>, data:<span class="built_in">any</span></span>):<span class="title">Promise</span>&lt;<span class="title">void</span>&gt;</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>)=&gt;</span>&#123;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">const</span> buildOption : xml2js.BuilderOptions = &#123;</span><br><span class="line">            xmldec:&#123;<span class="attr">version</span>:<span class="string">&quot;&quot;</span>, <span class="attr">encoding</span>:<span class="string">&quot;utf-8&quot;</span>,<span class="attr">standalone</span>:<span class="literal">undefined</span>&#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">const</span> builder = <span class="keyword">new</span> xml2js.Builder(buildOption);</span><br><span class="line">        <span class="keyword">const</span> xml = builder.buildObject(data);</span><br><span class="line">        fs.writeFile(filePath, xml, <span class="function">(<span class="params">err</span>)=&gt;</span>&#123;</span><br><span class="line">            <span class="keyword">if</span>(err)&#123;</span><br><span class="line">                reject(err);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                resolve();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">main</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">try</span>&#123;</span><br><span class="line">        <span class="comment">// 读xml文件</span></span><br><span class="line">        <span class="keyword">const</span> xmlData = <span class="keyword">await</span> readXmlFile(<span class="string">&quot;jj.xml&quot;</span>);</span><br><span class="line">        <span class="built_in">console</span>.log(xmlData);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// xmlData 是一个js对象，根节点是component, $表示xml属性</span></span><br><span class="line">        xmlData.component.$.attribute = <span class="string">&quot;new value --- 100&quot;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// js对象转换为xml</span></span><br><span class="line">        <span class="keyword">await</span> writeXmlFile(<span class="string">&quot;jj2.xml&quot;</span>, xmlData)</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&quot;xml file write&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">catch</span>(err)&#123;</span><br><span class="line">        <span class="built_in">console</span>.error(<span class="string">&quot;err: &quot;</span>, err);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">main()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>上面的<code>xml2js</code>库是没有代码提示的，我们可以额外安装<code>npm install --save-dev @types/xml2js</code>, 这样在vscode中就可以看到代码提示了</p>
+</li>
+<li><p>上面安装后，<code>package.json</code>文件会变成</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;TSProjectDemo&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;version&quot;</span>: <span class="string">&quot;1.0.0&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;description&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;main&quot;</span>: <span class="string">&quot;index.js&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;scripts&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;test&quot;</span>: <span class="string">&quot;node ./output/main.js&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;keywords&quot;</span>: [],</span><br><span class="line">  <span class="attr">&quot;author&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;license&quot;</span>: <span class="string">&quot;ISC&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;devDependencies&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;@types/node&quot;</span>: <span class="string">&quot;^20.12.7&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;@types/xml2js&quot;</span>: <span class="string">&quot;^0.4.14&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;dependencies&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;xml2js&quot;</span>: <span class="string">&quot;^0.6.2&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>基于上面的流程，我们就可以开发一些工具了</p>
 
       
     </div>
@@ -268,7 +388,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-07-07 18:18:13" itemprop="dateModified" datetime="2023-07-07T18:18:13+08:00">2023-07-07</time>
+                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -357,7 +477,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-07-07 18:18:13" itemprop="dateModified" datetime="2023-07-07T18:18:13+08:00">2023-07-07</time>
+                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -444,7 +564,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-07-07 18:18:13" itemprop="dateModified" datetime="2023-07-07T18:18:13+08:00">2023-07-07</time>
+                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -519,7 +639,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-07-07 18:18:13" itemprop="dateModified" datetime="2023-07-07T18:18:13+08:00">2023-07-07</time>
+                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -633,92 +753,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2022/11/27/Unity_Ex_Editor_CreateParentForTransforms/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2022/11/27/Unity_Ex_Editor_CreateParentForTransforms/" class="post-title-link" itemprop="url">Create Parent For Transforms</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-11-27 10:01:00" itemprop="dateCreated datePublished" datetime="2022-11-27T10:01:00+08:00">2022-11-27</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-07-07 18:18:13" itemprop="dateModified" datetime="2023-07-07T18:18:13+08:00">2023-07-07</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Extention/" itemprop="url" rel="index"><span itemprop="name">Extention</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Extention/Editor/" itemprop="url" rel="index"><span itemprop="name">Editor</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Extention/Editor/MenuUtility/" itemprop="url" rel="index"><span itemprop="name">MenuUtility</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="扩展命令"><a href="#扩展命令" class="headerlink" title="扩展命令"></a>扩展命令</h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> UnityEditor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title">CreateParentForTransforms</span> : <span class="title">ScriptableObject</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//[MenuItem(&quot;MenuUtility/Create Parent For Selection _p&quot;)]</span></span><br><span class="line">    [<span class="meta">MenuItem(<span class="meta-string">&quot;MenuUtility/Create Parent For Selection&quot;</span>)</span>]</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">MenuInsertParent</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Transform[] selection = Selection.GetTransforms(</span><br><span class="line">            SelectionMode.TopLevel | SelectionMode.Editable);</span><br><span class="line">        GameObject newParent = ObjectFactory.CreateGameObject(<span class="string">&quot;Parent&quot;</span>);</span><br><span class="line">        Undo.RegisterCreatedObjectUndo(newParent, <span class="string">&quot;Create Parent For Selection&quot;</span>);</span><br><span class="line">        <span class="keyword">foreach</span> (Transform t <span class="keyword">in</span> selection)</span><br><span class="line">        &#123;</span><br><span class="line">            Undo.SetTransformParent(t, newParent.transform, <span class="string">&quot;Create Parent For Selection 1&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Disable the menu if there is nothing selected</span></span><br><span class="line">    <span class="comment">//[MenuItem(&quot;MenuUtility/Create Parent For Selection _p&quot;, true)]</span></span><br><span class="line">    [<span class="meta">MenuItem(<span class="meta-string">&quot;MenuUtility/Create Parent For Selection&quot;</span>, true)</span>]</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="built_in">bool</span> <span class="title">ValidateSelection</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">return</span> Selection.activeTransform != <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2022/11/27/Unity_Ex_Editor_PackageMenuItem/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -750,7 +784,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-07-07 18:18:13" itemprop="dateModified" datetime="2023-07-07T18:18:13+08:00">2023-07-07</time>
+                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -805,6 +839,92 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2022/11/27/Unity_Ex_Editor_CreateParentForTransforms/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2022/11/27/Unity_Ex_Editor_CreateParentForTransforms/" class="post-title-link" itemprop="url">Create Parent For Transforms</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-27 10:01:00" itemprop="dateCreated datePublished" datetime="2022-11-27T10:01:00+08:00">2022-11-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Extention/" itemprop="url" rel="index"><span itemprop="name">Extention</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Extention/Editor/" itemprop="url" rel="index"><span itemprop="name">Editor</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Extention/Editor/MenuUtility/" itemprop="url" rel="index"><span itemprop="name">MenuUtility</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="扩展命令"><a href="#扩展命令" class="headerlink" title="扩展命令"></a>扩展命令</h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> UnityEditor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title">CreateParentForTransforms</span> : <span class="title">ScriptableObject</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//[MenuItem(&quot;MenuUtility/Create Parent For Selection _p&quot;)]</span></span><br><span class="line">    [<span class="meta">MenuItem(<span class="meta-string">&quot;MenuUtility/Create Parent For Selection&quot;</span>)</span>]</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">MenuInsertParent</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Transform[] selection = Selection.GetTransforms(</span><br><span class="line">            SelectionMode.TopLevel | SelectionMode.Editable);</span><br><span class="line">        GameObject newParent = ObjectFactory.CreateGameObject(<span class="string">&quot;Parent&quot;</span>);</span><br><span class="line">        Undo.RegisterCreatedObjectUndo(newParent, <span class="string">&quot;Create Parent For Selection&quot;</span>);</span><br><span class="line">        <span class="keyword">foreach</span> (Transform t <span class="keyword">in</span> selection)</span><br><span class="line">        &#123;</span><br><span class="line">            Undo.SetTransformParent(t, newParent.transform, <span class="string">&quot;Create Parent For Selection 1&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Disable the menu if there is nothing selected</span></span><br><span class="line">    <span class="comment">//[MenuItem(&quot;MenuUtility/Create Parent For Selection _p&quot;, true)]</span></span><br><span class="line">    [<span class="meta">MenuItem(<span class="meta-string">&quot;MenuUtility/Create Parent For Selection&quot;</span>, true)</span>]</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="built_in">bool</span> <span class="title">ValidateSelection</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">return</span> Selection.activeTransform != <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2022/11/10/Unity_Asset_Extractor/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -836,7 +956,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-07-07 18:18:13" itemprop="dateModified" datetime="2023-07-07T18:18:13+08:00">2023-07-07</time>
+                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -927,7 +1047,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-07-07 18:18:13" itemprop="dateModified" datetime="2023-07-07T18:18:13+08:00">2023-07-07</time>
+                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -961,90 +1081,6 @@
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEditor;</span><br><span class="line"></span><br><span class="line">[<span class="meta">InitializeOnLoad</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">CompilerOptionsEditorScript</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="title">CompilerOptionsEditorScript</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        EditorApplication.playModeStateChanged += PlaymodeChanged;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">PlaymodeChanged</span>(<span class="params">PlayModeStateChange state</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="comment">//在切换运行模式的时候自动进行脚本编译</span></span><br><span class="line">        <span class="keyword">if</span> (state == PlayModeStateChange.ExitingPlayMode</span><br><span class="line">            || state == PlayModeStateChange.ExitingEditMode)</span><br><span class="line">        &#123;</span><br><span class="line">            EditorApplication.UnlockReloadAssemblies();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//在运行时或编辑模型下，关闭脚本自动编译，解决频繁编译降低开发效率的问题</span></span><br><span class="line">        <span class="keyword">if</span> (state == PlayModeStateChange.EnteredPlayMode</span><br><span class="line">            || state == PlayModeStateChange.EnteredEditMode)</span><br><span class="line">        &#123;</span><br><span class="line">            EditorApplication.LockReloadAssemblies();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://support.unity.com/hc/en-us/articles/210452343-How-to-stop-automatic-assembly-compilation-from-script">How to stop automatic assembly compilation from script</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2022/08/30/Docker_GitLab_Jenkins_Unity/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2022/08/30/Docker_GitLab_Jenkins_Unity/" class="post-title-link" itemprop="url">GitLab and Jenkins and Unity</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-30 18:03:00" itemprop="dateCreated datePublished" datetime="2022-08-30T18:03:00+08:00">2022-08-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-07-07 18:18:13" itemprop="dateModified" datetime="2023-07-07T18:18:13+08:00">2023-07-07</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>在<a href="https://tyson-wu.github.io/blogs/2022/08/29/Docker_GitLab_Jenkins/">这篇文章</a>讲了如何在Docker上安装GitLab，Jenkins，并且最终Jenkins从GitLab上拉取到项目文件。<br>我最终的目的是希望能够对Unity项目进行打包部署，所以我开始关联Jenkins和Unity。因为我的Unity是装在物理机上，而Jenkins是装在Docker上，所以Jenkins没办法调取Unity进行打包操作。<br>所以我后面采用的是GitLab部署在Docker上，而Jenkins和Unity都是安装在物理机上，这样Jenkins通过GitLab的Url拉取项目，然后通过Unity Puglin插件调用Unity进行打包，当然也可以使用windows的批处理命令<code>build.bat</code>的方式。采用Unity Plugin的方式的一个好处就是unity的log会直接显示到Jenkins的log界面上。</p>
-<p>其中，虽然Jenkins和GitLab的安装位置不一样，但是他们之间的关联操作和之前的是一样的。这里我们讲一下Jenkins和Unity的关联步骤。<br>首先建一个Unity项目，然后在项目根目录下创建两个文件<code>build_image_url_link.bat</code>和<code>myqrcode.py</code>。<br><code>build_image_url_link.bat</code></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> BASE_PATH=D:\ServicesData\Publish\%1\%2</span><br><span class="line"><span class="built_in">set</span> BASE_URL=http://192.168.31.186:8080/Publish/%1/%2</span><br><span class="line">python myqrcode.py %BASE_URL%/%3_%4.apk %BASE_PATH%\qrcode.png</span><br><span class="line"><span class="built_in">echo</span> DESC_INFO:%BASE_URL%/qrcode.png,%BASE_URL%/%3_%4.apk</span><br></pre></td></tr></table></figure>
-<p><code>myqrcode.py</code></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> qrcode</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">data = sys.argv[<span class="number">1</span>]</span><br><span class="line">path=sys.argv[<span class="number">2</span>]</span><br><span class="line">img = qrcode.make(data)</span><br><span class="line">img.save(path)</span><br></pre></td></tr></table></figure>
-<p><img src="/blogs/images/src/Snipaste_2022-09-01_01-13-45.png" alt="wwwwwww"><br>然后在Editor下创建<code>BuildTools.cs</code>脚本。</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> UnityEditor;</span><br><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">BuildTools</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title">BuildTargetName</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">const</span> <span class="built_in">string</span> android = <span class="string">&quot;Android&quot;</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">const</span> <span class="built_in">string</span> window = <span class="string">&quot;Window&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title">EnvironmentParam</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">const</span> <span class="built_in">string</span> projectName = <span class="string">&quot;--projectName&quot;</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">const</span> <span class="built_in">string</span> productName = <span class="string">&quot;--productName&quot;</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">const</span> <span class="built_in">string</span> version = <span class="string">&quot;--version&quot;</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">const</span> <span class="built_in">string</span> target = <span class="string">&quot;--target&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">bool</span> <span class="title">GetEnvironmentParam</span>(<span class="params"><span class="built_in">string</span> paramName, <span class="keyword">out</span> <span class="built_in">string</span> paramValue</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        paramValue = <span class="literal">null</span>;</span><br><span class="line">        <span class="built_in">string</span>[] args = System.Environment.GetCommandLineArgs();</span><br><span class="line">        <span class="keyword">foreach</span> (<span class="keyword">var</span> s <span class="keyword">in</span> args)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (s.Contains(paramName))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> (s.Split(<span class="string">&#x27;:&#x27;</span>).Length &gt; <span class="number">1</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    paramValue = s.Split(<span class="string">&#x27;:&#x27;</span>)[<span class="number">1</span>];</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    [<span class="meta">MenuItem(<span class="meta-string">&quot;Build/Build APK&quot;</span>)</span>]</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">int</span> <span class="title">BuildApk</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (!GetEnvironmentParam(EnvironmentParam.productName, <span class="keyword">out</span> <span class="built_in">string</span> productName))</span><br><span class="line">            &#123;</span><br><span class="line">                productName = <span class="string">&quot;productName&quot;</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (!GetEnvironmentParam(EnvironmentParam.version, <span class="keyword">out</span> <span class="built_in">string</span> bundleVersion))</span><br><span class="line">            &#123;</span><br><span class="line">                bundleVersion = <span class="string">&quot;bundleVersion&quot;</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (!GetEnvironmentParam(EnvironmentParam.projectName, <span class="keyword">out</span> <span class="built_in">string</span> projectName))</span><br><span class="line">            &#123;</span><br><span class="line">                projectName = <span class="string">&quot;projectName&quot;</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (!GetEnvironmentParam(EnvironmentParam.target, <span class="keyword">out</span> <span class="built_in">string</span> target))</span><br><span class="line">            &#123;</span><br><span class="line">                target = BuildTargetName.android;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">string</span> extention = <span class="string">&quot;.exe&quot;</span>;</span><br><span class="line">            PlayerSettings.productName = productName;</span><br><span class="line">            PlayerSettings.bundleVersion = bundleVersion;</span><br><span class="line">            BuildPlayerOptions opt = <span class="keyword">new</span> BuildPlayerOptions();</span><br><span class="line">            opt.scenes = <span class="keyword">new</span> <span class="built_in">string</span>[] &#123; <span class="string">&quot;Assets/Scenes/SampleScene.unity&quot;</span> &#125;;</span><br><span class="line">            <span class="keyword">switch</span> (target)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">case</span> BuildTargetName.android:</span><br><span class="line">                    opt.target = BuildTarget.Android;</span><br><span class="line">                    extention = <span class="string">&quot;.apk&quot;</span>;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> BuildTargetName.window:</span><br><span class="line">                    opt.target = BuildTarget.StandaloneWindows64;</span><br><span class="line">                    extention = <span class="string">&quot;.exe&quot;</span>;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            opt.locationPathName = <span class="string">$&quot;D:/ServicesData/Publish/<span class="subst">&#123;projectName&#125;</span>/<span class="subst">&#123;target&#125;</span>/<span class="subst">&#123;productName&#125;</span>_<span class="subst">&#123;bundleVersion&#125;</span><span class="subst">&#123;extention&#125;</span>&quot;</span>;</span><br><span class="line"></span><br><span class="line">            opt.options = BuildOptions.None;</span><br><span class="line">            BuildPipeline.BuildPlayer(opt);</span><br><span class="line">            Debug.Log(<span class="string">&quot;Build Done!&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        catch(Exception e)</span><br><span class="line">        &#123;</span><br><span class="line">            Debug.LogError(e.Message);</span><br><span class="line">            <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p><img src="/blogs/images/src/Snipaste_2022-09-01_01-19-26.png" alt="wwwwwww"><br>到这一步Unity项目就建好了，然后将它提交的GitLab上。</p>
-<p>创建一个打包项目，关联到GitLab，操作步骤参考上面的链接。进入当前打包项目的配置界面。按下图配置。<br><img src="/blogs/images/src/Snipaste_2022-09-01_00-58-51.png" alt="wwwwwww"><br><img src="/blogs/images/src/Snipaste_2022-09-01_00-59-04.png" alt="wwwwwww"><br><img src="/blogs/images/src/Snipaste_2022-09-01_01-01-05.png" alt="wwwwwww"><br><img src="/blogs/images/src/Snipaste_2022-09-01_01-01-13.png" alt="wwwwwww"><br><img src="/blogs/images/src/Snipaste_2022-09-01_01-01-23.png" alt="wwwwwww"><br><img src="/blogs/images/src/Snipaste_2022-09-01_01-02-11.png" alt="wwwwwww"><br><img src="/blogs/images/src/Snipaste_2022-09-01_01-02-32.png" alt="wwwwwww"><br><code>-quit -batchmode -nographics -executeMethod BuildTools.BuildApk --productName:$productName --version:$version --projectName:JenkinsUnityForAndroid --target:$target</code><br><img src="/blogs/images/src/Snipaste_2022-09-01_01-14-37.png" alt="wwwwwww"><br><code>build_image_url_link.bat JenkinsUnityForAndroid %target% %productName% %version%</code><br><img src="/blogs/images/src/Snipaste_2022-09-01_01-02-57.png" alt="wwwwwww"><br><code>DESC_INFO:(.*),(.*)</code><br><code>&lt;img src=&quot;\1&quot; height=&quot;200&quot; width=&quot;200&quot;  /&gt; &lt;a href=&quot;\2&quot;&gt;点击下载&lt;/a&gt;</code></p>
-<p>这样就基本配置好Jenkins和Unity项目了。但是上面配置中多了很多奇怪的操作，像什么Python脚本之类的。这是因为我想将打包好的包发布到一个本地服务，然后通过二维码下载。<br>所以这里我需要搭建一个本地服务，看网上有说用蒲公英什么的来当作发布平台，但是我就想本地局域网用，所以使用我比较熟悉的<code>HFS</code>来冲动服务。<br><img src="/blogs/images/src/Snipaste_2022-09-01_01-39-11.png" alt="wwwwwww"><br>前面打包代码里面会将好的包放到这个服务路径下面，然后可以通过Url来访问，假设当前打好的包在这个路径下，那么手机输入对应的Url就可以下载了。不过每次都要输入Url很麻烦。所以这里考虑使用二维码。<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/rainboy2010/p/12007248.html">这里</a>讲了使用<code>qrcode</code>和<code>Image</code>两个python插件来生成二维码，所以首先我们要安装Python，这里<a target="_blank" rel="noopener" href="https://www.python.org/downloads/release/python-377/">Python 3.7.7</a>下载，安装默认安装，并勾选写入环境变量。<br>然后打开命令行窗口，分别输入<code>pip install qrcode</code>和<code>pip install Image</code>两个命令，安装好两个插件。<br>然后回到Jenkins，设置Jenkins内部的环境变量。<br><img src="/blogs/images/src/Snipaste_2022-09-01_01-31-34.png" alt="wwwwwww"><br><img src="/blogs/images/src/Snipaste_2022-09-01_01-31-47.png" alt="wwwwwww"><br>这里因为我的python是安装在<code>C:\Users\10524\AppData\Local\Programs\Python\Python37</code>目录下的。都准备好后，就可以开始构建了，下面是最终效果。<br><img src="/blogs/images/src/Snipaste_2022-09-01_01-50-28.png" alt="wwwwwww"></p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weboof/article/details/104491998">docker+gitlab+jenkins从零搭建自动化部署</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/rainboy2010/p/12007248.html">Jenkins生成APK链接的二维码</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_42281648/article/details/120057980">Jenkins构建Python项目提示：‘python‘ 不是内部或外部命令，也不是可运行的程序</a><br><a target="_blank" rel="noopener" href="https://www.python.org/downloads/release/python-377/">Python 3.7.7</a>下载Windows x86-64 executable installer，安装默认安装，并勾选写入环境变量。<br><a target="_blank" rel="noopener" href="http://www.rejetto.com/hfs/">HFS</a>下载，搭建简易服务。</p>
 
       
     </div>
@@ -1131,20 +1167,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">69</span>
+          <span class="site-state-item-count">70</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/blogs/categories/">
           
-        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-count">26</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/blogs/tags/">
           
-        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-count">36</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1189,7 +1225,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
