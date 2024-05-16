@@ -194,7 +194,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
+                <time title="修改时间：2024-05-16 21:01:03" itemprop="dateModified" datetime="2024-05-16T21:01:03+08:00">2024-05-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -218,6 +218,125 @@
 
       
           <p>撕夜<br>用心爱你你不懂<br>十年<br>时间都去哪儿了<br>其实你不懂我的心<br>关于你们之间的故事<br>假如爱有天意</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2024/05/19/xlua/xlua_ext/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2024/05/19/xlua/xlua_ext/" class="post-title-link" itemprop="url">xlua 代码扩展</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-19 19:01:34" itemprop="dateCreated datePublished" datetime="2024-05-19T19:01:34+08:00">2024-05-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-05-16 21:01:03" itemprop="dateModified" datetime="2024-05-16T21:01:03+08:00">2024-05-16</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/xlua/" itemprop="url" rel="index"><span itemprop="name">xlua</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在使用xlua的过程中，可能需要自定义xlua，比如所Astar寻路算法，如果在lua中实现的话，效率是非常低的，所以可以考虑将实现方法放到C/C++，这样运行效率可以大大提升。<br>这里参照xlua官方<a target="_blank" rel="noopener" href="https://github.com/Tencent/xLua/blob/master/Assets/XLua/Doc/XLua%E5%A2%9E%E5%8A%A0%E5%88%A0%E9%99%A4%E7%AC%AC%E4%B8%89%E6%96%B9lua%E5%BA%93.md">文档</a>,总结了一下。</p>
+<ul>
+<li><p>首先下载<a target="_blank" rel="noopener" href="https://github.com/Tencent/xLua">xlua</a>源码。</p>
+</li>
+<li><p>下载完后可以用Unity打开这个项目，跑一下01_Helloworld案例，后面扩展xlua也将在这个案例上修改。</p>
+</li>
+<li><p>然后添加扩展代码，扩展代码是在和Assets同目录的build目录下。</p>
+</li>
+<li><p>这里我们沿用官方文档的例子，扩展lua-rapidjson。可以在github上搜索，路径的话就是<a target="_blank" rel="noopener" href="https://github.com/xpol/lua-rapidjson">xpol/lua-rapidjson</a></p>
+</li>
+<li><p>下载lua-rapidjson源码</p>
+</li>
+<li><p>在xlua的build目录下新建文件夹lua-rapidjson，然后在lua-rapidjson文件夹下新建文件夹include和src。在官方文档中说的是新建include和source,其实名字是什么都可以，后面配置的时候对应上就行。</p>
+</li>
+<li><p>然后将lua-rapidjson源码中的<code>lua-rapidjson/rapidjson/include</code>目录全部拷贝到上面新建的include目录下。</p>
+</li>
+<li><p>再将lua-rapidjson源码中的<code>lua-rapidjson/src</code>目录全部拷贝到上面新建的src目录下。</p>
+</li>
+<li><p>上面两步就准备好了扩展的源码。</p>
+</li>
+<li><p>然后是将上面的源码关联到xlua的cmake上。</p>
+</li>
+<li><p>在xlua的build目录下找到CMakeLists.txt文件。在这个文件里面配置。配置内容如下。下面这个<code>lua-rapidjson/include</code>和<code>ua-rapidjson/src/</code>就是上面建的源文件。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">MARK_AS_ADVANCED(XLUA_PROJECT_DIR)</span><br><span class="line"></span><br><span class="line"> <span class="comment"># 下面是新增部分</span></span><br><span class="line"> <span class="comment">#begin lua-rapidjson</span></span><br><span class="line"> <span class="built_in">set</span> (RAPIDJSON_SRC </span><br><span class="line">    lua-rapidjson/src/Document.cpp</span><br><span class="line">    lua-rapidjson/src/Schema.cpp</span><br><span class="line">    lua-rapidjson/src/rapidjson.cpp</span><br><span class="line">    lua-rapidjson/src/values.cpp</span><br><span class="line"> )</span><br><span class="line"> set_property(</span><br><span class="line">     SOURCE <span class="variable">$&#123;RAPIDJSON_SRC&#125;</span></span><br><span class="line">     APPEND</span><br><span class="line">     PROPERTY COMPILE_DEFINITIONS</span><br><span class="line">     LUA_LIB</span><br><span class="line"> )</span><br><span class="line"> list(APPEND THIRDPART_INC  lua-rapidjson/include)</span><br><span class="line"> <span class="built_in">set</span> (THIRDPART_SRC <span class="variable">$&#123;THIRDPART_SRC&#125;</span> <span class="variable">$&#123;RAPIDJSON_SRC&#125;</span>)</span><br><span class="line"> <span class="comment">#end lua-rapidjson</span></span><br><span class="line"> <span class="comment"># 上面是新增部分</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (NOT LUA_VERSION)</span><br><span class="line">    <span class="built_in">set</span>(LUA_VERSION <span class="string">&quot;5.3.5&quot;</span>)</span><br><span class="line">endif()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置好后，就可以尝试重新编译xlua源码。在xlua的build目录下找到make_win_lua54.bat文件，双击，会运行控制台命令，看看如果没有报错就说明成功了。</p>
+</li>
+<li><p>成功后会导出plugin_lua54，这里就是Unity Plugins下要用到的dll。将生成的Plugins拷贝到Unity下替换原本的Plugins。当然拷贝要关闭Unity才行。</p>
+</li>
+<li><p>替换好Plugins后，重新打开Unity。还是打开01_Helloworld案例。这里将在01_Helloworld案例中测试新增的lua-rapidjson</p>
+</li>
+<li><p>首选可以新建一个脚本目录<code>XLuaExt</code>，用来存放Xlua扩展脚本。当然也可以不建，后面的扩展代码直接写在<code>LuaDLL.cs</code>脚本中，不过后面更新xlua时就会被覆盖。</p>
+</li>
+<li><p>在<code>XLuaExt</code>目录下新建<code>LuaDLL.Rapidjson.cs</code>，并且在脚本中添加如下内容。这样C#脚本就关联上了xlua中的扩展。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System.Runtime.InteropServices;</span><br><span class="line"><span class="keyword">namespace</span> <span class="title">XLua.LuaDLL</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">class</span> <span class="title">Lua</span></span><br><span class="line">    &#123;</span><br><span class="line">        [<span class="meta">DllImport(LUADLL, CallingConvention = CallingConvention.Cdecl)</span>]</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="built_in">int</span> <span class="title">luaopen_rapidjson</span>(<span class="params">System.IntPtr L</span>)</span>;</span><br><span class="line"></span><br><span class="line">        [<span class="meta">MonoPInvokeCallback(typeof(LuaDLL.lua_CSFunction))</span>]</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">int</span> <span class="title">LoadRapidJson</span>(<span class="params">System.IntPtr L</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="keyword">return</span> luaopen_rapidjson(L);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>然后打开01_Helloworld案例的<code>Helloworld.cs</code>脚本，修改这个脚本成如下：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> XLua;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">XLuaTest</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Helloworld</span> : <span class="title">MonoBehaviour</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// Use this for initialization</span></span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">Start</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            LuaEnv luaenv = <span class="keyword">new</span> LuaEnv();</span><br><span class="line">            luaenv.AddBuildin(<span class="string">&quot;rapidjson&quot;</span>, XLua.LuaDLL.Lua.LoadRapidJson);</span><br><span class="line">            luaenv.DoString(<span class="string">&quot;CS.UnityEngine.Debug.Log(&#x27;hello world&#x27;)&quot;</span>);</span><br><span class="line"></span><br><span class="line">            luaenv.DoString(<span class="string">@&quot;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">local rapidjson = require(&#x27;rapidjson&#x27;)</span></span><br><span class="line"><span class="string">local t = rapidjson.decode(&#x27;&#123;&quot;&quot;a&quot;&quot;:123&#125;&#x27;)</span></span><br><span class="line"><span class="string">print(t.a)</span></span><br><span class="line"><span class="string">t.a = 456</span></span><br><span class="line"><span class="string">local s = rapidjson.encode(t)</span></span><br><span class="line"><span class="string">print(&#x27;json&#x27;, s)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&quot;</span>);</span><br><span class="line"></span><br><span class="line">            luaenv.Dispose();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Update is called once per frame</span></span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">Update</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>然后运行01_Helloworld案例。可以看到<code>LUA: json    &#123;&quot;a&quot;:456&#125;</code>打印日志。</p>
+</li>
+</ul>
 
       
     </div>
@@ -268,7 +387,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
+                <time title="修改时间：2024-05-16 21:01:03" itemprop="dateModified" datetime="2024-05-16T21:01:03+08:00">2024-05-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -388,7 +507,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
+                <time title="修改时间：2024-05-16 21:01:03" itemprop="dateModified" datetime="2024-05-16T21:01:03+08:00">2024-05-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -477,7 +596,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
+                <time title="修改时间：2024-05-16 21:01:03" itemprop="dateModified" datetime="2024-05-16T21:01:03+08:00">2024-05-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -564,7 +683,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
+                <time title="修改时间：2024-05-16 21:01:03" itemprop="dateModified" datetime="2024-05-16T21:01:03+08:00">2024-05-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -639,7 +758,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
+                <time title="修改时间：2024-05-16 21:01:03" itemprop="dateModified" datetime="2024-05-16T21:01:03+08:00">2024-05-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -753,92 +872,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2022/11/27/Unity_Ex_Editor_PackageMenuItem/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2022/11/27/Unity_Ex_Editor_PackageMenuItem/" class="post-title-link" itemprop="url">Unity Package Menu Item</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-11-27 10:01:00" itemprop="dateCreated datePublished" datetime="2022-11-27T10:01:00+08:00">2022-11-27</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Extention/" itemprop="url" rel="index"><span itemprop="name">Extention</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Extention/Editor/" itemprop="url" rel="index"><span itemprop="name">Editor</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Extention/Editor/AssetsMenuUtility/" itemprop="url" rel="index"><span itemprop="name">AssetsMenuUtility</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Package扩展命令"><a href="#Package扩展命令" class="headerlink" title="Package扩展命令"></a>Package扩展命令</h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"><span class="keyword">using</span> UnityEditor;</span><br><span class="line"><span class="keyword">using</span> UnityEditor.PackageManager.Requests;</span><br><span class="line"><span class="keyword">using</span> UnityEditor.PackageManager;</span><br><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> System.Text.RegularExpressions;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">Unity.Editor.Extention</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title">PackageMenuItem</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">static</span> String targetPackage;</span><br><span class="line">        <span class="keyword">static</span> EmbedRequest Request;</span><br><span class="line">        <span class="keyword">static</span> ListRequest LRequest;</span><br><span class="line"></span><br><span class="line">        [<span class="meta">MenuItem(<span class="meta-string">&quot;Assets/Package/Embed Installed Package&quot;</span>)</span>]</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">EmbedInstalledPackage</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="keyword">if</span>(Selection.assetGUIDs.Length &gt; <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="built_in">string</span> path = AssetDatabase.GUIDToAssetPath(Selection.assetGUIDs[<span class="number">0</span>]);</span><br><span class="line">                Match match = Regex.Match(path, <span class="string">&quot;^Packages/([^/]+)$&quot;</span>);</span><br><span class="line">                <span class="keyword">if</span>(match.Success)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="built_in">string</span> targetPackage = match.Groups[<span class="number">1</span>].Value;</span><br><span class="line">                    <span class="comment">//Debug.LogError(targetPackage);</span></span><br><span class="line">                    Embed(targetPackage);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        [<span class="meta">MenuItem(<span class="meta-string">&quot;Assets/Package/Embed Installed Package&quot;</span>, validate = true)</span>]</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="built_in">bool</span> <span class="title">Check_EmbedInstalledPackage</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="keyword">if</span> (Selection.assetGUIDs.Length &gt; <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="built_in">string</span> path = AssetDatabase.GUIDToAssetPath(Selection.assetGUIDs[<span class="number">0</span>]);</span><br><span class="line">                Match match = Regex.Match(path, <span class="string">&quot;^Packages/([^/]+)$&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span> match.Success;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Embed</span>(<span class="params"><span class="built_in">string</span> inTarget</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="comment">// Embed a package in the project</span></span><br><span class="line">            Debug.Log(<span class="string">&quot;Embed(&#x27;&quot;</span> + inTarget + <span class="string">&quot;&#x27;) called&quot;</span>);</span><br><span class="line">            Request = Client.Embed(inTarget);</span><br><span class="line">            EditorApplication.update += Progress;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Progress</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="keyword">if</span> (Request.IsCompleted)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> (Request.Status == StatusCode.Success)</span><br><span class="line">                    Debug.Log(<span class="string">&quot;Embedded: &quot;</span> + Request.Result.packageId);</span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (Request.Status &gt;= StatusCode.Failure)</span><br><span class="line">                    Debug.Log(Request.Error.message);</span><br><span class="line"></span><br><span class="line">                EditorApplication.update -= Progress;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="meta">#<span class="meta-keyword">region</span> Test</span></span><br><span class="line">        [<span class="meta">MenuItem(<span class="meta-string">&quot;Assets/Package/Test/Get Package Name&quot;</span>, priority = 100)</span>]</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">GetPackageName</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="comment">// First get the name of an installed package</span></span><br><span class="line">            LRequest = Client.List();</span><br><span class="line">            EditorApplication.update += LProgress;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">LProgress</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="keyword">if</span> (LRequest.IsCompleted)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> (LRequest.Status == StatusCode.Success)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">foreach</span> (<span class="keyword">var</span> package <span class="keyword">in</span> LRequest.Result)</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="comment">// Only retrieve packages that are currently installed in the</span></span><br><span class="line">                        <span class="comment">// project (and are neither Built-In nor already Embedded)</span></span><br><span class="line">                        <span class="keyword">if</span> (package.isDirectDependency &amp;&amp; package.source</span><br><span class="line">                            != PackageSource.BuiltIn &amp;&amp; package.source</span><br><span class="line">                            != PackageSource.Embedded)</span><br><span class="line">                        &#123;</span><br><span class="line">                            targetPackage = package.name;</span><br><span class="line">                            Debug.LogError(targetPackage);</span><br><span class="line">                            <span class="comment">//break;</span></span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                    Debug.Log(LRequest.Error.message);</span><br><span class="line"></span><br><span class="line">                EditorApplication.update -= LProgress;</span><br><span class="line"></span><br><span class="line">                <span class="comment">//Embed(targetPackage);</span></span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="meta">#<span class="meta-keyword">endregion</span></span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2022/11/27/Unity_Ex_Editor_CreateParentForTransforms/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -870,7 +903,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
+                <time title="修改时间：2024-05-16 21:01:03" itemprop="dateModified" datetime="2024-05-16T21:01:03+08:00">2024-05-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -925,6 +958,92 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2022/11/27/Unity_Ex_Editor_PackageMenuItem/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2022/11/27/Unity_Ex_Editor_PackageMenuItem/" class="post-title-link" itemprop="url">Unity Package Menu Item</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-27 10:01:00" itemprop="dateCreated datePublished" datetime="2022-11-27T10:01:00+08:00">2022-11-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-05-16 21:01:03" itemprop="dateModified" datetime="2024-05-16T21:01:03+08:00">2024-05-16</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Extention/" itemprop="url" rel="index"><span itemprop="name">Extention</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Extention/Editor/" itemprop="url" rel="index"><span itemprop="name">Editor</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Extention/Editor/AssetsMenuUtility/" itemprop="url" rel="index"><span itemprop="name">AssetsMenuUtility</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="Package扩展命令"><a href="#Package扩展命令" class="headerlink" title="Package扩展命令"></a>Package扩展命令</h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"><span class="keyword">using</span> UnityEditor;</span><br><span class="line"><span class="keyword">using</span> UnityEditor.PackageManager.Requests;</span><br><span class="line"><span class="keyword">using</span> UnityEditor.PackageManager;</span><br><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> System.Text.RegularExpressions;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">Unity.Editor.Extention</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title">PackageMenuItem</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">static</span> String targetPackage;</span><br><span class="line">        <span class="keyword">static</span> EmbedRequest Request;</span><br><span class="line">        <span class="keyword">static</span> ListRequest LRequest;</span><br><span class="line"></span><br><span class="line">        [<span class="meta">MenuItem(<span class="meta-string">&quot;Assets/Package/Embed Installed Package&quot;</span>)</span>]</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">EmbedInstalledPackage</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="keyword">if</span>(Selection.assetGUIDs.Length &gt; <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="built_in">string</span> path = AssetDatabase.GUIDToAssetPath(Selection.assetGUIDs[<span class="number">0</span>]);</span><br><span class="line">                Match match = Regex.Match(path, <span class="string">&quot;^Packages/([^/]+)$&quot;</span>);</span><br><span class="line">                <span class="keyword">if</span>(match.Success)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="built_in">string</span> targetPackage = match.Groups[<span class="number">1</span>].Value;</span><br><span class="line">                    <span class="comment">//Debug.LogError(targetPackage);</span></span><br><span class="line">                    Embed(targetPackage);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        [<span class="meta">MenuItem(<span class="meta-string">&quot;Assets/Package/Embed Installed Package&quot;</span>, validate = true)</span>]</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="built_in">bool</span> <span class="title">Check_EmbedInstalledPackage</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="keyword">if</span> (Selection.assetGUIDs.Length &gt; <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="built_in">string</span> path = AssetDatabase.GUIDToAssetPath(Selection.assetGUIDs[<span class="number">0</span>]);</span><br><span class="line">                Match match = Regex.Match(path, <span class="string">&quot;^Packages/([^/]+)$&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span> match.Success;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Embed</span>(<span class="params"><span class="built_in">string</span> inTarget</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="comment">// Embed a package in the project</span></span><br><span class="line">            Debug.Log(<span class="string">&quot;Embed(&#x27;&quot;</span> + inTarget + <span class="string">&quot;&#x27;) called&quot;</span>);</span><br><span class="line">            Request = Client.Embed(inTarget);</span><br><span class="line">            EditorApplication.update += Progress;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Progress</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="keyword">if</span> (Request.IsCompleted)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> (Request.Status == StatusCode.Success)</span><br><span class="line">                    Debug.Log(<span class="string">&quot;Embedded: &quot;</span> + Request.Result.packageId);</span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (Request.Status &gt;= StatusCode.Failure)</span><br><span class="line">                    Debug.Log(Request.Error.message);</span><br><span class="line"></span><br><span class="line">                EditorApplication.update -= Progress;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="meta">#<span class="meta-keyword">region</span> Test</span></span><br><span class="line">        [<span class="meta">MenuItem(<span class="meta-string">&quot;Assets/Package/Test/Get Package Name&quot;</span>, priority = 100)</span>]</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">GetPackageName</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="comment">// First get the name of an installed package</span></span><br><span class="line">            LRequest = Client.List();</span><br><span class="line">            EditorApplication.update += LProgress;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">LProgress</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="keyword">if</span> (LRequest.IsCompleted)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> (LRequest.Status == StatusCode.Success)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">foreach</span> (<span class="keyword">var</span> package <span class="keyword">in</span> LRequest.Result)</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="comment">// Only retrieve packages that are currently installed in the</span></span><br><span class="line">                        <span class="comment">// project (and are neither Built-In nor already Embedded)</span></span><br><span class="line">                        <span class="keyword">if</span> (package.isDirectDependency &amp;&amp; package.source</span><br><span class="line">                            != PackageSource.BuiltIn &amp;&amp; package.source</span><br><span class="line">                            != PackageSource.Embedded)</span><br><span class="line">                        &#123;</span><br><span class="line">                            targetPackage = package.name;</span><br><span class="line">                            Debug.LogError(targetPackage);</span><br><span class="line">                            <span class="comment">//break;</span></span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                    Debug.Log(LRequest.Error.message);</span><br><span class="line"></span><br><span class="line">                EditorApplication.update -= LProgress;</span><br><span class="line"></span><br><span class="line">                <span class="comment">//Embed(targetPackage);</span></span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="meta">#<span class="meta-keyword">endregion</span></span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2022/11/10/Unity_Asset_Extractor/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -956,7 +1075,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
+                <time title="修改时间：2024-05-16 21:01:03" itemprop="dateModified" datetime="2024-05-16T21:01:03+08:00">2024-05-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1012,94 +1131,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2022/09/21/Unity-Editor-Recompile/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2022/09/21/Unity-Editor-Recompile/" class="post-title-link" itemprop="url">Compiler Options</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-09-21 10:01:00" itemprop="dateCreated datePublished" datetime="2022-09-21T10:01:00+08:00">2022-09-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blogs/categories/Unity/Editor/" itemprop="url" rel="index"><span itemprop="name">Editor</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h2><p>在用Unity开发项目时，每次编写或者修改C#脚本，Unity都会自动检查脚本，并进行自动编译。频繁的自动编译，无疑是会降低开发效率，基于这个出发点，我希望能够关闭自动编译功能。在Unity下有两个设置是和自动编译相关的，就是Preferences界面下的General里面的<code>Auto Refresh</code>和<code>Script Changes While Playing</code>。前者是自动刷新，每次刷新的时候就会检查脚本是否需要编译，这时候我们可以把自动刷新关掉，然后使用手动的方式进行刷新。后者主要是控制运行时脚本自动编译的时机，是否在运行时进行自动编译。<br><img src="/blogs/images/src/Snipaste_2022-09-21_21-45-55.png" alt="wwwwwww"><br>上图中的设置项的位置可能会因Unity的版本不同而有所改变，这里我用的Unity版本是<code>Unity 2020.3.33f1c2 Personal</code><br>这里写了一个编辑器脚本，将上面的设置暴露在菜单栏中。</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEditor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">ScriptOptions</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//Auto Refresh</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//kAutoRefresh has two posible values</span></span><br><span class="line">    <span class="comment">//0 = Auto Refresh Disabled</span></span><br><span class="line">    <span class="comment">//1 = Auto Refresh Enabled</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//This is called when you click on the &#x27;Tools/Auto Refresh&#x27; and toggles its value</span></span><br><span class="line">    [<span class="meta">MenuItem(<span class="meta-string">&quot;Tools/Auto Refresh&quot;</span>)</span>]</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">AutoRefreshToggle</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">var</span> status = EditorPrefs.GetInt(<span class="string">&quot;kAutoRefresh&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (status == <span class="number">1</span>)</span><br><span class="line">            EditorPrefs.SetInt(<span class="string">&quot;kAutoRefresh&quot;</span>, <span class="number">0</span>);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            EditorPrefs.SetInt(<span class="string">&quot;kAutoRefresh&quot;</span>, <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//This is called before &#x27;Tools/Auto Refresh&#x27; is shown to check the current value</span></span><br><span class="line">    <span class="comment">//of kAutoRefresh and update the checkmark</span></span><br><span class="line">    [<span class="meta">MenuItem(<span class="meta-string">&quot;Tools/Auto Refresh&quot;</span>, true)</span>]</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="built_in">bool</span> <span class="title">AutoRefreshToggleValidation</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">var</span> status = EditorPrefs.GetInt(<span class="string">&quot;kAutoRefresh&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (status == <span class="number">1</span>)</span><br><span class="line">            Menu.SetChecked(<span class="string">&quot;Tools/Auto Refresh&quot;</span>, <span class="literal">true</span>);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            Menu.SetChecked(<span class="string">&quot;Tools/Auto Refresh&quot;</span>, <span class="literal">false</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//Script Compilation During Play</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//ScriptCompilationDuringPlay has three posible values</span></span><br><span class="line">    <span class="comment">//0 = Recompile And Continue Playing</span></span><br><span class="line">    <span class="comment">//1 = Recompile After Finished Playing</span></span><br><span class="line">    <span class="comment">//2 = Stop Playing And Recompile</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//The following methods assing the three possible values to ScriptCompilationDuringPlay</span></span><br><span class="line">    <span class="comment">//depending on the option you selected</span></span><br><span class="line">    [<span class="meta">MenuItem(<span class="meta-string">&quot;Tools/Script Compilation During Play/Recompile And Continue Playing&quot;</span>)</span>]</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">ScriptCompilationToggleOption0</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        EditorPrefs.SetInt(<span class="string">&quot;ScriptCompilationDuringPlay&quot;</span>, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    [<span class="meta">MenuItem(<span class="meta-string">&quot;Tools/Script Compilation During Play/Recompile After Finished Playing&quot;</span>)</span>]</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">ScriptCompilationToggleOption1</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        EditorPrefs.SetInt(<span class="string">&quot;ScriptCompilationDuringPlay&quot;</span>, <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    [<span class="meta">MenuItem(<span class="meta-string">&quot;Tools/Script Compilation During Play/Stop Playing And Recompile&quot;</span>)</span>]</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">ScriptCompilationToggleOption2</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        EditorPrefs.SetInt(<span class="string">&quot;ScriptCompilationDuringPlay&quot;</span>, <span class="number">2</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//This is called before &#x27;Tools/Script Compilation During Play/Recompile And Continue Playing&#x27;</span></span><br><span class="line">    <span class="comment">//is shown to check for the current value of ScriptCompilationDuringPlay and update the checkmark</span></span><br><span class="line">    [<span class="meta">MenuItem(<span class="meta-string">&quot;Tools/Script Compilation During Play/Recompile And Continue Playing&quot;</span>, true)</span>]</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="built_in">bool</span> <span class="title">ScriptCompilationValidation</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="comment">//Here, we uncheck all options before we show them</span></span><br><span class="line">        Menu.SetChecked(<span class="string">&quot;Tools/Script Compilation During Play/Recompile And Continue Playing&quot;</span>, <span class="literal">false</span>);</span><br><span class="line">        Menu.SetChecked(<span class="string">&quot;Tools/Script Compilation During Play/Recompile After Finished Playing&quot;</span>, <span class="literal">false</span>);</span><br><span class="line">        Menu.SetChecked(<span class="string">&quot;Tools/Script Compilation During Play/Stop Playing And Recompile&quot;</span>, <span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> status = EditorPrefs.GetInt(<span class="string">&quot;ScriptCompilationDuringPlay&quot;</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="comment">//Here, we put the checkmark on the current value of ScriptCompilationDuringPlay</span></span><br><span class="line">        <span class="keyword">switch</span> (status)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">                Menu.SetChecked(<span class="string">&quot;Tools/Script Compilation During Play/Recompile And Continue Playing&quot;</span>, <span class="literal">true</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">                Menu.SetChecked(<span class="string">&quot;Tools/Script Compilation During Play/Recompile After Finished Playing&quot;</span>, <span class="literal">true</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">                Menu.SetChecked(<span class="string">&quot;Tools/Script Compilation During Play/Stop Playing And Recompile&quot;</span>, <span class="literal">true</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>回到开头的问题，为了解决频繁自动编译的问题，这里我禁用用自动刷新的功能，但是这就导致了我每次都需要手动刷新，如果没有手动刷新，那么修改的代码就不会生效。<br>所以这里换个思路来解决问题，我们只在运行前和退出运行的时候，进行代码编译，而其他时候都不会进行代码编译。这样上面提到的设置都不用管，仍然可以启用自动刷新功能，但是自动刷新不会进行自动编译。刚好Unity提供是否启用自动编译的接口。所以在不需要任何设置的情况下，只需要将下面的编辑器脚本导入到Unity的Editor目录下，在运行前和运行结束的时候会自动检查代码进行自动编译。</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEditor;</span><br><span class="line"></span><br><span class="line">[<span class="meta">InitializeOnLoad</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">CompilerOptionsEditorScript</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="title">CompilerOptionsEditorScript</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        EditorApplication.playModeStateChanged += PlaymodeChanged;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">PlaymodeChanged</span>(<span class="params">PlayModeStateChange state</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="comment">//在切换运行模式的时候自动进行脚本编译</span></span><br><span class="line">        <span class="keyword">if</span> (state == PlayModeStateChange.ExitingPlayMode</span><br><span class="line">            || state == PlayModeStateChange.ExitingEditMode)</span><br><span class="line">        &#123;</span><br><span class="line">            EditorApplication.UnlockReloadAssemblies();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//在运行时或编辑模型下，关闭脚本自动编译，解决频繁编译降低开发效率的问题</span></span><br><span class="line">        <span class="keyword">if</span> (state == PlayModeStateChange.EnteredPlayMode</span><br><span class="line">            || state == PlayModeStateChange.EnteredEditMode)</span><br><span class="line">        &#123;</span><br><span class="line">            EditorApplication.LockReloadAssemblies();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://support.unity.com/hc/en-us/articles/210452343-How-to-stop-automatic-assembly-compilation-from-script">How to stop automatic assembly compilation from script</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/blogs/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/blogs/page/7/">7</a><a class="extend next" rel="next" href="/blogs/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/blogs/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/blogs/page/8/">8</a><a class="extend next" rel="next" href="/blogs/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1167,20 +1202,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">70</span>
+          <span class="site-state-item-count">71</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/blogs/categories/">
           
-        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/blogs/tags/">
           
-        <span class="site-state-item-count">36</span>
+        <span class="site-state-item-count">38</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

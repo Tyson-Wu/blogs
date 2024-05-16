@@ -163,6 +163,104 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Sprite_Shaders/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blogs/images/avatar.png">
+      <meta itemprop="name" content="Tyson Wu">
+      <meta itemprop="description" content="If you want, Just do it!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TysonWu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/2021/07/01/Ronja_Sprite_Shaders/" class="post-title-link" itemprop="url">Sprite Shaders</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-07-01 15:01:00" itemprop="dateCreated datePublished" datetime="2021-07-01T15:01:00+08:00">2021-07-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-05-16 21:01:03" itemprop="dateModified" datetime="2024-05-16T21:01:03+08:00">2024-05-16</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blogs/categories/Unity/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>原文：<br><a target="_blank" rel="noopener" href="https://www.ronja-tutorials.com/post/007-sprite-shaders/">Sprite Shaders</a></p>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>在Unity中，图片的渲染和三维模型渲染非常相似。并且提供了<code>SpriteRender</code>的组件来实现图片渲染的功能。接下来我也会介绍这个组件、及其实现原理，然后通过我们的着色器来模拟这个组件的功能。</p>
+<p>这个教程依赖于上一个<a href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Basic_Transparency/">透明着色器</a>的教程。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/007/Result.png"></p>
+<h2 id="Scene-Setup"><a href="#Scene-Setup" class="headerlink" title="Scene Setup"></a>Scene Setup</h2><p>这里采用一个非常简单的场景来实验我们的图片着色器。首先，我将摄像机改为正交模式，并且将原先的小方块改成<code>sprite renderer</code>，同时将后面用到的图片格式改为<code>sprite</code>。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/007/Hierarchy.png"><br><img src="https://www.ronja-tutorials.com/assets/images/posts/007/CameraInspector.png"><br><img src="https://www.ronja-tutorials.com/assets/images/posts/007/SpriteInspector.png"><br><img src="https://www.ronja-tutorials.com/assets/images/posts/007/SpriteImporter.png"></p>
+<h2 id="Changing-the-Shader"><a href="#Changing-the-Shader" class="headerlink" title="Changing the Shader"></a>Changing the Shader</h2><p>在完成以上修改后，将上一章的透明材质放到<code>SpriteRenderer</code>组件的材质属性上，一切准备就绪！</p>
+<p><code>SpriteRenderer</code>组件会自动根据附加的图片自动生成一个网格数据，包括顶点、UV等。然后和普通的三维模型一样渲染到场景中。同时在<code>SpriteRenderer</code>上定义的颜色也会以顶点颜色的形式包含在网格数据中。另外还可以设置图片是否翻转。而且图片渲染和半透明渲染一样，是排在不透明渲染之后，甚至大多数渲染之后，而这个渲染队列是由<code>SpriteRenderer</code>自动帮我们设置的。</p>
+<p>因为目前我们的半透明着色器还不支持翻转、和顶点颜色。所以接下来我们把这个添加上。</p>
+<p>但是当我们翻转后，会发现图片不见了，然后再翻转，图片又出现了。这时因为从性能优化角度考虑，渲染单面比渲染双面更节约性能，这里叫做<code>backface culling</code>背面剔除。普通的不透明模型渲染使用背面剔除非常有效，因为其内部不可能被渲染。另外如果不使用背面剔除，在光照计算的时候会出现怪异的效果，因为参与计算的法向量只会指向正面方向，因此背面计算的结果无效。</p>
+<p>在这里我们并不用考虑这个优化项，因为图片、半透明物体之类的并不存在哪个面朝内、哪个面朝外的问题，也不需要参与光照计算。因此我们这里直接关闭背面剔除公共，关闭的设置和之前混合模式、深度写入设置类似。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Cull Off</span><br></pre></td></tr></table></figure>
+
+<p>为了在最终的渲染中使用到前面说的顶点颜色数据。我们需要在半透明着色其中做一些修改。首先在输入数据结构和插值数据结构中加入一个四维向量，并标记为颜色类型。然后在顶点着色器中将输入数据结构中的顶点颜色传递给插值数据结构中的颜色值。最终在片段着色器中叠加到输出颜色上。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">    float4 vertex : POSITION;</span><br><span class="line">    float2 uv : TEXCOORD0;</span><br><span class="line">    fixed4 color : COLOR;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">    float4 position : SV_POSITION;</span><br><span class="line">    float2 uv : TEXCOORD0;</span><br><span class="line">    fixed4 color : COLOR;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">    v2f o;</span><br><span class="line">    o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">    o.uv = TRANSFORM_TEX(v.uv, _MainTex);</span><br><span class="line">    o.color = v.color;</span><br><span class="line">    <span class="keyword">return</span> o;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">    fixed4 col = tex2D(_MainTex, i.uv);</span><br><span class="line">    col *= _Color;</span><br><span class="line">    col *= i.color;</span><br><span class="line">    <span class="keyword">return</span> col;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>修改后的半透明材质就可以应用到<code>SpriteRenderer</code>组件上了，并且可以响应<code>SpriteRenderer</code>上的一些设置操作。在后面的教程中我们还可以在此基础上扩展出更加绚丽的效果。<br><img src="https://www.ronja-tutorials.com/assets/images/posts/007/AdjustVariables.gif"></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">&quot;Tutorial/007_Sprite&quot;</span>&#123;</span><br><span class="line">	Properties&#123;</span><br><span class="line">		_Color (<span class="string">&quot;Tint&quot;</span>, Color) = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">		_MainTex (<span class="string">&quot;Texture&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	SubShader&#123;</span><br><span class="line">		Tags&#123; </span><br><span class="line">			<span class="string">&quot;RenderType&quot;</span>=<span class="string">&quot;Transparent&quot;</span> </span><br><span class="line">			<span class="string">&quot;Queue&quot;</span>=<span class="string">&quot;Transparent&quot;</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		Blend SrcAlpha OneMinusSrcAlpha</span><br><span class="line"></span><br><span class="line">		ZWrite off</span><br><span class="line">		Cull off</span><br><span class="line"></span><br><span class="line">		Pass&#123;</span><br><span class="line"></span><br><span class="line">			CGPROGRAM</span><br><span class="line"></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UnityCG.cginc&quot;</span></span></span><br><span class="line"></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line"></span><br><span class="line">			sampler2D _MainTex;</span><br><span class="line">			float4 _MainTex_ST;</span><br><span class="line"></span><br><span class="line">			fixed4 _Color;</span><br><span class="line"></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">appdata</span>&#123;</span></span><br><span class="line">				float4 vertex : POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">				fixed4 color : COLOR;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">v2f</span>&#123;</span></span><br><span class="line">				float4 position : SV_POSITION;</span><br><span class="line">				float2 uv : TEXCOORD0;</span><br><span class="line">				fixed4 color : COLOR;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			<span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span>&#123;</span><br><span class="line">				v2f o;</span><br><span class="line">				o.position = UnityObjectToClipPos(v.vertex);</span><br><span class="line">				o.uv = TRANSFORM_TEX(v.uv, _MainTex);</span><br><span class="line">				o.color = v.color;</span><br><span class="line">				<span class="keyword">return</span> o;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="function">fixed4 <span class="title">frag</span><span class="params">(v2f i)</span> : SV_TARGET</span>&#123;</span><br><span class="line">				fixed4 col = tex2D(_MainTex, i.uv);</span><br><span class="line">				col *= _Color;</span><br><span class="line">				col *= i.color;</span><br><span class="line">				<span class="keyword">return</span> col;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>SpriteRenderer</code>组件还会提供各种网格数据来实现图标、多边形图形、动画效果。</p>
+<p>相比于Unity内置的<code>Sprite Shader</code>，我们目前还没有实现的功能有<code>instancing</code>、像素捕捉、<code>alpha</code>通道扩展，因为这些功能比较复杂，而且很少使用，因此我现在不做介绍。</p>
+<p>你可以在以下链接找到源码：<a target="_blank" rel="noopener" href="https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/007_Sprites/sprite.shader">https://github.com/ronja-tutorials/ShaderTutorials/blob/master/Assets/007_Sprites/sprite.shader</a></p>
+<p>希望你能喜欢这个教程哦！如果你想支持我，可以关注我的<a target="_blank" rel="noopener" href="https://twitter.com/totallyRonja">推特</a>,或者通过<a target="_blank" rel="noopener" href="https://ko-fi.com/ronjatutorials">ko-fi</a>、或<a target="_blank" rel="noopener" href="https://www.patreon.com/RonjaTutorials">patreon</a>给两小钱。总之，各位大爷，走过路过不要错过，有钱的捧个钱场，没钱的捧个人场:-)!!!</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/07/01/Ronja_Basic_Transparency/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -194,7 +292,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
+                <time title="修改时间：2024-05-16 21:01:03" itemprop="dateModified" datetime="2024-05-16T21:01:03+08:00">2024-05-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -296,7 +394,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
+                <time title="修改时间：2024-05-16 21:01:03" itemprop="dateModified" datetime="2024-05-16T21:01:03+08:00">2024-05-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -428,7 +526,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
+                <time title="修改时间：2024-05-16 21:01:03" itemprop="dateModified" datetime="2024-05-16T21:01:03+08:00">2024-05-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -530,7 +628,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
+                <time title="修改时间：2024-05-16 21:01:03" itemprop="dateModified" datetime="2024-05-16T21:01:03+08:00">2024-05-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -638,7 +736,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
+                <time title="修改时间：2024-05-16 21:01:03" itemprop="dateModified" datetime="2024-05-16T21:01:03+08:00">2024-05-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -771,7 +869,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
+                <time title="修改时间：2024-05-16 21:01:03" itemprop="dateModified" datetime="2024-05-16T21:01:03+08:00">2024-05-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -874,7 +972,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
+                <time title="修改时间：2024-05-16 21:01:03" itemprop="dateModified" datetime="2024-05-16T21:01:03+08:00">2024-05-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -987,7 +1085,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
+                <time title="修改时间：2024-05-16 21:01:03" itemprop="dateModified" datetime="2024-05-16T21:01:03+08:00">2024-05-16</time>
               </span>
 
           
@@ -1004,79 +1102,6 @@
           <h3 id="Basic"><a href="#Basic" class="headerlink" title="Basic"></a>Basic</h3><p><a target="_blank" rel="noopener" href="https://www.freecodecamp.org/news/getting-started-with-centos-15eac7215c99/">getting-started-with-centos</a><br><a target="_blank" rel="noopener" href="https://www.server-world.info/en/note?os=CentOS_7">Server World</a><br><a target="_blank" rel="noopener" href="https://linuxize.com/post/create-a-sudo-user-on-centos/">How To Create a Sudo User on CentOS</a><br><a target="_blank" rel="noopener" href="https://linuxize.com/post/how-to-install-mongodb-on-centos-7/">How to Install MongoDB on CentOS 7</a><br><a target="_blank" rel="noopener" href="https://iqcode.com/code/shell/uninstaall-mongodb-from-centos7">uninstaall mongodb from centos7</a><br><a target="_blank" rel="noopener" href="https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-red-hat/">Install MongoDB Community Edition on Red Hat or CentOS</a></p>
 <h3 id="MongoDB"><a href="#MongoDB" class="headerlink" title="MongoDB"></a>MongoDB</h3><p><a target="_blank" rel="noopener" href="https://www.w3schools.com/mongodb/index.php">MongoDB Tutorial</a><br><a target="_blank" rel="noopener" href="https://www.mongodb.com/developer/products/realm/lessons-learned-building-game-mongodb-unity/">Lessons Learned from Building a Game with MongoDB and Unity</a><br><a target="_blank" rel="noopener" href="https://www.mongodb.com/developer/technologies/unity/">Unity</a><br><a target="_blank" rel="noopener" href="https://www.mongodb.com/developer/products/realm/getting-started-realm-sdk-unity/">Getting Started with the Realm SDK for Unity</a></p>
 <h3 id="Node"><a href="#Node" class="headerlink" title="Node"></a>Node</h3><p><a target="_blank" rel="noopener" href="https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-a-centos-7-server">How To Install Node.js on a CentOS 7 server</a>:注意，这里的源码安装方式，需要先编译，再安装，一定要确保下载的源码，比如这个地址：<a target="_blank" rel="noopener" href="https://registry.npmmirror.com/-/binary/node/v16.19.1/node-v16.19.1.tar.gz">https://registry.npmmirror.com/-/binary/node/v16.19.1/node-v16.19.1.tar.gz</a><br><a target="_blank" rel="noopener" href="https://ahelpme.com/linux/centos7/how-to-install-gnu-gcc-8-on-centos-7/#:~:text=How%20to%20install%20GNU%20GCC%208%20on%20CentOS,the%20%E2%80%9Cdevtools%E2%80%9D...%20STEP%203%29%20Use%20the%20installed%20tools.">How to install GNU GCC 8 on CentOS 7</a><br>sudo yum remove –skip-broken gcc<br>sudo yum install –skip-broken gcc<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/java-six/p/15915315.html#%E5%AE%89%E8%A3%85nginx%E6%9C%8D%E5%8A%A1%E5%99%A8">虚拟机搭建web服务器</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tyson-wu.github.io/blogs/2021/05/27/linux/WebReference%20package/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blogs/images/avatar.png">
-      <meta itemprop="name" content="Tyson Wu">
-      <meta itemprop="description" content="If you want, Just do it!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TysonWu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/2021/05/27/linux/WebReference%20package/" class="post-title-link" itemprop="url">Web Reference package</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-05-27 17:01:34" itemprop="dateCreated datePublished" datetime="2021-05-27T17:01:34+08:00">2021-05-27</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="package"><a href="#package" class="headerlink" title="package"></a>package</h3><p><a target="_blank" rel="noopener" href="https://gitee.com/unity3d-demo/unity-rpg-combat-system/tree/master">unity-rpg-combat-system</a><br><a target="_blank" rel="noopener" href="https://github.com/Chux-Padaina/RPG-Core-Combat-Systems">RPG-Core-Combat-Systems</a><br><a target="_blank" rel="noopener" href="https://github.com/Altair115/3rd-Person-Combat-demo">3rd-Person-Combat-demo</a><br><a target="_blank" rel="noopener" href="https://github.com/BennyKok/unity-runtime-debug-action">unity-runtime-debug-action</a><br><a target="_blank" rel="noopener" href="https://github.com/BennyKok?tab=repositories">BennyKok</a><br><a target="_blank" rel="noopener" href="https://github.com/KrazyL">KrazyL</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/272216809">如何实现一个灵活、通用的战斗（技能）系统——序章</a><br><a target="_blank" rel="noopener" href="https://github.com/m969/EGamePlay">EGamePlay</a><br><a target="_blank" rel="noopener" href="https://github.com/search?p=12&q=unity+combat&type=Repositories">unity+combat</a><br><a target="_blank" rel="noopener" href="https://github.com/gucheng0712?tab=repositories">gucheng0712</a><br><a target="_blank" rel="noopener" href="https://gucheng0712.github.io/">gucheng0712</a><br><a target="_blank" rel="noopener" href="https://huailiang.github.io/">huailiang</a><br><a target="_blank" rel="noopener" href="https://github.com/gucheng0712/CombatDesigner/wiki">CombatDesigner</a><br><a target="_blank" rel="noopener" href="https://gitee.com/jackyuzju/UnityAssetsResources?_from=gitee_search">Unity常见插件汇总</a><br><a target="_blank" rel="noopener" href="https://fungusgames.com/">Everyone loves a good story</a><br><a target="_blank" rel="noopener" href="https://github.com/stevehalliwell/fungus">fungus</a></p>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://github.com/ALEXTANGXIAO?tab=repositories">ALEXTANG</a><br><a target="_blank" rel="noopener" href="https://github.com/KrazyL/UnityMeshSimplifier">UnityMeshSimplifier</a><br><a target="_blank" rel="noopener" href="https://github.com/KrazyL/ComponentAutoBindTool">ComponentAutoBindTool</a><br><a target="_blank" rel="noopener" href="https://github.com/KrazyL/UnityToolchainsTrick">UnityToolchainsTrick</a><br><a target="_blank" rel="noopener" href="https://github.com/unity3d-open-tools/openstash">openstash</a>背包<br><a target="_blank" rel="noopener" href="https://github.com/genechiu/NavMesh">NavMesh</a><br><a target="_blank" rel="noopener" href="https://github.com/dongweiPeng/ChangeEQForUnity">ChangeEQForUnity</a><br><a target="_blank" rel="noopener" href="https://github.com/dongweiPeng?page=2&tab=repositories">dongweiPeng</a><br><a target="_blank" rel="noopener" href="https://github.com/dongweiPeng/SkillSystem">SkillSystem</a><br><a target="_blank" rel="noopener" href="https://github.com/jewer3330/plato">plato</a><br><a target="_blank" rel="noopener" href="https://www.supercline.com/game/tool-action/actioneditor.html">技能编辑器</a><br><a target="_blank" rel="noopener" href="https://github.com/longshilin/GameDev">Unity游戏开发资源</a><br><a target="_blank" rel="noopener" href="https://github.com/longshilin/Lockstep-Tutorial">帧同步技术</a><br><a target="_blank" rel="noopener" href="https://github.com/sjai013/unity-gameplay-ability-system">unity-gameplay-ability-system</a>对标UE里面的GAS<br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/unity-guid-regenerator">unity-guid-regenerator</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/AssetsTools.NET">AssetsTools.NET</a><br><a target="_blank" rel="noopener" href="https://github.com/Voldakk/Unity-Drag-and-Drop">Unity-Drag-and-Drop</a><br><a target="_blank" rel="noopener" href="https://github.com/Voldakk/Unity-FPS">Unity-FPS</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/MeshMaker">MeshMaker</a><br><a target="_blank" rel="noopener" href="https://github.com/Voldakk/Unity-Ability-System">Unity-Ability-System</a></p>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://github.com/sunbrando?tab=repositories">sunbrando</a><br><a target="_blank" rel="noopener" href="https://github.com/ThisisGame/ParticleEffectProfiler">ParticleEffectProfiler</a>Unity 特效性能分析工具<br><a target="_blank" rel="noopener" href="https://github.com/ThisisGame?tab=repositories">ThisisGame</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/GameDevTools">GameDevTools</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame?page=8&tab=repositories">ElonGame</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/seqence">剧情-技能编辑器</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/unity-ability-system-1">unity-ability-system</a><br><a target="_blank" rel="noopener" href="https://github.com/MinaPecheux/UnityTutorials-RTS">UnityTutorials-RTS</a><br><a target="_blank" rel="noopener" href="https://github.com/MinaPecheux/UnityTutorials-BehaviourTrees">UnityTutorials-BehaviourTrees</a><br><a target="_blank" rel="noopener" href="https://github.com/MinaPecheux?tab=repositories">MinaPecheux</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/Unity-Procedural-IK-Wall-Walking-Spider">Unity Procedural IK Wall Walking Spider</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/UnityGameplayAbilitySystem">UnityGameplayAbilitySystem</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/Undercooked">Undercooked</a>🍴🍅 Fan-made cooking game! 🍔🥣<br><a target="_blank" rel="noopener" href="https://github.com/jeffvella/UnityAStarNavigation">UnityAStarNavigation</a><br><a target="_blank" rel="noopener" href="https://github.com/jeffvella">Jeffrey Vella</a><br><a target="_blank" rel="noopener" href="https://github.com/XCharts-Team/XCharts">XCharts</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/VirturalTextureFast">VirturalTextureFast</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/waterReflectionBillBoard">waterReflectionBillBoard</a>一种手游可用的 高性能简化水面反射<br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/knead_proj">knead_proj</a>游戏中捏脸的实现<br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/UnityEditorScripts">UnityEditorScripts</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/ParticleEffectForUGUI">ParticleEffectForUGUI</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/UIEffect">UIEffect</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/Multiplayer-FPS">Multiplayer-FPS</a></p>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://github.com/ElonGame/KDTree">KDTree</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/UnityWaveEquation">UnityWaveEquation</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/SevenZip">SevenZip</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/ServerFramework">ServerFramework</a><br><a target="_blank" rel="noopener" href="https://github.com/RichardGSchmidt/GroundGrowing">GroundGrowing</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/UnityWireframeRenderer">UnityWireframeRenderer</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/UnityDemo_Splatoon2">UnityDemo_Splatoon2</a>Unity仿Splatoon喷漆效果<br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/Unity-Human-Skin-Shader-PC">Unity-Human-Skin-Shader-PC</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/GPUAOBaker">GPUAOBaker</a>基于GPU的AO烘焙实现<br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/HoudiniEngineForUnity">Houdini Engine for Unity</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/Joystick">Joystick</a>Unity 使用有限状态机 完美还原 王者荣耀 虚拟摇杆<br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/ProceduralTerrain">Procedural Voxel Terrain Generation</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/UnySplat">UnySplat</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/SpellSystem">法术系统</a><br><a target="_blank" rel="noopener" href="https://github.com/sugi-cho/Animation-Texture-Baker">Animation Texture Baker for Unity</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/GameDesignPattern_U3D_Version">GameDesignPattern_U3D_Version</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/Fractal-Lightning-Unity">Fractal-Lightning-Unity</a>Unity中的分形闪电<br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/Unity3D.IncrementalCompiler">Unity3D.IncrementalCompiler</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/GizmoExtensions">GizmoExtensions</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/WaterByBakeDepth">WaterByBakeDepth</a>基于预渲染顶点色的水编辑器</p>
-<hr>
-<p><a target="_blank" rel="noopener" href="https://github.com/ElonGame/Cs2Lua">Cs2Lua</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/UnityWireFrame">UnityWireFrame</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/AutoLOD">AutoLOD</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/UnityDemo_Splatoon">UnityDemo_Splatoon</a>Unity5的一个Demo, 模拟主机上的喷射战士<br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/protobuf-net-gc-optimization">protobuf-net-gc-optimization</a>protobuf-net无gc优化版本，另外还提供了一些无gc自定义数据结构，以及对Unity3D中c#代码的各种无gc使用方式测试。<br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/server">Server emulation for Age of Empires Online</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/quick_psd2ugui">quick_psd2ugui</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/TurnRound">TurnRound</a>3D效果的卡牌旋转切换<br><a target="_blank" rel="noopener" href="https://github.com/keijiro/Skinner">Skinner</a>Special Effects with Skinned Mesh in Unity<br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/Spherical-Gravity">Spherical-Gravity</a><br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/UnityAvater">UnityAvater</a>Unity中Avatar换装实现<br><a target="_blank" rel="noopener" href="https://github.com/ElonGame/unity-ads-demo">unity-ads-demo</a>广告<br><a target="_blank" rel="noopener" href="https://github.com/Tiggilyboo/UnityQuadTreePlanet">UnityQuadTreePlanet</a><br><a target="_blank" rel="noopener" href="https://github.com/Demigiant/dotween">dotween</a><br><a target="_blank" rel="noopener" href="https://github.com/Wokarol/StateMachine">StateMachine</a><br><a target="_blank" rel="noopener" href="https://github.com/jushii/StateMachineController/tree/master">StateMachineController</a><br><a target="_blank" rel="noopener" href="https://github.com/gwlenglish/Ultimate-ARPG/tree/main">Ultimate-ARPG</a></p>
 
       
     </div>
@@ -1127,7 +1152,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-25 20:02:08" itemprop="dateModified" datetime="2024-04-25T20:02:08+08:00">2024-04-25</time>
+                <time title="修改时间：2024-05-16 21:01:03" itemprop="dateModified" datetime="2024-05-16T21:01:03+08:00">2024-05-16</time>
               </span>
 
           
@@ -1160,7 +1185,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/blogs/page/5/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/blogs/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blogs/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/blogs/page/7/">7</a><a class="extend next" rel="next" href="/blogs/page/7/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/blogs/page/5/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/blogs/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blogs/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/blogs/page/7/">7</a><a class="page-number" href="/blogs/page/8/">8</a><a class="extend next" rel="next" href="/blogs/page/7/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1228,20 +1253,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/blogs/archives/">
         
-          <span class="site-state-item-count">70</span>
+          <span class="site-state-item-count">71</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/blogs/categories/">
           
-        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/blogs/tags/">
           
-        <span class="site-state-item-count">36</span>
+        <span class="site-state-item-count">38</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
